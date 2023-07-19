@@ -1,0 +1,40 @@
+import React, { useState } from 'react';
+import { styled } from 'styled-components';
+
+export enum SortOption {
+  Popularity = 'popularity',
+  Latest = 'latest',
+}
+
+interface SortToggleProps {
+  onSortChange: (sortOption: SortOption) => void;
+}
+
+const SortToggle: React.FC<SortToggleProps> = ({ onSortChange }) => {
+  const [sortOption, setSortOption] = useState(SortOption.Popularity);
+
+  const handleToggle = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSortOption = event.target.value as SortOption;
+    setSortOption(newSortOption);
+    onSortChange(newSortOption);
+  };
+
+  return (
+    <Select value={sortOption} onChange={handleToggle}>
+      <option value="popularity">인기순</option>
+      <option value="latest">최신순</option>
+    </Select>
+  );
+};
+
+export default SortToggle;
+
+const Select = styled.select`
+  border: none;
+  outline: none;
+  padding: 3px 5px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--background-color);
+  color: var(--primary-color);
+`;
