@@ -1,5 +1,5 @@
 import React from 'react';
-import PerfumeReviewCarousel from '../../components/Perfume/PerfumeReviewCarousel';
+import PerfumeReviewCarousel from '../../components/Carousel/PerfumeCarousel';
 
 const perfumes = [
   {
