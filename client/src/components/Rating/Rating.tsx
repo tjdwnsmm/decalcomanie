@@ -11,7 +11,7 @@ const StyledRating = MUstyled(Rating)({
 export default function HalfRating() {
   return (
     <Stack spacing={1}>
-      <StyledRating name="half-rating" defaultValue={2.5} precision={0.5} />
+      <StyledRating name="half-rating" defaultValue={0} precision={0.5} />
     </Stack>
   );
 }
