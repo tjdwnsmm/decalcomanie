@@ -4,7 +4,7 @@ import { PerfumeFeed } from '../pages/FeedPage/PerfumeFeed';
 import SearchTabPage from '../pages/SearchPage/SearchTabPage';
 import SearchMyPerfume from '../pages/SearchPage/SearchMyPerfume';
 import Post from '../pages/PostPages/Post';
-import PostDetail from '../pages/PostPage/PostDetail';
+import PostDetail from '../pages/PostDetailPage/PostDetail';
 
 export default function Router() {
   return (
