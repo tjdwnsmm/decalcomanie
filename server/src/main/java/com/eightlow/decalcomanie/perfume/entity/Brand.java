@@ -17,7 +17,7 @@ public class Brand {
 
     @Id
     @Column(name = "brandId")
-    private int perfumeId;
+    private int brandId;
 
     @Column(name = "name")
     private String name;
