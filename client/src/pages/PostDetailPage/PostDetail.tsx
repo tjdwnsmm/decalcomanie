@@ -1,6 +1,7 @@
 import React from 'react';
 import PerfumeCarousel from '../../components/Carousel/PerfumeCarousel';
 import CommentBox from '../../components/Post/CommentBox.tsx';
+import CommentInputForm from '../../components/Post/CommentInputForm.tsx';
 import { Post } from '../../types/PostInfoType.ts';
 
 // const perfumes = [
@@ -76,6 +77,7 @@ const PostDetail = () => {
       {post.comments.map((comment, idx) => 
         <CommentBox key={idx} comment={comment} />
       )}
+      <CommentInputForm />
     </>
   );
 };
