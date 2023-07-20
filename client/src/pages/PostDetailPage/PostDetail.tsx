@@ -1,5 +1,6 @@
 import React from 'react';
 import PerfumeCarousel from '../../components/Carousel/PerfumeCarousel';
+import PostInfoBox from '../../components/Post/PostInfoBox.tsx';
 import CommentBox from '../../components/Post/CommentBox.tsx';
 import CommentInputForm from '../../components/Post/CommentInputForm.tsx';
 import { Post } from '../../types/PostInfoType.ts';
@@ -74,6 +75,7 @@ const PostDetail = () => {
   return (
     <>
       <PerfumeCarousel perfumes={post.perfumes} />
+      <PostInfoBox postInfo={post.postInfo} />
       {post.comments.map((comment, idx) => 
         <CommentBox key={idx} comment={comment} />
       )}
