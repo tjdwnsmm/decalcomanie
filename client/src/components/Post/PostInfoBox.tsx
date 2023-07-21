@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { PostInfo } from '../../types/PostInfoType';
 import { FollowBtn } from '../Button/FollowBtn';
+import { PostModalBtn } from '../Button/PostModalBtn';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 
@@ -107,19 +108,13 @@ interface PostInfoBoxProps {
 }
 
 const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
-  const {
-    profileImg,
-    writer,
-    createdAt,
-    favScent,
-    nofavScent,
-    isFollow,
-    likeCount,
-    // isLike,
-    // isScrap,
-    content,
-    commentCount,
-  } = postInfo;
+  const { profileImg, writer, createdAt, favScent, nofavScent, isFollow, likeCount, isLike, isScrap, content, commentCount } = postInfo;
+  
+  // isWriter: 글 작성자와 request.user의 일치 여부를 나타내는 로직 구현
+  // 같을 경우 팔로우 버튼이 아닌 글 수정/삭제 모달을 띄우기 위해
+  // 현재는 임시로 설정
+  // const isWriter = true;
+  const isWriter = false;
 
   return (
     <PostInfoBoxContainer>
@@ -135,14 +130,14 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
             <NoFavScent>{nofavScent?.map((fav) => `#${fav}  `)}</NoFavScent>
           </InfoBoxRow>
         </InfoBox>
-        <FollowBtn isFollow={isFollow} />
+        {!isWriter && <FollowBtn isFollow={isFollow} />}
+        {isWriter && <PostModalBtn/>}
       </WriterInfoBox>
       <ContentBox>{content}</ContentBox>
       <IconBox>
         <LikeBtn count={likeCount}/>
         <ScrapBtn />
       </IconBox>
-      
       {/* 댓글 개수부분을 Comment 관련 파일에서 count해서 출력 ? */}
       <CommentCount>
         {commentCount === 0 ? '댓글이 없습니다.' : `${commentCount}개의 댓글`}
