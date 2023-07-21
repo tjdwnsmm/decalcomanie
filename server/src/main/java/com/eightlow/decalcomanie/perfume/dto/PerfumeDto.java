@@ -1,10 +1,13 @@
 package com.eightlow.decalcomanie.perfume.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-@Data
-@Builder
+import java.util.List;
+
+@Getter
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class PerfumeDto {
     private int perfumeId;
 
@@ -12,7 +15,7 @@ public class PerfumeDto {
 
     private String nameOrg;
 
-    private String brand;
+    private int brandId;
 
     private String picture;
 
@@ -23,4 +26,8 @@ public class PerfumeDto {
     private float longevity;
 
     private float sillage;
+
+    private List<ScentDto> accord;
+
+    private List<NoteListDto> note;
 }

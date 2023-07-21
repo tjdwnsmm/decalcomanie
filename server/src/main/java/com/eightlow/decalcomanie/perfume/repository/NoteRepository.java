@@ -1,14 +1,14 @@
 package com.eightlow.decalcomanie.perfume.repository;
 
-import com.eightlow.decalcomanie.perfume.entity.Scent;
+import com.eightlow.decalcomanie.perfume.entity.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface ScentRepository extends JpaRepository<Scent, Integer> {
-    List<Scent> findAll();
+public interface NoteRepository extends JpaRepository<Note, Integer> {
+    List<Note> findAll();
 
-    Scent findOneByScentId(int scentId);
+    Note findOneByNoteId(int noteId);
 }

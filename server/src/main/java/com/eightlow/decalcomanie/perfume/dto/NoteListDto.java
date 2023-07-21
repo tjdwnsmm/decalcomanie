@@ -6,12 +6,13 @@ import lombok.*;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScentDto {
-    private int scentId;
+public class NoteListDto {
+    private int noteListId;
 
-    private float weight;
+    private int perfumeId;
 
-    private String name;
+    private String type;
 
-    private String rgb;
+    private int noteId;
 }
+

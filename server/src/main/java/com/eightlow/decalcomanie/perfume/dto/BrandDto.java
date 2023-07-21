@@ -1,10 +1,11 @@
 package com.eightlow.decalcomanie.perfume.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-@Data
-@Builder
+@Getter
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class BrandDto {
     private int brandId;
 

@@ -3,12 +3,12 @@ package com.eightlow.decalcomanie.perfume.controller;
 import com.eightlow.decalcomanie.perfume.dto.BrandDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,39 +19,44 @@ public class PerfumeApiController {
 
     private final IPerfumeService perfumeService;
 
-    @GetMapping("/search/{id}")
-    public PerfumeDto perfumeDetail(@PathVariable String id) {
-        int perfumeId = Integer.parseInt(id);
+    @PostMapping("/search")
+    public ResponseEntity<List<PerfumeDto>> searchPerfume(@RequestBody PerfumeSearchRequest request) {
+        List<PerfumeDto> perfumes = perfumeService.findMatchingPerfumes(request.getGender(), request.getScent(), request.getKeyword(), request.getBrand());
 
-        PerfumeDto perfumeDto = perfumeService.getPerfume(perfumeId);
+        return new ResponseEntity<>(perfumes, HttpStatus.OK);
+    }
+
+    @GetMapping("/search/{id}")
+    public ResponseEntity<PerfumeDto> perfumeDetail(@PathVariable int id) {
+        PerfumeDto perfumeDto = perfumeService.getPerfume(id);
 
         if(perfumeDto != null) {
-            System.out.println(perfumeDto.toString());
+            return new ResponseEntity<>(perfumeDto, HttpStatus.OK);
         }
 
-        return perfumeDto;
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/search/brand")
-    public List<BrandDto> getAllBrand() {
+    public ResponseEntity<List<BrandDto>> getAllBrand() {
         List<BrandDto> brandList = perfumeService.findAllBrand();
 
         if(brandList != null) {
-            System.out.println(brandList.toString());
+            return new ResponseEntity<>(brandList, HttpStatus.OK);
         }
 
-        return brandList;
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/search/scent")
-    public List<ScentDto> getAllScent() {
+    public ResponseEntity<List<ScentDto>> getAllScent() {
         List<ScentDto> scentList = perfumeService.findAllScent();
 
         if(scentList != null) {
-            System.out.println(scentList.toString());
+            return new ResponseEntity<>(scentList, HttpStatus.OK);
         }
 
-        return scentList;
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }

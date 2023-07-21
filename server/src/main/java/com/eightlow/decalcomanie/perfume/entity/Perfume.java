@@ -25,8 +25,8 @@ public class Perfume {
     @Column(name = "nameOrg")
     private String nameOrg;
 
-    @Column(name = "brand")
-    private String brand;
+    @Column(name = "brandId")
+    private int brandId;
 
     @Column(name = "picture")
     private String picture;
