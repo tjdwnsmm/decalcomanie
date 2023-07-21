@@ -3,6 +3,7 @@ import { styled } from 'styled-components';
 import { CenterFrame, Main, MarginFrame } from '../../style';
 import { DrawerAddBtn } from '../../components/Drawer/DrawerAddBtn';
 import { DrawerCarousel } from '../../components/Drawer/DrawerCarousel';
+import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
 
 export interface Perfume {
   name: string;
@@ -49,6 +50,9 @@ export const MyDrawerPage = () => {
 
   return (
     <Main>
+      <CloseFrame>
+        <CloseSvg />
+      </CloseFrame>
       {perfumeList.length === 0 ? (
         <>
           <MarginFrame margin="240px 10px" />
@@ -66,7 +70,7 @@ export const MyDrawerPage = () => {
         </>
       ) : (
         <>
-          <MarginFrame margin="80px 10px">
+          <MarginFrame margin="30px 10px">
             <CenterFrame direction="column">
               <DrawerText size="25px" fontweight="700">
                 이런 향수들을 좋아하시는군요 ?
@@ -105,4 +109,10 @@ const DrawerText = styled.div<TextProp>`
   font-size: ${(props) => props.size};
   font-weight: ${(props) => props.fontweight};
   color: ${(props) => props.color};
+`;
+
+const CloseFrame = styled.div`
+  margin: 25px 30px;
+  display: flex;
+  flex-direction: row-reverse;
 `;
