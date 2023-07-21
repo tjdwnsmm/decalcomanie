@@ -29,7 +29,7 @@ export const DrawerCarousel: React.FC<DrawerFrameProps> = ({
       <Slider {...settings}>
         {chunks.map((chunk, index) => (
           <div key={index}>
-            <MarginFrame margin="40px 0 0" />
+            <MarginFrame margin="50px 0 0" />
             <DrawerFrame
               perfumeList={chunk.slice(0, 3)}
               handlePerfume={handlePerfume}
@@ -55,7 +55,7 @@ export const DrawerCarousel: React.FC<DrawerFrameProps> = ({
 const Container = styled.div`
   width: 320px;
   .slick-list {
-    height: 480px;
+    height: 500px;
   }
   .slick-dots {
     .slick-active {

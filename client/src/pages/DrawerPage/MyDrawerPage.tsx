@@ -66,7 +66,7 @@ export const MyDrawerPage = () => {
         </>
       ) : (
         <>
-          <MarginFrame margin="30px 10px">
+          <MarginFrame margin="80px 10px">
             <CenterFrame direction="column">
               <DrawerText size="25px" fontweight="700">
                 이런 향수들을 좋아하시는군요 ?
