@@ -1,9 +1,9 @@
-import React from 'react';
 import { Main } from '../../style';
 import { styled } from 'styled-components';
 import { LikeBtn } from '../../components/Button/LikeBtn';
 import { RateBtn } from '../../components/Button/RateBtn';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import ScentList from '../../components/Perfume/Detail/ScentList';
 
 const perfumeEx: PerfumeDetail = {
   id: '1',
@@ -31,12 +31,7 @@ const PerfumeDetail = () => {
           </PerfumeIcon>
           <Brand>{perfumeEx.brand}</Brand>
           <PerfumeName>{perfumeEx.korName}</PerfumeName>
-
-          <ScentList>
-            {perfumeEx.accord.map((scent) => (
-              <AccordBox>{scent.name}</AccordBox>
-            ))}
-          </ScentList>
+          <ScentList accord={perfumeEx.accord} />
         </LeftSection>
         <PerfumeImg>
           <img src="src/assets/img/perfume1.png" />
@@ -94,28 +89,4 @@ const PerfumeName = styled.div`
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-`;
-
-const ScentList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-top : 15px;
-}
-`;
-
-const AccordBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 400;
-  background: var(--primary-color);
-  color: var(--white-color);
-  // width: 60px;
-  padding: 2px 8px;
-  height: 24px;
-  letter-spacing: 0.8px;
-  margin: 5px 5px 0 0;
 `;
