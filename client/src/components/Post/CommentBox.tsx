@@ -8,8 +8,8 @@ interface CommentBoxProps {
 
 const CommentBoxContainer = styled.div`
   display: flex;
-  align-items: center;
-  margin: 10px 20px;
+  align-items: start;
+  padding: 5px 25px;
 `;
 
 const ProfileImage = styled.img`
@@ -28,6 +28,7 @@ const InfoBox = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-end;
+  margin-top: 3px;
 `;
 
 const UserNickname = styled.div`
@@ -38,16 +39,16 @@ const UserNickname = styled.div`
 
 const CreatedAt = styled.div`
   color: var(--gray-color);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   margin-left: 10px;
 `;
 
 const Content = styled.div`
   color: var(--black-color);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
-  margin-top: 5px; /* 추가: UserNickname과 CreatedAt 아래로 Content의 간격 조정 */
+  margin-top: 5px;
 `;
 
 const CommentBox: React.FC<CommentBoxProps> = ({ comment }) => {

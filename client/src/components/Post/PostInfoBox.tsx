@@ -20,19 +20,19 @@ ButtonBox : 좋아요/스크랩
 const PostInfoBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0px 20px;
+  margin: 8px 25px;
 `;
 
 const WriterInfoBox = styled.div`
   display: flex;
-  align-items: center;
+  align-items: start;
   flex-direction: row;
-  margin: 15px 0px;
+  margin: 10px 0px;
 `;
 
 const ProfileImg = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
 `;
 
@@ -40,13 +40,14 @@ const InfoBox = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin-left: 10px;
+  margin: 0px 8px;
 `;
 
 const InfoBoxRow = styled.div`
   display: flex;
+  flex-flow: wrap;
   align-items: flex-end;
-  margin: 2px 0px;
+  margin-top: 3px;
 `;
 
 const Writer = styled.div`
@@ -57,7 +58,7 @@ const Writer = styled.div`
 
 const CreatedAt = styled.div`
   color: var(--gray-color);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   margin-left: 10px;
 `;
@@ -67,6 +68,7 @@ const FavScent = styled.div`
   color: var(--primary-color);
   font-size: 10px;
   font-weight: 500;
+  margin-right: 10px;
 `;
 
 const NoFavScent = styled.div`
@@ -74,29 +76,30 @@ const NoFavScent = styled.div`
   color: var(--gray-color);
   font-size: 10px;
   font-weight: 500;
-  margin-left: 10px;
+  margin-top: 2px;
 `;
 
-const Content = styled.div`
+const ContentBox = styled.div`
   color: var(--black-color);
-  margin: 0px 4px 0px 48px;
+  margin: 5px;
+  padding-left: 40px;
   font-size: 14px;
-  font-weight: light;
-  white-space: pre-line;
+  font-weight: 400;
+  white-space: pre-wrap;
 `;
 
 const IconBox = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin: 10px;
+  padding: 10px;
   gap: 12px;
+  border-bottom: 1.2px solid var(--gray-color);
 `;
 
 const CommentCount = styled.span`
   font-size: 14px;
   font-weight: 600;
-  border-top: 1px solid var(--gray-color);
-  padding-top: 15px;
+  margin: 15px 5px 0px;
 `;
 
 interface PostInfoBoxProps {
@@ -122,7 +125,7 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
     <PostInfoBoxContainer>
       <WriterInfoBox>
         <ProfileImg src={profileImg} alt="프로필 사진" />
-        <InfoBox> 
+        <InfoBox>
           <InfoBoxRow>
             <Writer>{writer}</Writer>
             <CreatedAt>{createdAt}</CreatedAt>
@@ -134,7 +137,7 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
         </InfoBox>
         <FollowBtn isFollow={isFollow} />
       </WriterInfoBox>
-      <Content>{content}</Content>
+      <ContentBox>{content}</ContentBox>
       <IconBox>
         <LikeBtn count={likeCount}/>
         <ScrapBtn />
