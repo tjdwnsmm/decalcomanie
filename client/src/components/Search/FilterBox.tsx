@@ -22,6 +22,8 @@ interface Filter {
 const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
   //현재 필터된 정보들
   const [filter, setFilter] = useState<Filter>(filterNow);
+  const [brandInput, setBrandInput] = useState('');
+  const [scentInput, setScentInput] = useState('');
   /**
    *@summary filter 정보가 바뀔때마다 업데이트
    * @param filterName 필터명 : ex) 브랜드, 성별, 향 계열 등등
@@ -48,6 +50,9 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
         ...prevFilter,
         brand: prevFilter.brand ? [...prevFilter.brand, keyword] : [keyword],
       }));
+      setBrandInput('');
+    } else {
+      setBrandInput(keyword);
     }
   };
   const handleScentSearch = (keyword: string, isSearch: boolean) => {
@@ -57,6 +62,9 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
         ...prevFilter,
         scent: prevFilter.scent ? [...prevFilter.scent, keyword] : [keyword],
       }));
+      setScentInput('');
+    } else {
+      setScentInput(keyword);
     }
   };
 
@@ -96,39 +104,44 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
         ))}
       </RecentBtnList>
 
-      {/* 성별 필터링 */}
-      <MarginFrame margin="15px 0 0" />
-      <FilterTitle>성별</FilterTitle>
-      <Select
-        value={filter.gender || ''}
-        onChange={(e) => handleFilterChange('gender', e.target.value)}
-      >
-        <option value="">미선택</option>
-        <option value="0">남성</option>
-        <option value="1">여성</option>
-        <option value="2">남녀공용</option>
-      </Select>
+      {brandInput.length == 0 && (
+        <>
+          {/* 성별 필터링 */}
+          <MarginFrame margin="15px 0 0" />
+          <FilterTitle>성별</FilterTitle>
+          <Select
+            value={filter.gender || ''}
+            onChange={(e) => handleFilterChange('gender', e.target.value)}
+          >
+            <option value="">미선택</option>
+            <option value="0">남성</option>
+            <option value="1">여성</option>
+            <option value="2">남녀공용</option>
+          </Select>
 
-      <MarginFrame margin="15px 0 0" />
-      {/* 향 계열 필터링 */}
-      <FilterTitle>향 계열</FilterTitle>
-      <SearchBar
-        onSearch={handleScentSearch}
-        placeholder="선호하시는 향 계열을 입력해주세요"
-        fetchURL="https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
-      />
-      <RecentBtnList>
-        {filter.scent?.map((scent, idx) => (
-          <RecentBtn>
-            {scent}
-            <CancelSvg
-              onClick={() => {
-                handleRemoveScentSearch(idx);
-              }}
-            />
-          </RecentBtn>
-        ))}
-      </RecentBtnList>
+          <MarginFrame margin="15px 0 0" />
+
+          {/* 향 계열 필터링 */}
+          <FilterTitle>향 계열</FilterTitle>
+          <SearchBar
+            onSearch={handleScentSearch}
+            placeholder="선호하시는 향 계열을 입력해주세요"
+            fetchURL="https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
+          />
+          <RecentBtnList>
+            {filter.scent?.map((scent, idx) => (
+              <RecentBtn>
+                {scent}
+                <CancelSvg
+                  onClick={() => {
+                    handleRemoveScentSearch(idx);
+                  }}
+                />
+              </RecentBtn>
+            ))}
+          </RecentBtnList>
+        </>
+      )}
 
       {/* 필터링 검색 버튼 */}
       <MarginFrame margin={'30px 0 0'} />

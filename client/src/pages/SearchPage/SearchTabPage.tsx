@@ -46,6 +46,11 @@ const SearchTabPage: React.FC = () => {
    */
   const handleSearch = (keyword: string, isSearch: boolean) => {
     console.log(`💨 ${keyword} and ${isSearch}`);
+    if (!isSearch) {
+      setSearchKeyword(keyword);
+    } else {
+      setSearchKeyword('');
+    }
     setSearchResults([]);
   };
 
@@ -110,13 +115,18 @@ const SearchTabPage: React.FC = () => {
             placeholder="검색어를 입력해주세요"
             fetchURL="https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
           />
-          {/*sorting*/}
-          <SortArea>
-            <SortToggle onSortChange={handleSortChange} />
-          </SortArea>
 
-          {/* 검색 결과 */}
-          <SearchResults results={searchResults} isButton={false} />
+          {searchKeyword.length === 0 && (
+            <>
+              {/*sorting*/}
+              <SortArea>
+                <SortToggle onSortChange={handleSortChange} />
+              </SortArea>
+
+              {/* 검색 결과 */}
+              <SearchResults results={searchResults} isButton={false} />
+            </>
+          )}
         </>
       )}
 
