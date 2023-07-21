@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { Perfume } from '../../pages/DrawerPage/MyDrawerPage';
 import { ReactComponent as CancelSvg } from '../../assets/icon/input-cancel.svg';
 import { useState } from 'react';
-import { ConfirmAlert } from '../alert/ConfirmAlert';
+import { ConfirmAlert } from '../Alert/ConfirmAlert';
 
 export interface DrawerFrameProps {
   perfumeList: Perfume[];
