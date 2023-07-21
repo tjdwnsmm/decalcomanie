@@ -1,6 +1,8 @@
 import { styled } from 'styled-components';
 import { Perfume } from '../../pages/DrawerPage/MyDrawerPage';
 import { ReactComponent as CancelSvg } from '../../assets/icon/input-cancel.svg';
+import { useState } from 'react';
+import { ConfirmAlert } from '../alert/ConfirmAlert';
 
 export interface DrawerFrameProps {
   perfumeList: Perfume[];
@@ -13,15 +15,29 @@ export const DrawerFrame: React.FC<DrawerFrameProps> = ({
   handlePerfume,
   stairNum,
 }) => {
+  const [open, setOpen] = useState(false);
+  const [clickIdx, setClickIdx] = useState(-1);
+  const handleClickOpen = (index: number) => {
+    setOpen(true);
+    setClickIdx(index);
+  };
   return (
     <>
+      <ConfirmAlert
+        open={open}
+        setOpen={setOpen}
+        handlePerfume={handlePerfume}
+        deleteIdx={stairNum * 3 + clickIdx}
+      />
       <RowFrame>
         {perfumeList.map((perfume, index) => (
           <PerfumeContainer key={index}>
             <CancelSvg2
               onClick={() => {
                 // console.log('지워지는 idx : ', stairNum * 3 + index);
-                handlePerfume(stairNum * 3 + index);
+                // handlePerfume(stairNum * 3 + index);
+                handleClickOpen(index);
+                // confirm('정말 삭제하시겠어요?');
               }}
             />
             <PerfumeImg src={perfume.img} />
