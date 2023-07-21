@@ -81,9 +81,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, isButton }) => {
                   <img src={feed.perfumeInfo.img}></img>
                 </ImgBox>
               </PerfumeInfo>
-              <ButtonFrame>
-                {isButton && <Button>내 서랍에 담기</Button>}
-              </ButtonFrame>
+              <ButtonFrame>{isButton && <Button>추가하기</Button>}</ButtonFrame>
             </PerfumeBox>
             <MarginFrame margin="10px 0" />
           </>
