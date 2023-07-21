@@ -4,6 +4,7 @@ import PostInfoBox from '../../components/Post/PostInfoBox.tsx';
 import CommentBox from '../../components/Post/CommentBox.tsx';
 import CommentInputForm from '../../components/Post/CommentInputForm.tsx';
 import { Post } from '../../types/PostInfoType.ts';
+import { Main } from '../../style';
 
 // 임시
 const post: Post = {
@@ -61,14 +62,14 @@ const post: Post = {
 
 const PostDetail = () => {
   return (
-    <>
+    <Main>
       <PerfumeCarousel perfumes={post.perfumes} />
       <PostInfoBox postInfo={post.postInfo} />
       {post.comments.map((comment, idx) => 
         <CommentBox key={idx} comment={comment} />
       )}
       <CommentInputForm />
-    </>
+    </Main>
   );
 };
 
