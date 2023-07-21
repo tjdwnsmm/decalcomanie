@@ -1,16 +1,29 @@
 import { styled } from 'styled-components';
 import { Perfume } from '../../pages/DrawerPage/MyDrawerPage';
+import { ReactComponent as CancelSvg } from '../../assets/icon/input-cancel.svg';
 
 export interface DrawerFrameProps {
   perfumeList: Perfume[];
+  handlePerfume: (idx: number) => void;
+  stairNum: number;
 }
 
-export const DrawerFrame: React.FC<DrawerFrameProps> = ({ perfumeList }) => {
+export const DrawerFrame: React.FC<DrawerFrameProps> = ({
+  perfumeList,
+  handlePerfume,
+  stairNum,
+}) => {
   return (
     <>
       <RowFrame>
         {perfumeList.map((perfume, index) => (
           <PerfumeContainer key={index}>
+            <CancelSvg2
+              onClick={() => {
+                // console.log('지워지는 idx : ', stairNum * 3 + index);
+                handlePerfume(stairNum * 3 + index);
+              }}
+            />
             <PerfumeImg src={perfume.img} />
             <PerfumeInfo>
               <PerfumeName>{perfume.name}</PerfumeName>
@@ -33,17 +46,21 @@ const PerfumeContainer = styled.div`
   flex-direction: column;
   margin: 0 10px -10px;
   position: relative;
+  align-items: flex-end;
+  gap: 10px;
 `;
 
 const PerfumeImg = styled.img`
   width: 80px;
+  height: 100px;
   object-fit: cover;
 `;
 
 const PerfumeInfo = styled.div`
+  width: 150px;
   position: absolute;
   bottom: -70px;
-  left: 15px;
+  left: -35px;
   padding: 10px 2px;
   text-align: center;
 `;
@@ -61,4 +78,10 @@ const PerfumeBrand = styled.div`
 
 const Image = styled.img`
   width: 320px;
+`;
+
+const CancelSvg2 = styled(CancelSvg)`
+  g path {
+    fill: var(--gray-color);
+  }
 `;

@@ -6,7 +6,10 @@ import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import { Perfume } from '../../pages/DrawerPage/MyDrawerPage';
 
-export const DrawerCarousel: React.FC<DrawerFrameProps> = ({ perfumeList }) => {
+export const DrawerCarousel: React.FC<DrawerFrameProps> = ({
+  perfumeList,
+  handlePerfume,
+}) => {
   const settings = {
     arrows: false,
     dots: true,
@@ -27,12 +30,20 @@ export const DrawerCarousel: React.FC<DrawerFrameProps> = ({ perfumeList }) => {
         {chunks.map((chunk, index) => (
           <div key={index}>
             <MarginFrame margin="40px 0 0" />
-            <DrawerFrame perfumeList={chunk.slice(0, 3)} />
+            <DrawerFrame
+              perfumeList={chunk.slice(0, 3)}
+              handlePerfume={handlePerfume}
+              stairNum={2 * index}
+            />
 
             {chunk.length > 3 && (
               <>
                 <MarginFrame margin="70px 0 0" />
-                <DrawerFrame perfumeList={chunk.slice(3, 6)} />
+                <DrawerFrame
+                  perfumeList={chunk.slice(3, 6)}
+                  handlePerfume={handlePerfume}
+                  stairNum={2 * index + 1}
+                />
               </>
             )}
           </div>
@@ -44,7 +55,7 @@ export const DrawerCarousel: React.FC<DrawerFrameProps> = ({ perfumeList }) => {
 const Container = styled.div`
   width: 320px;
   .slick-list {
-    height: 450px;
+    height: 480px;
   }
   .slick-dots {
     .slick-active {
