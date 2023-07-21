@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Carousel from 'react-items-carousel';
-import PerfumeReviewBox from '../Perfume/PerfumeReviewBox.tsx';
 import { ReactComponent as AddButtonSvg } from '../../assets/img/add-button.svg';
 
 interface Perfume {
@@ -14,13 +13,24 @@ interface Perfume {
 interface PerfumeReviewCarouselProps {
   perfumes: Perfume[];
 }
+
 const EmptyBox = styled.div`
   display: flex;
   justify-content: center;
-  width: 100%;
+  width: 387.5px;
   height: 150px;
-  border: 1.5px dashed var(--primary-color);
+  border: 1.25px dashed var(--primary-color);
+`;
+
+const NotEmptyBox = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 360px;
+  height: 150px;
+  border: 1.25px dashed var(--primary-color);
   box-shadow: 5px 5px 5px var(--gray-color);
+  margin: 5px 5px;
+  border-radius: 10px;
 `;
 
 const StyledAddButtonSvg = styled(AddButtonSvg)`
@@ -37,15 +47,71 @@ const TextArea = styled.span`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 180px;
+  height: 150px;
 `;
 
 const Button = styled.button`
   background: none;
   border: none;
-  color: var(--gray-color);
+  color: var(--primary-color);
   font-size: 25px;
+  font-weight: bold;
   cursor: pointer;
+  opacity: 80%;
 `;
+// ---------------------------------------------
+const PerfumeReviewBoxContainer = styled.div`
+  display: flex;
+  background: var(--white-color);
+  justify-content: center;
+  align-items: center;
+  padding: 0px 0px;
+  width: 360px;
+  height: 150px;
+  border: 1.25px solid var(--primary-color);
+  box-shadow: 5px 5px 5px var(--gray-color);
+  margin: 5px 5px;
+  border-radius: 10px;
+`;
+
+const TextInfoContainer = styled.div`
+  padding: 0px 10px;
+  width: 60px;
+`;
+
+const PerfumeBrand = styled.div`
+  color: var(--black-color);
+  font-size: 10px;
+  width: 100px;
+`;
+
+const PerfumeName = styled.div`
+  color: var(--black-color);
+  font-size: 12px;
+  font-weight: bold;
+  width: 100px;
+`;
+
+const ImgBox = styled.div`
+  width: 100px;
+  height: 100px;
+  display: flex;
+`;
+
+function PerfumeReviewBox({ brand, name, img }) {
+  return (
+    <PerfumeReviewBoxContainer>
+      <TextInfoContainer>
+        <PerfumeBrand>{brand}</PerfumeBrand>
+        <PerfumeName>{name}</PerfumeName>
+      </TextInfoContainer>
+      <ImgBox>
+        <img src={img} />
+      </ImgBox>
+    </PerfumeReviewBoxContainer>
+  );
+}
 
 const AddCarousel = ({ perfumes }: PerfumeReviewCarouselProps) => {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
@@ -72,8 +138,7 @@ const AddCarousel = ({ perfumes }: PerfumeReviewCarouselProps) => {
           numberOfCards={1}
           leftChevron={<Button>{'<'}</Button>}
           rightChevron={<Button>{'>'}</Button>}
-          chevronWidth={30}
-          gutter={10}
+          chevronWidth={15}
           showSlither={false}
           outsideChevron={false}
         >
@@ -85,7 +150,7 @@ const AddCarousel = ({ perfumes }: PerfumeReviewCarouselProps) => {
               img={perfume.img}
             />
           ))}
-          <EmptyBox>
+          <NotEmptyBox>
             <TextArea>
               향수를 추가해주세요
               <StyledAddButtonSvg
@@ -94,7 +159,7 @@ const AddCarousel = ({ perfumes }: PerfumeReviewCarouselProps) => {
                 }}
               />
             </TextArea>
-          </EmptyBox>
+          </NotEmptyBox>
         </Carousel>
       )}
     </>
@@ -102,25 +167,3 @@ const AddCarousel = ({ perfumes }: PerfumeReviewCarouselProps) => {
 };
 
 export default AddCarousel;
-
-// export default function Carousel() {
-//   const [numOfCards, setNumOfCards] = useState(0);
-//   const [activeItemIndex, setActiveItemIndex] = useState(0);
-//   return (
-//       <ItemsCarousel
-//         requestToChangeActive={0}
-//         activeItemIndex={activeItemIndex}
-//         numberOfCards={1}
-//         gutter={10}
-//         showSlither={false}
-//         leftChevron={<Button>{'<'}</Button>}
-//         rightChevron={<Button>{'>'}</Button>}
-//         outsideChevron={false}
-//       >
-//         <div style={{ width: 150, height: 151, background: '#EEE' }}>First card</div>
-//         <div style={{ width: 150, height: 151, background: '#EEE' }}>First card</div>
-//         <div style={{ width: 150, height: 151, background: '#EEE' }}>First card</div>
-//         <div style={{ width: 150, height: 151, background: '#EEE' }}>First card</div>
-//       </ItemsCarousel>
-//   );
-// }
