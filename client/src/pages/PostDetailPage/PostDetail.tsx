@@ -1,4 +1,5 @@
 import React from 'react';
+import { styled } from 'styled-components';
 import PerfumeCarousel from '../../components/Carousel/PerfumeCarousel';
 import PostInfoBox from '../../components/Post/PostInfoBox.tsx';
 import CommentBox from '../../components/Post/CommentBox.tsx';
@@ -60,14 +61,20 @@ const post: Post = {
   ],
 };
 
+const CommentListBox = styled.div`
+  margin-bottom: 80px;
+`;
+
 const PostDetail = () => {
   return (
     <Main>
       <PerfumeCarousel perfumes={post.perfumes} />
       <PostInfoBox postInfo={post.postInfo} />
-      {post.comments.map((comment, idx) => 
-        <CommentBox key={idx} comment={comment} />
-      )}
+      <CommentListBox>
+        {post.comments.map((comment, idx) => 
+          <CommentBox key={idx} comment={comment} />
+        )}
+      </CommentListBox>
       <CommentInputForm />
     </Main>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Comment } from '../../types/PostInfoTypes';
+import { PostModalBtn } from '../Button/PostModalBtn';
 
 interface CommentBoxProps {
   comment: Comment;
@@ -20,6 +21,7 @@ const ProfileImage = styled.img`
 
 const CommentContent = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   margin-left: 10px;
 `;
@@ -51,7 +53,12 @@ const Content = styled.div`
   margin-top: 5px;
 `;
 
-const CommentBox: React.FC<CommentBoxProps> = ({ comment }) => {
+const CommentBox = ({ comment }: CommentBoxProps) => {
+  // 요청보낸 사람이 댓글 작성자일 때만 수정/삭제 나오도록
+  // 임시로 설정
+  const CurrentUser = '복이'
+  const isWriter = comment.writer === CurrentUser ? true : false;
+  
   return (
     <CommentBoxContainer>
       <ProfileImage src={comment.profileImg} alt="프로필" />
@@ -62,6 +69,7 @@ const CommentBox: React.FC<CommentBoxProps> = ({ comment }) => {
         </InfoBox>
         <Content>{comment.content}</Content>
       </CommentContent>
+      {isWriter && <PostModalBtn/>}
     </CommentBoxContainer>
   );
 };
