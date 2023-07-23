@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Comment } from '../../types/PostInfoTypes';
 import { PostModalBtn } from '../Button/PostModalBtn';
@@ -53,11 +53,56 @@ const Content = styled.div`
   margin-top: 5px;
 `;
 
+const getElapsedTime = (createdAt: string): number => {
+  const createdAtDate = new Date(createdAt);
+  const currentTime = new Date();
+  console.log("작성시간", createdAtDate)
+  console.log(currentTime)
+  const diff = currentTime.getTime() - createdAtDate.getTime(); // 단위: (ms)
+  const elapsedTime = Math.floor(diff / 1000 / 60);
+  return elapsedTime;
+};
+
+const getTimeString = (elapsedTime: number, createdAt: string): string => {
+  if (elapsedTime < 1) {
+    return '방금 전';
+  } else if (elapsedTime < 60) {
+    return `${elapsedTime}분 전`;
+  } else if (elapsedTime < 1440) {
+    return `${Math.floor(elapsedTime / 60)}시간 전`;
+  } else if (elapsedTime < 10080) {
+    return `${Math.floor(elapsedTime / 1440)}일 전`;
+  } else {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return new Date(createdAt).toLocaleDateString('ko-KR', options);
+  }
+};
+
 const CommentBox = ({ comment }: CommentBoxProps) => {
   // 요청보낸 사람이 댓글 작성자일 때만 수정/삭제 나오도록
   // 임시로 설정
-  const CurrentUser = '복이'
+  const CurrentUser = '복이';
   const isWriter = comment.writer === CurrentUser ? true : false;
+  
+  const [elapsedTime, setElapsedTime] = useState(getElapsedTime(comment.createdAt));
+
+  // 페이지가 처음 로드될 때 작성 시간과 현재 시간의 차이를 업데이트
+  useEffect(() => {
+    setElapsedTime(getElapsedTime(comment.createdAt));
+  }, [comment.createdAt]);
+
+  // 새로고침할 때 작성 시간과 현재 시간의 차이를 업데이트
+  const handlePageRefresh = () => {
+    setElapsedTime(getElapsedTime(comment.createdAt));
+  };
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', handlePageRefresh);
+
+    return () => {
+      window.removeEventListener('beforeunload', handlePageRefresh);
+    };
+  }, [comment.createdAt]);
   
   return (
     <CommentBoxContainer>
@@ -65,7 +110,7 @@ const CommentBox = ({ comment }: CommentBoxProps) => {
       <CommentContent>
         <InfoBox>
           <UserNickname>{comment.writer}</UserNickname>
-          <CreatedAt>{comment.createdAt}</CreatedAt>
+          <CreatedAt>{getTimeString(elapsedTime, comment.createdAt)}</CreatedAt>
         </InfoBox>
         <Content>{comment.content}</Content>
       </CommentContent>
