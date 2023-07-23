@@ -113,7 +113,7 @@ function PerfumeReviewBox({ brand, name, img }) {
   );
 }
 
-const AddCarousel = ({ perfumes }: PerfumeReviewCarouselProps) => {
+export default function AddCarousel({ perfumes }: PerfumeReviewCarouselProps) {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const navigate = useNavigate();
 
@@ -166,4 +166,3 @@ const AddCarousel = ({ perfumes }: PerfumeReviewCarouselProps) => {
   );
 };
 
-export default AddCarousel;

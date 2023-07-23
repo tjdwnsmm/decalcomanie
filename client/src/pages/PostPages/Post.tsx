@@ -1,23 +1,12 @@
 import { styled } from 'styled-components';
 import { PostButton, CancleButton } from '../../components/Button/Button.tsx';
 import CustomizedSwitches from '../../components/Switch/Switch.tsx';
-import PerfumeBox from '../../components/Box/AddPerfume.tsx';
 import ContextBox from '../../components/Box/AddContext.tsx';
 import AddRating from '../../components/Rating/Rating.tsx';
 import AddCarousel from '../../components/Box/AddCarousel.tsx';
 import { Main } from '../../style/index.ts';
 
 const perfumes = [
-  {
-    brand: '아쿠아 디 파르마',
-    name: '미르토 디 파나레아',
-    img: 'src/assets/img/perfume_aqua.png',
-  },
-  {
-    brand: '딥디크',
-    name: '오 드 퍼퓸 도손',
-    img: 'src/assets/img/perfume_doson.png',
-  },
   {
     brand: '아쿠아 디 파르마',
     name: '미르토 디 파나레아',
@@ -46,14 +35,19 @@ const PostBody = styled.div`
   flex-direction: column;
 `;
 
-const LeftAlign = styled.div`
+
+const TitleAlign = styled.div`
   width: 340px;
   font-weight: bold;
-  text-align: left;
+  font-size: 18pt;
+  text-align: center;
+  margin-top: 10px;
 `;
 
-const TitleAlign = styled(LeftAlign)`
+const LeftTitleAlign = styled(TitleAlign)`
+  text-align: left;
   font-size: 14pt;
+  margin-bottom: 5px;
 `;
 
 export default function Post() {
@@ -68,20 +62,25 @@ export default function Post() {
 
   return (
     <Main>
-      <AddCarousel perfumes={perfumes} />
-      <CustomizedSwitches></CustomizedSwitches>
+      <PostBody>
+        <TitleAlign>글 작성하기</TitleAlign>
+      </PostBody>
+      <div>
+        <AddCarousel perfumes={perfumes} />
+        <CustomizedSwitches></CustomizedSwitches>
+      </div>
 
       <PostBody>
-        <TitleAlign>내용을 입력해주세요.</TitleAlign>
+        <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
         <ContextBox />
-        <TitleAlign>평점</TitleAlign>
-        <LeftAlign>
-        <AddRating perfumes={perfumes} />
-        </LeftAlign>
+        <LeftTitleAlign>
+          평점
+          <AddRating perfumes={perfumes} />
+        </LeftTitleAlign>
+        <PostButton onClick={postAlert}>글 등록하기</PostButton>
+        <CancleButton onClick={cancleAlert}>취소</CancleButton>
       </PostBody>
 
-      <PostButton onClick={postAlert}>글 등록하기</PostButton>
-      <CancleButton onClick={cancleAlert}>취소</CancleButton>
     </Main>
   );
 }
