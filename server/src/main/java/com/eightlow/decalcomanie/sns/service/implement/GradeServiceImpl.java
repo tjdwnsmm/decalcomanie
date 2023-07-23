@@ -1,7 +1,6 @@
 package com.eightlow.decalcomanie.sns.service.implement;
 
 import com.eightlow.decalcomanie.sns.dto.GradeDto;
-import com.eightlow.decalcomanie.sns.entity.Article;
 import com.eightlow.decalcomanie.sns.entity.Grade;
 import com.eightlow.decalcomanie.sns.mapper.GradeMapper;
 import com.eightlow.decalcomanie.sns.repository.GradeRepository;
@@ -11,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,8 +27,19 @@ public class GradeServiceImpl implements IGradeService {
     public void createGrade(GradeDto gradeDto) {
         log.info("GradeServiceImpl::: createGrade start");
         Grade grade = gradeRepository.save(gradeMapper.toEntity(gradeDto));
-        log.info("GradeServiceImpl::: finish ", String.valueOf(grade.getRate()), String.valueOf(grade.getPerfumeId()));
+        log.info("GradeServiceImpl::: finish ");
     }
+
+
+
+//    @Override
+//    @Transactional
+//    public List<GradeDto> searchGradesByArticle(ArticleDto article) {
+//        log.info("GradeServiceImpl::: searchGradesByArticle start");
+//        List<Grade> grades = gradeRepository.findGradeByGradePkUserIdAndGradePkArticleId(article.getUserId(), article.get);
+////        return gradeMapper.toDto(grades);
+//        return null;
+//    }
 
     @Override
     @Transactional
@@ -38,6 +49,18 @@ public class GradeServiceImpl implements IGradeService {
             GradeDto gradeDto = new GradeDto(userId, perfumes.get(i), rates.get(i));
             createGrade(gradeDto);
         }
+    }
+
+    @Override
+    public List<GradeDto> searchGradesByPerfumeId(String userId, List<Integer> perfumeIdList) {
+
+        log.info("GradeServiceImpl::: searchGradesByPerfumeId start");
+        List<Grade> grades = new ArrayList<>();
+        for (int i = 0; i < perfumeIdList.size(); i++) {
+            grades.add(gradeRepository.findByUserIdAndPerfumeId(userId, perfumeIdList.get(i)));
+        }
+        log.info("GradeServiceImpl::: searchGradesByPerfumeId end");
+        return gradeMapper.toDto(grades);
     }
 
 

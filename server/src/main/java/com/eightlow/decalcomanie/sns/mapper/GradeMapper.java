@@ -12,4 +12,7 @@ import java.util.List;
 public interface GradeMapper {
     Grade toEntity(GradeDto gradeDto);
     GradeDto toDto(Grade grade);
+
+    List<Grade> toEntity(List<GradeDto> gradeDtoList);
+    List<GradeDto> toDto(List<Grade> gradeList);
 }

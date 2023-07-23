@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.util.UUID;
-
 @Getter
 @RequiredArgsConstructor
 @AllArgsConstructor

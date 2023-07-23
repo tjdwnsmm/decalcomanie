@@ -4,8 +4,6 @@ import com.eightlow.decalcomanie.common.dto.BaseDto;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
-import java.util.UUID;
-
 @Data
 @SuperBuilder
 public class ArticleDto extends BaseDto {
