@@ -93,22 +93,22 @@ public class ArticleController {
                         .build());
     }
 
-//    @DeleteMapping("/delete/{articleId}")
-//    public ResponseEntity<Response> deleteArticle(@PathVariable int articleId) {
-//        // 글 삭제
-//        articleService.deleteArticle(articleId);
-//
-//        // 글삭제시 그 게시물에 달린 댓글 전부 삭제
-//
-//        // 글삭제시 사용자의 post갯수 줄여줘야함
-//
-//        // 글삭제시 북마크한 사용자의 북마크 개수를 줄여야함
-//
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(Response.builder()
-//                        .message("글이 정상적으로 삭제되었습니다.")
-//                        .build());
-//    }
+    @DeleteMapping("/delete/{articleId}")
+    public ResponseEntity<Response> deleteArticle(@PathVariable int articleId) {
+        // 글 삭제
+        articleService.deleteArticle(articleId);
+
+        // 글삭제시 그 게시물에 달린 댓글 전부 삭제
+
+        // 글삭제시 사용자의 post갯수 줄여줘야함
+
+        // 글삭제시 북마크한 사용자의 북마크 개수를 줄여야함
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Response.builder()
+                        .message("글이 정상적으로 삭제되었습니다.")
+                        .build());
+    }
 
     /* 댓글 작업 part*/
 //    @PostMapping("/comment/create")
