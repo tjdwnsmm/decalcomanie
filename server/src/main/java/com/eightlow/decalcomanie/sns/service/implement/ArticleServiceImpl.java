@@ -2,7 +2,6 @@ package com.eightlow.decalcomanie.sns.service.implement;
 
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
 import com.eightlow.decalcomanie.sns.dto.ArticlePerfumeDto;
-<<<<<<< server/src/main/java/com/eightlow/decalcomanie/sns/service/implement/ArticleServiceImpl.java
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.sns.entity.Article;

@@ -1,7 +1,7 @@
 package com.eightlow.decalcomanie.sns.controller;
 
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
-<<<<<<< server/src/main/java/com/eightlow/decalcomanie/sns/controller/ArticleController.java
+
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.GradeDto;
 import com.eightlow.decalcomanie.sns.dto.request.CommentRequest;
