@@ -29,5 +29,7 @@ public interface IArticleService {
      */
     void createComment(CommentDto commentDto);
     ResponseEntity<Response> updateComment(CommentDto commentDto);
+    int deleteComment(CommentDto commentDto);
+    void modifyCommentCount(int articleId);
 
 }

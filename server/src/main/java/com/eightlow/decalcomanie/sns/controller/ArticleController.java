@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -115,6 +116,7 @@ public class ArticleController {
                         .build());
     }
 
+
     /* 댓글 작업 part*/
     @PostMapping("/comment/create")
     public ResponseEntity<Response> createComment(@RequestBody CommentRequest commentRequest) {
@@ -137,8 +139,31 @@ public class ArticleController {
 //        return ResponseEntity.status(HttpStatus.OK).body();
     }
 
-//    @DeleteMapping("/comment/delete/{commentId}")
-//    public ResponseEntity<ArticleDto> getDetailById(@PathVariable int articleId) {
-//        return ResponseEntity.status(HttpStatus.OK).body();
-//    }
+    @DeleteMapping("/comment/delete/{commentId}")
+    public ResponseEntity<Response> deleteComment(@RequestBody CommentRequest commentRequest) {
+        CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
+        System.out.println(commentDto);
+        // 댓글 삭제
+        int statusCode = articleService.deleteComment(commentDto);
+
+        // 댓글 삭제시 article 테이블의 comment의 갯수를 줄여준다
+        articleService.modifyCommentCount(commentDto.getArticleId());
+
+        if (statusCode == 200) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Response.builder()
+                            .message("댓글이 정상적으로 삭제되었습니다.")
+                            .build());
+        } else if (statusCode == 401) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Response.builder()
+                            .message("잘못된 사용자 접근입니다.")
+                            .build());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Response.builder()
+                            .message("404")
+                            .build());
+        }
+    }
 }
