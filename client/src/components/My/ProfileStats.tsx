@@ -1,6 +1,7 @@
 import React from 'react';
 import { styled } from 'styled-components';
 import { ReactComponent as Bar } from '../../assets/img/bar.svg';
+import { useNavigate } from 'react-router-dom';
 
 interface TextProp {
   size?: string;
@@ -37,25 +38,40 @@ const StatsBox = styled.div`
 `;
 
 const CountBox = styled.div`
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export default function ProfileStats() {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/follow-list');
+  };
+
   return (
     <StatsDiv>
       <StatsBox>
-        <CountBox>
-            <BoxText size='14pt' color='var(--primary-color)' fontweight='700'>123</BoxText>
-            <BoxText size='10pt'>Following</BoxText>
+        <CountBox onClick={handleClick}>
+          <BoxText size="14pt" color="var(--primary-color)" fontweight="700">
+            123
+          </BoxText>
+          <BoxText size="10pt">Following</BoxText>
         </CountBox>
         <Bar />
-        <CountBox>
-            <BoxText size='14pt' color='var(--primary-color)' fontweight='700'>123</BoxText>
-            <BoxText size='10pt'>Post</BoxText>
-        </CountBox>
+        <div>
+          <BoxText size="14pt" color="var(--primary-color)" fontweight="700">
+            123
+          </BoxText>
+          <BoxText size="10pt">Post</BoxText>
+        </div>
         <Bar />
-        <CountBox>
-            <BoxText size='14pt' color='var(--primary-color)' fontweight='700'>123</BoxText>
-            <BoxText size='10pt'>Followers</BoxText>
+        <CountBox onClick={handleClick}>
+          <BoxText size="14pt" color="var(--primary-color)" fontweight="700">
+            123
+          </BoxText>
+          <BoxText size="10pt">Followers</BoxText>
         </CountBox>
       </StatsBox>
     </StatsDiv>

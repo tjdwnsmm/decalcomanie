@@ -18,6 +18,7 @@ export default function Router() {
         <Route path="/post" element={<Post />}></Route>
         <Route path="/post-detail" element={<PostDetail />}></Route>
         <Route path="/mypage" element={<Mypage />}></Route>
+        {/* <Route path="/follow-list" element={<Follow-list />}></Route> */}
       </Routes>
     </BrowserRouter>
   );
