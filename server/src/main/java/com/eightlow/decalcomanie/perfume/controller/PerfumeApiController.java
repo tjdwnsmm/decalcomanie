@@ -13,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/perfume")
@@ -34,7 +36,7 @@ public class PerfumeApiController {
         return new ResponseEntity<>(perfumes, HttpStatus.OK);
     }
 
-    @GetMapping("/search/{id}")
+    @GetMapping("/detail/{id}")
     public ResponseEntity<PerfumeDto> perfumeDetail(@PathVariable int id) {
         PerfumeDto perfumeDto = perfumeService.getPerfume(id);
 
@@ -68,13 +70,11 @@ public class PerfumeApiController {
     }
 
     @PostMapping("/pick")
-    public ResponseEntity<?> pick(@RequestBody PerfumePickRequest request) {
-        if(perfumeService.pick(request.getUserid(), request.getPerfumeId())) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
+    public ResponseEntity<Map<String, Boolean>> pick(@RequestBody PerfumePickRequest request) {
+        Map<String, Boolean> responseMap = new HashMap<>();
+        responseMap.put("isPicked", perfumeService.pick(request.getUserId(), request.getPerfumeId()));
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(responseMap, HttpStatus.OK);
     }
-
 
 }

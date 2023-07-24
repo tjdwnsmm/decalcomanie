@@ -1,9 +1,8 @@
 package com.eightlow.decalcomanie.perfume.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.*;
-import com.eightlow.decalcomanie.perfume.entity.Accord;
-import com.eightlow.decalcomanie.perfume.entity.Perfume;
-import com.eightlow.decalcomanie.perfume.entity.Scent;
+import com.eightlow.decalcomanie.perfume.dto.request.PerfumePickRequest;
+import com.eightlow.decalcomanie.perfume.entity.*;
 import com.eightlow.decalcomanie.perfume.mapper.*;
 import com.eightlow.decalcomanie.perfume.repository.*;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
@@ -14,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,6 +26,8 @@ public class PerfumeServiceImpl implements IPerfumeService {
     private final ScentRepository scentRepository;
     private final AccordRepository accordRepository;
     private final NoteListRepository noteListRepository;
+    private final NoteRepository noteRepository;
+    private final PerfumePickRepository perfumePickRepository;
     private final PerfumeMapper perfumeMapper;
     private final BrandMapper brandMapper;
     private final ScentMapper scentMapper;
@@ -44,6 +46,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
         PerfumeDto updatedDto = pdto.toBuilder()
                 .accord(scents)
                 .note(noteList)
+                .brandName(brandRepository.findOneByBrandId(pdto.getBrandId()).getName())
                 .build();
 
         return updatedDto;
@@ -86,6 +89,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
             PerfumeDto updatedDto = pdto.toBuilder()
                     .accord(scents)
                     .note(noteList)
+                    .brandName(brandRepository.findOneByBrandId(p.getBrandId()).getName())
                     .build();
 
             searchedPerfumes.add(updatedDto);
@@ -110,6 +114,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
             PerfumeDto updatedDto = pdto.toBuilder()
                     .accord(scents)
                     .note(noteList)
+                    .brandName(brandRepository.findOneByBrandId(p.getBrandId()).getName())
                     .build();
 
             searchedPerfumes.add(updatedDto);
@@ -119,8 +124,19 @@ public class PerfumeServiceImpl implements IPerfumeService {
     }
 
     @Override
-    public boolean pick(UUID userid, int perfumeId) {
-        return false;
+    public boolean pick(String userId, int perfumeId) {
+        // 이미 같은 데이터가 있는지 확인
+        PerfumePick existingPick = perfumePickRepository.findByUserIdAndPerfumeId(userId, perfumeId);
+
+        // 같은 데이터가 이미 있으면 삭제하고, 없으면 새로 추가
+        if (existingPick != null) {
+            perfumePickRepository.deleteByUserIdAndPerfumeId(userId, perfumeId);
+            return false;
+        } else {
+            PerfumePick newPick = new PerfumePick(userId, perfumeId);
+            perfumePickRepository.save(newPick);
+            return true;
+        }
     }
 
     // accord 테이블의 향 정보와 scent 테이블의 향 정보를 response type에 맞는 형태로 합친다
@@ -141,7 +157,15 @@ public class PerfumeServiceImpl implements IPerfumeService {
 
     // Top, Middle, Base note의 정보를 불러와서 리스트 형태로 반환
     public List<NoteListDto> getNoteList(int perfumeId) {
-        List<NoteListDto> noteLists = noteListMapper.toDto(noteListRepository.findAllByPerfumeId(perfumeId));
+        List<NoteListDto> noteLists = new ArrayList<>();
+
+        for (NoteList note : noteListRepository.findAllByPerfumeId(perfumeId)) {
+            NoteListDto noteList = noteListMapper.toDto(note);
+            NoteListDto ndto = noteList.toBuilder()
+                    .noteName(noteRepository.findOneByNoteId(note.getNoteId()).getName()).build();
+
+            noteLists.add(ndto);
+        }
 
         return noteLists;
     }

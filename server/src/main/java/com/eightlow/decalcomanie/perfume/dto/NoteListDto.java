@@ -14,5 +14,7 @@ public class NoteListDto {
     private String type;
 
     private int noteId;
+
+    private String noteName;
 }
 
