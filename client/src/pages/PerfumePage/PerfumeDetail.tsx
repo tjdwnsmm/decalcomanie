@@ -9,38 +9,199 @@ import { useState } from 'react';
 import { ScentNotes } from '../../components/Perfume/Detail/ScentNotes';
 
 const perfumeEx: PerfumeDetail = {
-  id: '1',
-  brand: '아쿠아 디 파르마',
-  korName: '미르토 디 파나레아',
-  engName: '미르토 디 파나레아',
-  picture: 'src/assets/img/perfume1.png',
+  perfumeId: 11,
+  nameOrg: 'Chanel N019',
+  brandName: 'Chanel',
+  brandId: 1,
+  picture: '이미지 없음 이미지',
+  gender: 1,
+  rate: null,
+  longevity: 3.18,
+  sillage: 2.36,
+  pick: 0,
   accord: [
-    { scentId: 1, name: '우디', rgb: 'brown' },
-    { scentId: 2, name: '플로럴', rgb: 'pink' },
-    { scentId: 2, name: '플로럴', rgb: 'pink' },
+    {
+      scentId: 3,
+      weight: 0.0,
+      name: 'green',
+      rgb: '#0E8C1D',
+    },
+    {
+      scentId: 20,
+      weight: 0.0,
+      name: 'earthy',
+      rgb: '#544838',
+    },
+    {
+      scentId: 9,
+      weight: 0.0,
+      name: 'woody',
+      rgb: '#774414',
+    },
+    {
+      scentId: 27,
+      weight: 0.0,
+      name: 'iris',
+      rgb: '#b7a7d7',
+    },
+    {
+      scentId: 10,
+      weight: 0.0,
+      name: 'powdery',
+      rgb: '#EEDDCC',
+    },
+    {
+      scentId: 5,
+      weight: 0.0,
+      name: 'aromatic',
+      rgb: '#37a089',
+    },
+    {
+      scentId: 11,
+      weight: 0.0,
+      name: 'floral',
+      rgb: '#FF5F8D',
+    },
+    {
+      scentId: 21,
+      weight: 0.0,
+      name: 'mossy',
+      rgb: '#5B6B32',
+    },
+    {
+      scentId: 6,
+      weight: 0.0,
+      name: 'white floral',
+      rgb: '#edf2fb',
+    },
+    {
+      scentId: 2,
+      weight: 0.0,
+      name: 'fresh spicy',
+      rgb: '#83C928',
+    },
   ],
-  noteList: [
+  note: [
     {
-      noteListId: 1,
-      noteId: 1,
-      perfumeId: 1,
-      type: '머틀, 바질, 이탈리안 레몬, 이탈리안 베르가못',
+      noteListId: 284,
+      perfumeId: 11,
+      type: 'Top',
+      noteId: 45,
+      noteName: 'Galbanum',
     },
     {
-      noteListId: 2,
-      noteId: 1,
-      perfumeId: 1,
-      type: '마린 브리즈, 자스민 앱솔루드, 다마스크 로즈 앱솔루트',
+      noteListId: 285,
+      perfumeId: 11,
+      type: 'Top',
+      noteId: 22,
+      noteName: 'Hyacinth',
     },
     {
-      noteListId: 3,
-      noteId: 1,
-      perfumeId: 1,
-      type: '렌티스크 앱솔루트, 주니퍼, 버지니안 시더우드, 앰버',
+      noteListId: 286,
+      perfumeId: 11,
+      type: 'Top',
+      noteId: 75,
+      noteName: 'Bergamot',
+    },
+    {
+      noteListId: 287,
+      perfumeId: 11,
+      type: 'Top',
+      noteId: 17,
+      noteName: 'Neroli',
+    },
+    {
+      noteListId: 288,
+      perfumeId: 11,
+      type: 'Middle',
+      noteId: 11,
+      noteName: 'Iris',
+    },
+    {
+      noteListId: 289,
+      perfumeId: 11,
+      type: 'Middle',
+      noteId: 101,
+      noteName: 'Orris Root',
+    },
+    {
+      noteListId: 290,
+      perfumeId: 11,
+      type: 'Middle',
+      noteId: 105,
+      noteName: 'Rose',
+    },
+    {
+      noteListId: 291,
+      perfumeId: 11,
+      type: 'Middle',
+      noteId: 109,
+      noteName: 'Lily of the Valley',
+    },
+    {
+      noteListId: 292,
+      perfumeId: 11,
+      type: 'Middle',
+      noteId: 18,
+      noteName: 'Narcissus',
+    },
+    {
+      noteListId: 293,
+      perfumeId: 11,
+      type: 'Middle',
+      noteId: 14,
+      noteName: 'Jasmine',
+    },
+    {
+      noteListId: 294,
+      perfumeId: 11,
+      type: 'Middle',
+      noteId: 24,
+      noteName: 'Ylang Ylang',
+    },
+    {
+      noteListId: 295,
+      perfumeId: 11,
+      type: 'Base',
+      noteId: 39,
+      noteName: 'Oakmoss',
+    },
+    {
+      noteListId: 296,
+      perfumeId: 11,
+      type: 'Base',
+      noteId: 2,
+      noteName: 'Vetiver',
+    },
+    {
+      noteListId: 297,
+      perfumeId: 11,
+      type: 'Base',
+      noteId: 156,
+      noteName: 'Leather',
+    },
+    {
+      noteListId: 298,
+      perfumeId: 11,
+      type: 'Base',
+      noteId: 41,
+      noteName: 'Cedar',
+    },
+    {
+      noteListId: 299,
+      perfumeId: 11,
+      type: 'Base',
+      noteId: 4,
+      noteName: 'Musk',
+    },
+    {
+      noteListId: 300,
+      perfumeId: 11,
+      type: 'Base',
+      noteId: 33,
+      noteName: 'Sandalwood',
     },
   ],
-  pick: 1059,
-  rate: 4.5,
 };
 const PerfumeDetail = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -58,10 +219,10 @@ const PerfumeDetail = () => {
         <LeftSection>
           <PerfumeIcon>
             <LikeBtn count={perfumeEx.pick}></LikeBtn>
-            <RateBtn count={perfumeEx.rate} />
+            <RateBtn count={perfumeEx.rate ? perfumeEx.rate : 0} />
           </PerfumeIcon>
-          <Brand>{perfumeEx.brand}</Brand>
-          <PerfumeName>{perfumeEx.korName}</PerfumeName>
+          <Brand>{perfumeEx.brandName}</Brand>
+          <PerfumeName>{perfumeEx.nameOrg}</PerfumeName>
           <ScentList accord={perfumeEx.accord.slice(0, 3)} />
         </LeftSection>
         <PerfumeImg>
@@ -87,10 +248,7 @@ const PerfumeDetail = () => {
         </CenterFrame>
       </MarginFrame>
       {modalOpen && (
-        <ScentNotes
-          noteLists={perfumeEx.noteList}
-          closeModal={handleCloseModal}
-        />
+        <ScentNotes noteLists={perfumeEx.note} closeModal={handleCloseModal} />
       )}
     </Main>
   );

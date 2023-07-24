@@ -1,25 +1,36 @@
 //향수 상세 정보 DTO API
 export interface PerfumeDetail {
-  id: string;
-  brand: string;
-  korName: string;
-  engName: string;
+  perfumeId: number;
+  brandId: number;
+  brandName: string;
+  nameOrg: string;
   picture: string;
+  gender: number;
   accord: ScentDto[];
-  noteList: NoteListDto[];
-  pick: number;
-  rate: number;
+  note: NoteListDto[];
+  pick: number; // 찜 수
+  rate: number | null; // 평점
+  longevity: number; // 지속력 (5점만점)
+  sillage: number; // 잔향감 (4점만점)
 }
 
 export interface ScentDto {
   scentId: number;
   name: string;
   rgb: string;
+  weight?: number;
 }
 
+/**
+ * @noteListId : 사용자는 건드리지 않는 부분
+ * @noteId :note 넘버
+ * @noteName : note 이름
+ * @type : Top, Middle, Base
+ */
 export interface NoteListDto {
   noteListId: number;
   noteId: number;
   perfumeId: number;
   type: string;
+  noteName: string;
 }
