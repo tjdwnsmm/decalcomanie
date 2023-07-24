@@ -5,6 +5,7 @@ import SearchTabPage from '../pages/SearchPage/SearchTabPage';
 import SearchMyPerfume from '../pages/SearchPage/SearchMyPerfume';
 import Post from '../pages/PostPages/Post';
 import PostDetail from '../pages/PostPage/PostDetail';
+import Mypage from '../pages/MyPage/Mypage';
 
 export default function Router() {
   return (
@@ -16,6 +17,7 @@ export default function Router() {
         <Route path="/search-myperfume" element={<SearchMyPerfume />}></Route>
         <Route path="/post" element={<Post />}></Route>
         <Route path="/post-detail" element={<PostDetail />}></Route>
+        <Route path="/mypage" element={<Mypage />}></Route>
       </Routes>
     </BrowserRouter>
   );
