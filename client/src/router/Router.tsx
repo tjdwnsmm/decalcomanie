@@ -6,6 +6,7 @@ import SearchMyPerfume from '../pages/SearchPage/SearchMyPerfume';
 import Post from '../pages/PostPages/Post';
 import PostDetail from '../pages/PostPage/PostDetail';
 import { MyDrawerPage } from '../pages/DrawerPage/MyDrawerPage';
+import FollowList from '../pages/MyPage/FollowList';
 
 export default function Router() {
   return (
@@ -18,6 +19,7 @@ export default function Router() {
         <Route path="/post" element={<Post />}></Route>
         <Route path="/post-detail" element={<PostDetail />}></Route>
         <Route path="/my-drawer" element={<MyDrawerPage />}></Route>
+        <Route path="/follow-list" element={<FollowList />}></Route>
       </Routes>
     </BrowserRouter>
   );
