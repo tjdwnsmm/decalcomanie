@@ -66,9 +66,13 @@ public class ArticleServiceImpl implements IArticleService {
 
     @Override
     @Transactional
-    public void deleteArticle(int articleId) {
+    public void deleteArticle(int commentId) {
         log.info("ArticleServiceImpl::: deleteArticle start");
-        articleRepository.deleteById(articleId);
+
+        //TODO
+        // 1. 사용자 인증 로직 추가
+        // 2. status code 리턴 필요
+        articleRepository.deleteById(commentId);
 //        log.info("ArticleServiceImpl::: finish ", String.valueOf(article.getArticleId()));
     }
 
@@ -115,6 +119,8 @@ public class ArticleServiceImpl implements IArticleService {
         return perfumes;
     }
 
+
+
     /*
         댓글 파트
      */
@@ -146,7 +152,7 @@ public class ArticleServiceImpl implements IArticleService {
             if (existingComment.getUserId().equals(commentDto.getUserId())) {
                 // 일치하는 경우, 수정 작업 진행
                 // 수정할 내용을 업데이트
-                // existingComment.builder().content(commentDto.getContent()).build();
+                // existingComment.toBuilder().content(commentDto.getContent()).build();
                 existingComment.setContent(commentDto.getContent());
 
                 // 수정된 댓글 저장
@@ -173,5 +179,54 @@ public class ArticleServiceImpl implements IArticleService {
                 Response.builder()
                         .message("댓글이 수정되었습니다.")
                         .build());
+    }
+
+    @Override
+    public int deleteComment(CommentDto commentDto) {
+        log.info("ArticleServiceImpl::: updateComment start");
+        // 수정하려는 댓글의 commentId를 가져옴
+        int commentId = commentDto.getCommentId();
+        int articleId = commentDto.getArticleId();
+
+        // 해당 commentId를 가진 댓글 조회
+        Optional<Comment> optionalComment = commentRepository.findByArticleIdAndCommentId(articleId, commentId);
+
+        // 해당 commentId를 가진 댓글이 존재하는지 확인
+        if (optionalComment.isPresent()) {
+            // 댓글이 존재하는 경우, 삭제 작업 진행
+            Comment existingComment = optionalComment.get();
+            System.out.println(existingComment);
+
+            // 댓글의 userId와 수정하려는 userId를 비교하여 일치하는지 확인
+            if (existingComment.getUserId().equals(commentDto.getUserId())) {
+                // 일치하는 경우, 삭제 작업 진행
+                try {
+                    commentRepository.deleteByArticleIdAndCommentId(existingComment.getArticleId(), existingComment.getCommentId());
+                } catch (Exception e) {
+                    log.info(e.getMessage());
+                }
+            } else {
+                // userId가 일치하지 않는 경우, 권한이 없음을 알리는 예외 또는 메시지를 반환
+                // throw new UnauthorizedAccessException("댓글을 수정할 권한이 없습니다.");
+                return 401;
+            }
+
+//        } else {
+//            // 해당 commentId를 가진 댓글이 존재하지 않는 경우, 적절한 예외 또는 메시지를 반환
+////            throw new CommentNotFoundException("해당 댓글을 찾을 수 없습니다.");
+//        }
+//        Comment comment = commentRepository.save(commentMapper.toEntity(commentDto));
+//        log.info("ArticleServiceImpl::: finish ", String.valueOf(comment));
+        }
+        return 200;
+    }
+
+    @Override
+    @Transactional
+    public void modifyCommentCount(int articleId) {
+        log.info("ArticleServiceImpl::: modifyCommentCount start");
+        // 주어진 articleId 의 comment 갯수를 하나 줄인다.
+        commentRepository.decreaseCommentCount(articleId);
+        log.info("ArticleServiceImpl::: finish ");
     }
 }

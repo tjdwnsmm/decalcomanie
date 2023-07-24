@@ -10,13 +10,12 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(CommentPk.class)
 public class Comment extends BaseEntity {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int commentId;
 
     @Id
