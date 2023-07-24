@@ -8,6 +8,4 @@ import java.io.Serializable;
 public class GradePk implements Serializable {
     private String userId;
     private int perfumeId;
-
-
 }
