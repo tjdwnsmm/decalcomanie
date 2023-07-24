@@ -1,16 +1,75 @@
 import React, { useState, useEffect } from 'react';
 import { Main } from '../../style';
 import FollowTab from '../../components/TabBar/FollowTab';
+import FollowBox from '../../components/Follow/FollowBox';
 
-const FollowersComponent = () => {
-  // 팔로워 목록을 렌더링하는 컴포넌트 구현
-  return <div>팔로워 목록</div>;
-};
 
-const FollowingComponent = () => {
-  // 팔로잉 목록을 렌더링하는 컴포넌트 구현
-  return <div>팔로잉 목록</div>;
-};
+// 임시 데이터
+const follwers = [
+  {
+    profileImg: 'src/assets/img/profile-user.png',
+    writer: '코코',
+    favScent: ['우디', '플로럴', '시트러스'],
+    isFollow: true,  // 내가 팔로우 하고 있는지
+  },
+  {
+    profileImg: 'src/assets/img/profile-user.png',
+    writer: '루루',
+    favScent: ['프루티', '플로럴', '오션'],
+    isFollow: true,
+  },
+  {
+    profileImg: 'src/assets/img/profile-user.png',
+    writer: '캔디',
+    favScent: ['그린', '오리엔탈', '스파이시'],
+    isFollow: false,
+  },
+  {
+    profileImg: 'src/assets/img/profile-user.png',
+    writer: '꾹이',
+    favScent: ['우디', '플로럴', '시트러스'],
+    isFollow: true,
+  },
+  {
+    profileImg: 'src/assets/img/profile-user.png',
+    writer: '초코',
+    favScent: ['프루티', '플로럴', '오션'],
+    isFollow: false,
+  },
+  {
+    profileImg: 'src/assets/img/profile-user.png',
+    writer: '꼬미',
+    favScent: ['그린', '오리엔탈', '스파이시'],
+    isFollow: true,
+  },
+];
+
+const following = [
+  {
+    profileImg: 'src/assets/img/profile-user.png',
+    writer: '코코',
+    favScent: ['우디', '플로럴', '시트러스'],
+    isFollow: true,
+  },
+  {
+    profileImg: 'src/assets/img/profile-user.png',
+    writer: '루루',
+    favScent: ['프루티', '플로럴', '오션'],
+    isFollow: true,
+  },
+  {
+    profileImg: 'src/assets/img/profile-user.png',
+    writer: '꾹이',
+    favScent: ['우디', '플로럴', '시트러스'],
+    isFollow: true,
+  },
+  {
+    profileImg: 'src/assets/img/profile-user.png',
+    writer: '꼬미',
+    favScent: ['그린', '오리엔탈', '스파이시'],
+    isFollow: true,
+  },
+];
 
 const FollowList = () => {
   // useEffect(() => {
@@ -34,8 +93,8 @@ const FollowList = () => {
         followersCount={followersCount}
         followingCount={followingCount}
       />
-      {activeTab === 'followers' && <FollowersComponent />}
-      {activeTab === 'following' && <FollowingComponent />}
+      {activeTab === 'followers' && <FollowBox followList={follwers}/>}
+      {activeTab === 'following' && <FollowBox followList={following}/>}
     </Main>
   );
 };
