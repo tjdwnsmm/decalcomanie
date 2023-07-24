@@ -22,12 +22,13 @@ const ModalContainer = styled.div`
   z-index: 1;
 `;
 
-const ModalContent = styled.div`
+const ModalContent = styled.div<{ top: number; left: number }>`
+  position: fixed;
+  top: ${(props) => props.top + 15}px;
   background-color: white;
   padding: 10px;
+  margin-right: 35px;
   border-radius: 8px;
-  margin-top: 210px;
-  margin-right: 38px;
 `;
 
 const OptionButton = styled.button`
@@ -46,9 +47,11 @@ const OptionButton = styled.button`
 `;
 
 export const PostModalBtn = () => {
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const handleModalToggle = () => {
+  const handleModalToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setModalPosition({ x: event.clientX, y: event.clientY });
     setModalOpen(!isModalOpen);
   };
 
@@ -74,7 +77,7 @@ export const PostModalBtn = () => {
       </Button>
       {isModalOpen && (
         <ModalContainer onClick={handleModalContainerClick}>
-          <ModalContent>
+          <ModalContent top={modalPosition.y} left={modalPosition.x}>
             <OptionButton onClick={handleEditClick}>수정하기</OptionButton>
             <OptionButton onClick={handleDeleteClick}>삭제하기</OptionButton>
           </ModalContent>

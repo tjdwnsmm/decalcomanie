@@ -107,6 +107,12 @@ interface PostInfoBoxProps {
   postInfo: PostInfo;
 }
 
+const formatDateTime = (datetimeStr: string) => {
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false};
+  const datetime = new Date(datetimeStr);
+  return datetime.toLocaleDateString('ko-KR', options);
+};
+
 const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
   const { profileImg, writer, createdAt, favScent, nofavScent, isFollow, likeCount, isLike, isScrap, content, commentCount } = postInfo;
   
@@ -123,7 +129,7 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
         <InfoBox>
           <InfoBoxRow>
             <Writer>{writer}</Writer>
-            <CreatedAt>{createdAt}</CreatedAt>
+            <CreatedAt>{formatDateTime(createdAt)}</CreatedAt>
           </InfoBoxRow>
           <InfoBoxRow>
             <FavScent>{favScent?.map((fav) => `#${fav}  `)}</FavScent>
