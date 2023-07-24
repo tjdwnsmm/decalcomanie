@@ -8,11 +8,13 @@ import com.eightlow.decalcomanie.perfume.mapper.*;
 import com.eightlow.decalcomanie.perfume.repository.*;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -90,6 +92,35 @@ public class PerfumeServiceImpl implements IPerfumeService {
         }
 
         return searchedPerfumes;
+    }
+
+    @Override
+    public List<PerfumeDto> getAllPerfumes() {
+        // 나머지 조건에 맞는 향수를 DB에서 조회하여 받아온다
+        List<Perfume> searchResult = perfumeRepository.findAll();
+        List<PerfumeDto> searchedPerfumes = new ArrayList<>();
+
+        for(Perfume p : searchResult) {
+            // 각각의 향수에 대하여 scents와 noteList 정보를 추가해준다
+            List<ScentDto> scents = createScentDto(p.getPerfumeId());
+            List<NoteListDto> noteList = getNoteList(p.getPerfumeId());
+
+            PerfumeDto pdto = perfumeMapper.toDto(p);
+
+            PerfumeDto updatedDto = pdto.toBuilder()
+                    .accord(scents)
+                    .note(noteList)
+                    .build();
+
+            searchedPerfumes.add(updatedDto);
+        }
+
+        return searchedPerfumes;
+    }
+
+    @Override
+    public boolean pick(UUID userid, int perfumeId) {
+        return false;
     }
 
     // accord 테이블의 향 정보와 scent 테이블의 향 정보를 response type에 맞는 형태로 합친다

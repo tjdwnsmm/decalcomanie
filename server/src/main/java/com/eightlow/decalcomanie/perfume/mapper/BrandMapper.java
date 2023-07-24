@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 @Mapper(componentModel = "spring")
 public interface BrandMapper {
     Brand toEntity(BrandDto brandDto);

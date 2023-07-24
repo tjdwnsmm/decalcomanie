@@ -27,6 +27,8 @@ public class PerfumeDto {
 
     private float sillage;
 
+    private int pick;
+
     private List<ScentDto> accord;
 
     private List<NoteListDto> note;

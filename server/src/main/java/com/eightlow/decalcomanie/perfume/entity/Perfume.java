@@ -6,13 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
 @Getter
 @Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-//@Table(indexes = @Index(name = "idx_actor", columnList = "docId"))
+@Table(name = "perfume", indexes = @Index(name = "idx_pick_rate", columnList = "pick, rate"))
 public class Perfume {
 
     @Id
@@ -42,5 +41,8 @@ public class Perfume {
 
     @Column(name = "sillage")
     private float sillage;
+
+    @Column(name = "pick")
+    private Integer pick;
 
 }
