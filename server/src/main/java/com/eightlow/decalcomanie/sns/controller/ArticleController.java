@@ -3,6 +3,7 @@ package com.eightlow.decalcomanie.sns.controller;
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.GradeDto;
+import com.eightlow.decalcomanie.sns.dto.request.CommentRequest;
 import com.eightlow.decalcomanie.sns.dto.request.CreateArticleRequest;
 import com.eightlow.decalcomanie.sns.dto.request.CreateCommentRequest;
 import com.eightlow.decalcomanie.sns.dto.request.UpdateArticleRequest;
@@ -115,8 +116,8 @@ public class ArticleController {
 
     /* 댓글 작업 part*/
     @PostMapping("/comment/create")
-    public ResponseEntity<Response> createArticle(@RequestBody CreateCommentRequest createCommentRequest) {
-        CommentDto commentDto = commentDtoMapper.fromCreateArticleRequest(createCommentRequest);
+    public ResponseEntity<Response> createComment(@RequestBody CommentRequest commentRequest) {
+        CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
         articleService.createComment(commentDto);
 //        return ResponseEntity.status(HttpStatus.OK).body();
         return ResponseEntity.status(HttpStatus.OK)
@@ -125,10 +126,15 @@ public class ArticleController {
                         .build());
     }
 
-//    @PutMapping("/comment/update")
-//    public ResponseEntity<ArticleDto> getDetailById(@PathVariable int articleId) {
+    @PutMapping("/comment/update")
+    public ResponseEntity<Response> updateComment(@RequestBody CommentRequest commentRequest) {
+        CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
+        System.out.println(commentDto);
+        ResponseEntity<Response> response = articleService.updateComment(commentDto);
+        return response;
+//        return null;
 //        return ResponseEntity.status(HttpStatus.OK).body();
-//    }
+    }
 
 
 //    @DeleteMapping("/comment/delete/{commentId}")

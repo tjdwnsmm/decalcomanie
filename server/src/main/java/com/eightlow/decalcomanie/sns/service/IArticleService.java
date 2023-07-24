@@ -2,7 +2,8 @@ package com.eightlow.decalcomanie.sns.service;
 
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
-import org.springframework.transaction.annotation.Transactional;
+import com.eightlow.decalcomanie.sns.dto.response.Response;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,4 +27,5 @@ public interface IArticleService {
             댓글 파트
      */
     void createComment(CommentDto commentDto);
+    ResponseEntity<Response> updateComment(CommentDto commentDto);
 }

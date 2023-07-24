@@ -7,6 +7,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Deprecated
 public class CreateCommentRequest {
     private int commentId;
     private int articleId;
