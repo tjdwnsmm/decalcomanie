@@ -2,6 +2,7 @@ package com.eightlow.decalcomanie.sns.service.implement;
 
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
 import com.eightlow.decalcomanie.sns.dto.ArticlePerfumeDto;
+<<<<<<< server/src/main/java/com/eightlow/decalcomanie/sns/service/implement/ArticleServiceImpl.java
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.sns.entity.Article;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -40,6 +42,7 @@ public class ArticleServiceImpl implements IArticleService {
 
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+
 
     @Override
     public boolean existArticleById(int id) {
