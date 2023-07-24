@@ -1,6 +1,7 @@
 package com.eightlow.decalcomanie.sns.controller;
 
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
+
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.GradeDto;
 import com.eightlow.decalcomanie.sns.dto.request.CommentRequest;
@@ -137,7 +138,6 @@ public class ArticleController {
 //        return null;
 //        return ResponseEntity.status(HttpStatus.OK).body();
     }
-
 
     @DeleteMapping("/comment/delete/{commentId}")
     public ResponseEntity<Response> deleteComment(@RequestBody CommentRequest commentRequest) {

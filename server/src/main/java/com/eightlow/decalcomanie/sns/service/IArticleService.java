@@ -5,6 +5,7 @@ import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import org.springframework.http.ResponseEntity;
 
+
 import java.util.List;
 import java.util.UUID;
 
@@ -30,4 +31,5 @@ public interface IArticleService {
     ResponseEntity<Response> updateComment(CommentDto commentDto);
     int deleteComment(CommentDto commentDto);
     void modifyCommentCount(int articleId);
+
 }
