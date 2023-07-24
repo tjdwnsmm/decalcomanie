@@ -28,6 +28,6 @@ public class NoteList {
     private String type;
 
     @Column(name = "noteId")
-    private String noteId;
+    private int noteId;
 
 }

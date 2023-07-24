@@ -15,6 +15,8 @@ public class PerfumeDto {
 
     private String nameOrg;
 
+    private String brandName;
+
     private int brandId;
 
     private String picture;

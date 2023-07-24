@@ -3,6 +3,7 @@ package com.eightlow.decalcomanie.perfume.service;
 import com.eightlow.decalcomanie.perfume.dto.BrandDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.perfume.dto.request.PerfumePickRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,5 +19,5 @@ public interface IPerfumeService {
 
     List<PerfumeDto> getAllPerfumes();
 
-    boolean pick(UUID userid, int perfumeId);
+    boolean pick(String userId, int perfumeId);
 }
