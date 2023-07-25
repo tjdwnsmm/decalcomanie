@@ -8,11 +8,13 @@ import PostDetail from '../pages/PostDetailPage/PostDetail';
 import { MyDrawerPage } from '../pages/DrawerPage/MyDrawerPage';
 import FollowList from '../pages/MyPage/FollowList';
 import Post from '../pages/PostPages/Post';
+import MainPage from '../pages/MainPage/MainPage';
 
 export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<MainPage />}></Route>
         <Route path="/main-feed" element={<MainFeed />}></Route>
         <Route path="/perfume-feed" element={<PerfumeFeed />}></Route>
         <Route path="/search" element={<SearchTabPage />}></Route>
