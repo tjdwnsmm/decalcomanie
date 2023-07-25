@@ -5,7 +5,6 @@ import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumePickRequest;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
-import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

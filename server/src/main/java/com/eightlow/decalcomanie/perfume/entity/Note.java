@@ -14,7 +14,6 @@ import javax.persistence.Id;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-//@Table(indexes = @Index(name = "idx_actor", columnList = "docId"))
 public class Note {
 
     @Id

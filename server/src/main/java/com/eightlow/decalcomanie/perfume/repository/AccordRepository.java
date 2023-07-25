@@ -1,6 +1,5 @@
 package com.eightlow.decalcomanie.perfume.repository;
 
-import com.eightlow.decalcomanie.perfume.dto.AccordDto;
 import com.eightlow.decalcomanie.perfume.entity.Accord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

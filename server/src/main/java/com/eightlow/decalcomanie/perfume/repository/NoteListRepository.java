@@ -1,6 +1,5 @@
 package com.eightlow.decalcomanie.perfume.repository;
 
-import com.eightlow.decalcomanie.perfume.dto.NoteListDto;
 import com.eightlow.decalcomanie.perfume.entity.Note;
 import com.eightlow.decalcomanie.perfume.entity.NoteList;
 import org.springframework.data.jpa.repository.JpaRepository;

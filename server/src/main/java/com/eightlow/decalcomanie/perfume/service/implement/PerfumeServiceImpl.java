@@ -1,7 +1,6 @@
 package com.eightlow.decalcomanie.perfume.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.*;
-import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
 import com.eightlow.decalcomanie.perfume.entity.*;
 import com.eightlow.decalcomanie.perfume.mapper.*;
 import com.eightlow.decalcomanie.perfume.repository.*;
@@ -9,7 +8,6 @@ import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +30,8 @@ public class PerfumeServiceImpl implements IPerfumeService {
     private final AccordMapper accordMapper;
     private final NoteListMapper noteListMapper;
 
-    @Override   // id로 개별 향수 조회
+    // id로 개별 향수 조회
+    @Override
     public PerfumeDto getPerfume(int perfumeId) {
         PerfumeDto pdto = perfumeMapper.toDto(perfumeRepository.findOneByPerfumeId(perfumeId));
 
@@ -50,17 +49,20 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return updatedDto;
     }
 
+    // 전체 브랜드 조회
     @Override
     public List<BrandDto> findAllBrand() {
         return brandMapper.toDto(brandRepository.findAll());
     }
 
+    // 전체 향 조회
     @Override
     public List<ScentDto> findAllScent() {
         return scentMapper.toDto(scentRepository.findAll());
     }
 
-    @Override   // 검색 조건에 맞는 향수 조회
+    // 검색 조건에 맞는 향수 조회
+    @Override
     public List<PerfumeDto> findMatchingPerfumes(int gender, List<Integer> scent, String keyword, List<Integer> brand) {
         List<Integer> perfumeIds = new ArrayList<>();
         List<Perfume> searchResult;
@@ -101,6 +103,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return searchedPerfumes;
     }
 
+    // 모든 향수 조회
     @Override
     public List<PerfumeDto> getAllPerfumes() {
         // 나머지 조건에 맞는 향수를 DB에서 조회하여 받아온다
@@ -126,6 +129,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return searchedPerfumes;
     }
 
+    // 향수 찜
     @Override
     @Transactional
     public boolean pickPerfume(String userId, int perfumeId) {
@@ -145,6 +149,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
         }
     }
 
+    // 이미 찜한 향수인지 체크
     @Override
     public boolean isPickedPerfume(int perfumeId, String userId) {
         PerfumePick existingPick = perfumePickRepository.findByUserIdAndPerfumeId(userId, perfumeId);
@@ -153,6 +158,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return true;
     }
 
+    // DB에 존재하는 향수인지 체크
     @Override
     public boolean isExistingPerfume(int perfumeId) {
         Perfume existingPerfume = perfumeRepository.findOneByPerfumeId(perfumeId);
@@ -187,6 +193,17 @@ public class PerfumeServiceImpl implements IPerfumeService {
         }
 
         return searchedPerfumes;
+    }
+
+    // 향수 평점 업데이트
+    @Override
+    public void updatePerfumeRate(int perfumeId, float rate) {
+        Perfume perfume = perfumeRepository.findOneByPerfumeId(perfumeId);
+        Perfume updatedPerfume = perfume.toBuilder()
+                .rate(rate)
+                .build();
+
+        perfumeRepository.save(updatedPerfume);
     }
 
     // accord 테이블의 향 정보와 scent 테이블의 향 정보를 response type에 맞는 형태로 합친다

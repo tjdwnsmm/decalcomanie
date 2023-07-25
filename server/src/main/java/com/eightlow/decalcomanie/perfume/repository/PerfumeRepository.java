@@ -1,7 +1,6 @@
 package com.eightlow.decalcomanie.perfume.repository;
 
 import com.eightlow.decalcomanie.perfume.entity.Perfume;
-import com.eightlow.decalcomanie.user.entity.UserPerfume;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

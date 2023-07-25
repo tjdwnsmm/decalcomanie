@@ -1,6 +1,5 @@
 package com.eightlow.decalcomanie.perfume.mapper;
 
-import com.eightlow.decalcomanie.perfume.dto.NoteDto;
 import com.eightlow.decalcomanie.perfume.dto.NoteListDto;
 import com.eightlow.decalcomanie.perfume.entity.NoteList;
 import org.mapstruct.Mapper;

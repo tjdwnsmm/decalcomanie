@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-//@Table(indexes = @Index(name = "idx_actor", columnList = "docId"))
 public class Brand {
 
     @Id
