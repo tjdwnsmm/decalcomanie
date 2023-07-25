@@ -1,12 +1,18 @@
 import styled from 'styled-components';
 import { FeedProps } from '../../types/FeedInfoType';
-import PerfumeInfoBox from '../Perfume/PerfumeInfoBox';
+import ProfileInfoBox from './ProfileInfoBox';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 
 interface FeedComponentProps {
   feed: FeedProps;
 }
+
+const FeedBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 15px 15px;
+`;
 
 /**
 @summary
@@ -21,55 +27,9 @@ InfoBox : 피드 나머지 부분 내용
 const ProfileTabs = ({ feed }: FeedComponentProps) => (
   <>
     <FeedBox>
-      <PerfumeInfoBox
-        brand={feed.perfumeInfo.brand}
-        name={feed.perfumeInfo.name}
-        scent={feed.perfumeInfo.scent}
-        img={feed.perfumeInfo.img}
-      />
-      <ContentBox>{feed.content}</ContentBox>
-      <InfoBox>
-        <ProfileBox>
-          <img src={feed.profileImg} />
-          {feed.writer}
-        </ProfileBox>
-        <IconBox>
-          <LikeBtn count={feed.like} />
-          <ScrapBtn />
-        </IconBox>
-      </InfoBox>
+      <ProfileInfoBox img={feed.perfumeInfo.img} />
     </FeedBox>
   </>
 );
 
 export default ProfileTabs;
-const InfoBox = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-const ProfileBox = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 12px;
-  font-weight: 600;
-`;
-const IconBox = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-const FeedBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 15px 20px;
-  border-bottom: 1px solid var(--gray-color);
-`;
-
-const ContentBox = styled.div`
-  display: flex;
-  font-size: 12px;
-  font-weight: 300;
-  line-height: 18px;
-  margin: 10px;
-`;
