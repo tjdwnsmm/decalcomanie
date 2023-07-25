@@ -19,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/perfume")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PerfumeApiController {
 
     private final IPerfumeService perfumeService;
