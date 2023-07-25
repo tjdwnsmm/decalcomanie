@@ -16,19 +16,19 @@ interface FollowTabProps {
 
 const TabContainer = styled.div`
   display: flex;
-  height: 50px;
+  height: 40px;
   line-height: 50px;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 25px;
+  padding: 10px 30px;
 `;
 
 const Tab = styled.div<TabProps>`
   text-align: center;
   padding: 0px 5px;
   cursor: pointer;
-  color: ${(props) =>
-    props.active ? 'var(--primary-color)' : 'var(--black-color)'};
+  color: ${(props) => (
+    props.active ? 'var(--primary-color)' : 'var(--gray-color)')};
   text-decoration: none;
   font-size: 16px;
   font-weight: 700;

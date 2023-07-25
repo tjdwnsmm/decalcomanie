@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Main } from '../../style';
 import FollowTab from '../../components/TabBar/FollowTab';
 import FollowBox from '../../components/Follow/FollowBox';
-
+import { FollowInfo } from '../../types/FollowInfoType';
 
 // 임시 데이터
-const follwers = [
+const follwers: FollowInfo[] = [
   {
     profileImg: 'src/assets/img/profile-user.png',
     writer: '코코',
     favScent: ['우디', '플로럴', '시트러스'],
-    isFollow: true,  // 내가 팔로우 하고 있는지
+    // 내가(=페이지 요청자) 팔로우 하고 있는지
+    isFollow: true,
   },
   {
     profileImg: 'src/assets/img/profile-user.png',
@@ -44,7 +45,7 @@ const follwers = [
   },
 ];
 
-const following = [
+const following: FollowInfo[] = [
   {
     profileImg: 'src/assets/img/profile-user.png',
     writer: '코코',
