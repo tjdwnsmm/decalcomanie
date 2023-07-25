@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public class BaseDto {
     private LocalDateTime createdAt;
 

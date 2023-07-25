@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public class ArticleDto extends BaseDto {
     private int articleId;
     private String userId;
