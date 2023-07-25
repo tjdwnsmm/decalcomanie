@@ -164,19 +164,13 @@ public class PerfumeServiceImpl implements IPerfumeService {
     // 사용자가 찜한 향수 모두 조회
     @Override
     public List<PerfumeDto> findAllPickedPerfume(String userId) {
-        System.out.println("userId : " + userId);
-
         List<PerfumePick> searchResult = perfumePickRepository.findByUserId(userId);
 
         List<PerfumeDto> searchedPerfumes = new ArrayList<>();
 
         for (PerfumePick p : searchResult) {
             // 각각의 향수에 대하여 scents와 noteList 정보를 추가해준다
-            System.out.println("PerfumeId => " + p.getPerfumeId());
             Perfume perfume = perfumeRepository.findOneByPerfumeId(p.getPerfumeId());
-
-            System.out.println("PERFUME => ");
-            System.out.println(perfumeMapper.toDto(perfume));
 
             List<ScentDto> scents = createScentDto(perfume.getPerfumeId());
             List<NoteListDto> noteList = getNoteList(perfume.getPerfumeId());
@@ -226,6 +220,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return noteLists;
     }
 
+    // 향수 찜 또는 찜 해제 시에 향수 전체 찜 개수에 반영
     public void updatePickCount(int perfumeId, int value) {
         Perfume perfume = perfumeRepository.findOneByPerfumeId(perfumeId);
         if (perfume != null) {

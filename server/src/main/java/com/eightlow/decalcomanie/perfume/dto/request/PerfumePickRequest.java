@@ -3,7 +3,6 @@ package com.eightlow.decalcomanie.perfume.dto.request;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 @Getter
 @Builder
