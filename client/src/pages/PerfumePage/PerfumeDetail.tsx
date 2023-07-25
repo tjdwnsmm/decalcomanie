@@ -7,6 +7,7 @@ import ScentList from '../../components/Perfume/Detail/ScentList';
 import ScentBall from '../../components/Perfume/Detail/ScentBall';
 import { useState } from 'react';
 import { ScentNotes } from '../../components/Perfume/Detail/ScentNotes';
+import MoreInfo from '../../components/Perfume/Detail/MoreInfo';
 
 const perfumeEx: PerfumeDetail = {
   perfumeId: 11,
@@ -234,7 +235,8 @@ const PerfumeDetail = () => {
         second={perfumeEx.accord[0].rgb}
         third={perfumeEx.accord[1].rgb}
       />
-      <MarginFrame margin="40px 0 0 ">
+      <MoreInfo longevity={perfumeEx.longevity} sillage={perfumeEx.sillage} />
+      <MarginFrame margin="30px 0 20px ">
         <CenterFrame>
           <ConfirmButton fontweight="600" onClick={handleOpenModal}>
             자세한 노트 정보 확인하기
@@ -266,7 +268,7 @@ const PerfumeInfo = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  margin-top: 30px;
+  margin-top: 20px;
 `;
 
 const PerfumeIcon = styled.div`

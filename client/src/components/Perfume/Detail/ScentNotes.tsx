@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 import { NoteListDto } from '../../../types/PerfumeInfoType';
 import { ReactComponent as CloseSvg } from '../../../assets/img/close.svg';
-import { useEffect } from 'react';
+
 interface ScentNoteProps {
   noteLists: NoteListDto[];
   closeModal: () => void;
@@ -87,4 +87,5 @@ const ModalContent = styled.div`
   padding: 20px 20px 40px;
   border-radius: 4px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  transition: height 0.3s; /* Add height transition */
 `;
