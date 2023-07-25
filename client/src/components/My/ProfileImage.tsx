@@ -25,7 +25,7 @@ const ImageDiv = styled.div`
 
 const Root = styled.div`
   --size: 140px;
-  --speed: 4s;
+  --speed: 5s;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -43,7 +43,7 @@ const rotateAnimation = keyframes`
     transform: scale(1) rotate(360deg);
   }
   100% {
-    transform: scale(1.2) rotate(720deg);
+    transform: scale(1.1) rotate(720deg);
   }
 `;
 
@@ -52,7 +52,7 @@ const rotateOtherAnimation = keyframes`
     transform: scale(1) rotate(-360deg);
   }
   100% {
-    transform: scale(1.2) rotate(-720deg);
+    transform: scale(1.1) rotate(-720deg);
   }
 `;
 
@@ -62,23 +62,23 @@ const LoaderInner = styled.span`
   width: var(--size);
   height: var(--size);
   border-radius: 50%;
-  box-shadow: 0 -10px 0 0 rgb(251, 169, 146),
-    -7.5px 5px 0 0 rgb(251, 169, 146), 7.5px 5px 0 0 rgb(251, 169, 146);
-  animation: ${rotateAnimation} var(--speed) linear infinite;
+  box-shadow: 0 -10px 0 0 rgba(251, 169, 146, 0.9),
+    -7.5px 5px 0 0 rgba(251, 169, 146, 0.9), 7.5px 5px 0 0 rgba(251, 169, 146, 0.9);
+  animation: ${rotateAnimation} 10s alternate linear infinite;
 `;
 
 const LoaderInner2 = styled(LoaderInner)`
   box-shadow: 7.5px -5px 0 0 rgba(253, 250, 87, 0.913),
     -7.5px -5px 0 0 rgba(253, 250, 87, 0.913),
     5px 0px 0 0 rgba(253, 250, 87, 0.913);
-  animation: ${rotateOtherAnimation} var(--speed) linear infinite;
+  animation: ${rotateOtherAnimation} 10s alternate linear infinite;
 `;
 
 const LoaderInner3 = styled(LoaderInner)`
   box-shadow: 5px 0px 0 0 rgba(248, 84, 245, 0.911),
     5px 0px 0 0 rgba(248, 84, 245, 0.911),
     0 -10px 0 0 rgba(248, 84, 245, 0.911);
-  animation: ${rotateOtherAnimation} var(--speed) linear infinite;
+  animation: ${rotateAnimation} 10s alternate linear infinite;
 `;
 
 export default function ProfileImage() {
