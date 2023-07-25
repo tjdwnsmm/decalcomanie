@@ -4,7 +4,8 @@ import { PerfumeFeed } from '../pages/FeedPage/PerfumeFeed';
 import SearchTabPage from '../pages/SearchPage/SearchTabPage';
 import SearchMyPerfume from '../pages/SearchPage/SearchMyPerfume';
 import Post from '../pages/PostPages/Post';
-import PostDetail from '../pages/PostDetailPage/PostDetail';
+import PostDetail from '../pages/PostPage/PostDetail';
+import { MyDrawerPage } from '../pages/DrawerPage/MyDrawerPage';
 
 export default function Router() {
   return (
@@ -16,6 +17,7 @@ export default function Router() {
         <Route path="/search-myperfume" element={<SearchMyPerfume />}></Route>
         <Route path="/post" element={<Post />}></Route>
         <Route path="/post-detail" element={<PostDetail />}></Route>
+        <Route path="/my-drawer" element={<MyDrawerPage />}></Route>
       </Routes>
     </BrowserRouter>
   );

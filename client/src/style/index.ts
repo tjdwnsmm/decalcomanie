@@ -14,6 +14,7 @@ interface ButtonProps {
 export const ConfirmButton = styled.button<ButtonProps>`
   width: 340px;
   height: 45px;
+  line-height: 45px;
   flex-shrink: 0;
   border-radius: 5px;
   border: none;
@@ -27,10 +28,14 @@ export const ConfirmButton = styled.button<ButtonProps>`
   font-weight: 400;
   cursor: pointer;
 `;
-
-export const CenterFrame = styled.div`
+interface CenterProps {
+  direction?: string;
+}
+export const CenterFrame = styled.div<CenterProps>`
   display: flex;
   justify-content: center;
+  flex-direction: ${(props) => props.direction};
+  align-items: center;
 `;
 
 interface MarginProps {
