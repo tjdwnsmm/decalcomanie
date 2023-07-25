@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,6 +43,6 @@ public class Perfume {
     private float sillage;
 
     @Column(name = "pick")
-    private Integer pick;
+    private int pick;
 
 }

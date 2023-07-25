@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

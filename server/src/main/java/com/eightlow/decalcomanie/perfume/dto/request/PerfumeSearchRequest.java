@@ -14,7 +14,7 @@ public class PerfumeSearchRequest {
 
     private List<Integer> brand;
 
-    private int gender;
+    private Integer gender;
 
     private List<Integer> scent;
 }

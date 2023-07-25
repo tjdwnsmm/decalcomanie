@@ -14,6 +14,9 @@ public interface PerfumeRepository extends JpaRepository<Perfume, Integer> {
     Perfume findOneByPerfumeId(int perfumeId);
 
     // 검색 조건에 맞는 향수를 받아오는 메서드
-    @Query("SELECT p FROM Perfume p WHERE p.perfumeId IN :perfumeIds AND p.brandId IN :brands AND p.gender = :gender AND p.nameOrg LIKE %:keyword%")
-    List<Perfume> findPerfumesByBrandAndGenderAndKeyword(List<Integer> perfumeIds, List<Integer> brands, int gender, String keyword);
+    @Query("SELECT p FROM Perfume p WHERE p.perfumeId IN :perfumeIds AND p.brandId IN :brand AND p.gender = :gender AND p.nameOrg LIKE %:keyword%")
+    List<Perfume> findPerfumesByPerfumeIdAndBrandAndGenderAndKeyword(List<Integer> perfumeIds, List<Integer> brand, int gender, String keyword);
+
+    @Query("SELECT p FROM Perfume p WHERE p.brandId IN :brand AND p.gender = :gender AND p.nameOrg LIKE %:keyword%")
+    List<Perfume> findPerfumesByBrandAndGenderAndKeyword(List<Integer> brand, int gender, String keyword);
 }

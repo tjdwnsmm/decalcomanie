@@ -4,6 +4,8 @@ import com.eightlow.decalcomanie.perfume.dto.BrandDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumePickRequest;
+import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,5 +21,12 @@ public interface IPerfumeService {
 
     List<PerfumeDto> getAllPerfumes();
 
-    boolean pick(String userId, int perfumeId);
+    boolean pickPerfume(String userId, int perfumeId);
+
+    boolean isPickedPerfume(int perfumeId, String userId);
+
+    boolean isExistingPerfume(int perfumeId);
+
+    List<PerfumeDto> findAllPickedPerfume(String userId);
+
 }
