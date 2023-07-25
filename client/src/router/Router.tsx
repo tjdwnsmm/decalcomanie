@@ -7,6 +7,7 @@ import PerfumeDetail from '../pages/PerfumePage/PerfumeDetail';
 import PostDetail from '../pages/PostDetailPage/PostDetail';
 import { MyDrawerPage } from '../pages/DrawerPage/MyDrawerPage';
 import FollowList from '../pages/MyPage/FollowList';
+import Post from '../pages/PostPages/Post';
 
 export default function Router() {
   return (
