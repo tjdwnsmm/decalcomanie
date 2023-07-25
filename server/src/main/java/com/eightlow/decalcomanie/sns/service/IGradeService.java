@@ -11,4 +11,6 @@ public interface IGradeService {
     void createOrModifyGradeFromRequest(String userId, List<Integer> perfumes, List<Integer> rates);
 
     List<GradeDto> searchGradesByPerfumeId(String userId, List<Integer> perfumeIdList);
+
+    void deleteGradesByUserIdAndPerfumeId(String userId, List<Integer> perfumeIdList);
 }

@@ -52,6 +52,7 @@ public class GradeServiceImpl implements IGradeService {
     }
 
     @Override
+    @Transactional
     public List<GradeDto> searchGradesByPerfumeId(String userId, List<Integer> perfumeIdList) {
 
         log.info("GradeServiceImpl::: searchGradesByPerfumeId start");
@@ -63,5 +64,14 @@ public class GradeServiceImpl implements IGradeService {
         return gradeMapper.toDto(grades);
     }
 
+    @Override
+    @Transactional
+    public void deleteGradesByUserIdAndPerfumeId(String userId, List<Integer> perfumeIdList) {
+        log.info("GradeServiceImpl::: deleteGradesByUserIdAndPerfumeId start");
+        for (Integer perfumeId : perfumeIdList) {
+            gradeRepository.deleteByUserIdAndPerfumeId(userId, perfumeId);
+        }
 
+        log.info("GradeServiceImpl::: deleteGradesByUserIdAndPerfumeId end");
+    }
 }

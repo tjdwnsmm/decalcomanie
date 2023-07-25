@@ -8,10 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
 //    boolean existsById(int articleId);
-    Article findByArticleId(int articleId);
+    Optional<Article> findByArticleId(int articleId);
 
 }

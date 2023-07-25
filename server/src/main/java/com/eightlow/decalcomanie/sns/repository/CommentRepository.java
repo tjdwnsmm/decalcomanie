@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,4 +21,10 @@ public interface CommentRepository extends JpaRepository<Comment, CommentPk> {
     @Transactional
     @Query("UPDATE Article a SET a.comment = a.comment - 1 WHERE a.articleId = :articleId")
     void decreaseCommentCount(@Param("articleId") int articleId);
+
+    List<Comment> findByArticleId(int articleId);
+
+    @Modifying
+    @Query("DELETE FROM Comment WHERE articleId = :articleId")
+    void deleteAllByArticleId(@Param("articleId") int articleId);
 }
