@@ -1,24 +1,84 @@
 import React, { ChangeEvent, useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { ReactComponent as ProfileImg } from '../../assets/img/profile-img.svg';
+import ProfileEffect from './ProfileEffect';
 
 const Image = styled.div`
   width: 150px;
   height: 150px;
   border-radius: 100%;
   background-color: var(--primary-color);
-  background-image: ${({ imageUrl }: { imageUrl: string }) => imageUrl ? `url(${imageUrl})` : 'none'};
+  background-image: ${({ imageUrl }: { imageUrl: string }) =>
+    imageUrl ? `url(${imageUrl})` : 'none'};
   background-size: cover;
   box-shadow: 5px 5px 5px var(--gray-color);
+  z-index: 0;
 `;
 
 const ImageDiv = styled.div`
   width: 100%;
-  height: 150px;
+  height: 140px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 0px 20px 0px;
+`;
+
+const Root = styled.div`
+  --size: 140px;
+  --speed: 4s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const LoaderContainer = styled.div`
+  width: var(--size);
+  height: var(--size);
+  position: relative;
+`;
+
+const rotateAnimation = keyframes`
+  50% {
+    transform: scale(1) rotate(360deg);
+  }
+  100% {
+    transform: scale(1.2) rotate(720deg);
+  }
+`;
+
+const rotateOtherAnimation = keyframes`
+  50% {
+    transform: scale(1) rotate(-360deg);
+  }
+  100% {
+    transform: scale(1.2) rotate(-720deg);
+  }
+`;
+
+const LoaderInner = styled.span`
+  position: absolute;
+  display: block;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  box-shadow: 0 -10px 0 0 rgb(251, 169, 146),
+    -7.5px 5px 0 0 rgb(251, 169, 146), 7.5px 5px 0 0 rgb(251, 169, 146);
+  animation: ${rotateAnimation} var(--speed) linear infinite;
+`;
+
+const LoaderInner2 = styled(LoaderInner)`
+  box-shadow: 7.5px -5px 0 0 rgba(253, 250, 87, 0.913),
+    -7.5px -5px 0 0 rgba(253, 250, 87, 0.913),
+    5px 0px 0 0 rgba(253, 250, 87, 0.913);
+  animation: ${rotateOtherAnimation} var(--speed) linear infinite;
+`;
+
+const LoaderInner3 = styled(LoaderInner)`
+  box-shadow: 5px 0px 0 0 rgba(248, 84, 245, 0.911),
+    5px 0px 0 0 rgba(248, 84, 245, 0.911),
+    0 -10px 0 0 rgba(248, 84, 245, 0.911);
+  animation: ${rotateOtherAnimation} var(--speed) linear infinite;
 `;
 
 export default function ProfileImage() {
@@ -36,15 +96,22 @@ export default function ProfileImage() {
   };
 
   return (
-    <ImageDiv>
-      {/* <input type="file" accept="image/*" onChange={handleImageChange} /> */}
-      {imageUrl ? (
-        <Image imageUrl={imageUrl} />
-      ) : (
-        <Image>
-          <ProfileImg />
-        </Image>
-      )}
-    </ImageDiv>
+    <Root>
+      <LoaderContainer>
+        <LoaderInner />
+        <LoaderInner2 />
+        <LoaderInner3 />
+        <ImageDiv>
+          {/* <input type="file" accept="image/*" onChange={handleImageChange} /> */}
+          {imageUrl ? (
+            <Image imageUrl={imageUrl} />
+          ) : (
+            <Image>
+              <ProfileImg />
+            </Image>
+          )}
+        </ImageDiv>
+      </LoaderContainer>
+    </Root>
   );
 }
