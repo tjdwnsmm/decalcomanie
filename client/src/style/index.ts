@@ -27,10 +27,14 @@ export const ConfirmButton = styled.button<ButtonProps>`
   font-weight: ${(props) => props.fontweight};
   cursor: pointer;
 `;
-
-export const CenterFrame = styled.div`
+interface CenterProps {
+  direction?: string;
+}
+export const CenterFrame = styled.div<CenterProps>`
   display: flex;
   justify-content: center;
+  flex-direction: ${(props) => props.direction};
+  align-items: center;
 `;
 
 interface MarginProps {

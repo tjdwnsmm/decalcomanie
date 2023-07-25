@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Carousel from 'react-items-carousel';
-import PerfumeReviewBox from './PerfumeReviewBox.tsx';
+import PerfumeReviewBox from '../Perfume/PerfumeReviewBox.tsx';
 
 interface Perfume {
   rate: number;
