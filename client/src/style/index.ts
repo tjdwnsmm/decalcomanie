@@ -9,13 +9,12 @@ export const Main = styled.div`
 interface ButtonProps {
   background?: 'primary' | 'secondary';
   color?: 'primary' | 'secondary';
+  fontweight?: string | '400';
 }
 
 export const ConfirmButton = styled.button<ButtonProps>`
   width: 340px;
   height: 45px;
-  line-height: 45px;
-  flex-shrink: 0;
   border-radius: 5px;
   border: none;
   background-color: ${(props) =>
@@ -25,7 +24,7 @@ export const ConfirmButton = styled.button<ButtonProps>`
   color: ${(props) =>
     props.color === 'primary' ? 'var(--white-color)' : 'var(--black-color)'};
   font-size: 16px;
-  font-weight: 400;
+  font-weight: ${(props) => props.fontweight};
   cursor: pointer;
 `;
 interface CenterProps {
