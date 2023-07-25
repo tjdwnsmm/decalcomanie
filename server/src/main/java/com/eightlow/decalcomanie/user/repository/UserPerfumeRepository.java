@@ -11,4 +11,10 @@ import java.util.List;
 @Repository
 public interface UserPerfumeRepository extends JpaRepository<UserPerfume, Integer> {
     List<UserPerfume> findAll();
+
+    UserPerfume findByUserIdAndPerfumeId(String userId, int perfumeId);
+
+    void deleteByUserIdAndPerfumeId(String userId, int perfumeId);
+
+    List<UserPerfume> findByUserId(String userId);
 }
