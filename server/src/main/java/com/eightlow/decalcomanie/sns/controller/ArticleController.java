@@ -1,5 +1,9 @@
 package com.eightlow.decalcomanie.sns.controller;
 
+import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
+import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
+import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
 
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
@@ -9,6 +13,7 @@ import com.eightlow.decalcomanie.sns.dto.request.CreateArticleRequest;
 import com.eightlow.decalcomanie.sns.dto.request.CreateCommentRequest;
 import com.eightlow.decalcomanie.sns.dto.request.UpdateArticleRequest;
 import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
+import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.sns.mapper.ArticleDtoMapper;
 import com.eightlow.decalcomanie.sns.mapper.CommentDtoMapper;
@@ -23,7 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/sns")
@@ -33,9 +41,11 @@ import java.util.List;
 public class ArticleController {
     private final IArticleService articleService;
     private final IGradeService gradeService;
+    private final IPerfumeService perfumeService;
 
     private final ArticleDtoMapper articleDtoMapper;
     private final CommentDtoMapper commentDtoMapper;
+    private final PerfumeMapper perfumeMapper;
 
     @PostMapping("/create")
     public ResponseEntity<Response> createArticle(@RequestBody @Valid CreateArticleRequest createArticleRequest) {
@@ -51,7 +61,8 @@ public class ArticleController {
 
         //TODO
         // 평점 등록시 perfume테이블의 평점 수정!!!
-        // perfume 쪽과 합쳐지고 나면 perfume의 service를 통핵서 평점 갱신 필요
+        // grade 테이블을 통해서 평균을 내준다 (perfume id 갯수 카운트, rate 더하기 로)
+        // perfume service 호출해서 값을 넣어준다.
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.builder()
@@ -85,6 +96,64 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(articleResponse);
     }
 
+    /*
+        피드(글) 조회 부분
+     */
+
+    // 사용자가 쓴 글을 조회(내가 쓴글 조회)
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<FeedResponse> getArticleByUserId(@PathVariable String userId) {
+        System.out.println(userId);
+        List<ArticleDto> articles = articleService.searchArticleByUserId(userId);
+        System.out.println(articles);
+        List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
+        FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
+        return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
+    }
+
+    // 팔로워의 피드를 조희
+    @GetMapping("/feed/following")
+    public ResponseEntity<FeedResponse> getFollowingArticles(@RequestHeader(value = "userId") String userId) {
+        // 추후 구현 예정입니다.
+        // TODO: 사용자의 follower list를 받아와서 그 사용자들의 피드를 조회해야함 (정렬은 최신순으로)
+        List<ArticleDto> articles = null;
+        List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
+        FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
+        return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
+    }
+
+    @GetMapping("/feed/popularity")
+    public ResponseEntity<FeedResponse> getPopularArticles() {
+        List<ArticleDto> articles= articleService.searchPopularArticles();
+
+        // articleId를 키로 하고 각 article에 담긴 첫번째 향수 정보를 저장
+        List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
+        FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
+        return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
+    }
+
+    @GetMapping("/feed/latest")
+    public ResponseEntity<FeedResponse> getLatestArticles() {
+        List<ArticleDto> articles= articleService.searchLatestArticles();
+        log.info(articles.toString());
+        // articleId를 키로 하고 각 article에 담긴 첫번째 향수 정보를 저장
+        List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
+        FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
+        return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
+    }
+
+    @GetMapping("/perfume/{perfumeId}")
+    public ResponseEntity<FeedResponse> getPerfumeArticles(@PathVariable int perfumeId) {
+        List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);
+        log.info(articles.toString());
+        // articleId를 키로 하고 각 article에 담긴 첫번째 향수 정보를 저장
+        List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
+        FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
+        return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
+    }
+
+    // 조회 파트 끝
+
     @PutMapping("/update")
     public ResponseEntity<Response> modifyArticle(@RequestBody @Valid
                                                         UpdateArticleRequest updateArticleRequest) {
@@ -94,6 +163,7 @@ public class ArticleController {
         // 글 수정이 성공 한 경우
         if(status == 200) {
             // 향수 평가도 수정
+            // TODO: 원래 향수 리스트와 새로 받은 리스트를 확인하거나, 아니면 아얘 peerfumeList를 받지 않거나 둘중 하나 해야함
             gradeService.createOrModifyGradeFromRequest(updateArticleRequest.getUserId(),
                     updateArticleRequest.getPerfumeId(), updateArticleRequest.getRate());
         }
@@ -163,7 +233,7 @@ public class ArticleController {
         return resultMessage(statusCode);
     }
 
-    public ResponseEntity<Response> resultMessage(int status) {
+    private ResponseEntity<Response> resultMessage(int status) {
         if (status == 200) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(Response.builder()
@@ -180,5 +250,26 @@ public class ArticleController {
                             .message("404")
                             .build());
         }
+    }
+
+    private List<PerfumeDto> getPerfumeInfoForArticles(List<ArticleDto> articles){
+        // articleId를 키로 하고 각 article에 담긴 향수ID를 받아서 저장
+        List<PerfumeDto> articlesPerfume = new ArrayList<>();
+
+        // articleId를 보고 article에 임베디드된 향수 가져오기
+        for(ArticleDto article: articles){
+            // TODO: perfumeId가 하나만 필요함으로 추후 쿼리 최적화가 필요!!
+            List<Integer> perfumeIdList = articleService.searchArticlePerfumeId(article.getArticleId());
+            System.out.println(perfumeIdList);
+            log.info(perfumeIdList.toString());
+            // TODO: 공병 태그 (아마 perfumeId 0번 ), 즉 향수가 아무것도 임베디드 안된 상황을 구현 헤야함!!
+            // TODO: 향수 정보를 하나만 보내주면 됨으로
+            //  가장 첫번째 perfume id를 보고 향수 이름, 제조사, accord(상위 3개?), 사진(S3의 url로 대체될 예정) 받아와야함
+
+            PerfumeDto perfumeDto = perfumeService.getPerfume(perfumeIdList.get(0));
+            log.info(String.valueOf(perfumeDto));
+            articlesPerfume.add(perfumeDto);
+        }
+        return articlesPerfume;
     }
 }

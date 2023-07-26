@@ -15,12 +15,19 @@ public interface IArticleService {
      */
     boolean existArticleById(int id);
     int createArticle(ArticleDto articleDto);
-    int updateArticle(ArticleDto articleDto);
-    int deleteArticle(String userId, int articleId);
     void createArticlePerfume(int articleId, List<Integer> perfumes);
+
+    int updateArticle(ArticleDto articleDto);
+
+    int deleteArticle(String userId, int articleId);
+    void deleteArticlePerfumeByArticleId(int articleId);
+
     ArticleDto searchArticleByArticleId(int articleId);
-    List<ArticleDto> searchArticleByUserId(UUID userId);
-    List<ArticleDto> searchArticleByPerfumeId(UUID userId);
+    List<ArticleDto> searchArticlesOfFollowingUser(String userId);
+    List<ArticleDto> searchPopularArticles();
+    List<ArticleDto> searchLatestArticles();
+    List<ArticleDto> searchArticleByUserId(String userId);
+    List<ArticleDto> searchArticleByPerfumeId(int perfumeId);
 
     List<Integer> searchArticlePerfumeId(int articleId);
 
@@ -35,6 +42,4 @@ public interface IArticleService {
     List<CommentDto> getComments(int articleId);
 
     int deleteCommentByArticleId(int articleId);
-
-    void deleteArticlePerfumeByArticleId(int articleId);
 }
