@@ -14,8 +14,8 @@ const perfumeImages = [
   'src/assets/img/perfume1.png',
   'src/assets/img/perfume_aqua.png',
   'src/assets/img/perfume_doson.png',
-  'src/assets/img/perfume_doson.png',
   'src/assets/img/perfume1.png',
+  'src/assets/img/perfume_doson.png',
 ];
 
 interface TextProp {
@@ -34,8 +34,18 @@ const MypageText = styled.div<TextProp>`
 
 // feeds 배열을 두 개의 열로 나누는 함수
 const splitFeeds = (arr) => {
-  const mid = Math.ceil(arr.length / 2);
-  return [arr.slice(0, mid), arr.slice(mid)];
+  const oddColumn = [];
+  const evenColumn = [];
+
+  arr.forEach((feed, idx) => {
+    if (idx % 2 === 1) {
+      evenColumn.push(feed);
+    } else {
+      oddColumn.push(feed);
+    }
+  });
+
+  return [oddColumn, evenColumn];
 };
 
 // 컨테이너 스타일 정의

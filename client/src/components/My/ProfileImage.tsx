@@ -1,7 +1,6 @@
-import React, { ChangeEvent, useState } from 'react';
+import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { ReactComponent as ProfileImg } from '../../assets/img/profile-img.svg';
-import ProfileEffect from './ProfileEffect';
 
 const Image = styled.div`
   width: 150px;
@@ -63,7 +62,8 @@ const LoaderInner = styled.span`
   height: var(--size);
   border-radius: 50%;
   box-shadow: 0 -10px 0 0 rgba(251, 169, 146, 0.9),
-    -7.5px 5px 0 0 rgba(251, 169, 146, 0.9), 7.5px 5px 0 0 rgba(251, 169, 146, 0.9);
+    -7.5px 5px 0 0 rgba(251, 169, 146, 0.9),
+    7.5px 5px 0 0 rgba(251, 169, 146, 0.9);
   animation: ${rotateAnimation} 10s alternate linear infinite;
 `;
 
@@ -76,25 +76,11 @@ const LoaderInner2 = styled(LoaderInner)`
 
 const LoaderInner3 = styled(LoaderInner)`
   box-shadow: 5px 0px 0 0 rgba(248, 84, 245, 0.911),
-    5px 0px 0 0 rgba(248, 84, 245, 0.911),
-    0 -10px 0 0 rgba(248, 84, 245, 0.911);
+    5px 0px 0 0 rgba(248, 84, 245, 0.911), 0 -10px 0 0 rgba(248, 84, 245, 0.911);
   animation: ${rotateAnimation} 10s alternate linear infinite;
 `;
 
 export default function ProfileImage() {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   return (
     <Root>
       <LoaderContainer>
@@ -102,14 +88,9 @@ export default function ProfileImage() {
         <LoaderInner2 />
         <LoaderInner3 />
         <ImageDiv>
-          {/* <input type="file" accept="image/*" onChange={handleImageChange} /> */}
-          {imageUrl ? (
-            <Image imageUrl={imageUrl} />
-          ) : (
-            <Image>
-              <ProfileImg />
-            </Image>
-          )}
+          <Image>
+            <ProfileImg />
+          </Image>
         </ImageDiv>
       </LoaderContainer>
     </Root>

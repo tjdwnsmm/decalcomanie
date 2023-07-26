@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import { ReactComponent as MoreVert } from '../../assets/icon/more-vert.svg';
 import { ReactComponent as LeftArrow } from '../../assets/icon/left-arrow.svg';
+import { useNavigate } from 'react-router-dom';
 
 const TopDiv = styled.div`
   display: flex;
@@ -56,6 +57,7 @@ const ModalContent = styled.div<{ top: number; left: number }>`
 export default function OptionMenu() {
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleModalToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setModalPosition({ x: event.clientX, y: event.clientY });
@@ -64,12 +66,13 @@ export default function OptionMenu() {
 
   // 회원정보 수정 페이지로 이동
   const handleEditClick = () => {
-    setModalOpen(false);
+    // 회원정보 수정 url
+    navigate('/회원정보수정');
   };
 
   // 로그아웃 하시겠습니까? 모달 창 띄우기
   const handleLogoutClick = () => {
-    setModalOpen(false);
+    // 로그아웃 API
   };
 
   // 바깥 영역을 클릭 시 모달이 닫힘

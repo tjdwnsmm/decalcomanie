@@ -1,13 +1,25 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { ReactComponent as Bar } from '../../assets/img/bar.svg';
-import { useNavigate } from 'react-router-dom';
 
 interface TextProp {
   size?: string;
   fontweight?: string;
   color?: string;
 }
+
+interface StatProp {
+  following: number;
+  post: number;
+  follower: number;
+}
+
+const data: StatProp = {
+  following: 123123,
+  post: 123123123,
+  follower: 123123123123,
+};
 
 const BoxText = styled.div<TextProp>`
   display: flex;
@@ -43,6 +55,18 @@ const CountBox = styled.div`
   }
 `;
 
+const formatNumber = (number: number): string => {
+  if (number >= 1000000000) {
+    return (number / 1000000000).toFixed(1) + 'B';
+  } else if (number >= 1000000) {
+    return (number / 1000000).toFixed(1) + 'M';
+  } else if (number >= 1000) {
+    return (number / 1000).toFixed(1) + 'K';
+  } else {
+    return number.toString();
+  }
+};
+
 export default function ProfileStats() {
   const navigate = useNavigate();
 
@@ -55,21 +79,21 @@ export default function ProfileStats() {
       <StatsBox>
         <CountBox onClick={handleClick}>
           <BoxText size="14pt" color="var(--primary-color)" fontweight="700">
-            123
+            {formatNumber(data.following)}
           </BoxText>
           <BoxText size="10pt">Following</BoxText>
         </CountBox>
         <Bar />
         <div>
           <BoxText size="14pt" color="var(--primary-color)" fontweight="700">
-            123
+            {formatNumber(data.post)}
           </BoxText>
           <BoxText size="10pt">Post</BoxText>
         </div>
         <Bar />
         <CountBox onClick={handleClick}>
           <BoxText size="14pt" color="var(--primary-color)" fontweight="700">
-            123
+            {formatNumber(data.follower)}
           </BoxText>
           <BoxText size="10pt">Followers</BoxText>
         </CountBox>

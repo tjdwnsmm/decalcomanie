@@ -1,12 +1,6 @@
 import styled from 'styled-components';
 import { PerfumeInfo } from '../../types/FeedInfoType';
 
-/**
- * @param {PerfumeInfo} PerfumeInfo
- * @summary
- *  ImgBox : 향수 이미지
- */
-
 const ImgDiv = styled.div`
   display: flex;
   justify-content: space-between;
@@ -20,7 +14,7 @@ const ImgBox = styled.div`
   align-items: center;
   background: var(--white-color);
   border-radius: 10px;
-  box-shadow: 5px 5px 5px var(--gray-color);
+  box-shadow: 5px 5px 10px var(--gray-color);
   &:hover {
     cursor: pointer;
     opacity: 50%;
