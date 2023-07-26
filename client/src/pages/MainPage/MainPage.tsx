@@ -5,9 +5,10 @@ import RecommendPerfume from '../../components/Main/RecommendPerfume';
 import { styled } from 'styled-components';
 import { ReactComponent as ArrowSvg } from '../../assets/icon/nextArrow.svg';
 import NoRecommend from '../../components/Main/NoRecommend';
+import FloatingDrawerBtn from '../../components/Button/FloatingDrawerBtn';
 
 const MainPage = () => {
-  const [isDrawer, setDrawer] = useState(false);
+  const [isDrawer, setDrawer] = useState(true);
 
   return (
     <Main>
@@ -31,6 +32,7 @@ const MainPage = () => {
           </MarginFrame>
         </>
       )}
+      <FloatingDrawerBtn />
     </Main>
   );
 };
