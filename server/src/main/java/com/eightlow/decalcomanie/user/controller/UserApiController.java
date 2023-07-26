@@ -3,6 +3,7 @@ package com.eightlow.decalcomanie.user.controller;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.user.dto.FollowDto;
 import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
+import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,8 @@ public class UserApiController {
     }
 
     // 사용자 향수 조회
-    @GetMapping("/perfume/view")
-    public ResponseEntity<List<PerfumeDto>> getUserPerfume(@RequestHeader("userId") String userId) {
+    @GetMapping("/perfume/{userId}")
+    public ResponseEntity<List<PerfumeDto>> getUserPerfume(@PathVariable String userId) {
         return new ResponseEntity<>(userService.getUserPerfume(userId), HttpStatus.OK);
     }
 
@@ -39,6 +40,12 @@ public class UserApiController {
     @PostMapping("/follow")
     public ResponseEntity<String> followUser(@RequestBody FollowDto request) {
         return new ResponseEntity<>(userService.followUser(request.getFollowing(), request.getFollowed()), HttpStatus.CREATED);
+    }
+
+    // 팔로잉 목록 조회
+    @GetMapping("/following/{userId}")
+    public ResponseEntity<List<FollowingResponse>> getFollowingUsers(@PathVariable String userId) {
+        return new ResponseEntity<>(userService.getFollowingUsers(userId), HttpStatus.OK);
     }
 
 }

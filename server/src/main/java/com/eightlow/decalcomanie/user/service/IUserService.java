@@ -2,6 +2,7 @@ package com.eightlow.decalcomanie.user.service;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.user.dto.FollowDto;
+import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.entity.UserPerfume;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface IUserService {
     boolean isFollowing(String from, String to);
 
     String followUser(String from, String to);
+
+    List<FollowingResponse> getFollowingUsers(String userId);
 }

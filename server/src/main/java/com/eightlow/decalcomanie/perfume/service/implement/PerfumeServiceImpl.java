@@ -206,6 +206,12 @@ public class PerfumeServiceImpl implements IPerfumeService {
         perfumeRepository.save(updatedPerfume);
     }
 
+    // 향 정보를 가져오기
+    @Override
+    public Scent getScentById(int scentId) {
+        return scentRepository.findOneByScentId(scentId);
+    }
+
     // accord 테이블의 향 정보와 scent 테이블의 향 정보를 response type에 맞는 형태로 합친다
     public List<ScentDto> createScentDto(int perfumeId) {
         List<AccordDto> accords = accordMapper.toDto(accordRepository.findAllByPerfumeId(perfumeId));
