@@ -25,4 +25,14 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query("SELECT a FROM Article a ORDER BY a.createdAt DESC")
     @Transactional
     List<Article> findArticlesOrderByCreateTime();
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Article a SET a.heart = a.heart + 1 WHERE a.articleId = :articleId")
+    void increaseHeartCountByArticleId(int articleId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Article a SET a.heart = a.heart - 1 WHERE a.articleId = :articleId")
+    void decreaseHeartCountByArticleId(int articleId);
 }
