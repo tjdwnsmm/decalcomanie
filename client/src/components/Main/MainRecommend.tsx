@@ -26,7 +26,7 @@ const MainRecommend = () => {
 
 export default MainRecommend;
 
-const UserName = styled.div`
+export const UserName = styled.div`
   display: flex;
   margin-top: 40px;
   font-size: 22px;
@@ -34,7 +34,7 @@ const UserName = styled.div`
   letter-spacing: 0.44px;
 `;
 
-const WeatherInfo = styled.div`
+export const WeatherInfo = styled.div`
   margin-top: 18px;
   color: var(--primary-color);
   font-size: 30px;

@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Main } from '../../style';
+import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
 import MainRecommend from '../../components/Main/MainRecommend';
 import RecommendPerfume from '../../components/Main/RecommendPerfume';
 import { styled } from 'styled-components';
 import { ReactComponent as ArrowSvg } from '../../assets/icon/nextArrow.svg';
+import NoRecommend from '../../components/Main/NoRecommend';
 
 const MainPage = () => {
-  const [isDrawer, setDrawer] = useState(true);
+  const [isDrawer, setDrawer] = useState(false);
 
   return (
     <Main>
@@ -19,7 +20,16 @@ const MainPage = () => {
           </RecommendButton>
         </>
       ) : (
-        <></>
+        <>
+          <NoRecommend />
+          <MarginFrame margin="20px auto">
+            <CenterFrame>
+              <ConfirmButton color="primary" background="primary">
+                내 향수 찾으러 가기
+              </ConfirmButton>
+            </CenterFrame>
+          </MarginFrame>
+        </>
       )}
     </Main>
   );
