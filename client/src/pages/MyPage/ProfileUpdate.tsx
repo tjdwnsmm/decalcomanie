@@ -4,6 +4,7 @@ import { Main, MarginFrame } from '../../style';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
 import NewNickname from '../../components/Profile/NicknameModi';
 import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
+import { PostButton, CancleButton } from '../../components/Button/Button';
 
 // 임시데이터
 const user: ProfileUpdateInfo = {
@@ -88,6 +89,8 @@ const ProfileUpdate = () => {
         </UserInfoName>
         <NewNickname nickname={user.nickname}/>
       </MarginFrame>
+      <PostButton>수정하기</PostButton>
+      <CancleButton onClick={handleCancel}>취소</CancleButton>
     </Main>
   );
 };
