@@ -53,6 +53,9 @@ export const MyDrawerPage = () => {
   const handleClick = () => {
     navigate('/');
   };
+  const handleSearchPerfume = () => {
+    navigate('/search-myperfume');
+  };
 
   return (
     <Main>
@@ -97,7 +100,9 @@ export const MyDrawerPage = () => {
               />
 
               <MarginFrame margin="20px 0" />
-              <DrawerAddBtn buttonTxt="내 향수 추가하기" />
+              <Button onClick={handleSearchPerfume}>
+                <DrawerAddBtn buttonTxt="내 향수 추가하기" />
+              </Button>
             </CenterFrame>
           </MarginFrame>
         </>
@@ -111,6 +116,8 @@ interface TextProp {
   fontweight?: string;
   color?: string;
 }
+
+const Button = styled.div``;
 const DrawerText = styled.div<TextProp>`
   font-size: ${(props) => props.size};
   font-weight: ${(props) => props.fontweight};

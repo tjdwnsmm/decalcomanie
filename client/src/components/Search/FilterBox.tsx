@@ -126,7 +126,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
           <SearchBar
             onSearch={handleScentSearch}
             placeholder="선호하시는 향 계열을 입력해주세요"
-            fetchURL="https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
+            fetchURL=""
           />
           <RecentBtnList>
             {filter.scent?.map((scent, idx) => (

@@ -1,92 +1,64 @@
-import React from 'react';
-import { PerfumeResult } from '../../pages/SearchPage/SearchTabPage';
-import { FeedProps } from '../../types/FeedInfoType';
+import { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
 import SecondaryBox from '../Box/SecondaryBox';
+import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
+import Spinner from '../common/Spinner';
 
 interface SearchResultsProps {
-  results: PerfumeResult[];
+  results: PerfumeDetail[] | null;
   isButton: boolean;
 }
-
-//API 호출 전 임시데이터
-const feeds: FeedProps[] = [
-  {
-    perfumeInfo: {
-      name: '탐다오',
-      brand: '딥디크',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 ...',
-  },
-  {
-    perfumeInfo: {
-      name: '미르토 디 파나레아',
-      brand: '아쿠아 디 파르마',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 ...',
-  },
-  {
-    perfumeInfo: {
-      name: '집시 워터',
-      brand: '바이레도',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 ...',
-  },
-];
 
 /**
  * @param results : API 호출 결과 데이터
  * @param isButton : 등록 버튼 있는 지 없는 지 여부
  */
 const SearchResults: React.FC<SearchResultsProps> = ({ results, isButton }) => {
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setLoading(false);
+  }, [results]);
+
   return (
     <>
-      <PerfumeList>
-        <MarginFrame margin="-4px 0" />
-        {feeds.map((feed) => (
-          <>
-            <PerfumeBox>
-              <PerfumeInfo>
-                <TextInfo>
-                  <PerfumeBrand>{feed.perfumeInfo.brand}</PerfumeBrand>
-                  <PerfumeName>{feed.perfumeInfo.name}</PerfumeName>
-                  <PerfumeScent>{feed.perfumeInfo.scent}</PerfumeScent>
-                </TextInfo>
-                <ImgBox>
-                  <img src={feed.perfumeInfo.img}></img>
-                </ImgBox>
-              </PerfumeInfo>
-              <ButtonFrame>{isButton && <Button>추가하기</Button>}</ButtonFrame>
-            </PerfumeBox>
-            <MarginFrame margin="10px 0" />
-          </>
-        ))}
-      </PerfumeList>
+      {!loading && results?.length ? (
+        <PerfumeList>
+          <MarginFrame margin="-4px 0" />
+          {results.map((feed) => (
+            <>
+              <PerfumeBox>
+                <PerfumeInfo>
+                  <TextInfo>
+                    <PerfumeBrand>{feed.brandName}</PerfumeBrand>
+                    <PerfumeName>{feed.nameOrg}</PerfumeName>
+                    <PerfumeScent>
+                      {feed.accord.splice(0, 3).map((scent: ScentDto, idx) => (
+                        <Scent>
+                          {scent.name}
+                          {idx === 2 ? '' : ', '}
+                        </Scent>
+                      ))}
+                    </PerfumeScent>
+                  </TextInfo>
+                  <ImgBox>
+                    <img src={feed.picture}></img>
+                  </ImgBox>
+                </PerfumeInfo>
+                <ButtonFrame>
+                  {isButton && <Button>추가하기</Button>}
+                </ButtonFrame>
+              </PerfumeBox>
+              <MarginFrame margin="10px 0" />
+            </>
+          ))}
+        </PerfumeList>
+      ) : (
+        <MarginFrame margin="100px auto">
+          <Spinner />
+        </MarginFrame>
+      )}
     </>
   );
 };
@@ -100,7 +72,7 @@ const PerfumeList = styled.div`
 `;
 
 const PerfumeBox = styled(SecondaryBox)`
-  padding: 25px 0px;
+  padding: 25px 15px;
   flex-direction: column;
 `;
 
@@ -114,6 +86,7 @@ const PerfumeInfo = styled.div`
 const TextInfo = styled.div`
   display: flex;
   flex-direction: column;
+  width: 60%;
 `;
 const PerfumeBrand = styled.div`
   color: var(--black-color);
@@ -140,6 +113,10 @@ const ImgBox = styled.div`
   background: var(--white-color);
   border-radius: 10px;
   justify-content: center;
+
+  img {
+    width: 80px;
+  }
 `;
 
 const ButtonFrame = styled.div`
@@ -150,13 +127,13 @@ const ButtonFrame = styled.div`
 const Button = styled.button`
   border: none;
   padding: 8px 8px;
-  width: 300px;
+  width: 100%;
   font-weight: 600;
   font-size: 14px;
   color: var(--primary-color);
   background: var(--white-color);
   border-radius: 5px;
-  margin: 15px 25px -10px;
+  margin: 15px 0px -10px;
 
   &:hover {
     background: var(--primary-color);
@@ -164,6 +141,7 @@ const Button = styled.button`
   }
 `;
 
+const Scent = styled.span``;
 /*
       {results.length > 0 ? (
         <ul>
