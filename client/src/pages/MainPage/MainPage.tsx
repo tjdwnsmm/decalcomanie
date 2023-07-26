@@ -6,6 +6,7 @@ import { styled } from 'styled-components';
 import { ReactComponent as ArrowSvg } from '../../assets/icon/nextArrow.svg';
 import NoRecommend from '../../components/Main/NoRecommend';
 import FloatingDrawerBtn from '../../components/Button/FloatingDrawerBtn';
+import BottomNav from '../../components/common/BottomNav';
 
 const MainPage = () => {
   const [isDrawer, setDrawer] = useState(true);
@@ -33,6 +34,7 @@ const MainPage = () => {
         </>
       )}
       <FloatingDrawerBtn />
+      <BottomNav />
     </Main>
   );
 };

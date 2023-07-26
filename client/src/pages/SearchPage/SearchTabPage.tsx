@@ -6,6 +6,7 @@ import FilterBox from '../../components/Search/FilterBox';
 import { CenterFrame, ConfirmButton, Main } from '../../style';
 import SearchResults from '../../components/Search/SearchResults';
 import SortToggle, { SortOption } from '../../components/Search/SortToggle';
+import BottomNav from '../../components/common/BottomNav';
 
 export interface PerfumeResult {
   brand: string;
@@ -127,6 +128,7 @@ const SearchTabPage: React.FC = () => {
               <SearchResults results={searchResults} isButton={false} />
             </>
           )}
+          <BottomNav />
         </>
       )}
 
