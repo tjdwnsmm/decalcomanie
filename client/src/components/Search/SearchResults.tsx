@@ -4,6 +4,7 @@ import { MarginFrame } from '../../style';
 import SecondaryBox from '../Box/SecondaryBox';
 import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
 import Spinner from '../common/Spinner';
+import { useNavigate } from 'react-router-dom';
 
 interface SearchResultsProps {
   results: PerfumeDetail[] | null;
@@ -21,13 +22,20 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, isButton }) => {
     setLoading(false);
   }, [results]);
 
+  const navigate = useNavigate();
+  const handleClick = (perfumeId: number) => {
+    navigate(`/perfume-detail/${perfumeId}`);
+  };
   return (
     <>
       {!loading && results?.length ? (
         <PerfumeList>
           <MarginFrame margin="-4px 0" />
           {results.map((feed) => (
-            <>
+            <div
+              key={feed.perfumeId}
+              onClick={() => handleClick(feed.perfumeId)}
+            >
               <PerfumeBox>
                 <PerfumeInfo>
                   <TextInfo>
@@ -51,7 +59,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, isButton }) => {
                 </ButtonFrame>
               </PerfumeBox>
               <MarginFrame margin="10px 0" />
-            </>
+            </div>
           ))}
         </PerfumeList>
       ) : (
@@ -142,17 +150,3 @@ const Button = styled.button`
 `;
 
 const Scent = styled.span``;
-/*
-      {results.length > 0 ? (
-        <ul>
-          {results.map((result, index) => (
-            <>
-              <li key={index}>{result.brand}</li>
-              <li key={index}>{result.name}</li>
-            </>
-          ))}
-        </ul>
-      ) : (
-        <p>No results found</p>
-      )}
-*/

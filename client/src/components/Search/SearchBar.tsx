@@ -123,7 +123,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
               <AutoSearchData
                 key={idx}
                 onClick={() => {
-                  setKeyword(search);
+                  setKeyword('');
                   onSearch(search, true);
                   setIsSearch(true);
                 }}

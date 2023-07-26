@@ -9,13 +9,16 @@ import { useEffect, useState } from 'react';
 import { ScentNotes } from '../../components/Perfume/Detail/ScentNotes';
 import MoreInfo from '../../components/Perfume/Detail/MoreInfo';
 import axios from '../../api/apiController';
+import { useParams } from 'react-router-dom';
 
+const USERID = '07161c43-bc03-44f6-95c1-a56d440a23bf';
 const PerfumeDetail = () => {
+  const { id } = useParams<{ id: string }>();
   const [perfume, setPerfume] = useState<PerfumeDetail | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    axios.get('/perfume/detail/11').then((res) => {
+    axios.get(`/perfume/detail/${USERID}/${id}`).then((res) => {
       setPerfume(res.data);
       console.log(res.data);
     });
@@ -46,7 +49,7 @@ const PerfumeDetail = () => {
           <ScentList accord={perfume.accord.slice(0, 3)} />
         </LeftSection>
         <PerfumeImg>
-          <img src="src/assets/img/perfume1.png" />
+          <img src={perfume.picture} />
         </PerfumeImg>
       </PerfumeInfo>
       <ScentBall
