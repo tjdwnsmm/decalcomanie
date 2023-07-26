@@ -2,18 +2,19 @@ import React, { useState } from 'react';
 import SearchBar from '../../components/Search/SearchBar';
 import { Main } from '../../style';
 import SearchResults from '../../components/Search/SearchResults';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 
-export interface PerfumeResult {
-  brand: string;
-  name: string;
-}
+// export interface PerfumeResult {
+//   brand: string;
+//   name: string;
+// }
 
 const SearchMyPerfume: React.FC = () => {
   //현재 검색할 단어
   const [searchKeyword, setSearchKeyword] = useState('');
 
   //검색 결과 창
-  const [searchResults, setSearchResults] = useState<PerfumeResult[]>([]);
+  const [searchResults, setSearchResults] = useState<PerfumeDetail[]>([]);
 
   /**
    *

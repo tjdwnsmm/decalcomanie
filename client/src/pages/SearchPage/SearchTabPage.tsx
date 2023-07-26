@@ -1,20 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchBar from '../../components/Search/SearchBar';
 import FilteringBtn from '../../components/Button/FilteringBtn';
 import { styled } from 'styled-components';
 import FilterBox from '../../components/Search/FilterBox';
-import { CenterFrame, ConfirmButton, Main } from '../../style';
+import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
 import SearchResults from '../../components/Search/SearchResults';
 import SortToggle, { SortOption } from '../../components/Search/SortToggle';
 import BottomNav from '../../components/common/BottomNav';
-
-export interface PerfumeResult {
-  brand: string;
-  name: string;
-}
+import axios from '../../api/apiController';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import Spinner from '../../components/common/Spinner';
 
 interface Filter {
-  brand?: string[];
+  brandName?: string[];
   gender?: string;
   scent?: string[];
 }
@@ -30,7 +28,15 @@ const SearchTabPage: React.FC = () => {
   const [filter, setFilter] = useState<Filter>({});
 
   //검색 결과 창
-  const [searchResults, setSearchResults] = useState<PerfumeResult[]>([]);
+  const [searchResults, setSearchResults] = useState<PerfumeDetail[] | null>(
+    null,
+  );
+
+  useEffect(() => {
+    axios.post('/perfume/search').then((res) => {
+      setSearchResults(res.data);
+    });
+  }, [searchResults]);
 
   /**
    *
@@ -125,7 +131,14 @@ const SearchTabPage: React.FC = () => {
               </SortArea>
 
               {/* 검색 결과 */}
-              <SearchResults results={searchResults} isButton={false} />
+
+              {searchResults ? (
+                <SearchResults results={searchResults} isButton={false} />
+              ) : (
+                <MarginFrame margin="120px auto">
+                  <Spinner />
+                </MarginFrame>
+              )}
             </>
           )}
           <BottomNav />
