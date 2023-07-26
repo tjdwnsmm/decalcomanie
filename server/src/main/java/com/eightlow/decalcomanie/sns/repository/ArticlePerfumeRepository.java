@@ -12,6 +12,8 @@ import java.util.List;
 @Repository
 public interface ArticlePerfumeRepository extends JpaRepository <ArticlePerfume, Integer>{
     List<ArticlePerfume> findByArticleId(int articleId);
+    List<ArticlePerfume> findByPerfumeId(int perfumeId);
+
     @Modifying
     @Query("DELETE FROM ArticlePerfume WHERE articleId = :articleId")
     void deleteAllByArticleId(@Param(value = "articleId") int articleId);

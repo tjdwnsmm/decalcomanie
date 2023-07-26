@@ -151,15 +151,57 @@ public class ArticleServiceImpl implements IArticleService {
         return article;
     }
 
+
+
+    /*
+        피드(글) 조회 파트
+     */
     @Override
-    public List<ArticleDto> searchArticleByUserId(UUID userId) {
+    @Transactional
+    public List<ArticleDto> searchArticleByUserId(String userId) {
+        return articleMapper.toDto(articleRepository.findByUserId(userId));
+    }
+
+    @Override
+    @Transactional
+    public List<ArticleDto> searchArticlesOfFollowingUser(String userId) {
+        //TODO: User 파트가 완성되고 나면 user에서 follwer리스트를 받아와서 article을 찾아야함
         return null;
     }
 
     @Override
-    public List<ArticleDto> searchArticleByPerfumeId(UUID userId) {
-        return null;
+    @Transactional
+    public List<ArticleDto> searchPopularArticles() {
+        return articleMapper.toDto(articleRepository.findArticlesOrderByHeart());
     }
+
+    @Override
+    @Transactional
+    public List<ArticleDto> searchLatestArticles() {
+        return articleMapper.toDto(articleRepository.findArticlesOrderByCreateTime());
+    }
+
+    @Override
+    @Transactional
+    public List<ArticleDto> searchArticleByPerfumeId(int perfumeId) {
+        List<ArticlePerfume> articlePerfumes = articlePerfumeRepository.findByPerfumeId(perfumeId);
+        List<Integer> articleIds = new ArrayList<>();
+        for(ArticlePerfume articlePerfume : articlePerfumes) {
+            articleIds.add(articlePerfume.getArticleId());
+        }
+
+        List<Article> articles = new ArrayList<>();
+        for(int articleId : articleIds) {
+            articles.add(articleRepository.findByArticleId(articleId).get());
+        }
+        System.out.println(articles);
+        return articleMapper.toDto(articles);
+    }
+
+
+
+
+    // 피드 조회 끝
 
     @Override
     @Transactional
