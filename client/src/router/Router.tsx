@@ -8,6 +8,7 @@ import PostDetail from '../pages/PostDetailPage/PostDetail';
 import { MyDrawerPage } from '../pages/DrawerPage/MyDrawerPage';
 import FollowList from '../pages/MyPage/FollowList';
 import Post from '../pages/PostPages/Post';
+import ProfileUpdate from '../pages/MyPage/ProfileUpdate';
 
 export default function Router() {
   return (
@@ -22,6 +23,7 @@ export default function Router() {
         <Route path="/perfume-detail" element={<PerfumeDetail />}></Route>
         <Route path="/my-drawer" element={<MyDrawerPage />}></Route>
         <Route path="/follow-list" element={<FollowList />}></Route>
+        <Route path="/profile-update" element={<ProfileUpdate />}></Route>
       </Routes>
     </BrowserRouter>
   );
