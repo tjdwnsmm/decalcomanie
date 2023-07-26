@@ -5,6 +5,7 @@ import FeedPage from '../../components/Feed/FeedPage';
 import { FeedProps } from '../../types/FeedInfoType';
 import { Main } from '../../style';
 import FloatingWriteBtn from '../../components/Button/FloatingWriteBtn';
+import BottomNav from '../../components/common/BottomNav';
 
 //API 호출 전 임시데이터
 const feeds: FeedProps[] = [
@@ -67,6 +68,7 @@ export const MainFeed = () => {
         <FeedPage key={idx} feed={feed} />
       ))}
       <FloatingWriteBtn />
+      <BottomNav />
     </Main>
   );
 };

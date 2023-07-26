@@ -4,6 +4,7 @@ import { CenterFrame, Main, MarginFrame } from '../../style';
 import { DrawerAddBtn } from '../../components/Drawer/DrawerAddBtn';
 import { DrawerCarousel } from '../../components/Drawer/DrawerCarousel';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
+import { useNavigate } from 'react-router-dom';
 
 export interface Perfume {
   name: string;
@@ -48,9 +49,14 @@ export const MyDrawerPage = () => {
     );
   };
 
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate('/');
+  };
+
   return (
     <Main>
-      <CloseFrame>
+      <CloseFrame onClick={handleClick}>
         <CloseSvg />
       </CloseFrame>
       {perfumeList.length === 0 ? (
