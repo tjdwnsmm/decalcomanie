@@ -18,6 +18,9 @@ const FloatingDrawerBtn = () => {
 export default FloatingDrawerBtn;
 
 const FloatingDrawerButton = styled(FloatingButton)`
-  width: 84px;
-  height: 84px;
+  width: 70px;
+  height: 70px;
+  img {
+    width: 32px;
+  }
 `;
