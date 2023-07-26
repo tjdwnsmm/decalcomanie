@@ -5,6 +5,7 @@ import { ReactComponent as InputCancelSvg } from '../../assets/icon/input-cancel
 import { ReactComponent as SearchSvg } from '../../assets/icon/search.svg';
 import Spinner from '../common/Spinner';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import axios from '../../api/apiController';
 
 interface SearchBoxProps {
   onSearch: (keyword: string, booleanCheck: boolean) => void;
@@ -27,9 +28,21 @@ const SearchBar: React.FC<SearchBoxProps> = ({
   fetchURL,
 }) => {
   const [keyword, setKeyword] = useState<string>('');
-  const [searchResults, setSearchResults] = useState<PerfumeDetail[]>([]);
+  const [searchResults, setSearchResults] = useState<string[]>([]);
   const [isSearch, setIsSearch] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+
+  const [DataByURL, setDataByURL] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (fetchURL) {
+      axios.get(fetchURL).then((res) => {
+        const namesArray = res.data.map((data: any) => data.name);
+        setDataByURL(namesArray);
+      });
+    }
+  }, []);
+
   /**
    * @param event : 입력값이 바뀔때마다
    */
@@ -38,29 +51,28 @@ const SearchBar: React.FC<SearchBoxProps> = ({
     setKeyword(newKeyword);
     onSearch(newKeyword, false);
   };
-
-  const fetchData = async (url: string) => {
-    const res = await fetch(url);
-    const data = await res.json();
-    return data.slice(0, 100);
-  };
-
   /**
    * @summary : 받아온 데이터를 입력 값을 포함하는 여부로 filtering (8개까지)
    */
   const updateData = async () => {
     setIsFetching(true);
     if (fetchURL) {
-      const res = await fetchData(fetchURL);
-      const filteredResults = res
-        .filter((list: string) => list.includes(keyword))
-        .slice(0, 8);
+      const filteredResults = DataByURL.filter((list: string) =>
+        list.toLowerCase().includes(keyword.toLowerCase()),
+      ).slice(0, 8);
+      console.log(filteredResults);
       setSearchResults(filteredResults);
+      setIsFetching(false);
     }
     //
     if (dataList) {
       const filteredResults = dataList
         .filter((list: PerfumeDetail) => list.nameOrg.includes(keyword))
+        .map((perfume: PerfumeDetail) =>
+          perfume.nameOrg.length > 30
+            ? perfume.nameOrg.slice(0, 30) + '...'
+            : perfume.nameOrg,
+        )
         .slice(0, 8);
       setSearchResults(filteredResults);
       setIsFetching(false);
@@ -111,15 +123,13 @@ const SearchBar: React.FC<SearchBoxProps> = ({
               <AutoSearchData
                 key={idx}
                 onClick={() => {
-                  setKeyword(search.nameOrg);
-                  onSearch(search.nameOrg, true);
+                  setKeyword(search);
+                  onSearch(search, true);
                   setIsSearch(true);
                 }}
               >
                 <a href="#">
-                  {search.nameOrg.length > 30
-                    ? search.nameOrg.slice(0, 30) + '...'
-                    : search.nameOrg}
+                  {search.length > 30 ? search.slice(0, 30) + '...' : search}
                 </a>
               </AutoSearchData>
             ))}
