@@ -2,7 +2,10 @@ package com.eightlow.decalcomanie.user.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
+import com.eightlow.decalcomanie.user.entity.Follow;
 import com.eightlow.decalcomanie.user.entity.UserPerfume;
+import com.eightlow.decalcomanie.user.mapper.FollowMapper;
+import com.eightlow.decalcomanie.user.repository.FollowRepository;
 import com.eightlow.decalcomanie.user.repository.UserPerfumeRepository;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +21,15 @@ import java.util.List;
 public class UserServiceImpl implements IUserService {
 
     private final UserPerfumeRepository userPerfumeRepository;
+    private final FollowRepository followRepository;
     private final IPerfumeService perfumeService;
+    private final FollowMapper followMapper;
 
     @Override
     public String modifyUserPerfume(UserPerfume userPerfume) {
-        UserPerfume u = userPerfumeRepository.findByUserIdAndPerfumeId(userPerfume.getUserId(), userPerfume.getPerfumeId());
+        UserPerfume perfume = userPerfumeRepository.findByUserIdAndPerfumeId(userPerfume.getUserId(), userPerfume.getPerfumeId());
 
-        if(u == null) {
+        if(perfume == null) {
             userPerfumeRepository.save(userPerfume);
             return "향수가 등록되었습니다";
         }
@@ -43,5 +48,30 @@ public class UserServiceImpl implements IUserService {
         }
 
         return result;
+    }
+
+    // following = 팔로우 주체의 userId, followed = 팔로우를 할 사람의 userId
+    @Override
+    public String followUser(String following, String followed) {
+        System.out.println(following);
+        System.out.println(followed);
+
+        if(isFollowing(following, followed)) {
+            followRepository.deleteByFollowingAndFollowed(following, followed);
+            return "팔로우가 취소되었습니다";
+        }
+
+        Follow follow = new Follow(following, followed);
+        followRepository.save(follow);
+        return "팔로우가 완료되었습니다";
+    }
+
+    // 팔로우 여부
+    @Override
+    public boolean isFollowing(String following, String followed) {
+        Follow follow = followRepository.findByFollowingAndFollowed(following, followed);
+
+        if(follow == null) return false;
+        return true;
     }
 }
