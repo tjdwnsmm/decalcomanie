@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Main } from '../../style';
 import FollowTab from '../../components/TabBar/FollowTab';
 import FollowBox from '../../components/Follow/FollowBox';
-import { FollowInfo } from '../../types/FollowInfoType';
+import { FollowInfo } from '../../types/ProfileInfoType';
 
 // 임시 데이터
 const follwers: FollowInfo[] = [
