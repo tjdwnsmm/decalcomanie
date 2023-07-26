@@ -3,6 +3,7 @@ package com.eightlow.decalcomanie.user.controller;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.user.dto.FollowDto;
 import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
+import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.service.IUserService;
@@ -46,6 +47,12 @@ public class UserApiController {
     @GetMapping("/following/{userId}")
     public ResponseEntity<List<FollowingResponse>> getFollowingUsers(@PathVariable String userId) {
         return new ResponseEntity<>(userService.getFollowingUsers(userId), HttpStatus.OK);
+    }
+
+    // 팔로우 목록 조회
+    @GetMapping("/follower/{userId}")
+    public ResponseEntity<List<FollowerResponse>> getFollowers(@PathVariable String userId) {
+        return new ResponseEntity<>(userService.getFollowers(userId), HttpStatus.OK);
     }
 
 }

@@ -2,6 +2,7 @@ package com.eightlow.decalcomanie.user.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
+import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.entity.Follow;
 import com.eightlow.decalcomanie.user.entity.User;
@@ -78,6 +79,7 @@ public class UserServiceImpl implements IUserService {
     // 팔로잉 하고 있는 유저들의 정보를 가져온다
     @Override
     public List<FollowingResponse> getFollowingUsers(String userId) {
+        // following 컬럼의 userId를 기준으로 조회
         List<Follow> myFollowing = followRepository.findByFollowing(userId);
         List<FollowingResponse> result = new ArrayList<>();
 
@@ -85,7 +87,8 @@ public class UserServiceImpl implements IUserService {
             User user = userRepository.findByUserId(follow.getFollowed());
 
             List<String> favorite = new ArrayList<>();
-
+        
+            // userScent 테이블에서 팔로잉 하고 있는 사람의 'FAVORITE' 향을 조회
             List<UserScent> userScentList = userScentRepository.findAllUserScentByUserId(follow.getFollowed());
 
             if(userScentList != null) {
@@ -94,7 +97,35 @@ public class UserServiceImpl implements IUserService {
                 }
             }
 
+            // 반환 포맷에 맞는 response 생성
             FollowingResponse response = new FollowingResponse(user.getUserId(), user.getNickname(), favorite, user.getPicture());
+
+            result.add(response);
+        }
+
+        return result;
+    }
+
+    // 팔로워 목록 조회
+    @Override
+    public List<FollowerResponse> getFollowers(String userId) {
+        List<Follow> myFollowing = followRepository.findByFollowed(userId);
+        List<FollowerResponse> result = new ArrayList<>();
+
+        for(Follow follow : myFollowing) {
+            User user = userRepository.findByUserId(follow.getFollowing());
+
+            List<String> favorite = new ArrayList<>();
+
+            List<UserScent> userScentList = userScentRepository.findAllUserScentByUserId(follow.getFollowing());
+
+            if(userScentList != null) {
+                for (UserScent scent : userScentList) {
+                    favorite.add(perfumeService.getScentById(scent.getScentId()).getName());
+                }
+            }
+
+            FollowerResponse response = new FollowerResponse(user.getUserId(), user.getNickname(), favorite, user.getPicture(), isFollowing(userId, user.getUserId()));
 
             result.add(response);
         }
