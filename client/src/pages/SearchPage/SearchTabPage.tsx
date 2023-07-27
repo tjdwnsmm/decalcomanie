@@ -35,6 +35,36 @@ const SearchTabPage: React.FC = () => {
     PerfumeDetail[] | null
   >(null);
 
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  const handleScroll = () => {
+    setScrollPosition(window.scrollY);
+    console.log(`스크롤 위치 : ${scrollPosition}`);
+    // localStorage.setItem('scrollPosition', scrollPosition.toString());
+  };
+
+  useEffect(() => {
+    const storedScrollPosition = localStorage.getItem('scrollPosition');
+    if (storedScrollPosition) {
+      const scrollY = parseInt(storedScrollPosition);
+      scrollToStoredPosition(scrollY);
+    }
+
+    // console.log(`스크롤 위치 : ${scrollPosition}`);
+    // localStorage.setItem('scrollPosition', scrollPosition.toString());
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      const scrollY = window.scrollY;
+      localStorage.setItem('scrollPosition', scrollY.toString());
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrollPosition]);
+
+  const scrollToStoredPosition = (scrollY: number) => {
+    window.scrollTo(0, scrollY);
+  };
+
   useEffect(() => {
     const storedData = localStorage.getItem('searchResults');
 

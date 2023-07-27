@@ -1,5 +1,5 @@
 import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
-import { FeedDetail } from '../../types/FeedInfoType';
+import { EachFeedInfo, FeedDetail } from '../../types/FeedInfoType';
 import PerfumeInfoBox from '../../components/Perfume/PerfumeInfoBox';
 import { styled } from 'styled-components';
 import FeedPageOnly from '../../components/Feed/FeedPageOnly';
@@ -11,7 +11,7 @@ import { ReactComponent as BackSvg } from '../../assets/icon/prevBack.svg';
 
 export const PerfumeFeed = () => {
   const { id } = useParams<{ id: string }>();
-  const [feed, setFeed] = useState<FeedDetail | null>(null);
+  const [feed, setFeed] = useState<EachFeedInfo[] | null>(null);
 
   useEffect(() => {
     axios.get(`/sns/perfume/${id}`).then((res) => {
@@ -30,7 +30,7 @@ export const PerfumeFeed = () => {
     return <Spinner />;
   }
 
-  if (feed.articleDtos.length === 0 && feed.perfumeDtos.length === 0) {
+  if (feed.length === 0) {
     return (
       <>
         <ErrorTxt>검색 결과가 없습니다 😥</ErrorTxt>
@@ -55,12 +55,12 @@ export const PerfumeFeed = () => {
       </MarginFrame>
 
       <PerfumeFeedBox>
-        <PerfumeInfoBox feed={feed.perfumeDtos[0]} />
+        <PerfumeInfoBox feed={feed[0].perfumeDtos} />
       </PerfumeFeedBox>
 
       <FeedBody>
-        {feed.articleDtos.map((eachFeed, idx) => (
-          <FeedPageOnly key={idx} feed={eachFeed} />
+        {feed.map((eachFeed, idx) => (
+          <FeedPageOnly key={idx} feed={eachFeed.articleDtos} />
         ))}
       </FeedBody>
     </Main>
@@ -80,7 +80,7 @@ const FeedBody = styled.div`
 const ErrorTxt = styled.div`
   color: var(--primary-color);
   font-weight: 700;
-  font-size: 23px;
+  font-size: 22px;
   text-align: center;
   margin-top: 270px;
 `;

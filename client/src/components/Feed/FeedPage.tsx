@@ -1,11 +1,15 @@
 import styled from 'styled-components';
-import { FeedProps } from '../../types/FeedInfoType';
+import {
+  EachFeedInfo,
+  ArticleDetail,
+  FeedDetail,
+} from '../../types/FeedInfoType';
 import PerfumeInfoBox from '../Perfume/PerfumeInfoBox';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 
 interface FeedComponentProps {
-  feed: FeedProps;
+  feed: EachFeedInfo;
 }
 
 /**
@@ -21,20 +25,15 @@ InfoBox : 피드 나머지 부분 내용
 const FeedPage = ({ feed }: FeedComponentProps) => (
   <>
     <FeedBox>
-      <PerfumeInfoBox
-        brand={feed.perfumeInfo.brand}
-        name={feed.perfumeInfo.name}
-        scent={feed.perfumeInfo.scent}
-        img={feed.perfumeInfo.img}
-      />
-      <ContentBox>{feed.content}</ContentBox>
+      <PerfumeInfoBox feed={feed.perfumeDtos} />
+      <ContentBox>{feed.articleDtos.content}</ContentBox>
       <InfoBox>
         <ProfileBox>
-          <img src={feed.profileImg} />
-          {feed.writer}
+          <img src={'src/assets/img/profile-user.png'} />
+          {feed.articleDtos.userId}
         </ProfileBox>
         <IconBox>
-          <LikeBtn count={feed.like} />
+          <LikeBtn count={feed.articleDtos.heart} />
           <ScrapBtn />
         </IconBox>
       </InfoBox>

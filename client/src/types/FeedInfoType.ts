@@ -16,3 +16,8 @@ export interface ArticleDetail {
   heart: number;
   comment: number;
 }
+
+export interface EachFeedInfo {
+  perfumeDtos: PerfumeDetail;
+  articleDtos: ArticleDetail;
+}
