@@ -3,10 +3,7 @@ package com.eightlow.decalcomanie.sns.controller;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
-import com.eightlow.decalcomanie.sns.dto.ArticleDto;
-import com.eightlow.decalcomanie.sns.dto.CommentDto;
-import com.eightlow.decalcomanie.sns.dto.GradeDto;
-import com.eightlow.decalcomanie.sns.dto.HeartDto;
+import com.eightlow.decalcomanie.sns.dto.*;
 import com.eightlow.decalcomanie.sns.dto.request.CommentRequest;
 import com.eightlow.decalcomanie.sns.dto.request.CreateArticleRequest;
 import com.eightlow.decalcomanie.sns.dto.request.UpdateArticleRequest;
@@ -17,6 +14,8 @@ import com.eightlow.decalcomanie.sns.mapper.ArticleDtoMapper;
 import com.eightlow.decalcomanie.sns.mapper.CommentDtoMapper;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
 import com.eightlow.decalcomanie.sns.service.IGradeService;
+import com.eightlow.decalcomanie.user.dto.UserInfoDto;
+import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,6 +35,7 @@ public class ArticleController {
     private final IArticleService articleService;
     private final IGradeService gradeService;
     private final IPerfumeService perfumeService;
+    private final IUserService userService;
 
     private final ArticleDtoMapper articleDtoMapper;
     private final CommentDtoMapper commentDtoMapper;
@@ -100,13 +100,8 @@ public class ArticleController {
         System.out.println(userId);
         List<ArticleDto> articles = articleService.searchArticleByUserId(userId);
         System.out.println(articles);
-        List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
 
-        List<FeedResponse> responses  = new ArrayList<>();
-
-        for (int i = 0; i < articles.size(); i++) {
-            responses.add(new FeedResponse(articles.get(i), articlesPerfume.get(i)));
-        }
+        List<FeedResponse> responses  = getFeedInfoForArticles(articles);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
@@ -114,16 +109,11 @@ public class ArticleController {
     // 팔로워의 피드를 조희
     @GetMapping("/feed/following")
     public ResponseEntity<List<FeedResponse>> getFollowingArticles(@RequestHeader(value = "userId") String userId) {
-        // 추후 구현 예정입니다.
+
         // TODO: 사용자의 follower list를 받아와서 그 사용자들의 피드를 조회해야함 (정렬은 최신순으로)
-        List<ArticleDto> articles = null;
-        List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
-
-        List<FeedResponse> responses  = new ArrayList<>();
-
-        for (int i = 0; i < articles.size(); i++) {
-            responses.add(new FeedResponse(articles.get(i), articlesPerfume.get(i)));
-        }
+        List<ArticleDto> articles = articleService.searchArticlesOfFollowingUser(userId);
+        log.info(articles.toString());
+        List<FeedResponse> responses  = getFeedInfoForArticles(articles);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
@@ -132,14 +122,7 @@ public class ArticleController {
     public ResponseEntity<List<FeedResponse>> getPopularArticles() {
         List<ArticleDto> articles= articleService.searchPopularArticles();
 
-        // articleId를 키로 하고 각 article에 담긴 첫번째 향수 정보를 저장
-        List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
-
-        List<FeedResponse> responses  = new ArrayList<>();
-
-        for (int i = 0; i < articles.size(); i++) {
-            responses.add(new FeedResponse(articles.get(i), articlesPerfume.get(i)));
-        }
+        List<FeedResponse> responses  = getFeedInfoForArticles(articles);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
@@ -148,14 +131,8 @@ public class ArticleController {
     public ResponseEntity<List<FeedResponse>> getLatestArticles() {
         List<ArticleDto> articles= articleService.searchLatestArticles();
         log.info(articles.toString());
-        // articleId를 키로 하고 각 article에 담긴 첫번째 향수 정보를 저장
-        List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
 
-        List<FeedResponse> responses  = new ArrayList<>();
-
-        for (int i = 0; i < articles.size(); i++) {
-            responses.add(new FeedResponse(articles.get(i), articlesPerfume.get(i)));
-        }
+        List<FeedResponse> responses  = getFeedInfoForArticles(articles);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
@@ -165,16 +142,7 @@ public class ArticleController {
     public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@PathVariable int perfumeId) {
         List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);
         log.info(articles.toString());
-        // articleId를 키로 하고 각 article에 담긴 첫번째 향수 정보를 저장
-        List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
-
-        // TODO: 향수 관련 피드에는 사용자의 닉네임, 프로필사진, 좋아하는 향, 싫어하는 향 을 추가적으로 보내줘야함
-
-        List<FeedResponse> responses  = new ArrayList<>();
-
-        for (int i = 0; i < articles.size(); i++) {
-            responses.add(new FeedResponse(articles.get(i), articlesPerfume.get(i)));
-        }
+        List<FeedResponse> responses  = getFeedInfoForArticles(articles);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
@@ -294,24 +262,26 @@ public class ArticleController {
         }
     }
 
-    private List<PerfumeDto> getPerfumeInfoForArticles(List<ArticleDto> articles){
-        // articleId를 키로 하고 각 article에 담긴 향수ID를 받아서 저장
-        List<PerfumeDto> articlesPerfume = new ArrayList<>();
+    private List<FeedResponse> getFeedInfoForArticles(List<ArticleDto> articles){
+        // 각 article에 담긴 사용자 정보와 향수 정보를 담아둔 Dto의 리스트
+        List<FeedResponse> feedResponses = new ArrayList<>();
 
-        // articleId를 보고 article에 임베디드된 향수 가져오기
+        // articleId를 보고 사용자 정보와 향수 정보를 담음
         for(ArticleDto article: articles){
             // TODO: perfumeId가 하나만 필요함으로 추후 쿼리 최적화가 필요!!
             List<Integer> perfumeIdList = articleService.searchArticlePerfumeId(article.getArticleId());
             System.out.println(perfumeIdList);
             log.info(perfumeIdList.toString());
             // TODO: 공병 태그 (아마 perfumeId 0번 ), 즉 향수가 아무것도 임베디드 안된 상황을 구현 헤야함!!
-            // TODO: 향수 정보를 하나만 보내주면 됨으로
-            //  가장 첫번째 perfume id를 보고 향수 이름, 제조사, accord(상위 3개?), 사진(S3의 url로 대체될 예정) 받아와야함
 
+            UserInfoDto userInfoDto = userService.getUserInfo(article.getUserId());
+            
+            // 하나만 필요함으로 get(0)을 수행함
             PerfumeDto perfumeDto = perfumeService.getPerfume(perfumeIdList.get(0));
             log.info(String.valueOf(perfumeDto));
-            articlesPerfume.add(perfumeDto);
+
+            feedResponses.add(new FeedResponse(userInfoDto, article, perfumeDto));
         }
-        return articlesPerfume;
+        return feedResponses;
     }
 }

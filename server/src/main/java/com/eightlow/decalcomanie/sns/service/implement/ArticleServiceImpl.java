@@ -17,6 +17,8 @@ import com.eightlow.decalcomanie.sns.repository.ArticleRepository;
 import com.eightlow.decalcomanie.sns.repository.CommentRepository;
 import com.eightlow.decalcomanie.sns.repository.HeartRepository;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
+import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
+import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,12 +32,15 @@ import java.util.List;
 import java.util.Optional;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
 @Slf4j
 public class ArticleServiceImpl implements IArticleService {
+
+    private final IUserService userService;
 
     private final ArticleRepository articleRepository;
     private final ArticleMapper articleMapper;
@@ -172,7 +177,21 @@ public class ArticleServiceImpl implements IArticleService {
     @Transactional
     public List<ArticleDto> searchArticlesOfFollowingUser(String userId) {
         //TODO: User 파트가 완성되고 나면 user에서 follwer리스트를 받아와서 article을 찾아야함
-        return null;
+        List<FollowingResponse> followingResponses = userService.getFollowingUsers(userId);
+        System.out.println(followingResponses.toString());
+
+        List<String> userIds = followingResponses.stream()
+                .map(FollowingResponse::getUserId)
+                .collect(Collectors.toList());
+        log.info(String.valueOf(userIds));
+
+        List<ArticleDto> articles = new ArrayList<>();
+
+        for(String id : userIds) {
+            articles.addAll(searchArticleByUserId(id));
+        }
+
+        return articles;
     }
 
     @Override
@@ -390,7 +409,4 @@ public class ArticleServiceImpl implements IArticleService {
         log.info("ArticleServiceImpl::: likeArticle finish");
         return 200;
     }
-
-
-
 }
