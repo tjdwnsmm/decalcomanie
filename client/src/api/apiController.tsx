@@ -9,7 +9,7 @@ export default axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
-    userId: '07161c43-bc03-44f6-95c1-a56d440a23bf',
+    userId: USERID,
     // Authorization: `Bearer`, 토큰
   },
 });
