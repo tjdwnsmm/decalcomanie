@@ -14,7 +14,7 @@ public interface ArticlePerfumeRepository extends JpaRepository <ArticlePerfume,
     List<ArticlePerfume> findByArticleId(int articleId);
     List<ArticlePerfume> findByPerfumeId(int perfumeId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("DELETE FROM ArticlePerfume WHERE articleId = :articleId")
     void deleteAllByArticleId(@Param(value = "articleId") int articleId);
 }

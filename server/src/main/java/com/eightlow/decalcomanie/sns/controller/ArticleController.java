@@ -142,12 +142,16 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
     }
 
+    // 향수별 피드 조회
     @GetMapping("/perfume/{perfumeId}")
     public ResponseEntity<FeedResponse> getPerfumeArticles(@PathVariable int perfumeId) {
         List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);
         log.info(articles.toString());
         // articleId를 키로 하고 각 article에 담긴 첫번째 향수 정보를 저장
         List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
+
+        // TODO: 향수 관련 피드에는 사용자의 닉네임, 프로필사진, 좋아하는 향, 싫어하는 향 을 추가적으로 보내줘야함
+
         FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
         return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
     }
