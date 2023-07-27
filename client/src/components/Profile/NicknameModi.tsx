@@ -4,10 +4,9 @@ import { ReactComponent as SuccessSvg } from '../../assets/icon/success.svg';
 import { ReactComponent as ErrorSvg } from '../../assets/icon/error.svg';
 
 const NicknameInputContainer = styled.div`
-  width: 100%;
-  margin: 8px 0px;
+  margin: 8px 6px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   position: relative;
 `;

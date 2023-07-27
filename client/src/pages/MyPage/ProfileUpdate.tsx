@@ -66,9 +66,10 @@ const ImgModiBox = styled.div`
 `;
 
 const UserInfoName = styled.div`
-  padding-left: 5px;
+  padding: 0px 0px 2px 5px;
   font-size: 16px;
   font-weight: 700;
+  letter-spacing: 1px;
 `;
 
 const ProfileUpdate = () => {
@@ -84,27 +85,23 @@ const ProfileUpdate = () => {
         <ProfileImg src={user.img} alt="프로필 사진" />
         <ImgModiBox><img src="src/assets/img/pencil-float.png" width="26" height="26"/></ImgModiBox>
       </Profile>
-      <MarginFrame margin="20px 40px">
+      <MarginFrame margin="30px 40px">
         <UserInfoName>
           닉네임
         </UserInfoName>
         <NewNickname nickname={user.nickname}/>
       </MarginFrame>
-      <MarginFrame margin="20px 40px">
+      <MarginFrame margin="30px 40px">
         <UserInfoName>
-          좋아요
+          좋아요😊
         </UserInfoName>
-        <MarginFrame margin="10px">
-          <ScentModi scents={user.favorite} fav="좋아하는"/>
-        </MarginFrame>
+        <ScentModi scents={user.favorite} fav="좋아하는"/>
       </MarginFrame>
-      <MarginFrame margin="20px 40px">
+      <MarginFrame margin="30px 40px">
         <UserInfoName>
-          싫어요
+          싫어요 🙁
         </UserInfoName>
-        <MarginFrame margin="10px">
-          <ScentModi scents={user.hate} fav="싫어하는"/>
-        </MarginFrame>
+        <ScentModi scents={user.hate} fav="싫어하는"/>
       </MarginFrame>
       <PostButton>수정하기</PostButton>
       <CancleButton onClick={handleCancel}>취소</CancleButton>
