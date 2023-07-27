@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { styled } from 'styled-components';
-import { Main, MarginFrame } from '../../style';
+import { Main, MarginFrame, ConfirmButton, CenterFrame } from '../../style';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
 import NewNickname from '../../components/Profile/NicknameModi';
 import ScentModi from '../../components/Profile/ScentModi';
 import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
-import { PostButton, CancleButton } from '../../components/Button/Button';
 
 // 임시데이터
 const user: ProfileUpdateInfo = {
@@ -70,20 +69,49 @@ const ImgModiBox = styled.div`
 `;
 
 const UserInfoName = styled.div`
-  padding: 0px 0px 2px 5px;
+  padding: 0px 0px 2px 8px;
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 1px;
 `;
 
-const FixedPostButton = styled(PostButton)`
+const FixedPostButton = styled(ConfirmButton)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
-  bottom: 4px;
+  bottom: 12px;
+`;
+
+const WithdrawButton = styled.div`
+  display: flex;
+  justify-content: center;
+  color: var(--error-color);
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  background-color: var(--background-color);
+  cursor: pointer;
+`;
+
+const CenterBackground = styled(CenterFrame)`
+  background-color: var(--background-color);
+  padding: 35px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
 `;
 
 const ProfileUpdate = () => {
   const handleCancel = () => {
     window.location.href = '/mypage';
+  };
+
+  const handleWithdraw = () => {
+    // 회원 탈퇴 로직 구현
+    console.log('회원 탈퇴');
   };
 
   return (
@@ -114,8 +142,12 @@ const ProfileUpdate = () => {
         </UserInfoName>
         <ScentModi scents={user.hate} fav="싫어하는"/>
       </MarginFrame>
-      <FixedPostButton>수정하기</FixedPostButton>
-      {/* <CancleButton onClick={handleCancel}>취소</CancleButton> */}
+      <MarginFrame margin="20px 0 76px">
+        <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>
+      </MarginFrame>
+      <CenterBackground>
+        <FixedPostButton background="primary" color="primary" fontweight="700">수정하기</FixedPostButton>
+      </CenterBackground>
     </Main>
   );
 };

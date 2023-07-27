@@ -28,7 +28,7 @@ const DeleteButton = styled.div`
   margin-left: 10px;
   border: 2px solid var(--white-color);
   border-radius: 7px;
-  font-size: 14px;
+  font-size: 13px;
 `;
 
 const AddScent = styled.div`
@@ -54,8 +54,8 @@ const ScentInput = styled.input`
 
 const AddButton = styled.button<{ disabled?: boolean }>`
   display: flex;
-  padding: 0px 4px;
-  margin: 1px 6px;
+  padding: 0px 5px;
+  margin: 0px 8px;
   border: 2px solid var(--success-color);
   border-radius: 7px;
   font-size: 14px;
