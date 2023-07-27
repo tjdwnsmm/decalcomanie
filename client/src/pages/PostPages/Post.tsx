@@ -1,10 +1,10 @@
 import { styled } from 'styled-components';
-import { PostButton, CancleButton } from '../../components/Button/Button.tsx';
-import CustomizedSwitches from '../../components/Switch/Switch.tsx';
-import ContextBox from '../../components/Box/AddContext.tsx';
-import AddRating from '../../components/Rating/Rating.tsx';
-import AddCarousel from '../../components/Box/AddCarousel.tsx';
-import { Main } from '../../style/index.ts';
+import { PostButton, CancleButton } from '../../components/Button/Button.js';
+import CustomizedSwitches from '../../components/Switch/Switch.js';
+import ContextBox from '../../components/Box/AddContext.js';
+import AddRating from '../../components/Rating/Rating.js';
+import AddCarousel from '../../components/Box/AddCarousel.js';
+import { Main } from '../../style/index.js';
 
 const perfumes = [
   {

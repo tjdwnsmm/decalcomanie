@@ -3,8 +3,8 @@ import { MainFeed } from '../pages/FeedPage/MainFeed';
 import { PerfumeFeed } from '../pages/FeedPage/PerfumeFeed';
 import SearchTabPage from '../pages/SearchPage/SearchTabPage';
 import SearchMyPerfume from '../pages/SearchPage/SearchMyPerfume';
-import Post from '../pages/PostPage/Post';
-import PostDetail from '../pages/PostDetailPage/PostDetail';
+import Post from '../pages/PostPages/Post';
+import PostDetail from '../pages/PostPage/PostDetail';
 
 export default function Router() {
   return (
