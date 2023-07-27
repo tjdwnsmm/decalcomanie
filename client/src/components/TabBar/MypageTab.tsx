@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as ColoredBookmark } from '../../assets/icon/colored-bookmark.svg';
-import { ReactComponent as ColoredFeed } from '../../assets/icon/colored-feed.svg';
-import { ReactComponent as ColoredLike } from '../../assets/icon/colored-like.svg';
-import { ReactComponent as UncoloredBookmark } from '../../assets/icon/uncolored-bookmark.svg';
-import { ReactComponent as UncoloredFeed } from '../../assets/icon/uncolored-feed.svg';
-import { ReactComponent as UncoloredLike } from '../../assets/icon/uncolored-like.svg';
 
 // styled-components의 PolymorphicComponentProps 타입을 사용하여 props 의 타입을 미리 지정
 interface TabProps {
@@ -19,7 +13,7 @@ interface FeedTabProps {
 }
 
 export const FeedTab = ({ setNowActive }: FeedTabProps) => {
-  const [activeTab, setActiveTab] = useState('post');
+  const [activeTab, setActiveTab] = useState('following');
 
   //탭을 클릭시
   const handleTabClick = (tab: string) => {
@@ -29,17 +23,23 @@ export const FeedTab = ({ setNowActive }: FeedTabProps) => {
 
   return (
     <TabContainer>
-      <Tab active={activeTab === 'post'} onClick={() => handleTabClick('post')}>
-        {activeTab === 'post' ? <ColoredFeed /> : <UncoloredFeed />}
+      <Tab
+        active={activeTab === 'following'}
+        onClick={() => handleTabClick('following')}
+      >
+        팔로잉
       </Tab>
       <Tab
-        active={activeTab === 'popularity'}
-        onClick={() => handleTabClick('popularity')}
+        active={activeTab === 'popular'}
+        onClick={() => handleTabClick('popular')}
       >
-        {activeTab === 'bookmark' ? <ColoredBookmark /> : <UncoloredBookmark />}
+        인기순
       </Tab>
-      <Tab active={activeTab === 'like'} onClick={() => handleTabClick('like')}>
-        {activeTab === 'like' ? <ColoredLike /> : <UncoloredLike />}
+      <Tab
+        active={activeTab === 'latest'}
+        onClick={() => handleTabClick('latest')}
+      >
+        최신순
       </Tab>
     </TabContainer>
   );

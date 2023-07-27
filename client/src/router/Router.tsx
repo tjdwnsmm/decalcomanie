@@ -8,6 +8,8 @@ import PostDetail from '../pages/PostDetailPage/PostDetail';
 import { MyDrawerPage } from '../pages/DrawerPage/MyDrawerPage';
 import FollowList from '../pages/MyPage/FollowList';
 import Post from '../pages/PostPages/Post';
+import PostDetail from '../pages/PostPage/PostDetail';
+import Mypage from '../pages/MyPage/Mypage';
 import MainPage from '../pages/MainPage/MainPage';
 
 export default function Router() {
@@ -20,6 +22,7 @@ export default function Router() {
         <Route path="/search" element={<SearchTabPage />}></Route>
         <Route path="/search-myperfume" element={<SearchMyPerfume />}></Route>
         <Route path="/post" element={<Post />}></Route>
+        <Route path="/mypage" element={<Mypage />}></Route>
         <Route path="/post-detail/:id" element={<PostDetail />}></Route>
         <Route path="/perfume-detail/:id" element={<PerfumeDetail />}></Route>
         <Route path="/my-drawer" element={<MyDrawerPage />}></Route>
