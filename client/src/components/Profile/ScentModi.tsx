@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
+import { ReactComponent as CancelSvg } from '../../assets/icon/input-cancel.svg';
 
 interface ScentModiProps {
   scents: string[];
-  fav :string;
+  fav: string;
 }
 
 const ScentList = styled.div`
@@ -20,6 +21,7 @@ const ScentItem = styled.div`
   border-radius: 7px;
   display: flex;
   align-items: center;
+  gap: 8px;
   font-size: 14px;
 `;
 
@@ -32,7 +34,7 @@ const DeleteButton = styled.div`
 `;
 
 const AddScent = styled.div`
-  margin-top: 10px;
+  margin-top: 15px;
   display: flex;
 `;
 
@@ -101,7 +103,10 @@ function ScentModi({ scents, fav }: ScentModiProps) {
         {scentList.map((scent, idx) => (
           <ScentItem key={idx}>
             {scent}
-            <DeleteButton onClick={() => handleDeleteScent(idx)}>x</DeleteButton>
+            <CancelSvgColor onClick={() => handleDeleteScent(idx)} />
+            {/* <DeleteButton onClick={() => handleDeleteScent(idx)}>
+              x
+            </DeleteButton> */}
           </ScentItem>
         ))}
       </ScentList>
@@ -112,13 +117,23 @@ function ScentModi({ scents, fav }: ScentModiProps) {
           onChange={(e) => setNewScent(e.target.value)}
           onKeyPress={handleAddScent}
         />
-        <AddButton onClick={handleAddScent} disabled={!newScent}>+</AddButton>
+        <AddButton onClick={handleAddScent} disabled={!newScent}>
+          +
+        </AddButton>
       </AddScent>
       {showMaxScentMessage && (
-        <MaxScentMessage>향 계열은 최대 3개까지만 추가할 수 있습니다.</MaxScentMessage>
+        <MaxScentMessage>
+          향 계열은 최대 3개까지만 추가할 수 있습니다.
+        </MaxScentMessage>
       )}
     </MarginFrame>
   );
 }
 
 export default ScentModi;
+
+const CancelSvgColor = styled(CancelSvg)`
+  g path {
+    fill: var(--white-color);
+  }
+`;
