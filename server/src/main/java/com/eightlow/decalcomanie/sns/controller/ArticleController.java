@@ -1,38 +1,31 @@
 package com.eightlow.decalcomanie.sns.controller;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
-import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
-
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.GradeDto;
 import com.eightlow.decalcomanie.sns.dto.HeartDto;
 import com.eightlow.decalcomanie.sns.dto.request.CommentRequest;
 import com.eightlow.decalcomanie.sns.dto.request.CreateArticleRequest;
-import com.eightlow.decalcomanie.sns.dto.request.CreateCommentRequest;
 import com.eightlow.decalcomanie.sns.dto.request.UpdateArticleRequest;
 import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
 import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.sns.mapper.ArticleDtoMapper;
 import com.eightlow.decalcomanie.sns.mapper.CommentDtoMapper;
-import com.eightlow.decalcomanie.sns.mapper.GradeMapper;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
 import com.eightlow.decalcomanie.sns.service.IGradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/sns")
@@ -103,49 +96,73 @@ public class ArticleController {
 
     // 사용자가 쓴 글을 조회(내가 쓴글 조회)
     @GetMapping("/user/{userId}")
-    public ResponseEntity<FeedResponse> getArticleByUserId(@PathVariable String userId) {
+    public ResponseEntity<List<FeedResponse>> getArticleByUserId(@PathVariable String userId) {
         System.out.println(userId);
         List<ArticleDto> articles = articleService.searchArticleByUserId(userId);
         System.out.println(articles);
         List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
-        FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
-        return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
+
+        List<FeedResponse> responses  = new ArrayList<>();
+
+        for (int i = 0; i < articles.size(); i++) {
+            responses.add(new FeedResponse(articles.get(i), articlesPerfume.get(i)));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     // 팔로워의 피드를 조희
     @GetMapping("/feed/following")
-    public ResponseEntity<FeedResponse> getFollowingArticles(@RequestHeader(value = "userId") String userId) {
+    public ResponseEntity<List<FeedResponse>> getFollowingArticles(@RequestHeader(value = "userId") String userId) {
         // 추후 구현 예정입니다.
         // TODO: 사용자의 follower list를 받아와서 그 사용자들의 피드를 조회해야함 (정렬은 최신순으로)
         List<ArticleDto> articles = null;
         List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
-        FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
-        return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
+
+        List<FeedResponse> responses  = new ArrayList<>();
+
+        for (int i = 0; i < articles.size(); i++) {
+            responses.add(new FeedResponse(articles.get(i), articlesPerfume.get(i)));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     @GetMapping("/feed/popularity")
-    public ResponseEntity<FeedResponse> getPopularArticles() {
+    public ResponseEntity<List<FeedResponse>> getPopularArticles() {
         List<ArticleDto> articles= articleService.searchPopularArticles();
 
         // articleId를 키로 하고 각 article에 담긴 첫번째 향수 정보를 저장
         List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
-        FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
-        return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
+
+        List<FeedResponse> responses  = new ArrayList<>();
+
+        for (int i = 0; i < articles.size(); i++) {
+            responses.add(new FeedResponse(articles.get(i), articlesPerfume.get(i)));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     @GetMapping("/feed/latest")
-    public ResponseEntity<FeedResponse> getLatestArticles() {
+    public ResponseEntity<List<FeedResponse>> getLatestArticles() {
         List<ArticleDto> articles= articleService.searchLatestArticles();
         log.info(articles.toString());
         // articleId를 키로 하고 각 article에 담긴 첫번째 향수 정보를 저장
         List<PerfumeDto> articlesPerfume = getPerfumeInfoForArticles(articles);
-        FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
-        return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
+
+        List<FeedResponse> responses  = new ArrayList<>();
+
+        for (int i = 0; i < articles.size(); i++) {
+            responses.add(new FeedResponse(articles.get(i), articlesPerfume.get(i)));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     // 향수별 피드 조회
     @GetMapping("/perfume/{perfumeId}")
-    public ResponseEntity<FeedResponse> getPerfumeArticles(@PathVariable int perfumeId) {
+    public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@PathVariable int perfumeId) {
         List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);
         log.info(articles.toString());
         // articleId를 키로 하고 각 article에 담긴 첫번째 향수 정보를 저장
@@ -153,8 +170,13 @@ public class ArticleController {
 
         // TODO: 향수 관련 피드에는 사용자의 닉네임, 프로필사진, 좋아하는 향, 싫어하는 향 을 추가적으로 보내줘야함
 
-        FeedResponse feedResponse = new FeedResponse(articles, articlesPerfume);
-        return ResponseEntity.status(HttpStatus.OK).body(feedResponse);
+        List<FeedResponse> responses  = new ArrayList<>();
+
+        for (int i = 0; i < articles.size(); i++) {
+            responses.add(new FeedResponse(articles.get(i), articlesPerfume.get(i)));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     // 조회 파트 끝

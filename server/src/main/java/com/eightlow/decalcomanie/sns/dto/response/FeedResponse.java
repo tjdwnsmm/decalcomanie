@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class FeedResponse {
-    private List<ArticleDto> articleDtos;
-    private List<PerfumeDto> perfumeDtos;
+    private ArticleDto articleDtos;
+    private PerfumeDto perfumeDtos;
 
 }
