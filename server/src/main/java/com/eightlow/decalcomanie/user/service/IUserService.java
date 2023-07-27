@@ -23,5 +23,5 @@ public interface IUserService {
 
     List<FollowerResponse> getFollowers(String userId);
 
-    UserInfoDto getUserInfo(Follow follow);
+    UserInfoDto getUserInfo(String userId);
 }
