@@ -36,10 +36,17 @@ const SearchTabPage: React.FC = () => {
   >(null);
 
   useEffect(() => {
-    axios.post('/perfume/search').then((res) => {
-      setSearchResults(res.data);
-      setOriginSearchResults(res.data);
-    });
+    const storedData = localStorage.getItem('searchResults');
+
+    if (storedData) {
+      setSearchResults(JSON.parse(storedData));
+    } else {
+      axios.post('/perfume/search').then((res) => {
+        setSearchResults(res.data);
+        setOriginSearchResults(res.data);
+        localStorage.setItem('searchResults', JSON.stringify(res.data));
+      });
+    }
   }, []);
 
   /**
