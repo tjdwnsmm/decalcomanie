@@ -25,7 +25,11 @@ const PerfumeInfoBox = ({ feed }: PerfumeInfoBoxProps) => (
     <PerfumeBox>
       <TextInfo>
         <PerfumeBrand>{feed.brandName}</PerfumeBrand>
-        <PerfumeName>{feed.nameOrg}</PerfumeName>
+        <PerfumeName>
+          {feed.nameOrg.length > 20
+            ? feed.nameOrg.slice(0, 20) + '...'
+            : feed.nameOrg}
+        </PerfumeName>
         <PerfumeScent>{extractAccordNames(feed.accord)}</PerfumeScent>
       </TextInfo>
       <ImgBox>
@@ -37,8 +41,8 @@ const PerfumeInfoBox = ({ feed }: PerfumeInfoBoxProps) => (
 
 export default PerfumeInfoBox;
 const PerfumeBox = styled(SecondaryBox)`
-  justify-content: space-around;
-  padding: 25px 0px;
+  justify-content: space-between;
+  padding: 25px 20px;
   align-items: center;
 `;
 const TextInfo = styled.div`

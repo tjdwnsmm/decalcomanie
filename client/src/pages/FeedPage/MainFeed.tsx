@@ -8,6 +8,7 @@ import axios from '../../api/apiController';
 import { EachFeedInfo } from '../../types/FeedInfoType';
 import Spinner from '../../components/common/Spinner';
 import { useNavigate } from 'react-router-dom';
+import { styled } from 'styled-components';
 
 export const MainFeed = () => {
   //default 탭 : following
@@ -39,11 +40,21 @@ export const MainFeed = () => {
   return (
     <Main>
       <FeedTab setNowActive={setNowActive} />
-      {feeds.map((feed, idx) => (
-        <FeedPage key={idx} feed={feed} handleDetail={handleDetail} />
-      ))}
+      <Feeds>
+        {feeds.map((feed, idx) => (
+          <FeedPage key={idx} feed={feed} handleDetail={handleDetail} />
+        ))}
+      </Feeds>
       <FloatingWriteBtn />
       <BottomNav />
     </Main>
   );
 };
+
+const Feeds = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  padding-bottom: 200px;
+`;
