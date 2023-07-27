@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FollowInfo } from '../../types/FollowInfoType';
+import { FollowInfo } from '../../types/ProfileInfoType';
 import { FollowBtn } from '../Button/FollowBtn';
 
 interface FollowBoxProps {
