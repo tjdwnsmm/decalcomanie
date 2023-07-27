@@ -22,11 +22,15 @@ const user: ProfileUpdateInfo = {
 };
 
 const PageName = styled.div`
+  background-color: var(--background-color);
   text-align: center;
   font-size: 20px;
   font-weight: 600;
-  padding: 20px;
-  position: relative;
+  padding: 20px 0 10px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1;
 `;
 
@@ -72,6 +76,11 @@ const UserInfoName = styled.div`
   letter-spacing: 1px;
 `;
 
+const FixedPostButton = styled(PostButton)`
+  position: absolute;
+  bottom: 4px;
+`;
+
 const ProfileUpdate = () => {
   const handleCancel = () => {
     window.location.href = '/mypage';
@@ -79,8 +88,10 @@ const ProfileUpdate = () => {
 
   return (
     <Main>
-      <PageName>회원 정보 수정</PageName>
-      <CancleBtn onClick={handleCancel}><CloseSvg/></CancleBtn>
+      <MarginFrame margin="64px">
+        <PageName>회원 정보 수정</PageName>
+        <CancleBtn onClick={handleCancel}><CloseSvg/></CancleBtn>
+      </MarginFrame>
       <Profile>
         <ProfileImg src={user.img} alt="프로필 사진" />
         <ImgModiBox><img src="src/assets/img/pencil-float.png" width="26" height="26"/></ImgModiBox>
@@ -93,7 +104,7 @@ const ProfileUpdate = () => {
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>
-          좋아요😊
+          좋아요 😊
         </UserInfoName>
         <ScentModi scents={user.favorite} fav="좋아하는"/>
       </MarginFrame>
@@ -103,8 +114,8 @@ const ProfileUpdate = () => {
         </UserInfoName>
         <ScentModi scents={user.hate} fav="싫어하는"/>
       </MarginFrame>
-      <PostButton>수정하기</PostButton>
-      <CancleButton onClick={handleCancel}>취소</CancleButton>
+      <FixedPostButton>수정하기</FixedPostButton>
+      {/* <CancleButton onClick={handleCancel}>취소</CancleButton> */}
     </Main>
   );
 };
