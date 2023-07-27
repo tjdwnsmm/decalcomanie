@@ -36,7 +36,7 @@ const SearchMyPerfume: React.FC = () => {
           localStorage.setItem('searchResults', JSON.stringify(res.data));
         });
     }
-  }, [searchResults]);
+  }, []);
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
    */
