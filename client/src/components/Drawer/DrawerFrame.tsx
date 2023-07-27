@@ -17,16 +17,21 @@ export const DrawerFrame: React.FC<DrawerFrameProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [clickIdx, setClickIdx] = useState(-1);
-  const handleClickOpen = (index: number) => {
+  const [perfumeIdx, setPerfumeIdx] = useState(-1);
+
+  const handleClickOpen = (index: number, perfumeId: number) => {
     setOpen(true);
     setClickIdx(index);
+    setPerfumeIdx(perfumeId);
   };
+
   return (
     <>
       <ConfirmAlert
         open={open}
         setOpen={setOpen}
         handlePerfume={handlePerfume}
+        perfumeId={perfumeIdx}
         deleteIdx={stairNum * 3 + clickIdx}
       />
       <RowFrame>
@@ -34,7 +39,7 @@ export const DrawerFrame: React.FC<DrawerFrameProps> = ({
           <PerfumeContainer key={index}>
             <CancelSvg2
               onClick={() => {
-                handleClickOpen(index);
+                handleClickOpen(index, perfume.perfumeId);
               }}
             />
             <PerfumeImg src={perfume.picture} />

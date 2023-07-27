@@ -148,7 +148,11 @@ const SearchTabPage: React.FC = () => {
               {/* 검색 결과 */}
 
               {searchResults ? (
-                <SearchResults results={searchResults} isButton={false} />
+                <SearchResults
+                  results={searchResults}
+                  isButton={false}
+                  addUrl=""
+                />
               ) : (
                 <MarginFrame margin="120px auto">
                   <Spinner />

@@ -65,7 +65,11 @@ const SearchMyPerfume: React.FC = () => {
         dataList={originSearchResults}
       />
       {searchKeyword.length === 0 && (
-        <SearchResults results={searchResults} isButton={true} />
+        <SearchResults
+          results={searchResults}
+          isButton={true}
+          addUrl="/user/perfume/manage"
+        />
       )}
     </Main>
   );

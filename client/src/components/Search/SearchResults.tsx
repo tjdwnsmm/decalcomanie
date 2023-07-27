@@ -5,17 +5,23 @@ import SecondaryBox from '../Box/SecondaryBox';
 import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
 import Spinner from '../common/Spinner';
 import { useNavigate } from 'react-router-dom';
+import axios, { USERID } from '../../api/apiController';
 
 interface SearchResultsProps {
   results: PerfumeDetail[] | null;
   isButton: boolean;
+  addUrl: string;
 }
 
 /**
  * @param results : API 호출 결과 데이터
  * @param isButton : 등록 버튼 있는 지 없는 지 여부
  */
-const SearchResults: React.FC<SearchResultsProps> = ({ results, isButton }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({
+  results,
+  isButton,
+  addUrl,
+}) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -26,18 +32,23 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, isButton }) => {
   const handleClick = (perfumeId: number) => {
     navigate(`/perfume-detail/${perfumeId}`);
   };
+
+  const handleAddPerfume = (perfumeId: number) => {
+    axios
+      .post(addUrl, { perfumeId: perfumeId, userId: USERID })
+      .then((res) => console.log(res.data));
+    navigate(`/my-drawer`);
+  };
+
   return (
     <>
       {!loading && results?.length ? (
         <PerfumeList>
           <MarginFrame margin="-4px 0" />
           {results.map((feed) => (
-            <div
-              key={feed.perfumeId}
-              onClick={() => handleClick(feed.perfumeId)}
-            >
+            <div key={feed.perfumeId}>
               <PerfumeBox>
-                <PerfumeInfo>
+                <PerfumeInfo onClick={() => handleClick(feed.perfumeId)}>
                   <TextInfo>
                     <PerfumeBrand>{feed.brandName}</PerfumeBrand>
                     <PerfumeName>{feed.nameOrg}</PerfumeName>
@@ -55,7 +66,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, isButton }) => {
                   </ImgBox>
                 </PerfumeInfo>
                 <ButtonFrame>
-                  {isButton && <Button>추가하기</Button>}
+                  {isButton && (
+                    <Button onClick={() => handleAddPerfume(feed.perfumeId)}>
+                      추가하기
+                    </Button>
+                  )}
                 </ButtonFrame>
               </PerfumeBox>
               <MarginFrame margin="10px 0" />
