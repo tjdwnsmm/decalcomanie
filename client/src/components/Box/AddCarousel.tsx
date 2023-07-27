@@ -28,7 +28,6 @@ const NotEmptyBox = styled.div`
   width: 360px;
   height: 150px;
   border: 1.25px dashed var(--primary-color);
-  box-shadow: 5px 5px 5px var(--gray-color);
   margin: 5px 5px;
   border-radius: 10px;
 `;
@@ -70,7 +69,6 @@ const PerfumeReviewBoxContainer = styled.div`
   width: 360px;
   height: 150px;
   border: 1.25px solid var(--primary-color);
-  box-shadow: 5px 5px 5px var(--gray-color);
   margin: 5px 5px;
   border-radius: 10px;
 `;
@@ -164,5 +162,4 @@ export default function AddCarousel({ perfumes }: PerfumeReviewCarouselProps) {
       )}
     </>
   );
-};
-
+}

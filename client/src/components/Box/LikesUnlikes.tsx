@@ -17,7 +17,6 @@ const LikeBox = styled.div`
   height: 25px;
   border-radius: 4px;
   background-color: var(--primary-color);
-  box-shadow: 5px 5px 5px var(--gray-color);
   color: var(--white-color);
   font-size: 14px;
   font-weight: bold;

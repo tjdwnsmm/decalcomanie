@@ -10,7 +10,6 @@ const Image = styled.div`
   background-image: ${({ imageUrl }: { imageUrl: string }) =>
     imageUrl ? `url(${imageUrl})` : 'none'};
   background-size: cover;
-  box-shadow: 5px 5px 5px var(--gray-color);
   z-index: 0;
 `;
 

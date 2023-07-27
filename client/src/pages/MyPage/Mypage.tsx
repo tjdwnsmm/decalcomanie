@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { styled } from 'styled-components';
-import { Main } from '../../style';
+import { Main, MarginFrame } from '../../style';
 import { MyPageTab } from '../../components/TabBar/MypageTab.tsx';
 import ProfileImage from '../../components/My/ProfileImage';
 import OptionMenu from '../../components/My/OptionMenu';
@@ -51,7 +51,7 @@ const splitFeeds = (arr) => {
 // 컨테이너 스타일 정의
 const MypageContainer = styled.div`
   display: flex;
-  padding-bottom: 100px;
+  padding-bottom: 50px;
 `;
 
 // 열 스타일 정의
@@ -65,26 +65,29 @@ export default function Mypage() {
 
   return (
     <Main>
-      <OptionMenu />
-      <ProfileImage />
-      <MypageText size="18px" fontweight="bold" textalign="center">
-        닉네임은여덟글자
-      </MypageText>
-      <LikesUnlikes />
-      <ProfileStats />
-      <MyPageTab setNowActive={setNowActive} />
-      <MypageContainer>
-        <Column>
-          {firstColumnFeeds.map((img, idx) => (
-            <ProfileTabs key={idx} feed={{ perfumeInfo: { img } }} />
-          ))}
-        </Column>
-        <Column>
-          {secondColumnFeeds.map((img, idx) => (
-            <ProfileTabs key={idx} feed={{ perfumeInfo: { img } }} />
-          ))}
-        </Column>
-      </MypageContainer>
+      <MarginFrame margin="10px 0">
+        <OptionMenu />
+        <ProfileImage />
+        <MypageText size="18px" fontweight="bold" textalign="center">
+          닉네임은여덟글자
+        </MypageText>
+        <LikesUnlikes />
+        <ProfileStats />
+        <MyPageTab setNowActive={setNowActive} />
+        <MypageContainer>
+          <Column>
+            {firstColumnFeeds.map((img, idx) => (
+              <ProfileTabs key={idx} feed={{ perfumeInfo: { img } }} />
+            ))}
+          </Column>
+          <Column>
+            {secondColumnFeeds.map((img, idx) => (
+              <ProfileTabs key={idx} feed={{ perfumeInfo: { img } }} />
+            ))}
+          </Column>
+        </MypageContainer>
+      </MarginFrame>
+
       <BottomNav />
     </Main>
   );

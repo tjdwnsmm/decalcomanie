@@ -46,7 +46,6 @@ const StatsBox = styled.div`
   height: 70px;
   border-radius: 20px;
   background-color: var(--white-color);
-  box-shadow: 5px 5px 5px var(--gray-color);
 `;
 
 const CountBox = styled.div`

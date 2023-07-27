@@ -14,7 +14,6 @@ const StyledReactQuill = styled(ReactQuill)`
   font-weight: bold;
   border-radius: 10px;
   background-color: var(--white-color);
-  box-shadow: 2px 2px 2px var(--gray-color);
 
   .ql-container.ql-snow {
     border: none;
