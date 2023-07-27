@@ -8,10 +8,9 @@ import ScentBall from '../../components/Perfume/Detail/ScentBall';
 import { useEffect, useState } from 'react';
 import { ScentNotes } from '../../components/Perfume/Detail/ScentNotes';
 import MoreInfo from '../../components/Perfume/Detail/MoreInfo';
-import axios from '../../api/apiController';
-import { useParams } from 'react-router-dom';
+import axios, { USERID } from '../../api/apiController';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const USERID = '07161c43-bc03-44f6-95c1-a56d440a23bf';
 const PerfumeDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [perfume, setPerfume] = useState<PerfumeDetail | null>(null);
@@ -30,6 +29,16 @@ const PerfumeDetail = () => {
 
   const handleCloseModal = () => {
     setModalOpen(false);
+  };
+
+  const navigate = useNavigate();
+
+  const handleFeed = () => {
+    navigate(`/perfume-feed/${id}`);
+  };
+
+  const handleBack = () => {
+    navigate('/search');
   };
 
   if (!perfume) {
@@ -66,9 +75,17 @@ const PerfumeDetail = () => {
         </CenterFrame>
         <MarginFrame margin="10px"></MarginFrame>
         <CenterFrame>
-          <ConfirmButton color="primary" background="primary" fontweight="500">
+          <ConfirmButton
+            color="primary"
+            background="primary"
+            fontweight="500"
+            onClick={handleFeed}
+          >
             다른 사용자들의 글을 구경해보세요
           </ConfirmButton>
+        </CenterFrame>
+        <CenterFrame>
+          <BackToList onClick={handleBack}>목록으로 돌아가기</BackToList>
         </CenterFrame>
       </MarginFrame>
       {modalOpen && (
@@ -126,4 +143,10 @@ const PerfumeName = styled.div`
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+`;
+
+const BackToList = styled.div`
+  color: var(--primary-color);
+  margin-top: 18px;
+  font-weight: 700;
 `;

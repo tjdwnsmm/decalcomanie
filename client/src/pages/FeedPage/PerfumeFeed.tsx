@@ -1,93 +1,86 @@
-import { Main } from '../../style';
-import FloatingWriteBtn from '../../components/Button/FloatingWriteBtn';
-import { FeedProps } from '../../types/FeedInfoType';
+import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
+import { FeedDetail } from '../../types/FeedInfoType';
 import PerfumeInfoBox from '../../components/Perfume/PerfumeInfoBox';
 import { styled } from 'styled-components';
 import FeedPageOnly from '../../components/Feed/FeedPageOnly';
-
-//API 호출 전 임시데이터
-const feeds: FeedProps[] = [
-  {
-    perfumeInfo: {
-      name: '탐다오',
-      brand: '딥디크',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임1',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도개인적으로도 너무 마음에 들고 회 ...',
-    favScent: ['우디', '플로럴', '시트러스'],
-    nofavScent: ['머스크', '코코넛', '스파이시'],
-  },
-  {
-    perfumeInfo: {
-      name: '탐다오',
-      brand: '딥디크',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임2',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도개인적으로도 너무 마음에 들고 회 ...',
-    favScent: ['우디', '플로럴', '시트러스'],
-    nofavScent: ['머스크', '코코넛'],
-  },
-  {
-    perfumeInfo: {
-      name: '탐다오',
-      brand: '딥디크',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임3',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도개인적으로도 너무 마음에 들고 회 ...',
-    favScent: ['우디', '플로럴', '시트러스'],
-    nofavScent: ['머스크', '코코넛'],
-  },
-];
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from '../../api/apiController';
+import Spinner from '../../components/common/Spinner';
+import { ReactComponent as BackSvg } from '../../assets/icon/prevBack.svg';
 
 export const PerfumeFeed = () => {
+  const { id } = useParams<{ id: string }>();
+  const [feed, setFeed] = useState<FeedDetail | null>(null);
+
+  useEffect(() => {
+    axios.get(`/sns/perfume/${id}`).then((res) => {
+      setFeed(res.data);
+      console.log(res.data);
+    });
+  }, []);
+
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate(`/perfume-detail/${id}`);
+  };
+
+  if (!feed) {
+    return <Spinner />;
+  }
+
+  if (feed.articleDtos.length === 0 && feed.perfumeDtos.length === 0) {
+    return (
+      <>
+        <ErrorTxt>검색 결과가 없습니다 😥</ErrorTxt>
+        <MarginFrame margin="15px 25px 0">
+          <CenterFrame>
+            <ConfirmButton
+              color="primary"
+              background="primary"
+              onClick={handleBack}
+            >
+              상세 페이지로 돌아가기
+            </ConfirmButton>
+          </CenterFrame>
+        </MarginFrame>
+      </>
+    );
+  }
   return (
     <Main>
+      <MarginFrame margin="20px 25px 0">
+        <BackSvg onClick={handleBack} />
+      </MarginFrame>
+
       <PerfumeFeedBox>
-        <PerfumeInfoBox
-          brand={feeds[0].perfumeInfo.brand}
-          name={feeds[0].perfumeInfo.name}
-          scent={feeds[0].perfumeInfo.scent}
-          img={feeds[0].perfumeInfo.img}
-        />
+        <PerfumeInfoBox feed={feed.perfumeDtos[0]} />
       </PerfumeFeedBox>
 
       <FeedBody>
-        {feeds.map((feed, idx) => (
-          <FeedPageOnly key={idx} feed={feed} />
+        {feed.articleDtos.map((eachFeed, idx) => (
+          <FeedPageOnly key={idx} feed={eachFeed} />
         ))}
       </FeedBody>
-      <FloatingWriteBtn />
     </Main>
   );
 };
 
 const PerfumeFeedBox = styled.div`
-  margin-top: 22px;
+  margin-top: 12px;
   padding: 0 18px;
 `;
 const FeedBody = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+`;
+
+const ErrorTxt = styled.div`
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 23px;
+  text-align: center;
+  margin-top: 270px;
 `;

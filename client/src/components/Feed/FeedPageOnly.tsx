@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import { FeedProps } from '../../types/FeedInfoType';
+import { ArticleDetail } from '../../types/FeedInfoType';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { CommentBtn } from '../Button/CommentBtn';
 
 interface FeedComponentProps {
-  feed: FeedProps;
+  feed: ArticleDetail;
 }
 
 /**
@@ -18,20 +18,20 @@ ContentBox : 피드 게시물 내용
 IconBox : 좋아요 아이콘, 좋아요 수, 댓글 수, 댓글 아이콘
 */
 
+const favScent = ['우디', '플로럴', '시트러스'];
+const nofavScent = ['스파이시', '머스크'];
 const FeedPageOnly = ({ feed }: FeedComponentProps) => (
   <>
     <FeedBox>
       <InfoBox>
         <ProfileBox>
           <LeftProfile>
-            <img src={feed.profileImg} />
+            <img src="src/assets/img/profile-user.png" />
             <ProfileInfoBox>
-              {feed.writer}
+              {'닉네임'}
               <Scent>
-                <FavScent>{feed.favScent?.map((fav) => `#${fav}  `)}</FavScent>
-                <NoFavScent>
-                  {feed.nofavScent?.map((fav) => `#${fav}  `)}
-                </NoFavScent>
+                <FavScent>{favScent?.map((fav) => `#${fav}  `)}</FavScent>
+                <NoFavScent>{nofavScent?.map((fav) => `#${fav}  `)}</NoFavScent>
               </Scent>
             </ProfileInfoBox>
           </LeftProfile>
@@ -41,7 +41,7 @@ const FeedPageOnly = ({ feed }: FeedComponentProps) => (
 
       <ContentBox>{feed.content}</ContentBox>
       <IconBox>
-        <LikeBtn count={feed.like} />
+        <LikeBtn count={feed.heart} />
         <CommentBtn count={feed.comment} />
       </IconBox>
     </FeedBox>

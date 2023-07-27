@@ -16,7 +16,7 @@ export default function Router() {
       <Routes>
         <Route path="/" element={<MainPage />}></Route>
         <Route path="/main-feed" element={<MainFeed />}></Route>
-        <Route path="/perfume-feed" element={<PerfumeFeed />}></Route>
+        <Route path="/perfume-feed/:id" element={<PerfumeFeed />}></Route>
         <Route path="/search" element={<SearchTabPage />}></Route>
         <Route path="/search-myperfume" element={<SearchMyPerfume />}></Route>
         <Route path="/post" element={<Post />}></Route>
