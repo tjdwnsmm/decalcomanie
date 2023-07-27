@@ -43,8 +43,8 @@ public class PerfumeApiController {
     }
 
     // 향수 상세보기
-    @GetMapping("/detail/{perfumeId}")
-    public ResponseEntity<PerfumeDto> perfumeDetail(@RequestHeader(value = "userId") String userId, @PathVariable int perfumeId) {
+    @GetMapping("/detail/{userId}/{perfumeId}")
+    public ResponseEntity<PerfumeDto> perfumeDetail(@PathVariable("userId") String userId, @PathVariable("perfumeId") int perfumeId) {
         if(!perfumeService.isExistingPerfume(perfumeId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -99,8 +99,8 @@ public class PerfumeApiController {
     }
 
     // 찜한 향수 보기
-    @GetMapping("/picked")
-    public ResponseEntity<List<PerfumeDto>> picked(@RequestHeader("userId") String userId) {
+    @GetMapping("/picked/{userId}")
+    public ResponseEntity<List<PerfumeDto>> picked(@PathVariable("userId") String userId) {
         return new ResponseEntity<>(perfumeService.findAllPickedPerfume(userId), HttpStatus.OK);
     }
 

@@ -1,7 +1,7 @@
 package com.eightlow.decalcomanie.user.entity;
 
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumePickRequest;
-import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
+import com.eightlow.decalcomanie.user.dto.FollowDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,17 +13,17 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 
 @Entity
-@IdClass(UserPerfumeDto.class)
 @Getter
+@IdClass(FollowDto.class)
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserPerfume {
+public class Follow {
     @Id
-    @Column(name="userId")
-    private String userId;
+    @Column(name="following")
+    private String following;
 
     @Id
-    @Column(name="perfumeId")
-    private int perfumeId;
+    @Column(name="followed")
+    private String followed;
 }

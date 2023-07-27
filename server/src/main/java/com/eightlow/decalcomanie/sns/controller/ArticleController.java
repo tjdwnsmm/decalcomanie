@@ -8,6 +8,7 @@ import com.eightlow.decalcomanie.sns.dto.ArticleDto;
 
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.GradeDto;
+import com.eightlow.decalcomanie.sns.dto.HeartDto;
 import com.eightlow.decalcomanie.sns.dto.request.CommentRequest;
 import com.eightlow.decalcomanie.sns.dto.request.CreateArticleRequest;
 import com.eightlow.decalcomanie.sns.dto.request.CreateCommentRequest;
@@ -235,6 +236,21 @@ public class ArticleController {
         articleService.modifyCommentCount(commentDto.getArticleId());
 
         return resultMessage(statusCode);
+    }
+
+
+    /* 피드 좋아요, 북마크 기능 파트*/
+
+    @PostMapping("/like")
+    public ResponseEntity<Response> likeArticle(@RequestBody HeartDto heartDto) {
+        int status = articleService.likeArticle(heartDto);
+        return resultMessage(status);
+    }
+
+    @PostMapping("/dislike")
+    public ResponseEntity<Response> dislikeArticle(@RequestBody HeartDto heartDto) {
+        int status = articleService.dislikeArticle(heartDto);
+        return resultMessage(status);
     }
 
     private ResponseEntity<Response> resultMessage(int status) {
