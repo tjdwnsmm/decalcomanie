@@ -9,7 +9,7 @@ interface FeedComponentProps {
 const FeedBox = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 15px 15px;
+  padding: 10px;
 `;
 
 const ProfileTabs = ({ feed }: FeedComponentProps) => (

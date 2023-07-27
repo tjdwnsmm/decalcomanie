@@ -51,7 +51,8 @@ const splitFeeds = (arr) => {
 // 컨테이너 스타일 정의
 const MypageContainer = styled.div`
   display: flex;
-  padding-bottom: 50px;
+  padding: 10px 50px;
+  justify-content: center;
 `;
 
 // 열 스타일 정의

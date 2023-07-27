@@ -7,8 +7,9 @@ import { useNavigate } from 'react-router-dom';
 const TopDiv = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-left: 10px;
+  margin-right: 10px;
   align-items: center;
-  width: 100%;
   height: 50px;
 `;
 
