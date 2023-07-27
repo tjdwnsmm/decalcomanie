@@ -88,12 +88,14 @@ export default function Post() {
       <PostBody>
         <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
         <ContextBox />
-        <MarginFrame margin="15px 0">
-          <LeftTitleAlign>평점</LeftTitleAlign>
-          <MarginFrame margin="10px 0 40px">
-            <AddRating perfumes={perfumes} />
+        {perfumes.length !== 0 && (
+          <MarginFrame margin="15px 0">
+            <LeftTitleAlign>평점</LeftTitleAlign>
+            <MarginFrame margin="10px 0 40px">
+              <AddRating perfumes={perfumes} />
+            </MarginFrame>
           </MarginFrame>
-        </MarginFrame>
+        )}
       </PostBody>
       <Buttons>
         <ConfirmButton color="primary" background="primary" onClick={postAlert}>

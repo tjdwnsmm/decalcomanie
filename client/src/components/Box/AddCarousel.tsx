@@ -23,6 +23,7 @@ const EmptyBox = styled.div`
   align-items: center;
   width: 340px;
   height: 140px;
+  background-color: var(--white-color);
 `;
 
 const NotEmptyBox = styled.div`
