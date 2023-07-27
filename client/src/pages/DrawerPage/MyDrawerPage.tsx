@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { CenterFrame, Main, MarginFrame } from '../../style';
 import { DrawerAddBtn } from '../../components/Drawer/DrawerAddBtn';
 import { DrawerCarousel } from '../../components/Drawer/DrawerCarousel';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
+import { useNavigate } from 'react-router-dom';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import Spinner from '../../components/common/Spinner';
+import axios, { USERID } from '../../api/apiController';
 
 export interface Perfume {
   name: string;
@@ -24,33 +28,43 @@ const examplePerfume2: Perfume = {
 };
 
 export const MyDrawerPage = () => {
-  const [perfumeList, setPerfumeList] = useState<Perfume[]>([
-    examplePerfume,
-    examplePerfume2,
-    examplePerfume,
-    examplePerfume2,
-    examplePerfume,
-    examplePerfume,
-    examplePerfume,
-    examplePerfume2,
-    examplePerfume,
-    examplePerfume,
-    examplePerfume,
-    examplePerfume2,
-    examplePerfume2,
-    examplePerfume,
-  ]);
+  const [perfumeList, setPerfumeList] = useState<PerfumeDetail[] | null>(null);
+
+  useEffect(() => {
+    axios.get(`/user/perfume/${USERID}`).then((res) => {
+      setPerfumeList(res.data);
+      console.log(res.data);
+    });
+  }, []);
 
   const handleRemoveMyPerfume = (idx: number) => {
-    console.log(idx);
-    setPerfumeList((prevPerfume) =>
-      prevPerfume.filter((item, index) => index !== idx),
-    );
+    setPerfumeList((prevPerfume) => {
+      if (prevPerfume) {
+        return prevPerfume.filter((item, index) => index !== idx);
+      }
+      return prevPerfume;
+    });
   };
+
+  const navigate = useNavigate();
+  const handleClose = () => {
+    navigate('/');
+  };
+  const handleSearchPerfume = () => {
+    navigate('/search-myperfume');
+  };
+
+  if (!perfumeList) {
+    return (
+      <MarginFrame margin="120px auto 0">
+        <Spinner />
+      </MarginFrame>
+    );
+  }
 
   return (
     <Main>
-      <CloseFrame>
+      <CloseFrame onClick={handleClose}>
         <CloseSvg />
       </CloseFrame>
       {perfumeList.length === 0 ? (
@@ -91,7 +105,9 @@ export const MyDrawerPage = () => {
               />
 
               <MarginFrame margin="20px 0" />
-              <DrawerAddBtn buttonTxt="내 향수 추가하기" />
+              <Button onClick={handleSearchPerfume}>
+                <DrawerAddBtn buttonTxt="내 향수 추가하기" />
+              </Button>
             </CenterFrame>
           </MarginFrame>
         </>
@@ -105,6 +121,8 @@ interface TextProp {
   fontweight?: string;
   color?: string;
 }
+
+const Button = styled.div``;
 const DrawerText = styled.div<TextProp>`
   font-size: ${(props) => props.size};
   font-weight: ${(props) => props.fontweight};

@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -21,9 +22,19 @@ const StyledReactQuill = styled(ReactQuill)`
 `;
 
 export default function ContextBox() {
+  const [content, setContent] = useState('');
+
+  const handleChange = (value: string) => {
+    setContent(value);
+  };
+
   return (
     <>
-      <StyledReactQuill modules={modules}></StyledReactQuill>
+      <StyledReactQuill
+        modules={modules}
+        value={content}
+        onChange={handleChange}
+      />
     </>
   );
 }

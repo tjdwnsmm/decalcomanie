@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchBar from '../../components/Search/SearchBar';
 import FilteringBtn from '../../components/Button/FilteringBtn';
 import { styled } from 'styled-components';
 import FilterBox from '../../components/Search/FilterBox';
-import { CenterFrame, ConfirmButton, Main } from '../../style';
+import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
 import SearchResults from '../../components/Search/SearchResults';
 import SortToggle, { SortOption } from '../../components/Search/SortToggle';
+import BottomNav from '../../components/common/BottomNav';
+import axios from '../../api/apiController';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import Spinner from '../../components/common/Spinner';
 
-export interface PerfumeResult {
-  brand: string;
-  name: string;
-}
-
-interface Filter {
-  brand?: string[];
-  gender?: string;
+export interface Filter {
+  brandName?: string[];
+  gender?: string[];
   scent?: string[];
 }
 
@@ -29,29 +28,100 @@ const SearchTabPage: React.FC = () => {
   const [filter, setFilter] = useState<Filter>({});
 
   //검색 결과 창
-  const [searchResults, setSearchResults] = useState<PerfumeResult[]>([]);
+  const [searchResults, setSearchResults] = useState<PerfumeDetail[] | null>(
+    null,
+  );
+  const [originSearchResults, setOriginSearchResults] = useState<
+    PerfumeDetail[] | null
+  >(null);
 
-  /**
-   *
-   * @param event 살시간으로 입력받는 단어를 검색어로 설정
-   */
-  const handleSearchKeywordChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setSearchKeyword(event.target.value); // 검색할 단어
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  const handleScroll = () => {
+    setScrollPosition(window.scrollY);
+    console.log(`스크롤 위치 : ${scrollPosition}`);
+    // localStorage.setItem('scrollPosition', scrollPosition.toString());
   };
+
+  useEffect(() => {
+    const storedScrollPosition = localStorage.getItem('scrollPosition');
+    if (storedScrollPosition) {
+      const scrollY = parseInt(storedScrollPosition);
+      scrollToStoredPosition(scrollY);
+    }
+
+    // console.log(`스크롤 위치 : ${scrollPosition}`);
+    // localStorage.setItem('scrollPosition', scrollPosition.toString());
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      const scrollY = window.scrollY;
+      localStorage.setItem('scrollPosition', scrollY.toString());
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrollPosition]);
+
+  const scrollToStoredPosition = (scrollY: number) => {
+    window.scrollTo(0, scrollY);
+  };
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('searchResults');
+
+    if (storedData) {
+      setSearchResults(JSON.parse(storedData));
+      setOriginSearchResults(JSON.parse(storedData));
+    } else {
+      axios
+        .post('/perfume/search', {
+          keyword: '',
+          brand: [],
+          gender: [],
+          scent: [],
+        })
+        .then((res) => {
+          setSearchResults(res.data);
+          setOriginSearchResults(res.data);
+          localStorage.setItem('searchResults', JSON.stringify(res.data));
+        });
+    }
+  }, []);
 
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
    */
-  const handleSearch = (keyword: string, isSearch: boolean) => {
+  const handleSearch = async (keyword: string, isSearch: boolean) => {
     console.log(`💨 ${keyword} and ${isSearch}`);
     if (!isSearch) {
       setSearchKeyword(keyword);
     } else {
       setSearchKeyword('');
+      setSearchResults([]);
+      try {
+        console.log(`진짜 데이터 검색 : ${searchResults}`);
+        const data = await searchPerfume(keyword);
+        setSearchResults(data);
+      } catch (error) {
+        console.error(error);
+        setSearchResults([]);
+      }
     }
-    setSearchResults([]);
+  };
+
+  const searchPerfume = async (keyword: string) => {
+    try {
+      const response = await axios.post('/perfume/search', {
+        keyword: keyword,
+        brand: [],
+        gender: [],
+        scent: [],
+      });
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   };
 
   /**
@@ -61,11 +131,27 @@ const SearchTabPage: React.FC = () => {
     setModalOpen(!modalOpen);
   };
 
+  //![수정] filter.scent 부분 문자열로 넘겨주는게 아니라 향 id 로 넘겨줘야됨!!
+  const filterSearch = async (filter: Filter) => {
+    try {
+      const response = await axios.post('/perfume/search', {
+        keyword: searchKeyword,
+        brand: filter.brandName ? filter.brandName : [],
+        gender: filter.gender ? [filter.gender] : [],
+        scent: filter.scent ? filter.scent : [],
+      });
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
   /**
    *
    * @param filter 현재 적용된 필터 정보 - interface Filter로 관리
    */
-  const handleApplyFilters = (filter: Filter) => {
+  const handleApplyFilters = async (filter: Filter) => {
     setModalOpen(false); // 모달 닫기
     setFilter(filter);
     console.log(
@@ -75,7 +161,7 @@ const SearchTabPage: React.FC = () => {
       }`,
     );
     calcFilteringNum(filter);
-    setSearchResults([]); // 검색 결과
+    setSearchResults(await filterSearch(filter)); // 검색 결과
   };
 
   const [sortOption, setSortOption] = useState<SortOption>(
@@ -113,7 +199,7 @@ const SearchTabPage: React.FC = () => {
           <SearchBar
             onSearch={handleSearch}
             placeholder="검색어를 입력해주세요"
-            fetchURL="https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
+            dataList={originSearchResults}
           />
 
           {searchKeyword.length === 0 && (
@@ -124,9 +210,21 @@ const SearchTabPage: React.FC = () => {
               </SortArea>
 
               {/* 검색 결과 */}
-              <SearchResults results={searchResults} isButton={false} />
+
+              {searchResults ? (
+                <SearchResults
+                  results={searchResults}
+                  isButton={false}
+                  addUrl=""
+                />
+              ) : (
+                <MarginFrame margin="120px auto">
+                  <Spinner />
+                </MarginFrame>
+              )}
             </>
           )}
+          <BottomNav />
         </>
       )}
 

@@ -1,11 +1,17 @@
 import styled from 'styled-components';
-import { FeedProps } from '../../types/FeedInfoType';
+import {
+  EachFeedInfo,
+  ArticleDetail,
+  FeedDetail,
+} from '../../types/FeedInfoType';
 import PerfumeInfoBox from '../Perfume/PerfumeInfoBox';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
+import { useNavigate } from 'react-router-dom';
 
 interface FeedComponentProps {
-  feed: FeedProps;
+  feed: EachFeedInfo;
+  handleDetail: (articleId: number) => void;
 }
 
 /**
@@ -18,23 +24,20 @@ InfoBox : 피드 나머지 부분 내용
   - IconBox : 좋아요 아이콘, 좋아요 수, 스크랩 버튼
 */
 
-const FeedPage = ({ feed }: FeedComponentProps) => (
+const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => (
   <>
     <FeedBox>
-      <PerfumeInfoBox
-        brand={feed.perfumeInfo.brand}
-        name={feed.perfumeInfo.name}
-        scent={feed.perfumeInfo.scent}
-        img={feed.perfumeInfo.img}
-      />
-      <ContentBox>{feed.content}</ContentBox>
+      <div onClick={() => handleDetail(feed.articleDtos.articleId)}>
+        <PerfumeInfoBox feed={feed.perfumeDtos} />
+        <ContentBox>{feed.articleDtos.content}</ContentBox>
+      </div>
       <InfoBox>
         <ProfileBox>
-          <img src={feed.profileImg} />
-          {feed.writer}
+          <img src={'src/assets/img/profile-user.png'} />
+          {feed.articleDtos.userId}
         </ProfileBox>
         <IconBox>
-          <LikeBtn count={feed.like} />
+          <LikeBtn count={feed.articleDtos.heart} />
           <ScrapBtn />
         </IconBox>
       </InfoBox>
@@ -43,6 +46,7 @@ const FeedPage = ({ feed }: FeedComponentProps) => (
 );
 
 export default FeedPage;
+
 const InfoBox = styled.div`
   display: flex;
   justify-content: space-between;

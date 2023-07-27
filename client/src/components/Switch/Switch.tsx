@@ -49,7 +49,7 @@ const Section = styled.div`
   justify-content: end;
   align-items: center;
   font-weight: bold;
-  width: 340px;
+  width: 100%;
 `;
 
 export default function CustomizedSwitches() {

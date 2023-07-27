@@ -1,17 +1,33 @@
 import { styled } from 'styled-components';
-import { PostButton, CancleButton } from '../../components/Button/Button.tsx';
-import CustomizedSwitches from '../../components/Switch/Switch.tsx';
-import PerfumeBox from '../../components/Box/AddPerfume.tsx';
-import ContextBox from '../../components/Box/AddContext.tsx';
-import Rating from '../../components/Rating/Rating.tsx';
-import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
-import { Main } from '../../style';
+import { PostButton, CancleButton } from '../../components/Button/Button.js';
+import CustomizedSwitches from '../../components/Switch/Switch.js';
+import ContextBox from '../../components/Box/AddContext.js';
+import AddRating from '../../components/Rating/Rating.js';
+import AddCarousel from '../../components/Box/AddCarousel.js';
+import { Main } from '../../style/index.js';
 
-const PerfumeBody = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-`;
+const perfumes = [
+  {
+    brand: '아쿠아 디 파르마',
+    name: '미르토 디 파나레아',
+    img: 'src/assets/img/perfume_aqua.png',
+  },
+  {
+    brand: '딥디크',
+    name: '오 드 퍼퓸 도손',
+    img: 'src/assets/img/perfume_doson.png',
+  },
+  {
+    brand: '아쿠아 디 파르마',
+    name: '미르토 디 파나레아',
+    img: 'src/assets/img/perfume_aqua.png',
+  },
+  {
+    brand: '딥디크',
+    name: '오 드 퍼퓸 도손',
+    img: 'src/assets/img/perfume_doson.png',
+  },
+];
 
 const PostBody = styled.div`
   display: flex;
@@ -19,25 +35,21 @@ const PostBody = styled.div`
   flex-direction: column;
 `;
 
-const FlexDiv = styled.div`
-  display: flex;
-`;
-
-const MiddleAlign = styled.div`
+const TitleAlign = styled.div`
   width: 340px;
   font-weight: bold;
+  font-size: 16pt;
   text-align: center;
+  margin-top: 10px;
 `;
 
-const LeftAlign = styled.div`
-  display: flex;
-  align-items: center;
-  width: 340px;
-  font-weight: bold;
+const LeftTitleAlign = styled(TitleAlign)`
   text-align: left;
+  font-size: 14pt;
+  margin-bottom: 5px;
 `;
 
-function Post() {
+export default function Post() {
   // test alert
   const postAlert = () => {
     alert('글을 등록하시겠습니까?');
@@ -49,29 +61,24 @@ function Post() {
 
   return (
     <Main>
-      <PerfumeBody>
-        <FlexDiv>
-          <MiddleAlign>글 작성하기</MiddleAlign>
-          <CloseSvg />
-        </FlexDiv>
-        <PerfumeBox />
+      <PostBody>
+        <TitleAlign>글 작성하기</TitleAlign>
+      </PostBody>
+      <div>
+        <AddCarousel perfumes={perfumes} />
         <CustomizedSwitches></CustomizedSwitches>
-      </PerfumeBody>
+      </div>
 
       <PostBody>
-        <LeftAlign>내용을 입력해주세요.</LeftAlign>
+        <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
         <ContextBox />
-        <LeftAlign>평점</LeftAlign>
-        <LeftAlign>
-          로파피에
-          <Rating></Rating>
-        </LeftAlign>
+        <LeftTitleAlign>
+          평점
+          <AddRating perfumes={perfumes} />
+        </LeftTitleAlign>
+        <PostButton onClick={postAlert}>글 등록하기</PostButton>
+        <CancleButton onClick={cancleAlert}>취소</CancleButton>
       </PostBody>
-
-      <PostButton onClick={postAlert}>글 등록하기</PostButton>
-      <CancleButton onClick={cancleAlert}>취소</CancleButton>
     </Main>
   );
 }
-
-export default Post;

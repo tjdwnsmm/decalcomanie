@@ -1,72 +1,60 @@
-import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FeedTab } from '../../components/TabBar/FeedTab';
 import FeedPage from '../../components/Feed/FeedPage';
-import { FeedProps } from '../../types/FeedInfoType';
-import { Main } from '../../style';
+import { Main, MarginFrame } from '../../style';
 import FloatingWriteBtn from '../../components/Button/FloatingWriteBtn';
-
-//API 호출 전 임시데이터
-const feeds: FeedProps[] = [
-  {
-    perfumeInfo: {
-      name: '탐다오',
-      brand: '딥디크',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 ...',
-  },
-  {
-    perfumeInfo: {
-      name: '미르토 디 파나레아',
-      brand: '아쿠아 디 파르마',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 ...',
-  },
-  {
-    perfumeInfo: {
-      name: '집시 워터',
-      brand: '바이레도',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 ...',
-  },
-];
+import BottomNav from '../../components/common/BottomNav';
+import axios from '../../api/apiController';
+import { EachFeedInfo } from '../../types/FeedInfoType';
+import Spinner from '../../components/common/Spinner';
+import { useNavigate } from 'react-router-dom';
+import { styled } from 'styled-components';
 
 export const MainFeed = () => {
   //default 탭 : following
-  const [nowActive, setNowActive] = useState('following');
+  //following , popular , latest
+  //! following api 가 미완성인 관계로 추후에 useState('following')으로 변경해야함
+  const [nowActive, setNowActive] = useState('popularity');
+  const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    axios.get(`/sns/feed/${nowActive}`).then((res) => {
+      setFeeds(res.data);
+      console.log(res.data, nowActive);
+    });
+  }, [nowActive]);
+
+  if (!feeds) {
+    return (
+      <MarginFrame margin="240px 0 0">
+        <Spinner />
+      </MarginFrame>
+    );
+  }
+
+  const handleDetail = (articleId: number) => {
+    navigate(`/post-detail/${articleId}`);
+  };
   //현재 탭을 설정하는 setNowActive 를 props 로 넘겨서 탭 변경에 따라 페이지 내용이 변경되도록 구현
   return (
     <Main>
       <FeedTab setNowActive={setNowActive} />
-      {feeds.map((feed, idx) => (
-        <FeedPage key={idx} feed={feed} />
-      ))}
+      <Feeds>
+        {feeds.map((feed, idx) => (
+          <FeedPage key={idx} feed={feed} handleDetail={handleDetail} />
+        ))}
+      </Feeds>
       <FloatingWriteBtn />
+      <BottomNav />
     </Main>
   );
 };
+
+const Feeds = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  padding-bottom: 200px;
+`;
