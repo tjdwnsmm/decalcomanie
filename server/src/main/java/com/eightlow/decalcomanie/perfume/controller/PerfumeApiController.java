@@ -32,12 +32,7 @@ public class PerfumeApiController {
             return new ResponseEntity<>(perfumes, HttpStatus.OK);
         }
 
-        System.out.println("keyword : " + request.getKeyword());
-        System.out.println("brand : " + request.getBrand());
-        System.out.println("gender : " + request.getGender());
-        System.out.println("scent : " + request.getScent());
-
-        List<PerfumeDto> perfumes = perfumeService.findMatchingPerfumes(request.getGender(), request.getScent(), request.getKeyword(), request.getBrand());
+        List<PerfumeDto> perfumes = perfumeService.findMatchingPerfumes(request);
 
         return new ResponseEntity<>(perfumes, HttpStatus.OK);
     }

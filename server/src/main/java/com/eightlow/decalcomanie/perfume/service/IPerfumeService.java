@@ -3,6 +3,7 @@ package com.eightlow.decalcomanie.perfume.service;
 import com.eightlow.decalcomanie.perfume.dto.BrandDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
 import com.eightlow.decalcomanie.perfume.entity.Scent;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface IPerfumeService {
 
     public List<ScentDto> findAllScent();
 
-    List<PerfumeDto> findMatchingPerfumes(int gender, List<Integer> scent, String keyword, List<Integer> brand);
+    List<PerfumeDto> findMatchingPerfumes(PerfumeSearchRequest condition);
 
     List<PerfumeDto> getAllPerfumes();
 
