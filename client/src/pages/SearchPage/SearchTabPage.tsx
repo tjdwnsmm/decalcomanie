@@ -161,7 +161,9 @@ const SearchTabPage: React.FC = () => {
       }`,
     );
     calcFilteringNum(filter);
-    setSearchResults(await filterSearch(filter)); // 검색 결과
+    const filterDatas = await filterSearch(filter);
+    setSearchResults(filterDatas); // 검색 결과
+    localStorage.setItem('searchResults', JSON.stringify(filterDatas));
   };
 
   const [sortOption, setSortOption] = useState<SortOption>(

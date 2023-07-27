@@ -72,7 +72,7 @@ export default function OptionMenu() {
   // 회원정보 수정 페이지로 이동
   const handleEditClick = () => {
     // 회원정보 수정 url
-    navigate('/회원정보수정');
+    navigate('/profile-update');
   };
 
   // 로그아웃 하시겠습니까? 모달 창 띄우기

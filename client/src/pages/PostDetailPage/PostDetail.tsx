@@ -14,17 +14,17 @@ const post: Post = {
       rate: 4,
       brand: '아쿠아 디 파르마',
       name: '미르토 디 파나레아',
-      img: 'src/assets/img/perfume_aqua.png',
+      img: '../../src/assets/img/perfume_aqua.png',
     },
     {
       rate: 5,
       brand: '딥디크',
       name: '오 드 퍼퓸 도손',
-      img: 'src/assets/img/perfume_doson.png',
+      img: '../../src/assets/img/perfume_doson.png',
     },
   ],
   postInfo: {
-    profileImg: 'src/assets/img/profile-user.png',
+    profileImg: '../../src/assets/img/profile-user.png',
     writer: '김싸피',
     createdAt: '2023-07-12T12:34:56.789+09:00',
     favScent: ['우디', '플로럴', '시트러스'],
@@ -41,26 +41,26 @@ const post: Post = {
   },
   comments: [
     {
-      profileImg: 'src/assets/img/profile-user.png',
+      profileImg: '../../src/assets/img/profile-user.png',
       writer: '혀니',
       createdAt: '2023-07-20T12:34:56.789+09:00',
       content: '향이 예쁘고 병이 향긋해요',
     },
     {
-      profileImg: 'src/assets/img/profile-user.png',
+      profileImg: '../../src/assets/img/profile-user.png',
       writer: '복이',
       createdAt: '2023-07-23T06:25:10.789+09:00',
       content: '테스트용 두번째 댓글',
     },
     {
-      profileImg: 'src/assets/img/profile-user.png',
+      profileImg: '../../src/assets/img/profile-user.png',
       writer: '쭈리',
       createdAt: '2023-07-23T23:00:56.789+09:00',
       content:
         '댓글이 길어서 한 줄이 넘어가면 어떻게 되는지 테스트를 해보겠어요 뭔가 프로필이 같이 내려가는거 같은데 약간 큰일인거 같기도 하고 허허 바꿔야되네',
     },
     {
-      profileImg: 'src/assets/img/profile-user.png',
+      profileImg: '../../src/assets/img/profile-user.png',
       writer: '복이',
       createdAt: '2023-07-24T09:34:56.789+09:00',
       content: '작성시간 테스트 댓글',

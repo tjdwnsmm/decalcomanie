@@ -33,7 +33,7 @@ const FeedPageOnly = ({ feed }: FeedComponentProps) => {
         <InfoBox>
           <ProfileBox>
             <LeftProfile>
-              <img src="src/assets/img/profile-user.png" />
+              <img src="../../src/assets/img/profile-img.png" />
               <ProfileInfoBox>
                 {'닉네임'}
                 <Scent>

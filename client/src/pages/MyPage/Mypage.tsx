@@ -7,6 +7,7 @@ import OptionMenu from '../../components/My/OptionMenu';
 import LikesUnlikes from '../../components/Box/LikesUnlikes';
 import ProfileStats from '../../components/My/ProfileStats';
 import ProfileTabs from '../../components/My/ProfileTabs';
+import BottomNav from '../../components/common/BottomNav.tsx';
 
 // 중복 데이터를 변수로 추출
 const perfumeImages = [
@@ -50,6 +51,7 @@ const splitFeeds = (arr) => {
 // 컨테이너 스타일 정의
 const MypageContainer = styled.div`
   display: flex;
+  padding-bottom: 100px;
 `;
 
 // 열 스타일 정의
@@ -83,6 +85,7 @@ export default function Mypage() {
           ))}
         </Column>
       </MypageContainer>
+      <BottomNav />
     </Main>
   );
 }
