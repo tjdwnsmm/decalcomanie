@@ -5,24 +5,21 @@ import { Main, MarginFrame } from '../../style';
 import FloatingWriteBtn from '../../components/Button/FloatingWriteBtn';
 import BottomNav from '../../components/common/BottomNav';
 import axios from '../../api/apiController';
-import {
-  EachFeedInfo,
-  ArticleDetail,
-  FeedDetail,
-} from '../../types/FeedInfoType';
+import { EachFeedInfo } from '../../types/FeedInfoType';
 import Spinner from '../../components/common/Spinner';
 
 export const MainFeed = () => {
   //default 탭 : following
+  //following , popular , latest
   const [nowActive, setNowActive] = useState('following');
   const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
 
   useEffect(() => {
-    axios.get(`/sns/feed/popularity`).then((res) => {
+    axios.get(`/sns/feed/${nowActive}`).then((res) => {
       setFeeds(res.data);
-      console.log(res.data);
+      console.log(res.data, nowActive);
     });
-  }, []);
+  }, [nowActive]);
 
   if (!feeds) {
     return (
