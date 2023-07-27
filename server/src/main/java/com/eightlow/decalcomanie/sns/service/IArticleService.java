@@ -2,6 +2,7 @@ package com.eightlow.decalcomanie.sns.service;
 
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
+import com.eightlow.decalcomanie.sns.dto.HeartDto;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import org.springframework.http.ResponseEntity;
 
@@ -42,4 +43,8 @@ public interface IArticleService {
     List<CommentDto> getComments(int articleId);
 
     int deleteCommentByArticleId(int articleId);
+
+    int likeArticle(HeartDto heartDto);
+
+    int dislikeArticle(HeartDto heartDto);
 }

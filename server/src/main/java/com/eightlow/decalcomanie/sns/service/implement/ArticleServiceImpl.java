@@ -3,6 +3,7 @@ package com.eightlow.decalcomanie.sns.service.implement;
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
 import com.eightlow.decalcomanie.sns.dto.ArticlePerfumeDto;
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
+import com.eightlow.decalcomanie.sns.dto.HeartDto;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.sns.entity.Article;
 import com.eightlow.decalcomanie.sns.entity.ArticlePerfume;
@@ -10,9 +11,11 @@ import com.eightlow.decalcomanie.sns.entity.Comment;
 import com.eightlow.decalcomanie.sns.mapper.ArticleMapper;
 import com.eightlow.decalcomanie.sns.mapper.ArticlePerfumeMapper;
 import com.eightlow.decalcomanie.sns.mapper.CommentMapper;
+import com.eightlow.decalcomanie.sns.mapper.HeartMapper;
 import com.eightlow.decalcomanie.sns.repository.ArticlePerfumeRepository;
 import com.eightlow.decalcomanie.sns.repository.ArticleRepository;
 import com.eightlow.decalcomanie.sns.repository.CommentRepository;
+import com.eightlow.decalcomanie.sns.repository.HeartRepository;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +45,9 @@ public class ArticleServiceImpl implements IArticleService {
 
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+
+    private final HeartRepository heartRepository;
+    private final HeartMapper heartMapper;
 
 
     @Override
@@ -226,6 +232,8 @@ public class ArticleServiceImpl implements IArticleService {
     public void createComment(CommentDto commentDto) {
         log.info("ArticleServiceImpl::: createComment start");
         Comment comment = commentRepository.save(commentMapper.toEntity(commentDto));
+        
+        // TODO: 댓글 갯수 하나 늘려 주는 부분 추가 필요
         log.info("ArticleServiceImpl::: finish ", String.valueOf(comment));
     }
 
@@ -347,10 +355,42 @@ public class ArticleServiceImpl implements IArticleService {
     }
 
     @Override
+    @Transactional
     public void deleteArticlePerfumeByArticleId(int articleId) {
         log.info("ArticleServiceImpl::: deleteArticlePerfumeByArticleId start");
         // 이미 글을 삭제할때 글의 userId를 확인했음으로 여기서는 확인을 하지 않고 삭제를 진행
         articlePerfumeRepository.deleteAllByArticleId(articleId);
         log.info("ArticleServiceImpl::: deleteArticlePerfumeByArticleId finish");
     }
+
+    @Override
+    @Transactional
+    public int likeArticle(HeartDto heartDto) {
+        log.info("ArticleServiceImpl::: likeArticle start");
+        // Heart 테이블에 좋아요 저장
+        heartRepository.save(heartMapper.toEntity(heartDto));
+
+        // 게시물의 heart갯수 + 1
+        articleRepository.increaseHeartCountByArticleId(heartDto.getArticleId());
+
+        log.info("ArticleServiceImpl::: likeArticle finish");
+        return 200;
+    }
+
+    @Override
+    @Transactional
+    public int dislikeArticle(HeartDto heartDto) {
+        log.info("ArticleServiceImpl::: likeArticle start");
+        // Heart 테이블에 좋아요한 부분 제거
+        heartRepository.deleteByArticleIdAndUserId(heartDto.getArticleId(), heartDto.getUserId());
+
+        // 게시물의 heart갯수 - 1
+        articleRepository.decreaseHeartCountByArticleId(heartDto.getArticleId());
+
+        log.info("ArticleServiceImpl::: likeArticle finish");
+        return 200;
+    }
+
+
+
 }
