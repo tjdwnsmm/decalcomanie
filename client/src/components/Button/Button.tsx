@@ -13,7 +13,7 @@ export const PostButton = styled.button`
   border-radius: 10px;
   border: none;
   box-shadow: 5px 5px 5px gray;
-  margin: 20px;
+  margin: 10px 0px;
   &:hover {
     cursor: pointer;
   }
