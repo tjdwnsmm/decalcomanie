@@ -24,6 +24,7 @@ const CommentContent = styled.div`
   flex: 1;
   flex-direction: column;
   margin-left: 10px;
+  margin-bottom: 6px;
 `;
 
 const InfoBox = styled.div`
@@ -51,13 +52,14 @@ const Content = styled.div`
   font-size: 13px;
   font-weight: 400;
   margin-top: 5px;
+  line-height: 17px;
 `;
 
 const getElapsedTime = (createdAt: string): number => {
   const createdAtDate = new Date(createdAt);
   const currentTime = new Date();
-  console.log("작성시간", createdAtDate)
-  console.log(currentTime)
+  console.log('작성시간', createdAtDate);
+  console.log(currentTime);
   const diff = currentTime.getTime() - createdAtDate.getTime(); // 단위: (ms)
   const elapsedTime = Math.floor(diff / 1000 / 60);
   return elapsedTime;
@@ -83,8 +85,10 @@ const CommentBox = ({ comment }: CommentBoxProps) => {
   // 임시로 설정
   const CurrentUser = '복이';
   const isWriter = comment.writer === CurrentUser ? true : false;
-  
-  const [elapsedTime, setElapsedTime] = useState(getElapsedTime(comment.createdAt));
+
+  const [elapsedTime, setElapsedTime] = useState(
+    getElapsedTime(comment.createdAt),
+  );
 
   // 페이지가 처음 로드될 때 작성 시간과 현재 시간의 차이를 업데이트
   useEffect(() => {
@@ -103,7 +107,7 @@ const CommentBox = ({ comment }: CommentBoxProps) => {
       window.removeEventListener('beforeunload', handlePageRefresh);
     };
   }, [comment.createdAt]);
-  
+
   return (
     <CommentBoxContainer>
       <ProfileImage src={comment.profileImg} alt="프로필" />
@@ -114,7 +118,7 @@ const CommentBox = ({ comment }: CommentBoxProps) => {
         </InfoBox>
         <Content>{comment.content}</Content>
       </CommentContent>
-      {isWriter && <PostModalBtn/>}
+      {isWriter && <PostModalBtn />}
     </CommentBoxContainer>
   );
 };

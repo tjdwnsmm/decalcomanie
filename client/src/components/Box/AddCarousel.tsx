@@ -182,7 +182,7 @@ export default function AddCarousel({ perfumes }: PerfumeReviewCarouselProps) {
   );
 }
 
-const NextSvg = styled(PrevSvg)`
+export const NextSvg = styled(PrevSvg)`
   transform: rotate(180deg);
 `;
 
