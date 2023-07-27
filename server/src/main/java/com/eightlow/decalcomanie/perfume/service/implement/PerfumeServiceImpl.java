@@ -1,16 +1,22 @@
 package com.eightlow.decalcomanie.perfume.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.*;
+import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
 import com.eightlow.decalcomanie.perfume.entity.*;
 import com.eightlow.decalcomanie.perfume.mapper.*;
 import com.eightlow.decalcomanie.perfume.repository.*;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
 
 @Service
 @Transactional
@@ -29,24 +35,12 @@ public class PerfumeServiceImpl implements IPerfumeService {
     private final ScentMapper scentMapper;
     private final AccordMapper accordMapper;
     private final NoteListMapper noteListMapper;
+    private final JPAQueryFactory queryFactory;
 
     // id로 개별 향수 조회
     @Override
     public PerfumeDto getPerfume(int perfumeId) {
-        PerfumeDto pdto = perfumeMapper.toDto(perfumeRepository.findOneByPerfumeId(perfumeId));
-
-        // scents 정보와 noteList 정보를 각각의 테이블에서 조회하여 가져온다
-        List<ScentDto> scents = createScentDto(perfumeId);
-        List<NoteListDto> noteList = getNoteList(perfumeId);
-
-        // perfume 테이블의 정보와 scents, noteList 의 정보를 하나로 합친다
-        PerfumeDto updatedDto = pdto.toBuilder()
-                .accord(scents)
-                .note(noteList)
-                .brandName(brandRepository.findOneByBrandId(pdto.getBrandId()).getName())
-                .build();
-
-        return updatedDto;
+        return mergePerfumeDetails(perfumeRepository.findOneByPerfumeId(perfumeId));
     }
 
     // 전체 브랜드 조회
@@ -63,44 +57,45 @@ public class PerfumeServiceImpl implements IPerfumeService {
 
     // 검색 조건에 맞는 향수 조회
     @Override
-    public List<PerfumeDto> findMatchingPerfumes(int gender, List<Integer> scent, String keyword, List<Integer> brand) {
-        List<Integer> perfumeIds = new ArrayList<>();
-        List<Perfume> searchResult;
+    public List<PerfumeDto> findMatchingPerfumes(PerfumeSearchRequest condition) {
+        List<Perfume> searchResult = queryFactory
+                .selectFrom(perfume)
+                .where(
+                        scentEq(condition.getScent()),
+                        brandEq(condition.getBrand()),
+                        genderEq(condition.getGender()),
+                        keywordEq(condition.getKeyword())
+                )
+                .fetch();
 
-        if (scent == null) {
-            searchResult = perfumeRepository.findPerfumesByBrandAndGenderAndKeyword(brand, gender, keyword);
-        } else {
-            // 먼저 사용자가 선택한 향을 accord로 가지고 있는 향수의 id를 받아온다
-            for (int i = 0; i < scent.size(); i++) {
-                List<Integer> result = accordRepository.findPerfumeIdsByScentId(scent.get(i));
+        return getPerfumeDtosFrom(searchResult);
+    }
 
-                for (int j = 0; j < result.size(); j++) {
-                    perfumeIds.add(result.get(j));
-                }
-            }
-            // 나머지 조건에 맞는 향수를 DB에서 조회하여 받아온다
-            searchResult = perfumeRepository.findPerfumesByPerfumeIdAndBrandAndGenderAndKeyword(perfumeIds, brand, gender, keyword);
-        }
-
+    // 검색 결과로 받아온 향수들의 부족한 정보를 채워서 완성된 Dto 리스트로 반환
+    private List<PerfumeDto> getPerfumeDtosFrom(List<Perfume> searchResult) {
         List<PerfumeDto> searchedPerfumes = new ArrayList<>();
 
         for (Perfume p : searchResult) {
-            // 각각의 향수에 대하여 scents와 noteList 정보를 추가해준다
-            List<ScentDto> scents = createScentDto(p.getPerfumeId());
-            List<NoteListDto> noteList = getNoteList(p.getPerfumeId());
-
-            PerfumeDto pdto = perfumeMapper.toDto(p);
-
-            PerfumeDto updatedDto = pdto.toBuilder()
-                    .accord(scents)
-                    .note(noteList)
-                    .brandName(brandRepository.findOneByBrandId(p.getBrandId()).getName())
-                    .build();
-
-            searchedPerfumes.add(updatedDto);
+            searchedPerfumes.add(mergePerfumeDetails(p));
         }
 
         return searchedPerfumes;
+    }
+
+    // 각각의 향수에 대하여 scents와 noteList 정보를 추가해준다
+    private PerfumeDto mergePerfumeDetails(Perfume perfume) {
+        List<ScentDto> scents = createScentDto(perfume.getPerfumeId());
+        List<NoteListDto> noteList = getNoteList(perfume.getPerfumeId());
+
+        PerfumeDto pdto = perfumeMapper.toDto(perfume);
+
+        PerfumeDto updatedDto = pdto.toBuilder()
+                .accord(scents)
+                .note(noteList)
+                .brandName(brandRepository.findOneByBrandId(perfume.getBrandId()).getName())
+                .build();
+
+        return updatedDto;
     }
 
     // 모든 향수 조회
@@ -108,25 +103,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
     public List<PerfumeDto> getAllPerfumes() {
         // 나머지 조건에 맞는 향수를 DB에서 조회하여 받아온다
         List<Perfume> searchResult = perfumeRepository.findAll();
-        List<PerfumeDto> searchedPerfumes = new ArrayList<>();
-
-        for (Perfume p : searchResult) {
-            // 각각의 향수에 대하여 scents와 noteList 정보를 추가해준다
-            List<ScentDto> scents = createScentDto(p.getPerfumeId());
-            List<NoteListDto> noteList = getNoteList(p.getPerfumeId());
-
-            PerfumeDto pdto = perfumeMapper.toDto(p);
-
-            PerfumeDto updatedDto = pdto.toBuilder()
-                    .accord(scents)
-                    .note(noteList)
-                    .brandName(brandRepository.findOneByBrandId(p.getBrandId()).getName())
-                    .build();
-
-            searchedPerfumes.add(updatedDto);
-        }
-
-        return searchedPerfumes;
+        return getPerfumeDtosFrom(searchResult);
     }
 
     // 향수 찜
@@ -171,25 +148,12 @@ public class PerfumeServiceImpl implements IPerfumeService {
     @Override
     public List<PerfumeDto> findAllPickedPerfume(String userId) {
         List<PerfumePick> searchResult = perfumePickRepository.findByUserId(userId);
-
         List<PerfumeDto> searchedPerfumes = new ArrayList<>();
 
         for (PerfumePick p : searchResult) {
             // 각각의 향수에 대하여 scents와 noteList 정보를 추가해준다
             Perfume perfume = perfumeRepository.findOneByPerfumeId(p.getPerfumeId());
-
-            List<ScentDto> scents = createScentDto(perfume.getPerfumeId());
-            List<NoteListDto> noteList = getNoteList(perfume.getPerfumeId());
-
-            PerfumeDto pdto = perfumeMapper.toDto(perfume);
-
-            PerfumeDto updatedDto = pdto.toBuilder()
-                    .accord(scents)
-                    .note(noteList)
-                    .brandName(brandRepository.findOneByBrandId(perfume.getBrandId()).getName())
-                    .build();
-
-            searchedPerfumes.add(updatedDto);
+            searchedPerfumes.add(mergePerfumeDetails(perfume));
         }
 
         return searchedPerfumes;
@@ -221,8 +185,11 @@ public class PerfumeServiceImpl implements IPerfumeService {
         // 향수의 향 계열 하나당 id, name, weight, rgb를 가져와서 하나의 Dto로 반환
         for (AccordDto accord : accords) {
             ScentDto sdto = scentMapper.toDto(scentRepository.findOneByScentId(accord.getScentId()));
-            sdto.builder().weight(accord.getWeight());
-            scents.add(sdto);
+            ScentDto scentDto = sdto.toBuilder()
+                    .weight(accord.getWeight())
+                    .build();
+
+            scents.add(scentDto);
         }
 
         return scents;
@@ -255,4 +222,34 @@ public class PerfumeServiceImpl implements IPerfumeService {
             perfumeRepository.save(updatedPerfume);
         }
     }
+
+    private BooleanExpression keywordEq(String keyword) {
+        return StringUtils.hasText(keyword) ? perfume.nameOrg.containsIgnoreCase(keyword) : null;
+    }
+
+    private BooleanExpression brandEq(List<Integer> brand) {
+        return brand == null || brand.size() == 0 ? null : perfume.brandId.in(brand);
+    }
+
+    private BooleanExpression genderEq(List<Integer> gender) {
+        return gender == null || gender.size() == 0 ? null : perfume.gender.in(gender);
+    }
+
+    private BooleanExpression scentEq(List<Integer> scent) {
+        if(scent == null || scent.size() == 0) return null;
+
+        List<Integer> perfumeIds = new ArrayList<>();
+
+        // 먼저 사용자가 선택한 향을 accord로 가지고 있는 향수의 id를 받아온다
+        for (int i = 0; i < scent.size(); i++) {
+            List<Integer> result = accordRepository.findPerfumeIdsByScentId(scent.get(i));
+
+            for (int j = 0; j < result.size(); j++) {
+                perfumeIds.add(result.get(j));
+            }
+        }
+
+        return perfume.perfumeId.in(perfumeIds);
+    }
+
 }
