@@ -26,6 +26,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   useEffect(() => {
     setLoading(false);
+    console.log(results);
   }, [results]);
 
   const navigate = useNavigate();
@@ -53,11 +54,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                     <PerfumeBrand>{feed.brandName}</PerfumeBrand>
                     <PerfumeName>{feed.nameOrg}</PerfumeName>
                     <PerfumeScent>
-                      {feed.accord.splice(0, 3).map((scent: ScentDto, idx) => (
-                        <Scent>
+                      {feed.accord.slice(0, 3).map((scent, idx) => (
+                        <span key={idx}>
                           {scent.name}
                           {idx === 2 ? '' : ', '}
-                        </Scent>
+                        </span>
                       ))}
                     </PerfumeScent>
                   </TextInfo>
