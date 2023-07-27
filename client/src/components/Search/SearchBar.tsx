@@ -32,7 +32,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
   const [isSearch, setIsSearch] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
-  const [DataByURL, setDataByURL] = useState<string[]>([]);
+  const [dataByURL, setDataByURL] = useState<string[]>([]);
 
   useEffect(() => {
     if (fetchURL) {
@@ -57,9 +57,11 @@ const SearchBar: React.FC<SearchBoxProps> = ({
   const updateData = async () => {
     setIsFetching(true);
     if (fetchURL) {
-      const filteredResults = DataByURL.filter((list: string) =>
-        list.toLowerCase().includes(keyword.toLowerCase()),
-      ).slice(0, 8);
+      const filteredResults = dataByURL
+        .filter((list: string) =>
+          list.toLowerCase().includes(keyword.toLowerCase()),
+        )
+        .slice(0, 8);
       console.log(filteredResults);
       setSearchResults(filteredResults);
       setIsFetching(false);
@@ -125,7 +127,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
                 onClick={() => {
                   setKeyword('');
                   onSearch(search, true);
-                  setIsSearch(true);
+                  setIsSearch(false);
                 }}
               >
                 <a href="#">

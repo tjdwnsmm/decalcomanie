@@ -17,12 +17,26 @@ const SearchMyPerfume: React.FC = () => {
   >(null);
 
   useEffect(() => {
-    axios.post('/perfume/search').then((res) => {
-      setSearchResults(res.data);
-      setOriginSearchResults(res.data);
-    });
-  }, []);
+    const storedData = localStorage.getItem('searchResults');
 
+    if (storedData) {
+      setSearchResults(JSON.parse(storedData));
+      setOriginSearchResults(JSON.parse(storedData));
+    } else {
+      axios
+        .post('/perfume/search', {
+          keyword: '',
+          brand: [],
+          gender: [],
+          scent: [],
+        })
+        .then((res) => {
+          setSearchResults(res.data);
+          setOriginSearchResults(res.data);
+          localStorage.setItem('searchResults', JSON.stringify(res.data));
+        });
+    }
+  }, [searchResults]);
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
    */
@@ -48,6 +62,9 @@ const SearchMyPerfume: React.FC = () => {
     try {
       const response = await axios.post('/perfume/search', {
         keyword: keyword,
+        brand: [],
+        gender: [],
+        scent: [],
       });
       console.log(response);
       return response.data;

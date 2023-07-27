@@ -11,9 +11,9 @@ import axios from '../../api/apiController';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import Spinner from '../../components/common/Spinner';
 
-interface Filter {
+export interface Filter {
   brandName?: string[];
-  gender?: string;
+  gender?: string[];
   scent?: string[];
 }
 
@@ -70,12 +70,20 @@ const SearchTabPage: React.FC = () => {
 
     if (storedData) {
       setSearchResults(JSON.parse(storedData));
+      setOriginSearchResults(JSON.parse(storedData));
     } else {
-      axios.post('/perfume/search').then((res) => {
-        setSearchResults(res.data);
-        setOriginSearchResults(res.data);
-        localStorage.setItem('searchResults', JSON.stringify(res.data));
-      });
+      axios
+        .post('/perfume/search', {
+          keyword: '',
+          brand: [],
+          gender: [],
+          scent: [],
+        })
+        .then((res) => {
+          setSearchResults(res.data);
+          setOriginSearchResults(res.data);
+          localStorage.setItem('searchResults', JSON.stringify(res.data));
+        });
     }
   }, []);
 
@@ -104,6 +112,9 @@ const SearchTabPage: React.FC = () => {
     try {
       const response = await axios.post('/perfume/search', {
         keyword: keyword,
+        brand: [],
+        gender: [],
+        scent: [],
       });
       console.log(response);
       return response.data;
@@ -120,11 +131,27 @@ const SearchTabPage: React.FC = () => {
     setModalOpen(!modalOpen);
   };
 
+  //![수정] filter.scent 부분 문자열로 넘겨주는게 아니라 향 id 로 넘겨줘야됨!!
+  const filterSearch = async (filter: Filter) => {
+    try {
+      const response = await axios.post('/perfume/search', {
+        keyword: searchKeyword,
+        brand: filter.brandName ? filter.brandName : [],
+        gender: filter.gender ? [filter.gender] : [],
+        scent: filter.scent ? filter.scent : [],
+      });
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
   /**
    *
    * @param filter 현재 적용된 필터 정보 - interface Filter로 관리
    */
-  const handleApplyFilters = (filter: Filter) => {
+  const handleApplyFilters = async (filter: Filter) => {
     setModalOpen(false); // 모달 닫기
     setFilter(filter);
     console.log(
@@ -134,7 +161,7 @@ const SearchTabPage: React.FC = () => {
       }`,
     );
     calcFilteringNum(filter);
-    setSearchResults([]); // 검색 결과
+    setSearchResults(await filterSearch(filter)); // 검색 결과
   };
 
   const [sortOption, setSortOption] = useState<SortOption>(

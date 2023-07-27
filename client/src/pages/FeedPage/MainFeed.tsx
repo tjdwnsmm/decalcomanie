@@ -28,7 +28,6 @@ export const MainFeed = () => {
     return (
       <MarginFrame margin="240px 0 0">
         <Spinner />
-        <FloatingWriteBtn />
       </MarginFrame>
     );
   }

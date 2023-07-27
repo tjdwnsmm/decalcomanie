@@ -10,7 +10,7 @@ interface FilterBoxProps {
 
 interface Filter {
   brand?: string[];
-  gender?: string;
+  gender?: string[];
   scent?: string[];
 }
 
