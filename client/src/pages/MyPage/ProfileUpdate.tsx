@@ -1,8 +1,9 @@
-// import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import { Main, MarginFrame } from '../../style';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
 import NewNickname from '../../components/Profile/NicknameModi';
+import ScentModi from '../../components/Profile/ScentModi';
 import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
 import { PostButton, CancleButton } from '../../components/Button/Button';
 
@@ -10,8 +11,8 @@ import { PostButton, CancleButton } from '../../components/Button/Button';
 const user: ProfileUpdateInfo = {
   nickname: '김수민',
   favorite: [
-    '플로럴',
     '시트러스',
+    '플로럴',
   ],
   hate: [
     '머스크',
@@ -88,6 +89,22 @@ const ProfileUpdate = () => {
           닉네임
         </UserInfoName>
         <NewNickname nickname={user.nickname}/>
+      </MarginFrame>
+      <MarginFrame margin="20px 40px">
+        <UserInfoName>
+          좋아요
+        </UserInfoName>
+        <MarginFrame margin="10px">
+          <ScentModi scents={user.favorite} fav="좋아하는"/>
+        </MarginFrame>
+      </MarginFrame>
+      <MarginFrame margin="20px 40px">
+        <UserInfoName>
+          싫어요
+        </UserInfoName>
+        <MarginFrame margin="10px">
+          <ScentModi scents={user.hate} fav="싫어하는"/>
+        </MarginFrame>
       </MarginFrame>
       <PostButton>수정하기</PostButton>
       <CancleButton onClick={handleCancel}>취소</CancleButton>
