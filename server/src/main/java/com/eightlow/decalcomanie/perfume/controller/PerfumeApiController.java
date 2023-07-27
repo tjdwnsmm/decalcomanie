@@ -23,15 +23,9 @@ public class PerfumeApiController {
 
     private final IPerfumeService perfumeService;
 
-    // TODO: 동적 쿼리를 이용하여 RequestBody에 담겨 오지 않은 검색 필터는 무시하는 쿼리 작성 필요
     // 향수 검색
     @PostMapping("/search")
     public ResponseEntity<List<PerfumeDto>> searchPerfume(@RequestBody(required = false) PerfumeSearchRequest request) {
-        if(request == null) {
-            List<PerfumeDto> perfumes = perfumeService.getAllPerfumes();
-            return new ResponseEntity<>(perfumes, HttpStatus.OK);
-        }
-
         List<PerfumeDto> perfumes = perfumeService.findMatchingPerfumes(request);
 
         return new ResponseEntity<>(perfumes, HttpStatus.OK);

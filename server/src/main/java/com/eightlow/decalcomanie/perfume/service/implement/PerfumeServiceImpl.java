@@ -98,14 +98,6 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return updatedDto;
     }
 
-    // 모든 향수 조회
-    @Override
-    public List<PerfumeDto> getAllPerfumes() {
-        // 나머지 조건에 맞는 향수를 DB에서 조회하여 받아온다
-        List<Perfume> searchResult = perfumeRepository.findAll();
-        return getPerfumeDtosFrom(searchResult);
-    }
-
     // 향수 찜
     @Override
     @Transactional
@@ -228,28 +220,30 @@ public class PerfumeServiceImpl implements IPerfumeService {
     }
 
     private BooleanExpression brandEq(List<Integer> brand) {
-        return brand == null || brand.size() == 0 ? null : perfume.brandId.in(brand);
+        return brand.size() > 0 ? perfume.brandId.in(brand) : null;
     }
 
     private BooleanExpression genderEq(List<Integer> gender) {
-        return gender == null || gender.size() == 0 ? null : perfume.gender.in(gender);
+        return gender.size() > 0 ? perfume.gender.in(gender) : null;
     }
 
     private BooleanExpression scentEq(List<Integer> scent) {
-        if(scent == null || scent.size() == 0) return null;
+        if(scent.size() > 0) {
+            List<Integer> perfumeIds = new ArrayList<>();
 
-        List<Integer> perfumeIds = new ArrayList<>();
+            // 먼저 사용자가 선택한 향을 accord로 가지고 있는 향수의 id를 받아온다
+            for (int i = 0; i < scent.size(); i++) {
+                List<Integer> result = accordRepository.findPerfumeIdsByScentId(scent.get(i));
 
-        // 먼저 사용자가 선택한 향을 accord로 가지고 있는 향수의 id를 받아온다
-        for (int i = 0; i < scent.size(); i++) {
-            List<Integer> result = accordRepository.findPerfumeIdsByScentId(scent.get(i));
-
-            for (int j = 0; j < result.size(); j++) {
-                perfumeIds.add(result.get(j));
+                for (int j = 0; j < result.size(); j++) {
+                    perfumeIds.add(result.get(j));
+                }
             }
+
+            return perfume.perfumeId.in(perfumeIds);
         }
 
-        return perfume.perfumeId.in(perfumeIds);
+        return null;
     }
 
 }

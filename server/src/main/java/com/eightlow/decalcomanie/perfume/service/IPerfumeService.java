@@ -18,8 +18,6 @@ public interface IPerfumeService {
 
     List<PerfumeDto> findMatchingPerfumes(PerfumeSearchRequest condition);
 
-    List<PerfumeDto> getAllPerfumes();
-
     boolean pickPerfume(String userId, int perfumeId);
 
     boolean isPickedPerfume(int perfumeId, String userId);
