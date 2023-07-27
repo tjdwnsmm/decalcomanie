@@ -90,7 +90,7 @@ public class UserServiceImpl implements IUserService {
         for(Follow follow : myFollowing) {
 
             // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
-            UserInfoDto userInfoDto = getUserInfo(follow);
+            UserInfoDto userInfoDto = getUserInfo(follow.getFollowed());
 
             // 반환 포맷에 맞는 response 생성
             FollowingResponse response = new FollowingResponse(userInfoDto.getUser().getUserId(),
@@ -112,7 +112,7 @@ public class UserServiceImpl implements IUserService {
 
         for(Follow follow : myFollowing) {
             // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
-            UserInfoDto userInfoDto = getUserInfo(follow);
+            UserInfoDto userInfoDto = getUserInfo(follow.getFollowing());
 
             FollowerResponse response = new FollowerResponse(userInfoDto.getUser().getUserId(),
                     userInfoDto.getUser().getNickname(),
@@ -137,14 +137,14 @@ public class UserServiceImpl implements IUserService {
 
     // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보
     @Override
-    public UserInfoDto getUserInfo(Follow follow) {
-        User user = userRepository.findByUserId(follow.getFollowed());
+    public UserInfoDto getUserInfo(String userId) {
+        User user = userRepository.findByUserId(userId);
 
         List<ScentDto> favorite = new ArrayList<>();
         List<ScentDto> hate = new ArrayList<>();
 
         // userScent 테이블에서 팔로잉 하고 있는 사람의 'FAVORITE' 향을 조회
-        List<UserScent> userScentList = userScentRepository.findAllUserScentByUserId(follow.getFollowed());
+        List<UserScent> userScentList = userScentRepository.findAllUserScentByUserId(userId);
 
         if(userScentList != null) {
             for (UserScent scent : userScentList) {
