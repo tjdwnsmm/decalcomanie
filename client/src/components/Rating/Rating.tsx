@@ -15,6 +15,9 @@ const StyledDiv = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 15px;
+  font-weight: 600;
+  width: 300px;
 `;
 
 const StyledRating = MUstyled(Rating)({
