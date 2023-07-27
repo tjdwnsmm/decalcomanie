@@ -1,8 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const FloatingWriteBtn = () => {
+  const navigate = useNavigate();
   const handleClick = () => {
-    // 플로팅 버튼 클릭 시 동작할 함수 작성
+    navigate('/post');
   };
 
   return (
