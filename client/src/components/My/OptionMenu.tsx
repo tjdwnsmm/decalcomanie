@@ -64,6 +64,11 @@ export default function OptionMenu() {
     setModalOpen(!isModalOpen);
   };
 
+  const handleLeftArrowClick = () => {
+    // 뒤로가기
+    navigate(-1);
+  };
+
   // 회원정보 수정 페이지로 이동
   const handleEditClick = () => {
     // 회원정보 수정 url
@@ -82,7 +87,7 @@ export default function OptionMenu() {
 
   return (
     <TopDiv>
-      <Button>
+      <Button onClick={handleLeftArrowClick}>
         <LeftArrow />
       </Button>
       <Button onClick={handleModalToggle}>
