@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface UserScentRepository extends JpaRepository<UserScent, Integer>  {
-    @Query("SELECT us FROM UserScent us WHERE us.userId = :userId AND us.status = 'FAVORITE'")
+    @Query("SELECT us FROM UserScent us WHERE us.userId = :userId")
     List<UserScent> findAllUserScentByUserId(String userId);
 }

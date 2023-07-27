@@ -18,7 +18,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     List<Article> findByUserId(String userId);
 
-    @Query("SELECT articleId, userId, content, heart, comment  FROM Article ORDER BY heart DESC")
+    @Query("SELECT a  FROM Article a ORDER BY a.heart DESC")
     @Transactional
     List<Article> findArticlesOrderByHeart();
 
