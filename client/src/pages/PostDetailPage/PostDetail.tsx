@@ -1,4 +1,3 @@
-import React from 'react';
 import { styled } from 'styled-components';
 import PerfumeCarousel from '../../components/Carousel/PerfumeCarousel';
 import PostInfoBox from '../../components/Post/PostInfoBox.tsx';
@@ -6,6 +5,7 @@ import CommentBox from '../../components/Post/CommentBox.tsx';
 import CommentInputForm from '../../components/Post/CommentInputForm.tsx';
 import { Post } from '../../types/PostInfoType.ts';
 import { Main } from '../../style';
+import { useParams } from 'react-router-dom';
 
 // 임시
 const post: Post = {
@@ -56,7 +56,8 @@ const post: Post = {
       profileImg: 'src/assets/img/profile-user.png',
       writer: '쭈리',
       createdAt: '2023-07-23T23:00:56.789+09:00',
-      content: '댓글이 길어서 한 줄이 넘어가면 어떻게 되는지 테스트를 해보겠어요 뭔가 프로필이 같이 내려가는거 같은데 약간 큰일인거 같기도 하고 허허 바꿔야되네',
+      content:
+        '댓글이 길어서 한 줄이 넘어가면 어떻게 되는지 테스트를 해보겠어요 뭔가 프로필이 같이 내려가는거 같은데 약간 큰일인거 같기도 하고 허허 바꿔야되네',
     },
     {
       profileImg: 'src/assets/img/profile-user.png',
@@ -72,14 +73,15 @@ const CommentListBox = styled.div`
 `;
 
 const PostDetail = () => {
+  const { id } = useParams<{ id: string }>();
   return (
     <Main>
       <PerfumeCarousel perfumes={post.perfumes} />
       <PostInfoBox postInfo={post.postInfo} />
       <CommentListBox>
-        {post.comments.map((comment, idx) => 
+        {post.comments.map((comment, idx) => (
           <CommentBox key={idx} comment={comment} />
-        )}
+        ))}
       </CommentListBox>
       <CommentInputForm />
     </Main>

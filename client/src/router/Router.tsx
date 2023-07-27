@@ -20,7 +20,7 @@ export default function Router() {
         <Route path="/search" element={<SearchTabPage />}></Route>
         <Route path="/search-myperfume" element={<SearchMyPerfume />}></Route>
         <Route path="/post" element={<Post />}></Route>
-        <Route path="/post-detail" element={<PostDetail />}></Route>
+        <Route path="/post-detail/:id" element={<PostDetail />}></Route>
         <Route path="/perfume-detail/:id" element={<PerfumeDetail />}></Route>
         <Route path="/my-drawer" element={<MyDrawerPage />}></Route>
         <Route path="/follow-list" element={<FollowList />}></Route>
