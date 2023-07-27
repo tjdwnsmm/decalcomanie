@@ -4,11 +4,10 @@ import { PerfumeFeed } from '../pages/FeedPage/PerfumeFeed';
 import SearchTabPage from '../pages/SearchPage/SearchTabPage';
 import SearchMyPerfume from '../pages/SearchPage/SearchMyPerfume';
 import PerfumeDetail from '../pages/PerfumePage/PerfumeDetail';
-import PostDetail from '../pages/PostDetailPage/PostDetail';
 import { MyDrawerPage } from '../pages/DrawerPage/MyDrawerPage';
 import FollowList from '../pages/MyPage/FollowList';
 import Post from '../pages/PostPages/Post';
-import PostDetail from '../pages/PostPage/PostDetail';
+import PostDetail from '../pages/PostDetailPage/PostDetail';
 import Mypage from '../pages/MyPage/Mypage';
 import MainPage from '../pages/MainPage/MainPage';
 

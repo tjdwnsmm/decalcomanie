@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import { Main } from '../../style';
-import { FeedTab } from '../../components/TabBar/FeedTab';
-import { FeedProps } from '../../types/FeedInfoType';
+import { MyPageTab } from '../../components/TabBar/MypageTab.tsx';
 import ProfileImage from '../../components/My/ProfileImage';
 import OptionMenu from '../../components/My/OptionMenu';
 import LikesUnlikes from '../../components/Box/LikesUnlikes';
@@ -71,7 +70,7 @@ export default function Mypage() {
       </MypageText>
       <LikesUnlikes />
       <ProfileStats />
-      <FeedTab setNowActive={setNowActive} />
+      <MyPageTab setNowActive={setNowActive} />
       <MypageContainer>
         <Column>
           {firstColumnFeeds.map((img, idx) => (
