@@ -4,7 +4,7 @@ import { styled } from 'styled-components';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
-import { Perfume } from '../../pages/DrawerPage/MyDrawerPage';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 
 export const DrawerCarousel: React.FC<DrawerFrameProps> = ({
   perfumeList,
@@ -19,7 +19,7 @@ export const DrawerCarousel: React.FC<DrawerFrameProps> = ({
     variableWidth: true,
   };
   const chunkSize = 6;
-  const chunks: Perfume[][] = [];
+  const chunks: PerfumeDetail[][] = [];
   for (let i = 0; i < perfumeList.length; i += chunkSize) {
     chunks.push(perfumeList.slice(i, i + chunkSize));
   }

@@ -33,8 +33,8 @@ export const FeedTab = ({ setNowActive }: FeedTabProps) => {
         {activeTab === 'post' ? <ColoredFeed /> : <UncoloredFeed />}
       </Tab>
       <Tab
-        active={activeTab === 'bookmark'}
-        onClick={() => handleTabClick('bookmark')}
+        active={activeTab === 'popularity'}
+        onClick={() => handleTabClick('popularity')}
       >
         {activeTab === 'bookmark' ? <ColoredBookmark /> : <UncoloredBookmark />}
       </Tab>

@@ -17,13 +17,12 @@ const RecommendPerfume = () => {
         <Info>
           <PerfumeName>{perfumeInfo.name}</PerfumeName>
           <PerfumeScent>
-            {perfumeInfo.scent.map((scent, idx) =>
-              idx === perfumeInfo.scent.length - 1 ? (
-                <>{scent}</>
-              ) : (
-                <>{scent}, </>
-              ),
-            )}
+            {perfumeInfo.scent.map((scent, idx) => (
+              <span key={idx}>
+                {scent}
+                {idx === perfumeInfo.scent.length - 1 ? '' : ', '}
+              </span>
+            ))}
           </PerfumeScent>
         </Info>
       </InfoBox>

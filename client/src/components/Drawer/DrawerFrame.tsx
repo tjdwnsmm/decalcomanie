@@ -1,11 +1,11 @@
 import { styled } from 'styled-components';
-import { Perfume } from '../../pages/DrawerPage/MyDrawerPage';
 import { ReactComponent as CancelSvg } from '../../assets/icon/input-cancel.svg';
 import { useState } from 'react';
 import { ConfirmAlert } from '../Alert/ConfirmAlert';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 
 export interface DrawerFrameProps {
-  perfumeList: Perfume[];
+  perfumeList: PerfumeDetail[];
   handlePerfume: (idx: number) => void;
   stairNum: number;
 }
@@ -17,16 +17,21 @@ export const DrawerFrame: React.FC<DrawerFrameProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [clickIdx, setClickIdx] = useState(-1);
-  const handleClickOpen = (index: number) => {
+  const [perfumeIdx, setPerfumeIdx] = useState(-1);
+
+  const handleClickOpen = (index: number, perfumeId: number) => {
     setOpen(true);
     setClickIdx(index);
+    setPerfumeIdx(perfumeId);
   };
+
   return (
     <>
       <ConfirmAlert
         open={open}
         setOpen={setOpen}
         handlePerfume={handlePerfume}
+        perfumeId={perfumeIdx}
         deleteIdx={stairNum * 3 + clickIdx}
       />
       <RowFrame>
@@ -34,16 +39,17 @@ export const DrawerFrame: React.FC<DrawerFrameProps> = ({
           <PerfumeContainer key={index}>
             <CancelSvg2
               onClick={() => {
-                // console.log('지워지는 idx : ', stairNum * 3 + index);
-                // handlePerfume(stairNum * 3 + index);
-                handleClickOpen(index);
-                // confirm('정말 삭제하시겠어요?');
+                handleClickOpen(index, perfume.perfumeId);
               }}
             />
-            <PerfumeImg src={perfume.img} />
+            <PerfumeImg src={perfume.picture} />
             <PerfumeInfo>
-              <PerfumeName>{perfume.name}</PerfumeName>
-              <PerfumeBrand>{perfume.brand}</PerfumeBrand>
+              <PerfumeName>
+                {perfume.nameOrg.length > 12
+                  ? perfume.nameOrg.slice(0, 12) + '..'
+                  : perfume.nameOrg}
+              </PerfumeName>
+              <PerfumeBrand>{perfume.brandName}</PerfumeBrand>
             </PerfumeInfo>
           </PerfumeContainer>
         ))}
@@ -70,6 +76,7 @@ const PerfumeImg = styled.img`
   width: 80px;
   height: 100px;
   object-fit: cover;
+  border-radius: 10px;
 `;
 
 const PerfumeInfo = styled.div`
