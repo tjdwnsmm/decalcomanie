@@ -1,7 +1,10 @@
 package com.eightlow.decalcomanie.user.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
+import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
+import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.entity.Follow;
@@ -34,6 +37,7 @@ public class UserServiceImpl implements IUserService {
     private final IPerfumeService perfumeService;
     private final FollowMapper followMapper;
     private final UserMapper userMapper;
+    private final ScentMapper scentMapper;
 
     @Override
     public String modifyUserPerfume(UserPerfume userPerfume) {
@@ -84,21 +88,15 @@ public class UserServiceImpl implements IUserService {
         List<FollowingResponse> result = new ArrayList<>();
 
         for(Follow follow : myFollowing) {
-            User user = userRepository.findByUserId(follow.getFollowed());
 
-            List<String> favorite = new ArrayList<>();
-        
-            // userScent 테이블에서 팔로잉 하고 있는 사람의 'FAVORITE' 향을 조회
-            List<UserScent> userScentList = userScentRepository.findAllUserScentByUserId(follow.getFollowed());
-
-            if(userScentList != null) {
-                for (UserScent scent : userScentList) {
-                    favorite.add(perfumeService.getScentById(scent.getScentId()).getName());
-                }
-            }
+            // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
+            UserInfoDto userInfoDto = getUserInfo(follow);
 
             // 반환 포맷에 맞는 response 생성
-            FollowingResponse response = new FollowingResponse(user.getUserId(), user.getNickname(), favorite, user.getPicture());
+            FollowingResponse response = new FollowingResponse(userInfoDto.getUser().getUserId(),
+                    userInfoDto.getUser().getNickname(),
+                    userInfoDto.getFavorities(),
+                    userInfoDto.getUser().getPicture());
 
             result.add(response);
         }
@@ -113,19 +111,14 @@ public class UserServiceImpl implements IUserService {
         List<FollowerResponse> result = new ArrayList<>();
 
         for(Follow follow : myFollowing) {
-            User user = userRepository.findByUserId(follow.getFollowing());
+            // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
+            UserInfoDto userInfoDto = getUserInfo(follow);
 
-            List<String> favorite = new ArrayList<>();
-
-            List<UserScent> userScentList = userScentRepository.findAllUserScentByUserId(follow.getFollowing());
-
-            if(userScentList != null) {
-                for (UserScent scent : userScentList) {
-                    favorite.add(perfumeService.getScentById(scent.getScentId()).getName());
-                }
-            }
-
-            FollowerResponse response = new FollowerResponse(user.getUserId(), user.getNickname(), favorite, user.getPicture(), isFollowing(userId, user.getUserId()));
+            FollowerResponse response = new FollowerResponse(userInfoDto.getUser().getUserId(),
+                    userInfoDto.getUser().getNickname(),
+                    userInfoDto.getFavorities(),
+                    userInfoDto.getUser().getPicture(),
+                    isFollowing(userId, userInfoDto.getUser().getUserId()));
 
             result.add(response);
         }
@@ -140,5 +133,30 @@ public class UserServiceImpl implements IUserService {
 
         if(follow == null) return false;
         return true;
+    }
+
+    // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보
+    @Override
+    public UserInfoDto getUserInfo(Follow follow) {
+        User user = userRepository.findByUserId(follow.getFollowed());
+
+        List<ScentDto> favorite = new ArrayList<>();
+        List<ScentDto> hate = new ArrayList<>();
+
+        // userScent 테이블에서 팔로잉 하고 있는 사람의 'FAVORITE' 향을 조회
+        List<UserScent> userScentList = userScentRepository.findAllUserScentByUserId(follow.getFollowed());
+
+        if(userScentList != null) {
+            for (UserScent scent : userScentList) {
+                if(scent.getStatus().equals("FAVORITE")) {
+                    favorite.add(scentMapper.toDto(perfumeService.getScentById(scent.getScentId())));
+                } else if(scent.getStatus().equals("HATE")) {
+                    hate.add(scentMapper.toDto(perfumeService.getScentById(scent.getScentId())));
+                }
+            }
+        }
+
+        UserInfoDto userInfoDto = new UserInfoDto(userMapper.toDto(user), favorite, hate);
+        return userInfoDto;
     }
 }

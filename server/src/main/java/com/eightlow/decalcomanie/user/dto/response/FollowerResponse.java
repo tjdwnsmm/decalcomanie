@@ -1,5 +1,6 @@
 package com.eightlow.decalcomanie.user.dto.response;
 
+import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import lombok.*;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class FollowerResponse {
 
     private String nickname;
 
-    private List<String> favorite;
+    private List<ScentDto> favorite;
 
     private String picture;
 
