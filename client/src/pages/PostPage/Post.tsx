@@ -35,11 +35,10 @@ const PostBody = styled.div`
   flex-direction: column;
 `;
 
-
 const TitleAlign = styled.div`
   width: 340px;
   font-weight: bold;
-  font-size: 18pt;
+  font-size: 16pt;
   text-align: center;
   margin-top: 10px;
 `;
@@ -80,7 +79,6 @@ export default function Post() {
         <PostButton onClick={postAlert}>글 등록하기</PostButton>
         <CancleButton onClick={cancleAlert}>취소</CancleButton>
       </PostBody>
-
     </Main>
   );
 }
