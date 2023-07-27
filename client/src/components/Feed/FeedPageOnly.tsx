@@ -3,6 +3,7 @@ import { ArticleDetail } from '../../types/FeedInfoType';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { CommentBtn } from '../Button/CommentBtn';
+import { useNavigate } from 'react-router-dom';
 
 interface FeedComponentProps {
   feed: ArticleDetail;
@@ -20,33 +21,44 @@ IconBox : 좋아요 아이콘, 좋아요 수, 댓글 수, 댓글 아이콘
 
 const favScent = ['우디', '플로럴', '시트러스'];
 const nofavScent = ['스파이시', '머스크'];
-const FeedPageOnly = ({ feed }: FeedComponentProps) => (
-  <>
-    <FeedBox>
-      <InfoBox>
-        <ProfileBox>
-          <LeftProfile>
-            <img src="src/assets/img/profile-user.png" />
-            <ProfileInfoBox>
-              {'닉네임'}
-              <Scent>
-                <FavScent>{favScent?.map((fav) => `#${fav}  `)}</FavScent>
-                <NoFavScent>{nofavScent?.map((fav) => `#${fav}  `)}</NoFavScent>
-              </Scent>
-            </ProfileInfoBox>
-          </LeftProfile>
-          <ScrapBtn />
-        </ProfileBox>
-      </InfoBox>
+const FeedPageOnly = ({ feed }: FeedComponentProps) => {
+  const navigate = useNavigate();
+  const handleDetail = (articleId: number) => {
+    navigate(`/post-detail/${articleId}`);
+  };
 
-      <ContentBox>{feed.content}</ContentBox>
-      <IconBox>
-        <LikeBtn count={feed.heart} />
-        <CommentBtn count={feed.comment} />
-      </IconBox>
-    </FeedBox>
-  </>
-);
+  return (
+    <>
+      <FeedBox>
+        <InfoBox>
+          <ProfileBox>
+            <LeftProfile>
+              <img src="src/assets/img/profile-user.png" />
+              <ProfileInfoBox>
+                {'닉네임'}
+                <Scent>
+                  <FavScent>{favScent?.map((fav) => `#${fav}  `)}</FavScent>
+                  <NoFavScent>
+                    {nofavScent?.map((fav) => `#${fav}  `)}
+                  </NoFavScent>
+                </Scent>
+              </ProfileInfoBox>
+            </LeftProfile>
+            <ScrapBtn />
+          </ProfileBox>
+        </InfoBox>
+
+        <ContentBox onClick={() => handleDetail(feed.articleId)}>
+          {feed.content}
+        </ContentBox>
+        <IconBox>
+          <LikeBtn count={feed.heart} />
+          <CommentBtn count={feed.comment} />
+        </IconBox>
+      </FeedBox>
+    </>
+  );
+};
 
 export default FeedPageOnly;
 
