@@ -21,14 +21,14 @@ ButtonBox : 좋아요/스크랩
 const PostInfoBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 8px 25px;
+  margin: 8px 25px 8px 20px;
 `;
 
 const WriterInfoBox = styled.div`
   display: flex;
   align-items: start;
   flex-direction: row;
-  margin: 10px 0px;
+  margin: 20px 0px 10px;
 `;
 
 const ProfileImg = styled.img`
@@ -84,9 +84,10 @@ const ContentBox = styled.div`
   color: var(--black-color);
   margin: 5px;
   padding-left: 40px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   white-space: pre-wrap;
+  line-height: 20px;
 `;
 
 const IconBox = styled.div`
@@ -100,7 +101,7 @@ const IconBox = styled.div`
 const CommentCount = styled.span`
   font-size: 14px;
   font-weight: 600;
-  margin: 15px 5px 0px;
+  margin: 25px 5px 5px;
 `;
 
 interface PostInfoBoxProps {
@@ -108,14 +109,33 @@ interface PostInfoBoxProps {
 }
 
 const formatDateTime = (datetimeStr: string) => {
-  const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false};
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  };
   const datetime = new Date(datetimeStr);
   return datetime.toLocaleDateString('ko-KR', options);
 };
 
 const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
-  const { profileImg, writer, createdAt, favScent, nofavScent, isFollow, likeCount, isLike, isScrap, content, commentCount } = postInfo;
-  
+  const {
+    profileImg,
+    writer,
+    createdAt,
+    favScent,
+    nofavScent,
+    isFollow,
+    likeCount,
+    isLike,
+    isScrap,
+    content,
+    commentCount,
+  } = postInfo;
+
   // isWriter: 글 작성자와 request.user의 일치 여부를 나타내는 로직 구현
   // 같을 경우 팔로우 버튼이 아닌 글 수정/삭제 모달을 띄우기 위해
   // 현재는 임시로 설정
@@ -137,11 +157,11 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
           </InfoBoxRow>
         </InfoBox>
         {!isWriter && <FollowBtn isFollow={isFollow} />}
-        {isWriter && <PostModalBtn/>}
+        {isWriter && <PostModalBtn />}
       </WriterInfoBox>
       <ContentBox>{content}</ContentBox>
       <IconBox>
-        <LikeBtn count={likeCount}/>
+        <LikeBtn count={likeCount} />
         <ScrapBtn />
       </IconBox>
       {/* 댓글 개수부분을 Comment 관련 파일에서 count해서 출력 ? */}

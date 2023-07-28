@@ -10,7 +10,6 @@ const Image = styled.div`
   background-image: ${({ imageUrl }: { imageUrl: string }) =>
     imageUrl ? `url(${imageUrl})` : 'none'};
   background-size: cover;
-  box-shadow: 5px 5px 5px var(--gray-color);
   z-index: 0;
 `;
 
@@ -28,7 +27,7 @@ const Root = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 `;
 
 const LoaderContainer = styled.div`

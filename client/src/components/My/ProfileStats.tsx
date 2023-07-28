@@ -46,7 +46,6 @@ const StatsBox = styled.div`
   height: 70px;
   border-radius: 20px;
   background-color: var(--white-color);
-  box-shadow: 5px 5px 5px var(--gray-color);
 `;
 
 const CountBox = styled.div`
@@ -78,24 +77,24 @@ export default function ProfileStats() {
     <StatsDiv>
       <StatsBox>
         <CountBox onClick={handleClick}>
-          <BoxText size="14pt" color="var(--primary-color)" fontweight="700">
+          <BoxText size="13pt" color="var(--primary-color)" fontweight="700">
             {formatNumber(data.following)}
           </BoxText>
-          <BoxText size="10pt">Following</BoxText>
+          <BoxText size="9.5pt">Following</BoxText>
         </CountBox>
         <Bar />
         <div>
-          <BoxText size="14pt" color="var(--primary-color)" fontweight="700">
+          <BoxText size="13pt" color="var(--primary-color)" fontweight="700">
             {formatNumber(data.post)}
           </BoxText>
-          <BoxText size="10pt">Post</BoxText>
+          <BoxText size="9.5pt">Post</BoxText>
         </div>
         <Bar />
         <CountBox onClick={handleClick}>
-          <BoxText size="14pt" color="var(--primary-color)" fontweight="700">
+          <BoxText size="13pt" color="var(--primary-color)" fontweight="700">
             {formatNumber(data.follower)}
           </BoxText>
-          <BoxText size="10pt">Followers</BoxText>
+          <BoxText size="9.5pt">Followers</BoxText>
         </CountBox>
       </StatsBox>
     </StatsDiv>

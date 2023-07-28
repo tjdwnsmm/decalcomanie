@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Carousel from 'react-items-carousel';
 import PerfumeReviewBox from '../Perfume/PerfumeReviewBox.tsx';
+import { NextSvg } from '../Box/AddCarousel.tsx';
+import { ReactComponent as PrevSvg } from '../../assets/icon/prevBack.svg';
 
 interface Perfume {
   rate: number;
@@ -33,8 +35,8 @@ const PerfumeReviewCarousel: React.FC<PerfumeReviewCarouselProps> = ({
       requestToChangeActive={setActiveItemIndex}
       activeItemIndex={activeItemIndex}
       numberOfCards={1}
-      leftChevron={<Button>{'<'}</Button>}
-      rightChevron={<Button>{'>'}</Button>}
+      leftChevron={<PrevSvg />}
+      rightChevron={<NextSvg />}
       chevronWidth={30}
     >
       {perfumes.map((perfume, index) => (

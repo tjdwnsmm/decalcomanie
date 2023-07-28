@@ -10,6 +10,7 @@ const CommentInputContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 1px 5px 8px 0px rgba(0, 0, 0, 0.15);
 `;
 
 const CommentInputBox = styled.div`
@@ -26,7 +27,7 @@ const CommentInput = styled.input`
   height: 45px;
   background-color: var(--background-color);
   margin: 0px 15px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: light;
   color: var(--black-color);
   border: none;
@@ -39,10 +40,11 @@ const CommentButton = styled.button`
   height: 45px;
   border-radius: 20px;
   background-color: var(--background-color);
-  font-size: 18px;
+  font-size: 16px;
   border: none;
   cursor: pointer;
-  color: ${({ hasContent }) => (hasContent ? 'var(--primary-color)' : 'var(--gray-color)')};
+  color: ${({ hasContent }) =>
+    hasContent ? 'var(--primary-color)' : 'var(--gray-color)'};
 `;
 
 function CommentInputForm() {
@@ -73,7 +75,10 @@ function CommentInputForm() {
           onKeyPress={handleKeyPress}
           placeholder="댓글을 입력해주세요."
         />
-        <CommentButton hasContent={commentContent.trim().length > 0} onClick={handleCommentSubmit}>
+        <CommentButton
+          hasContent={commentContent.trim().length > 0}
+          onClick={handleCommentSubmit}
+        >
           게시
         </CommentButton>
       </CommentInputBox>

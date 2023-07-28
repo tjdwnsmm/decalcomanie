@@ -9,12 +9,13 @@ const modules = {
 
 const StyledReactQuill = styled(ReactQuill)`
   margin: 10px 0px 10px 0px;
-  width: 340px;
+  padding: 10px;
+  width: 320px;
   height: 180px;
-  font-weight: bold;
+  font-weight: 500;d
   border-radius: 10px;
+  line-height: 25px;
   background-color: var(--white-color);
-  box-shadow: 2px 2px 2px var(--gray-color);
 
   .ql-container.ql-snow {
     border: none;

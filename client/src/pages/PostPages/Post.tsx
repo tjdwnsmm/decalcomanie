@@ -4,7 +4,9 @@ import CustomizedSwitches from '../../components/Switch/Switch.js';
 import ContextBox from '../../components/Box/AddContext.js';
 import AddRating from '../../components/Rating/Rating.js';
 import AddCarousel from '../../components/Box/AddCarousel.js';
-import { Main } from '../../style/index.js';
+import { ConfirmButton, Main, MarginFrame } from '../../style/index.js';
+import { ReactComponent as CancelSvg } from '../../assets/img/close.svg';
+import { useNavigate } from 'react-router-dom';
 
 const perfumes = [
   {
@@ -29,27 +31,39 @@ const perfumes = [
   },
 ];
 
-const PostBody = styled.div`
+const PostTitle = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const PostBody = styled.div`
+  display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 10px 0 0 25px;
 `;
 
 const TitleAlign = styled.div`
-  width: 340px;
+  width: 80%;
   font-weight: bold;
-  font-size: 16pt;
+  font-size: 18px;
   text-align: center;
-  margin-top: 10px;
+  padding-left: 10px;
 `;
 
 const LeftTitleAlign = styled(TitleAlign)`
   text-align: left;
-  font-size: 14pt;
-  margin-bottom: 5px;
+  font-size: 17px;
+  margin: 10px 0 5px;
+  padding-left: 0;
 `;
 
 export default function Post() {
+  const navigate = useNavigate();
+
   // test alert
   const postAlert = () => {
     alert('글을 등록하시겠습니까?');
@@ -57,13 +71,15 @@ export default function Post() {
 
   const cancleAlert = () => {
     alert('취소하시겠습니까?');
+    navigate('/main-feed');
   };
 
   return (
     <Main>
-      <PostBody>
+      <PostTitle>
         <TitleAlign>글 작성하기</TitleAlign>
-      </PostBody>
+        <CancelSvg onClick={() => cancleAlert()} />
+      </PostTitle>
       <div>
         <AddCarousel perfumes={perfumes} />
         <CustomizedSwitches></CustomizedSwitches>
@@ -72,13 +88,30 @@ export default function Post() {
       <PostBody>
         <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
         <ContextBox />
-        <LeftTitleAlign>
-          평점
-          <AddRating perfumes={perfumes} />
-        </LeftTitleAlign>
-        <PostButton onClick={postAlert}>글 등록하기</PostButton>
-        <CancleButton onClick={cancleAlert}>취소</CancleButton>
+        {perfumes.length !== 0 && (
+          <MarginFrame margin="15px 0">
+            <LeftTitleAlign>평점</LeftTitleAlign>
+            <MarginFrame margin="10px 0 40px">
+              <AddRating perfumes={perfumes} />
+            </MarginFrame>
+          </MarginFrame>
+        )}
       </PostBody>
+      <Buttons>
+        <ConfirmButton color="primary" background="primary" onClick={postAlert}>
+          글 등록하기
+        </ConfirmButton>
+        <ConfirmButton onClick={cancleAlert}>취소</ConfirmButton>
+      </Buttons>
     </Main>
   );
 }
+
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-contents: center;
+  gap: 10px;
+  padding-bottom: 10px;
+`;

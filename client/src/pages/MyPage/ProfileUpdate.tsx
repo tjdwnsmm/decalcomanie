@@ -9,14 +9,8 @@ import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
 // 임시데이터
 const user: ProfileUpdateInfo = {
   nickname: '김수민',
-  favorite: [
-    '시트러스',
-    '플로럴',
-  ],
-  hate: [
-    '머스크',
-    '스파이시',
-  ],
+  favorite: ['시트러스', '플로럴'],
+  hate: ['머스크', '스파이시'],
   img: 'src/assets/img/profile-img.png',
 };
 
@@ -65,7 +59,7 @@ const ImgModiBox = styled.div`
   margin: 5px;
   background-color: var(--white-color);
   border-radius: 40px;
-  box-shadow: 2px 4px 4px rgba(0,0,0, 0.2);
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.2);
 `;
 
 const UserInfoName = styled.div`
@@ -118,35 +112,35 @@ const ProfileUpdate = () => {
     <Main>
       <MarginFrame margin="64px">
         <PageName>회원 정보 수정</PageName>
-        <CancleBtn onClick={handleCancel}><CloseSvg/></CancleBtn>
+        <CancleBtn onClick={handleCancel}>
+          <CloseSvg />
+        </CancleBtn>
       </MarginFrame>
       <Profile>
         <ProfileImg src={user.img} alt="프로필 사진" />
-        <ImgModiBox><img src="src/assets/img/pencil-float.png" width="26" height="26"/></ImgModiBox>
+        <ImgModiBox>
+          <img src="src/assets/img/pencil-float.png" width="26" height="26" />
+        </ImgModiBox>
       </Profile>
       <MarginFrame margin="30px 40px">
-        <UserInfoName>
-          닉네임
-        </UserInfoName>
-        <NewNickname nickname={user.nickname}/>
+        <UserInfoName>닉네임</UserInfoName>
+        <NewNickname nickname={user.nickname} />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
-        <UserInfoName>
-          좋아요 😊
-        </UserInfoName>
-        <ScentModi scents={user.favorite} fav="좋아하는"/>
+        <UserInfoName>좋아요 😊</UserInfoName>
+        <ScentModi scents={user.favorite} fav="좋아하는" />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
-        <UserInfoName>
-          싫어요 🙁
-        </UserInfoName>
-        <ScentModi scents={user.hate} fav="싫어하는"/>
+        <UserInfoName>싫어요 🙁</UserInfoName>
+        <ScentModi scents={user.hate} fav="싫어하는" />
       </MarginFrame>
       <MarginFrame margin="20px 0 76px">
         <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>
       </MarginFrame>
       <CenterBackground>
-        <FixedPostButton background="primary" color="primary" fontweight="700">수정하기</FixedPostButton>
+        <FixedPostButton background="primary" color="primary" fontweight="700">
+          수정하기
+        </FixedPostButton>
       </CenterBackground>
     </Main>
   );
