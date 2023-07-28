@@ -243,6 +243,18 @@ public class ArticleController {
         return resultMessage(status);
     }
 
+    @PostMapping("/bookmark")
+    public ResponseEntity<Response> bookmarkArticle(@RequestBody BookMarkDto bookmarkDto) {
+        int status = articleService.bookmarkArticle(bookmarkDto);
+        return resultMessage(status);
+    }
+
+    @PostMapping("/cancelBookmark")
+    public ResponseEntity<Response> cancelBookmarkedArticle(@RequestBody BookMarkDto bookmarkDto) {
+        int status = articleService.cancelBookmarkArticle(bookmarkDto);
+        return resultMessage(status);
+    }
+
     private ResponseEntity<Response> resultMessage(int status) {
         if (status == 200) {
             return ResponseEntity.status(HttpStatus.OK)

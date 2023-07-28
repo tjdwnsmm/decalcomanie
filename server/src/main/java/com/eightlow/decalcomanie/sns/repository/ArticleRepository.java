@@ -31,10 +31,10 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Modifying
     @Transactional
     @Query("UPDATE Article a SET a.heart = a.heart + 1 WHERE a.articleId = :articleId")
-    void increaseHeartCountByArticleId(int articleId);
+    void increaseHeartCountByArticleId(@Param("articleId") int articleId);
 
     @Modifying
     @Transactional
     @Query("UPDATE Article a SET a.heart = a.heart - 1 WHERE a.articleId = :articleId")
-    void decreaseHeartCountByArticleId(int articleId);
+    void decreaseHeartCountByArticleId(@Param("articleId") int articleId);
 }
