@@ -26,12 +26,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.spec.PSource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -176,7 +174,7 @@ public class ArticleServiceImpl implements IArticleService {
     @Override
     @Transactional
     public List<ArticleDto> searchArticlesOfFollowingUser(String userId) {
-        //TODO: User 파트가 완성되고 나면 user에서 follwer리스트를 받아와서 article을 찾아야함
+
         List<FollowingResponse> followingResponses = userService.getFollowingUsers(userId);
         System.out.println(followingResponses.toString());
 
@@ -191,6 +189,9 @@ public class ArticleServiceImpl implements IArticleService {
             articles.addAll(searchArticleByUserId(id));
         }
 
+
+        Collections.sort(articles, Comparator.comparing(ArticleDto::getCreatedAt).reversed());
+        log.info(articles.toString());
         return articles;
     }
 
