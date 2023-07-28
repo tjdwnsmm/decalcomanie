@@ -29,7 +29,6 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
-
     private final UserPerfumeRepository userPerfumeRepository;
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
@@ -85,12 +84,14 @@ public class UserServiceImpl implements IUserService {
     public List<FollowingResponse> getFollowingUsers(String userId) {
         // following 컬럼의 userId를 기준으로 조회
         List<Follow> myFollowing = followRepository.findByFollowing(userId);
+        System.out.println("sdfsd" + myFollowing.toString());
         List<FollowingResponse> result = new ArrayList<>();
 
         for(Follow follow : myFollowing) {
 
             // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
             UserInfoDto userInfoDto = getUserInfo(follow.getFollowed());
+            System.out.println(userInfoDto);
 
             // 반환 포맷에 맞는 response 생성
             FollowingResponse response = new FollowingResponse(userInfoDto.getUser().getUserId(),
@@ -139,18 +140,19 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserInfoDto getUserInfo(String userId) {
         User user = userRepository.findByUserId(userId);
+        System.out.println(userMapper.toDto(user));
 
         List<ScentDto> favorite = new ArrayList<>();
         List<ScentDto> hate = new ArrayList<>();
 
-        // userScent 테이블에서 팔로잉 하고 있는 사람의 'FAVORITE' 향을 조회
-        List<UserScent> userScentList = userScentRepository.findAllUserScentByUserId(userId);
+        // userScent 테이블에서 팔로잉 하고 있는 사람의 좋아하는 향, 싫어하느 향을 조회
+        List<UserScent> userScentList = userScentRepository.findUserScentByUserId(userId);
 
         if(userScentList != null) {
             for (UserScent scent : userScentList) {
-                if(scent.getStatus().equals("FAVORITE")) {
+                if(scent.getStatus().getValue().equals("FAVORITE")) {
                     favorite.add(scentMapper.toDto(perfumeService.getScentById(scent.getScentId())));
-                } else if(scent.getStatus().equals("HATE")) {
+                } else if(scent.getStatus().getValue().equals("HATE")) {
                     hate.add(scentMapper.toDto(perfumeService.getScentById(scent.getScentId())));
                 }
             }
