@@ -15,5 +15,5 @@ import lombok.experimental.SuperBuilder;
 @ToString
 public class UserAndPerfumeDto {
     private UserInfoDto userInfoDto;
-    private PerfumeDto perfumeDtos;
+    private PerfumeDto perfumeDto;
 }

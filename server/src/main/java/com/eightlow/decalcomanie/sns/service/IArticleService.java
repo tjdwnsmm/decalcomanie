@@ -1,6 +1,7 @@
 package com.eightlow.decalcomanie.sns.service;
 
 import com.eightlow.decalcomanie.sns.dto.ArticleDto;
+import com.eightlow.decalcomanie.sns.dto.BookMarkDto;
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.HeartDto;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
@@ -47,4 +48,8 @@ public interface IArticleService {
     int likeArticle(HeartDto heartDto);
 
     int dislikeArticle(HeartDto heartDto);
+
+    int bookmarkArticle(BookMarkDto bookmarkDto);
+
+    int cancelBookmarkArticle(BookMarkDto bookmarkDto);
 }

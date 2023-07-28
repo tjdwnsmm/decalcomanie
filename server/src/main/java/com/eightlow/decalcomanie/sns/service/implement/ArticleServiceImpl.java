@@ -1,21 +1,12 @@
 package com.eightlow.decalcomanie.sns.service.implement;
 
-import com.eightlow.decalcomanie.sns.dto.ArticleDto;
-import com.eightlow.decalcomanie.sns.dto.ArticlePerfumeDto;
-import com.eightlow.decalcomanie.sns.dto.CommentDto;
-import com.eightlow.decalcomanie.sns.dto.HeartDto;
+import com.eightlow.decalcomanie.sns.dto.*;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.sns.entity.Article;
 import com.eightlow.decalcomanie.sns.entity.ArticlePerfume;
 import com.eightlow.decalcomanie.sns.entity.Comment;
-import com.eightlow.decalcomanie.sns.mapper.ArticleMapper;
-import com.eightlow.decalcomanie.sns.mapper.ArticlePerfumeMapper;
-import com.eightlow.decalcomanie.sns.mapper.CommentMapper;
-import com.eightlow.decalcomanie.sns.mapper.HeartMapper;
-import com.eightlow.decalcomanie.sns.repository.ArticlePerfumeRepository;
-import com.eightlow.decalcomanie.sns.repository.ArticleRepository;
-import com.eightlow.decalcomanie.sns.repository.CommentRepository;
-import com.eightlow.decalcomanie.sns.repository.HeartRepository;
+import com.eightlow.decalcomanie.sns.mapper.*;
+import com.eightlow.decalcomanie.sns.repository.*;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.service.IUserService;
@@ -51,6 +42,9 @@ public class ArticleServiceImpl implements IArticleService {
 
     private final HeartRepository heartRepository;
     private final HeartMapper heartMapper;
+
+    private final BookMarkRepository bookmarkRepository;
+    private final BookMarkMapper bookmarkMapper;
 
 
     @Override
@@ -408,6 +402,23 @@ public class ArticleServiceImpl implements IArticleService {
         articleRepository.decreaseHeartCountByArticleId(heartDto.getArticleId());
 
         log.info("ArticleServiceImpl::: likeArticle finish");
+        return 200;
+    }
+
+    @Override
+    @Transactional
+    public int bookmarkArticle(BookMarkDto bookmarkDto) {
+        log.info("ArticleServiceImpl::: bookmarkArticle start");
+        bookmarkRepository.save(bookmarkMapper.toEntity(bookmarkDto));
+        log.info("ArticleServiceImpl::: bookmarkArticle finish");
+        return 200;
+    }
+
+    @Override
+    public int cancelBookmarkArticle(BookMarkDto bookmarkDto) {
+        log.info("ArticleServiceImpl::: cancelBookmarkArticle start");
+        bookmarkRepository.deleteByArticleIdAndUserId(bookmarkDto.getArticleId(), bookmarkDto.getUserId());
+        log.info("ArticleServiceImpl::: cancelBookmarkArticle finish");
         return 200;
     }
 }
