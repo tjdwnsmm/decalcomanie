@@ -3,6 +3,7 @@ export interface PerfumeDetail {
   perfumeId: number;
   brandId: number;
   brandName: string;
+  name: string;
   nameOrg: string;
   picture: string;
   gender: number;

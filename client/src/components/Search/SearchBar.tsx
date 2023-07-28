@@ -76,7 +76,10 @@ const SearchBar: React.FC<SearchBoxProps> = ({
     //
     if (dataList) {
       const filteredResults = dataList
-        .filter((list: PerfumeDetail) => list.nameOrg.includes(keyword))
+        .filter(
+          (list: PerfumeDetail) =>
+            list.nameOrg.includes(keyword) || list.name.includes(keyword),
+        )
         .map((perfume: PerfumeDetail) =>
           perfume.nameOrg.length > 30
             ? perfume.nameOrg.slice(0, 30) + '...'
