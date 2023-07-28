@@ -26,9 +26,7 @@ const PerfumeInfoBox = ({ feed }: PerfumeInfoBoxProps) => (
       <TextInfo>
         <PerfumeBrand>{feed.brandName}</PerfumeBrand>
         <PerfumeName>
-          {feed.nameOrg.length > 20
-            ? feed.nameOrg.slice(0, 20) + '...'
-            : feed.nameOrg}
+          {feed.name.length > 14 ? feed.name.slice(0, 14) + '...' : feed.name}
         </PerfumeName>
         <PerfumeScent>{extractAccordNames(feed.accord)}</PerfumeScent>
       </TextInfo>

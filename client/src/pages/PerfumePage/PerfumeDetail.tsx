@@ -54,7 +54,7 @@ const PerfumeDetail = () => {
             <RateBtn count={perfume.rate ? perfume.rate : 0} />
           </PerfumeIcon>
           <Brand>{perfume.brandName}</Brand>
-          <PerfumeName>{perfume.nameOrg}</PerfumeName>
+          <PerfumeName>{perfume.name}</PerfumeName>
           <ScentList accord={perfume.accord.slice(0, 3)} />
         </LeftSection>
         <PerfumeImg>

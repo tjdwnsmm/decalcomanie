@@ -52,7 +52,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 <PerfumeInfo onClick={() => handleClick(feed.perfumeId)}>
                   <TextInfo>
                     <PerfumeBrand>{feed.brandName}</PerfumeBrand>
-                    <PerfumeName>{feed.nameOrg}</PerfumeName>
+                    <PerfumeName>
+                      {feed.name.length > 12
+                        ? feed.name.slice(0, 12) + '...'
+                        : feed.name}
+                    </PerfumeName>
                     <PerfumeScent>
                       {feed.accord.slice(0, 3).map((scent, idx) => (
                         <span key={idx}>

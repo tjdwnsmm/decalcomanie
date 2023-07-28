@@ -11,11 +11,13 @@ import PostDetail from '../pages/PostDetailPage/PostDetail';
 import Mypage from '../pages/MyPage/Mypage';
 import MainPage from '../pages/MainPage/MainPage';
 import ProfileUpdate from '../pages/MyPage/ProfileUpdate';
+import LoginPage from '../pages/MainPage/LoginPage';
 
 export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/" element={<MainPage />}></Route>
         <Route path="/main-feed" element={<MainFeed />}></Route>
         <Route path="/perfume-feed/:id" element={<PerfumeFeed />}></Route>
