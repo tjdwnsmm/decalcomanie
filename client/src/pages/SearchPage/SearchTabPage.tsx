@@ -14,7 +14,7 @@ import Spinner from '../../components/common/Spinner';
 export interface Filter {
   brandName?: string[];
   brandId?: number[];
-  gender?: string[];
+  gender?: number[];
   scent?: string[];
   scentId?: number[];
 }
@@ -38,6 +38,13 @@ const SearchTabPage: React.FC = () => {
   >(null);
 
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [sortOption, setSortOption] = useState<SortOption>(
+    SortOption.Popularity,
+  );
+
+  const handleSortChange = (newSortOption: SortOption) => {
+    setSortOption(newSortOption);
+  };
 
   const handleScroll = () => {
     setScrollPosition(window.scrollY);
@@ -90,6 +97,29 @@ const SearchTabPage: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (searchResults && searchResults.length > 0) {
+      const sortedResults = sortResults(searchResults);
+      setSearchResults(sortedResults);
+      console.log('정렬완료');
+    }
+  }, [searchResults, sortOption]);
+
+  const sortResults = (results: PerfumeDetail[]) => {
+    switch (sortOption) {
+      case SortOption.Popularity:
+        return results.sort((a, b) => b.pick - a.pick);
+      case SortOption.Grade:
+        return results.sort((a, b) => {
+          const rateA = a.rate !== null ? a.rate : 0;
+          const rateB = b.rate !== null ? b.rate : 0;
+          return rateB - rateA;
+        });
+      default:
+        return results;
+    }
+  };
+
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
    */
@@ -140,7 +170,7 @@ const SearchTabPage: React.FC = () => {
       const response = await axios.post('/perfume/search', {
         keyword: searchKeyword,
         brand: filter.brandId ? filter.brandId : [],
-        gender: filter.gender ? [0] : [],
+        gender: filter.gender ? filter.gender : [],
         scent: filter.scentId ? filter.scentId : [],
       });
       console.log(response);
@@ -166,14 +196,6 @@ const SearchTabPage: React.FC = () => {
     setSearchResults(null);
     const filterDatas = await filterSearch(filter);
     setSearchResults(filterDatas); // 검색 결과
-  };
-
-  const [sortOption, setSortOption] = useState<SortOption>(
-    SortOption.Popularity,
-  );
-
-  const handleSortChange = (newSortOption: SortOption) => {
-    setSortOption(newSortOption);
   };
 
   /**
