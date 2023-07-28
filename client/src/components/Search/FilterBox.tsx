@@ -13,7 +13,7 @@ interface FilterBoxProps {
 interface Filter {
   brand?: string[];
   brandId?: number[];
-  gender?: string[];
+  gender?: number[];
   scent?: string[];
   scentId?: number[];
 }
@@ -118,6 +118,24 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
     }
   };
 
+  const handleGenderChange = (value: number) => {
+    setFilter((prevFilter) => {
+      const genderArr = prevFilter.gender || [];
+      if (genderArr.includes(value)) {
+        // Deselect if already selected
+        return {
+          ...prevFilter,
+          gender: genderArr.filter((gender) => gender !== value),
+        };
+      } else {
+        return {
+          ...prevFilter,
+          gender: [...genderArr, value],
+        };
+      }
+    });
+  };
+
   const handleRemoveBrandSearch = (idx: number) => {
     setFilter((prevFilter) => ({
       ...prevFilter,
@@ -161,15 +179,42 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
           {/* 성별 필터링 */}
           <MarginFrame margin="15px 0 0" />
           <FilterTitle>성별</FilterTitle>
-          <Select
-            value={filter.gender || ''}
-            onChange={(e) => handleFilterChange('gender', e.target.value)}
-          >
-            <option value="">미선택</option>
-            <option value="0">남성</option>
-            <option value="1">여성</option>
-            <option value="2">남녀공용</option>
-          </Select>
+
+          <CheckboxContainer>
+            <CheckboxLabel>
+              <CheckboxInput
+                type="checkbox"
+                value={0}
+                checked={filter.gender?.includes(0) || false}
+                onChange={(e) => handleGenderChange(Number(e.target.value))}
+              />
+              <label htmlFor="check_btn">
+                <span>남성</span>
+              </label>
+            </CheckboxLabel>
+            <CheckboxLabel>
+              <CheckboxInput
+                type="checkbox"
+                value={1}
+                checked={filter.gender?.includes(1) || false}
+                onChange={(e) => handleGenderChange(Number(e.target.value))}
+              />
+              <label htmlFor="check_btn">
+                <span>여성</span>
+              </label>
+            </CheckboxLabel>
+            <CheckboxLabel>
+              <CheckboxInput
+                type="checkbox"
+                value={2}
+                checked={filter.gender?.includes(2) || false}
+                onChange={(e) => handleGenderChange(Number(e.target.value))}
+              />
+              <label htmlFor="check_btn">
+                <span>남녀공용</span>
+              </label>
+            </CheckboxLabel>
+          </CheckboxContainer>
 
           <MarginFrame margin="15px 0 0" />
 
@@ -209,26 +254,30 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
     </FilterContainer>
   );
 };
+const CheckboxContainer = styled.div`
+  margin: 15px 0 10px 20px;
+  display: flex;
+`;
+
+const CheckboxLabel = styled.label`
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  label {
+    margin-left: 1px;
+  }
+`;
+
+const CheckboxInput = styled.input`
+  color: var(--primary-color);
+  width: 20px;
+`;
 
 const FilterContainer = styled.div`
   display: flex;
   margin: 8px 0;
   flex-wrap: wrap;
   flex-direction: column;
-`;
-
-const Select = styled.select`
-  border-radius: 5px;
-  font-size: 14px;
-  border: none;
-  outline: none;
-  margin: 8px 20px;
-  padding: 0 18px;
-  display: flex;
-  height: 48px;
-  & option {
-    color: var(--primary-color);
-  }
 `;
 
 const FilterTitle = styled.div`
