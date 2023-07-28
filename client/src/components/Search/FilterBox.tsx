@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import SearchBar from './SearchBar';
+import SearchBar, { dataByUrlProps } from './SearchBar';
 import { CenterFrame, ConfirmButton, MarginFrame } from '../../style';
 import { ReactComponent as CancelSvg } from '../../assets/icon/input-cancel.svg';
+import axios from '../../api/apiController';
+
 interface FilterBoxProps {
   onApplyFilters: (filter: Filter) => void;
   filterNow: Filter;
@@ -10,8 +12,10 @@ interface FilterBoxProps {
 
 interface Filter {
   brand?: string[];
+  brandId?: number[];
   gender?: string[];
   scent?: string[];
+  scentId?: number[];
 }
 
 /**
@@ -24,6 +28,23 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
   const [filter, setFilter] = useState<Filter>(filterNow);
   const [brandInput, setBrandInput] = useState('');
   const [scentInput, setScentInput] = useState('');
+  const [brandInfo, setBrandInfo] = useState<dataByUrlProps[]>([]);
+  const [scentInfo, setScentInfo] = useState<dataByUrlProps[]>([]);
+
+  const BRAND_URL = `/perfume/search/brand`;
+  const SCENT_URL = `/perfume/search/scent`;
+
+  useEffect(() => {
+    axios.get(BRAND_URL).then((res) => {
+      const dataArray = res.data.map((data: dataByUrlProps) => data);
+      setBrandInfo(dataArray);
+    });
+    axios.get(SCENT_URL).then((res) => {
+      const dataArray = res.data.map((data: dataByUrlProps) => data);
+      setScentInfo(dataArray);
+    });
+  }, []);
+
   /**
    *@summary filter 정보가 바뀔때마다 업데이트
    * @param filterName 필터명 : ex) 브랜드, 성별, 향 계열 등등
@@ -43,12 +64,38 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
     onApplyFilters(filter);
   };
 
+  const getId = (type: string, searchKeyword: string): number => {
+    console.log(brandInfo, scentInfo);
+    let id: number | undefined = 0;
+
+    switch (type) {
+      case 'brand':
+        const brand = brandInfo.find((brand) => brand.name === searchKeyword);
+        if (brand) {
+          id = brand.brandId;
+        }
+        break;
+      case 'scent':
+        const scent = scentInfo.find((scent) => scent.name === searchKeyword);
+        if (scent) {
+          id = scent.scentId;
+        }
+        break;
+    }
+    if (id === undefined) {
+      return 0;
+    }
+    return id;
+  };
+
   const handleBrandSearch = (keyword: string, isSearch: boolean) => {
-    // console.log(`💨Filter-Brand > ${keyword} and ${isSearch}`);
+    const nowId = getId('brand', keyword);
+    console.log(`nowID = ${nowId}`);
     if (isSearch) {
       setFilter((prevFilter) => ({
         ...prevFilter,
         brand: prevFilter.brand ? [...prevFilter.brand, keyword] : [keyword],
+        brandId: prevFilter.brandId ? [...prevFilter.brandId, nowId] : [nowId],
       }));
       setBrandInput('');
     } else {
@@ -57,10 +104,13 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
   };
   const handleScentSearch = (keyword: string, isSearch: boolean) => {
     // console.log(`💨Filter-Scent > ${keyword} and ${isSearch}`);
+    const nowId = getId('scent', keyword);
+    console.log(`nowID = ${nowId}`);
     if (isSearch) {
       setFilter((prevFilter) => ({
         ...prevFilter,
         scent: prevFilter.scent ? [...prevFilter.scent, keyword] : [keyword],
+        scentId: prevFilter.scentId ? [...prevFilter.scentId, nowId] : [nowId],
       }));
       setScentInput('');
     } else {
@@ -72,12 +122,14 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
     setFilter((prevFilter) => ({
       ...prevFilter,
       brand: prevFilter.brand?.filter((item, index) => index !== idx),
+      brandId: prevFilter.brandId?.filter((item, index) => index !== idx),
     }));
   };
   const handleRemoveScentSearch = (idx: number) => {
     setFilter((prevFilter) => ({
       ...prevFilter,
       scent: prevFilter.scent?.filter((item, index) => index !== idx),
+      scentId: prevFilter.scentId?.filter((item, index) => index !== idx),
     }));
   };
 
@@ -88,12 +140,12 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
       <SearchBar
         onSearch={handleBrandSearch}
         placeholder="브랜드 명을 입력해주세요"
-        fetchURL="/perfume/search/brand"
+        fetchURL={BRAND_URL}
       />
 
       <RecentBtnList>
         {filter.brand?.map((brand, idx) => (
-          <RecentBtn>
+          <RecentBtn key={idx}>
             {brand}
             <CancelSvg
               onClick={() => {
@@ -126,7 +178,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
           <SearchBar
             onSearch={handleScentSearch}
             placeholder="선호하시는 향 계열을 입력해주세요"
-            fetchURL="/perfume/search/scent"
+            fetchURL={SCENT_URL}
           />
           <RecentBtnList>
             {filter.scent?.map((scent, idx) => (

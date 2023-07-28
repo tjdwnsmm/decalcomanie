@@ -14,6 +14,12 @@ interface SearchBoxProps {
   fetchURL?: string;
 }
 
+export interface dataByUrlProps {
+  name: string;
+  brandId?: number;
+  scentId?: number;
+}
+
 /**
  *
  * @param onSearch : 검색
@@ -32,13 +38,13 @@ const SearchBar: React.FC<SearchBoxProps> = ({
   const [isSearch, setIsSearch] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
-  const [dataByURL, setDataByURL] = useState<string[]>([]);
+  const [dataByURL, setDataByURL] = useState<dataByUrlProps[]>([]);
 
   useEffect(() => {
     if (fetchURL) {
       axios.get(fetchURL).then((res) => {
-        const namesArray = res.data.map((data: any) => data.name);
-        setDataByURL(namesArray);
+        const dataArray = res.data.map((data: dataByUrlProps) => data);
+        setDataByURL(dataArray);
       });
     }
   }, []);
@@ -58,9 +64,10 @@ const SearchBar: React.FC<SearchBoxProps> = ({
     setIsFetching(true);
     if (fetchURL) {
       const filteredResults = dataByURL
-        .filter((list: string) =>
-          list.toLowerCase().includes(keyword.toLowerCase()),
+        .filter((list: dataByUrlProps) =>
+          list.name.toLowerCase().includes(keyword.toLowerCase()),
         )
+        .map((data: dataByUrlProps) => data.name)
         .slice(0, 8);
       console.log(filteredResults);
       setSearchResults(filteredResults);
