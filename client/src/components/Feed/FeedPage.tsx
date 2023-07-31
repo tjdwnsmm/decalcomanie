@@ -1,11 +1,18 @@
 import styled from 'styled-components';
-import { FeedProps } from '../../types/FeedInfoType';
+import {
+  EachFeedInfo,
+  ArticleDetail,
+  FeedDetail,
+} from '../../types/FeedInfoType';
 import PerfumeInfoBox from '../Perfume/PerfumeInfoBox';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
+import { USERID } from '../../api/apiController';
+import { useEffect, useState } from 'react';
 
 interface FeedComponentProps {
-  feed: FeedProps;
+  feed: EachFeedInfo;
+  handleDetail: (articleId: number) => void;
 }
 
 /**
@@ -18,31 +25,49 @@ InfoBox : 피드 나머지 부분 내용
   - IconBox : 좋아요 아이콘, 좋아요 수, 스크랩 버튼
 */
 
-const FeedPage = ({ feed }: FeedComponentProps) => (
-  <>
-    <FeedBox>
-      <PerfumeInfoBox
-        brand={feed.perfumeInfo.brand}
-        name={feed.perfumeInfo.name}
-        scent={feed.perfumeInfo.scent}
-        img={feed.perfumeInfo.img}
-      />
-      <ContentBox>{feed.content}</ContentBox>
-      <InfoBox>
-        <ProfileBox>
-          <img src={feed.profileImg} />
-          {feed.writer}
-        </ProfileBox>
-        <IconBox>
-          <LikeBtn count={feed.like} />
-          <ScrapBtn />
-        </IconBox>
-      </InfoBox>
-    </FeedBox>
-  </>
-);
+const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
+  const [picked, setPicked] = useState(feed.hearted);
+  const [count, setCount] = useState(feed.articleDtos.heart);
+  useEffect(() => {
+    setPicked(feed.articleDtos.picked);
+    setCount(feed.articleDtos.heart);
+  }, [feed, count]);
+
+  return (
+    <>
+      <FeedBox>
+        <div onClick={() => handleDetail(feed.articleDtos.articleId)}>
+          <PerfumeInfoBox feed={feed.perfumeDtos} />
+          <ContentBox>{feed.articleDtos.content}</ContentBox>
+        </div>
+        <InfoBox>
+          <ProfileBox>
+            <img src={'src/assets/img/profile-user.png'} />
+            {feed.userInfoDto.user.nickname}
+          </ProfileBox>
+          <IconBox>
+            <LikeBtn
+              picked={feed.hearted}
+              count={count}
+              likeUrl="/sns/like"
+              dislikeUrl="/sns/dislike"
+              articleId={feed.articleDtos.articleId}
+              userId={USERID}
+            />
+            <ScrapBtn
+              isScrap={feed.bookmarked}
+              articleId={feed.articleDtos.articleId}
+              userId={USERID}
+            />
+          </IconBox>
+        </InfoBox>
+      </FeedBox>
+    </>
+  );
+};
 
 export default FeedPage;
+
 const InfoBox = styled.div`
   display: flex;
   justify-content: space-between;
