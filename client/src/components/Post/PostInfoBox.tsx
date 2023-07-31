@@ -171,7 +171,7 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
           articleId={articleId}
           userId={USERID}
         />
-        <ScrapBtn />
+        <ScrapBtn articleId={articleId} userId={USERID} isScrap={isScrap} />
       </IconBox>
       {/* 댓글 개수부분을 Comment 관련 파일에서 count해서 출력 ? */}
       <CommentCount>

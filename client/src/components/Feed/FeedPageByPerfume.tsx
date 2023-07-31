@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ArticleDetail } from '../../types/FeedInfoType';
+import { EachFeedInfo } from '../../types/FeedInfoType';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { CommentBtn } from '../Button/CommentBtn';
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { USERID } from '../../api/apiController';
 
 interface FeedComponentProps {
-  feed: ArticleDetail;
+  feed: EachFeedInfo;
 }
 
 /**
@@ -45,23 +45,27 @@ const FeedPageOnly = ({ feed }: FeedComponentProps) => {
                 </Scent>
               </ProfileInfoBox>
             </LeftProfile>
-            <ScrapBtn />
+            <ScrapBtn
+              isScrap={feed.bookmarked}
+              articleId={feed.articleDtos.articleId}
+              userId={USERID}
+            />
           </ProfileBox>
         </InfoBox>
 
-        <ContentBox onClick={() => handleDetail(feed.articleId)}>
-          {feed.content}
+        <ContentBox onClick={() => handleDetail(feed.articleDtos.articleId)}>
+          {feed.articleDtos.content}
         </ContentBox>
         <IconBox>
           <LikeBtn
-            picked={feed.picked}
-            count={feed.heart}
+            picked={feed.hearted}
+            count={feed.articleDtos.heart}
             likeUrl="/sns/like"
             dislikeUrl="/sns/dislike"
-            articleId={feed.articleId}
+            articleId={feed.articleDtos.articleId}
             userId={USERID}
           />
-          <CommentBtn count={feed.comment} />
+          <CommentBtn count={feed.articleDtos.comment} />
         </IconBox>
       </FeedBox>
     </>

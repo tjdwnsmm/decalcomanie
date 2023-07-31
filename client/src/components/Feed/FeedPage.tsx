@@ -26,7 +26,7 @@ InfoBox : 피드 나머지 부분 내용
 */
 
 const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
-  const [picked, setPicked] = useState(feed.articleDtos.picked);
+  const [picked, setPicked] = useState(feed.hearted);
   const [count, setCount] = useState(feed.articleDtos.heart);
   useEffect(() => {
     setPicked(feed.articleDtos.picked);
@@ -43,18 +43,22 @@ const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
         <InfoBox>
           <ProfileBox>
             <img src={'src/assets/img/profile-user.png'} />
-            {feed.articleDtos.userId}
+            {feed.userInfoDto.user.nickname}
           </ProfileBox>
           <IconBox>
             <LikeBtn
-              picked={picked}
+              picked={feed.hearted}
               count={count}
               likeUrl="/sns/like"
               dislikeUrl="/sns/dislike"
               articleId={feed.articleDtos.articleId}
               userId={USERID}
             />
-            <ScrapBtn />
+            <ScrapBtn
+              isScrap={feed.bookmarked}
+              articleId={feed.articleDtos.articleId}
+              userId={USERID}
+            />
           </IconBox>
         </InfoBox>
       </FeedBox>

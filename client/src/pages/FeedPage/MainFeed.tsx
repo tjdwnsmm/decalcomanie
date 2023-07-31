@@ -21,6 +21,7 @@ export const MainFeed = () => {
   const fetchFeedsForTab = (tab: string) => {
     axios.get(`/sns/feed/${tab}`).then((res) => {
       setFeeds(res.data);
+      // console.log(res.data);
     });
   };
 

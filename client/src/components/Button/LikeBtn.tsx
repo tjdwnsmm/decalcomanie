@@ -50,7 +50,6 @@ export const LikeBtn = ({
     }
   };
 
-  // Function to send the like status to the API
   const sendLikeStatus = async (url: string) => {
     try {
       const requestData = url.includes('sns')

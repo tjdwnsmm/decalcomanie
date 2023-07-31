@@ -6,8 +6,14 @@ export interface FollowInfo {
 }
 
 export interface ProfileUpdateInfo {
-  nickname: string,
+  user: userInfo;
   favorite: string[];
   hate: string[];
   img: string;
+}
+
+export interface userInfo {
+  userId: string;
+  accessToken: string;
+  nickname: string;
 }

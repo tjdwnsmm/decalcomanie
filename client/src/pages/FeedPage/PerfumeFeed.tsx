@@ -60,7 +60,7 @@ export const PerfumeFeed = () => {
 
       <FeedBody>
         {feed.map((eachFeed, idx) => (
-          <FeedPageOnly key={idx} feed={eachFeed.articleDtos} />
+          <FeedPageOnly key={idx} feed={eachFeed} />
         ))}
       </FeedBody>
     </Main>
