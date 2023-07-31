@@ -18,7 +18,9 @@ public class Brand {
     @Column(name = "brandId")
     private int brandId;
 
+    @Column(name = "nameOrg")
+    private String nameOrg;
+
     @Column(name = "name")
     private String name;
-
 }

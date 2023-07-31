@@ -20,9 +20,12 @@ public class Scent {
     @Column(name = "scentId")
     private int scentId;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "nameOrg")
+    private String nameOrg;
 
     @Column(name = "rgb")
     private String rgb;
+
+    @Column(name = "name")
+    private String name;
 }

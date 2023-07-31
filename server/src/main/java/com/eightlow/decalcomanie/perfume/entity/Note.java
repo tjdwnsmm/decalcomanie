@@ -20,6 +20,9 @@ public class Note {
     @Column(name = "noteId")
     private int noteId;
 
+    @Column(name = "nameOrg")
+    private String nameOrg;
+
     @Column(name = "name")
     private String name;
 

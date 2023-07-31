@@ -3,6 +3,7 @@ package com.eightlow.decalcomanie.perfume.repository;
 import com.eightlow.decalcomanie.perfume.entity.Accord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface AccordRepository extends JpaRepository<Accord, Integer> {
     Accord findOneByAccordId(int accordId);
 
     @Query("SELECT perfumeId FROM Accord WHERE scentId = :scentId")
-    List<Integer> findPerfumeIdsByScentId(int scentId);
+    List<Integer> findPerfumeIdsByScentId(@Param(value="scentId") int scentId);
 
     List<Accord> findAllByPerfumeId(int perfumeId);
 }
