@@ -55,7 +55,7 @@ const Brand = styled.div`
 
 const Info = styled.div`
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   width: 261px;
   align-items: center;
 `;

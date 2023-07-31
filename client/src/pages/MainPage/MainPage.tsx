@@ -7,7 +7,20 @@ import BottomNav from '../../components/common/BottomNav';
 import { useNavigate } from 'react-router-dom';
 import MainCarousel from '../../components/Carousel/MainCarousel';
 import { styled } from 'styled-components';
+import { LikeBtn } from '../../components/Button/LikeBtn';
+import { USERID } from '../../api/apiController';
+import { ScentDto } from '../../types/PerfumeInfoType';
 
+const nowDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = ('0' + (today.getMonth() + 1)).slice(-2);
+  const day = ('0' + today.getDate()).slice(-2);
+  const dateString = year + '-' + month + '-' + day;
+  return dateString;
+};
+
+const season = '여름';
 const MainPage = () => {
   const [isDrawer, setDrawer] = useState(true);
   const navigate = useNavigate();
@@ -16,29 +29,71 @@ const MainPage = () => {
     navigate('/search-myperfume');
   };
 
+  const getScentString = (perfumeInfo: ScentDto[]) => {
+    let scentString = perfumeInfo
+      .slice(0, 3)
+      .map((scent) => scent.name)
+      .join(', ');
+    if (scentString.length > 20) {
+      scentString = scentString.slice(0, 20) + '...';
+    }
+
+    return scentString;
+  };
+
   return (
     <Main>
-      {isDrawer ? (
-        <Frame>
-          <MainRecommend />
-          <MainCarousel perfumes={perfumes} />
-        </Frame>
-      ) : (
-        <Frame>
-          <NoRecommend />
-          <MarginFrame margin="20px auto">
-            <CenterFrame>
-              <ConfirmButton
-                color="primary"
-                background="primary"
-                onClick={handleSearchPerfume}
-              >
-                내 향수 찾으러 가기
-              </ConfirmButton>
-            </CenterFrame>
-          </MarginFrame>
-        </Frame>
-      )}
+      <Frame>
+        {isDrawer ? (
+          <>
+            <MainRecommend />
+            <MainCarousel perfumes={perfumes} />
+          </>
+        ) : (
+          <>
+            <NoRecommend />
+            <MarginFrame margin="20px auto">
+              <CenterFrame>
+                <ConfirmButton
+                  color="primary"
+                  background="primary"
+                  onClick={handleSearchPerfume}
+                >
+                  내 향수 찾으러 가기
+                </ConfirmButton>
+              </CenterFrame>
+            </MarginFrame>
+          </>
+        )}
+        <RecommendTab>
+          <Info>
+            <div className="title">{season}에 잘 어울려요</div>
+            <div className="subtitle">{nowDate()} 기준</div>
+            {perfumes.map((perfume) => (
+              <PerfumeEach>
+                <img src={perfume.picture} alt="" />
+                <div className="info">
+                  <div className="txt">
+                    <div className="brand">{perfume.brandName}</div>
+                    <div className="title">{perfume.name}</div>
+                    <div className="scent">
+                      {getScentString(perfume.accord)}
+                    </div>
+                  </div>
+                  <LikeBtn
+                    count={perfume.pick}
+                    dislikeUrl="/perfume/pick"
+                    likeUrl="/perfume/pick"
+                    picked={perfume.picked}
+                    perfumeId={perfume.perfumeId}
+                    userId={USERID}
+                  />
+                </div>
+              </PerfumeEach>
+            ))}
+          </Info>
+        </RecommendTab>
+      </Frame>
       <FloatingDrawerBtn />
       <BottomNav />
     </Main>
@@ -50,6 +105,55 @@ export default MainPage;
 const Frame = styled.div`
   padding-bottom: 130px;
   overflow: scroll;
+`;
+
+const RecommendTab = styled.div`
+  display: flex;
+  margin: 45px 0 0 30px;
+`;
+
+const Info = styled.div`
+  .title {
+    font-weight: 700;
+    font-size: 23px;
+  }
+  .subtitle {
+    font-size: 11px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+  }
+`;
+
+const PerfumeEach = styled.div`
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  img {
+    width: 55px;
+    border-radius: 10px;
+  }
+
+  .info {
+    width: 260px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+  }
+
+  .title {
+    font-size: 15px;
+  }
+
+  .brand {
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .scent {
+    margin-top: 8px;
+  }
 `;
 const perfumes = [
   {
@@ -209,7 +313,7 @@ const perfumes = [
     perfumeId: 1004,
     name: '알루어 홈므 스포츠 콜롱',
     nameOrg: 'Allure Homme Sport Cologne',
-    brandName: 'Chanel',
+    brandName: '샤넬',
     brandId: 1,
     picture: 'https://fimgs.net/mdimg/perfume/375x500.1004.jpg',
     gender: 0,
