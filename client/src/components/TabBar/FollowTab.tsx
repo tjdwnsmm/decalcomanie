@@ -20,7 +20,7 @@ const TabContainer = styled.div`
   line-height: 50px;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 30px;
+  padding: 12px 30px;
 `;
 
 const Tab = styled.div<TabProps>`
@@ -38,9 +38,11 @@ const Tab = styled.div<TabProps>`
 `;
 
 const FollowTab = ({ setNowActive, followerCount, followingCount }: FollowTabProps) => {
-  // 초기값 임시 데이터 사용
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialActiveTab = urlParams.get('initialActiveTab');
+
   const [activeTab, setActiveTab] = useState<'follower' | 'following'>(
-    'following',
+    initialActiveTab === 'following' ? 'following' : 'follower',
   );
 
   // 탭을 클릭시

@@ -1,11 +1,12 @@
 import { styled } from 'styled-components';
 import PerfumeCarousel from '../../components/Carousel/PerfumeCarousel';
-import PostInfoBox from '../../components/Post/PostInfoBox.tsx';
-import CommentBox from '../../components/Post/CommentBox.tsx';
-import CommentInputForm from '../../components/Post/CommentInputForm.tsx';
-import { Post } from '../../types/PostInfoType.ts';
+import PostInfoBox from '../../components/Post/PostInfoBox';
+import CommentBox from '../../components/Post/CommentBox';
+import CommentInputForm from '../../components/Post/CommentInputForm';
+import { Post } from '../../types/PostInfoType';
 import { Main } from '../../style';
 import { useParams } from 'react-router-dom';
+import axios from '../../api/apiController';
 
 // 임시
 const post: Post = {
