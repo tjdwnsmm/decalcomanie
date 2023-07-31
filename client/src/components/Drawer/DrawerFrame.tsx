@@ -45,9 +45,9 @@ export const DrawerFrame: React.FC<DrawerFrameProps> = ({
             <PerfumeImg src={perfume.picture} />
             <PerfumeInfo>
               <PerfumeName>
-                {perfume.nameOrg.length > 12
-                  ? perfume.nameOrg.slice(0, 12) + '..'
-                  : perfume.nameOrg}
+                {perfume.name.length > 8
+                  ? perfume.name.slice(0, 8) + '..'
+                  : perfume.name}
               </PerfumeName>
               <PerfumeBrand>{perfume.brandName}</PerfumeBrand>
             </PerfumeInfo>
