@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
-import axios from '../../api/apiController';
+import axios, { USERID } from '../../api/apiController';
 import { Main } from '../../style';
 import { ReactComponent as LeftArrow } from '../../assets/icon/left-arrow.svg';
 import FollowTab from '../../components/TabBar/FollowTab';
@@ -10,6 +10,7 @@ import { FollowInfo } from '../../types/ProfileInfoType';
 
 interface FollowListProps {
   initialActiveTab: 'follower' | 'following';
+  userId: string;
 }
 
 const Button = styled.button`
@@ -21,7 +22,6 @@ const Button = styled.button`
 
 const FollowList = ({ initialActiveTab }: FollowListProps) => {
   const navigate = useNavigate();
-
   const [activeTab, setActiveTab] = useState<'follower' | 'following'>(
     initialActiveTab,
   );
@@ -29,7 +29,6 @@ const FollowList = ({ initialActiveTab }: FollowListProps) => {
   const [following, setFollowing] = useState<FollowInfo[]>([]);
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
-
   const location = useLocation();
 
   const handleLeftArrowClick = () => {
@@ -41,11 +40,11 @@ const FollowList = ({ initialActiveTab }: FollowListProps) => {
     const fetchFollowData = async () => {
       try {
         // 팔로워 목록 조회
-        const followerResponse = await axios.get('/user/follower/{userId}');
+        const followerResponse = await axios.get(`/user/follower/${USERID}`);
         setFollower(followerResponse.data);
 
         // 팔로잉 목록 조회
-        const followingResponse = await axios.get('/user/following/{userId}');
+        const followingResponse = await axios.get(`/user/following/${USERID}`);
         setFollowing(followingResponse.data);
 
         // 팔로워 수, 팔로잉 수 조회

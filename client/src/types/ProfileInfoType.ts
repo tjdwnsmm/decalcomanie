@@ -1,8 +1,9 @@
 export interface FollowInfo {
-  profileImg: string;
-  writer: string;
-  favScent: string[];
-  isFollow: boolean;
+  userId: string;
+  picture: string;
+  nickname: string;
+  favorite: string[];
+  isFollowing: boolean;
 }
 
 export interface ProfileUpdateInfo {

@@ -74,18 +74,19 @@ const FollowBox = ({ followList }: FollowBoxProps) => (
   <FollowListContainer>
     {followList.map((follow, idx) => (
       <FollowInfoBox key={idx}>
-        <ProfileImg src={follow.profileImg} alt="프로필" />
+        <ProfileImg src={follow.picture} alt="프로필" />
         <InfoBox>
-          <FollowNickname>{follow.writer}</FollowNickname>
+          <FollowNickname>{follow.nickname}</FollowNickname>
           <FavScentList>
-            {follow.favScent.map((scent, index) => (
+            {follow.favorite.map((scent, index) => (
               <Scent key={index}>
                 {scent}
               </Scent>
             ))}
           </FavScentList>
         </InfoBox>
-        <FollowBtn isFollow={follow.isFollow} />
+        {/* 팔로잉 조회 시 isFollowing 값 안넘어옴 */}
+        <FollowBtn isFollow={follow.isFollowing ?? true} />
       </FollowInfoBox>
     ))}
   </FollowListContainer>
