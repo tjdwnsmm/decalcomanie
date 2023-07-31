@@ -8,13 +8,16 @@ import lombok.*;
 import java.util.List;
 
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
-public class FeedResponse {
+public class FeedResponse extends LikeAndBookmarkResponse {
     private UserInfoDto userInfoDto;
     private ArticleDto articleDtos;
     private PerfumeDto perfumeDtos;
 
+    public FeedResponse(UserInfoDto userInfoDto, ArticleDto article, PerfumeDto perfumeDto, boolean isHearted, boolean isBookmarked) {
+        super(isHearted, isBookmarked);
+        this.userInfoDto = userInfoDto;
+        this.articleDtos = article;
+        this.perfumeDtos = perfumeDto;
+    }
 }

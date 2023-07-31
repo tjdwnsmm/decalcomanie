@@ -2,9 +2,7 @@ package com.eightlow.decalcomanie.sns.service.implement;
 
 import com.eightlow.decalcomanie.sns.dto.*;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
-import com.eightlow.decalcomanie.sns.entity.Article;
-import com.eightlow.decalcomanie.sns.entity.ArticlePerfume;
-import com.eightlow.decalcomanie.sns.entity.Comment;
+import com.eightlow.decalcomanie.sns.entity.*;
 import com.eightlow.decalcomanie.sns.mapper.*;
 import com.eightlow.decalcomanie.sns.repository.*;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
@@ -415,10 +413,35 @@ public class ArticleServiceImpl implements IArticleService {
     }
 
     @Override
+    @Transactional
     public int cancelBookmarkArticle(BookMarkDto bookmarkDto) {
         log.info("ArticleServiceImpl::: cancelBookmarkArticle start");
         bookmarkRepository.deleteByArticleIdAndUserId(bookmarkDto.getArticleId(), bookmarkDto.getUserId());
         log.info("ArticleServiceImpl::: cancelBookmarkArticle finish");
         return 200;
+    }
+
+    // 사용자가 좋아요를 누른 게시물인지 확인 
+    @Override
+    @Transactional
+    public boolean checkHeartArticle(int articleId, String userId) {
+        Optional<Heart> hearts = heartRepository.findByArticleIdAndUserId(articleId, userId);
+
+        if(hearts.isPresent()) {
+            return true;
+        }
+        return false;
+    }
+
+    // 사용자가 북마크를 누른 게시물인지 확인 
+    @Override
+    public boolean checkBookmarkArticle(int articleId, String userId) {
+        Optional<BookMark> bookmarks = bookmarkRepository.findByArticleIdAndUserId(articleId, userId);
+
+        if(bookmarks.isPresent()) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -52,4 +52,8 @@ public interface IArticleService {
     int bookmarkArticle(BookMarkDto bookmarkDto);
 
     int cancelBookmarkArticle(BookMarkDto bookmarkDto);
+
+    boolean checkHeartArticle(int articleId, String userId);
+
+    boolean checkBookmarkArticle(int articleId, String userId);
 }

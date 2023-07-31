@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Repository
 public interface BookMarkRepository extends JpaRepository<BookMark, BookMarkPk> {
@@ -17,4 +18,6 @@ public interface BookMarkRepository extends JpaRepository<BookMark, BookMarkPk> 
     @Transactional
     @Query("DELETE FROM BookMark b WHERE b.articleId = :articleId AND b.userId LIKE :userId")
     void deleteByArticleIdAndUserId(@Param("articleId") int articleId, @Param("userId") String userId);
+
+    Optional<BookMark> findByArticleIdAndUserId(int articleId, String userId);
 }
