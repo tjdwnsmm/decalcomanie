@@ -2,7 +2,7 @@ import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
 import { EachFeedInfo, FeedDetail } from '../../types/FeedInfoType';
 import PerfumeInfoBox from '../../components/Perfume/PerfumeInfoBox';
 import { styled } from 'styled-components';
-import FeedPageOnly from '../../components/Feed/FeedPageOnly';
+import FeedPageOnly from '../../components/Feed/FeedPageByPerfume';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../../api/apiController';

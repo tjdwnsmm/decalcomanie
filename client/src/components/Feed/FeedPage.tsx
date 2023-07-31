@@ -7,7 +7,8 @@ import {
 import PerfumeInfoBox from '../Perfume/PerfumeInfoBox';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
-import { useNavigate } from 'react-router-dom';
+import { USERID } from '../../api/apiController';
+import { useEffect, useState } from 'react';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
@@ -24,26 +25,42 @@ InfoBox : 피드 나머지 부분 내용
   - IconBox : 좋아요 아이콘, 좋아요 수, 스크랩 버튼
 */
 
-const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => (
-  <>
-    <FeedBox>
-      <div onClick={() => handleDetail(feed.articleDtos.articleId)}>
-        <PerfumeInfoBox feed={feed.perfumeDtos} />
-        <ContentBox>{feed.articleDtos.content}</ContentBox>
-      </div>
-      <InfoBox>
-        <ProfileBox>
-          <img src={'src/assets/img/profile-user.png'} />
-          {feed.articleDtos.userId}
-        </ProfileBox>
-        <IconBox>
-          <LikeBtn count={feed.articleDtos.heart} />
-          <ScrapBtn />
-        </IconBox>
-      </InfoBox>
-    </FeedBox>
-  </>
-);
+const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
+  const [picked, setPicked] = useState(feed.articleDtos.picked);
+  const [count, setCount] = useState(feed.articleDtos.heart);
+  useEffect(() => {
+    setPicked(feed.articleDtos.picked);
+    setCount(feed.articleDtos.heart);
+  }, [feed, count]);
+
+  return (
+    <>
+      <FeedBox>
+        <div onClick={() => handleDetail(feed.articleDtos.articleId)}>
+          <PerfumeInfoBox feed={feed.perfumeDtos} />
+          <ContentBox>{feed.articleDtos.content}</ContentBox>
+        </div>
+        <InfoBox>
+          <ProfileBox>
+            <img src={'src/assets/img/profile-user.png'} />
+            {feed.articleDtos.userId}
+          </ProfileBox>
+          <IconBox>
+            <LikeBtn
+              picked={picked}
+              count={count}
+              likeUrl="/sns/like"
+              dislikeUrl="/sns/dislike"
+              articleId={feed.articleDtos.articleId}
+              userId={USERID}
+            />
+            <ScrapBtn />
+          </IconBox>
+        </InfoBox>
+      </FeedBox>
+    </>
+  );
+};
 
 export default FeedPage;
 

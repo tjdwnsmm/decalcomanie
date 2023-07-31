@@ -15,6 +15,7 @@ export interface ArticleDetail {
   content: string;
   heart: number;
   comment: number;
+  picked: boolean;
 }
 
 export interface EachFeedInfo {

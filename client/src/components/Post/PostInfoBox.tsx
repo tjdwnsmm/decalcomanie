@@ -5,6 +5,7 @@ import { FollowBtn } from '../Button/FollowBtn';
 import { PostModalBtn } from '../Button/PostModalBtn';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
+import { USERID } from '../../api/apiController';
 
 /**
 @summary
@@ -109,7 +110,7 @@ interface PostInfoBoxProps {
 }
 
 const formatDateTime = (datetimeStr: string) => {
-  const options = {
+  const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -123,6 +124,7 @@ const formatDateTime = (datetimeStr: string) => {
 
 const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
   const {
+    articleId,
     profileImg,
     writer,
     createdAt,
@@ -161,7 +163,14 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
       </WriterInfoBox>
       <ContentBox>{content}</ContentBox>
       <IconBox>
-        <LikeBtn count={likeCount} />
+        <LikeBtn
+          picked={isLike}
+          count={likeCount}
+          likeUrl="/sns/like"
+          dislikeUrl="/sns/dislike"
+          articleId={articleId}
+          userId={USERID}
+        />
         <ScrapBtn />
       </IconBox>
       {/* 댓글 개수부분을 Comment 관련 파일에서 count해서 출력 ? */}

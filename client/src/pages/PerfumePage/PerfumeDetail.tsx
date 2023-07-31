@@ -50,7 +50,14 @@ const PerfumeDetail = () => {
       <PerfumeInfo>
         <LeftSection>
           <PerfumeIcon>
-            <LikeBtn count={perfume.pick}></LikeBtn>
+            <LikeBtn
+              picked={perfume.picked}
+              count={perfume.pick}
+              likeUrl="/perfume/pick"
+              dislikeUrl="/perfume/dispick"
+              perfumeId={perfume.perfumeId}
+              userId={USERID}
+            />
             <RateBtn count={perfume.rate ? perfume.rate : 0} />
           </PerfumeIcon>
           <Brand>{perfume.brandName}</Brand>

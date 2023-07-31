@@ -18,11 +18,14 @@ export const MainFeed = () => {
   const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios.get(`/sns/feed/${nowActive}`).then((res) => {
+  const fetchFeedsForTab = (tab: string) => {
+    axios.get(`/sns/feed/${tab}`).then((res) => {
       setFeeds(res.data);
-      console.log(res.data, nowActive);
     });
+  };
+
+  useEffect(() => {
+    fetchFeedsForTab(nowActive);
   }, [nowActive]);
 
   if (!feeds) {
@@ -36,10 +39,15 @@ export const MainFeed = () => {
   const handleDetail = (articleId: number) => {
     navigate(`/post-detail/${articleId}`);
   };
+
+  const handleTabClick = (tab: string) => {
+    setNowActive(tab);
+    fetchFeedsForTab(tab);
+  };
   //현재 탭을 설정하는 setNowActive 를 props 로 넘겨서 탭 변경에 따라 페이지 내용이 변경되도록 구현
   return (
     <Main>
-      <FeedTab setNowActive={setNowActive} />
+      <FeedTab setNowActive={handleTabClick} />
       <Feeds>
         {feeds.map((feed, idx) => (
           <FeedPage key={idx} feed={feed} handleDetail={handleDetail} />
