@@ -15,18 +15,6 @@ export interface Perfume {
   img: string;
 }
 
-const examplePerfume: Perfume = {
-  name: '어나더13',
-  brand: '르라보',
-  img: 'src/assets/img/perfume1.png',
-};
-
-const examplePerfume2: Perfume = {
-  name: '아쿠아디파르마',
-  brand: '르라보',
-  img: 'src/assets/img/perfume_aqua.png',
-};
-
 export const MyDrawerPage = () => {
   const [perfumeList, setPerfumeList] = useState<PerfumeDetail[] | null>(null);
 
