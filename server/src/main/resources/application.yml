@@ -51,6 +51,6 @@ spring:
 jwt:
   header: Authorization
   secret: ${JWT_SECRET_KEY}
-  access-token-expire: 1800
-  refresh-token-expire: 20160
+  access-token-expire: ${ACCESS_TOKEN_EXPIRE}
+  refresh-token-expire: ${REFRESH_TOKEN_EXPIRE}
 

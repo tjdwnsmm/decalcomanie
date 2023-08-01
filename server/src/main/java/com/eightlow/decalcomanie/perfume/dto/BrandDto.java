@@ -9,5 +9,7 @@ import lombok.*;
 public class BrandDto {
     private int brandId;
 
+    private String nameOrg;
+
     private String name;
 }

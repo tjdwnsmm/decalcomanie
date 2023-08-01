@@ -9,5 +9,7 @@ import lombok.*;
 public class NoteDto {
     private int noteId;
 
+    private String nameOrg;
+
     private String name;
 }

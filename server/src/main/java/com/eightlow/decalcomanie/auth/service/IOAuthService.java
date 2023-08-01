@@ -8,4 +8,6 @@ public interface IOAuthService {
     public UserCredential isMember(String email);
 
     public void signIn(UserCredential userCredential);
+
+    public boolean isValidRefreshToken(String refreshToken);
 }

@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OAuthRepository extends JpaRepository<UserCredential, String> {
     UserCredential findByEmail(String email);
+
+    UserCredential findByUserId(String userId);
 }

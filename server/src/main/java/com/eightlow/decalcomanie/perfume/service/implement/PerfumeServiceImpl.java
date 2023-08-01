@@ -89,10 +89,13 @@ public class PerfumeServiceImpl implements IPerfumeService {
 
         PerfumeDto pdto = perfumeMapper.toDto(perfume);
 
+        Brand brand = brandRepository.findOneByBrandId(perfume.getBrandId());
+
         PerfumeDto updatedDto = pdto.toBuilder()
                 .accord(scents)
                 .note(noteList)
-                .brandName(brandRepository.findOneByBrandId(perfume.getBrandId()).getName())
+                .brandNameOrg(brand.getNameOrg())
+                .brandName(brand.getName())
                 .build();
 
         return updatedDto;
