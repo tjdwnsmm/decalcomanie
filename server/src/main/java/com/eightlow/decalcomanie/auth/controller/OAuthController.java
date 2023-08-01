@@ -5,14 +5,16 @@ import com.eightlow.decalcomanie.auth.dto.KakaoProfile;
 import com.eightlow.decalcomanie.auth.dto.LoginResponse;
 import com.eightlow.decalcomanie.auth.dto.OAuthToken;
 import com.eightlow.decalcomanie.auth.entity.UserCredential;
+import com.eightlow.decalcomanie.auth.jwt.JwtUtils;
 import com.eightlow.decalcomanie.auth.service.IOAuthService;
 import com.eightlow.decalcomanie.auth.service.JwtService;
-import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.user.dto.UserDto;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -126,8 +128,8 @@ public class OAuthController {
 
         UUID userId = UUID.randomUUID();
 
-        String accessToken = jwtService.generateAccessToken(kakaoProfile.getId().toString(), userCredential.getUserId());
-        String refreshToken = jwtService.generateRefreshToken(kakaoProfile.getId().toString(), userCredential.getUserId());
+        String accessToken = jwtService.generateAccessToken(kakaoProfile.getId().toString(), userId.toString());
+        String refreshToken = jwtService.generateRefreshToken(kakaoProfile.getId().toString(), userId.toString());
 
         userCredential = UserCredential.builder()
                 .userId(userId.toString())
@@ -157,5 +159,35 @@ public class OAuthController {
         responseHeaders.set("refreshToken", refreshToken);
 
         return new ResponseEntity<>(loginResponse, responseHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping("/reissue")
+    public ResponseEntity reissue(@RequestHeader HttpHeaders header) {
+        System.out.println(header.getFirst("refreshToken"));
+        if (jwtService.isValidToken(header.getFirst("refreshToken"))) {
+            HttpHeaders responseHeader = new HttpHeaders();
+
+            System.out.println("Token valid!");
+
+            Jws<Claims> claims = JwtUtils.parseToken(header.getFirst("refreshToken"), secretKey);
+            String userId = claims.getBody().get("userId", String.class);
+            String userName = claims.getBody().get("userName", String.class);
+
+            String accessToken = jwtService.generateAccessToken(userName, userId);
+            String refreshToken = jwtService.generateRefreshToken(userName, userId);
+
+            responseHeader.set("accessToken", accessToken);
+            responseHeader.set("refreshToken", refreshToken);
+
+            oAuthService.updateRefreshToken(refreshToken, userId);
+
+            System.out.println("new accessToken generated : " + accessToken);
+            System.out.println("new refreshToken generated : " + refreshToken);
+
+            return new ResponseEntity(responseHeader, HttpStatus.OK);
+        }
+
+        System.out.println("refreshToken 인증 실패! 로그아웃");
+        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
     }
 }

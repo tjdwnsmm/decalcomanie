@@ -47,7 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
 //            return;
 //        }
         try {
-            String userName = JwtUtils.getUserName(token, secretKey);
+            String userName = JwtUtils.parseToken(token, secretKey).getBody().get("userName", String.class);
             logger.info("userName : " + userName);
 
             // 권한 부여

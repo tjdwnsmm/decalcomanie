@@ -1,6 +1,7 @@
 package com.eightlow.decalcomanie.auth.service.implement;
 
 import com.eightlow.decalcomanie.auth.entity.UserCredential;
+import com.eightlow.decalcomanie.auth.jwt.JwtUtils;
 import com.eightlow.decalcomanie.auth.respository.OAuthRepository;
 import com.eightlow.decalcomanie.auth.service.IOAuthService;
 import com.eightlow.decalcomanie.user.entity.User;
@@ -17,9 +18,6 @@ public class OAuthServiceImpl implements IOAuthService {
 
     private final OAuthRepository oAuthRepository;
     private final UserRepository userRepository;
-
-    @Value("${jwt.secret}")
-    private String secretKey;
 
     @Override
     @Transactional
@@ -40,16 +38,12 @@ public class OAuthServiceImpl implements IOAuthService {
     }
 
     @Override
-    public boolean isValidRefreshToken(String refreshToken) {
-        try {
-            String userId = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken)
-                    .getBody().get("userId", String.class);
+    public void updateRefreshToken(String refreshToken, String userId) {
+        UserCredential userCredential = oAuthRepository.findByUserId(userId);
+        userCredential.toBuilder()
+                .refreshToken(refreshToken)
+                .build();
 
-            String checkToken = oAuthRepository.findByUserId(userId).getRefreshToken();
-
-            return refreshToken.equals(checkToken);
-        } catch (Exception e) {
-           return false;
-        }
+        oAuthRepository.save(userCredential);
     }
 }

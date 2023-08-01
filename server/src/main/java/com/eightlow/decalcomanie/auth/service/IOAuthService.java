@@ -9,5 +9,5 @@ public interface IOAuthService {
 
     public void signIn(UserCredential userCredential);
 
-    public boolean isValidRefreshToken(String refreshToken);
+    void updateRefreshToken(String refreshToken, String userId);
 }
