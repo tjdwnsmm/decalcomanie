@@ -9,8 +9,8 @@ interface TabProps {
 
 // FollowTab으로부터 넘어온 props에 대한 type 설정
 interface FollowTabProps {
-  setNowActive: (tab: 'followers' | 'following') => void;
-  followersCount: number;
+  setNowActive: (tab: 'follower' | 'following') => void;
+  followerCount: number;
   followingCount: number;
 }
 
@@ -20,7 +20,7 @@ const TabContainer = styled.div`
   line-height: 50px;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 30px;
+  padding: 12px 30px;
 `;
 
 const Tab = styled.div<TabProps>`
@@ -37,14 +37,16 @@ const Tab = styled.div<TabProps>`
   }
 `;
 
-const FollowTab = ({ setNowActive, followersCount, followingCount }: FollowTabProps) => {
-  // 초기값 임시 데이터 사용
-  const [activeTab, setActiveTab] = useState<'followers' | 'following'>(
-    'following',
+const FollowTab = ({ setNowActive, followerCount, followingCount }: FollowTabProps) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialActiveTab = urlParams.get('initialActiveTab');
+
+  const [activeTab, setActiveTab] = useState<'follower' | 'following'>(
+    initialActiveTab === 'following' ? 'following' : 'follower',
   );
 
   // 탭을 클릭시
-  const handleTabClick = (tab: 'followers' | 'following') => {
+  const handleTabClick = (tab: 'follower' | 'following') => {
     setActiveTab(tab);
     setNowActive(tab);
   };
@@ -52,10 +54,10 @@ const FollowTab = ({ setNowActive, followersCount, followingCount }: FollowTabPr
   return (
     <TabContainer>
       <Tab
-        active={activeTab === 'followers'}
-        onClick={() => handleTabClick('followers')}
+        active={activeTab === 'follower'}
+        onClick={() => handleTabClick('follower')}
       >
-        팔로워 {followersCount}
+        팔로워 {followerCount}
       </Tab>
       <Tab
         active={activeTab === 'following'}
