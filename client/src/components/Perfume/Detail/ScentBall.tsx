@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 import { ScentDto } from '../../../types/PerfumeInfoType';
 import PieChartComponent from './Chart';
+import { CenterFrame } from '../../../style';
+import { ReactComponent as InfoSvg } from '../../../assets/icon/info.svg';
 
 interface ScentBallProps {
   first: string;
@@ -37,7 +39,7 @@ const ScentBall: React.FC<ScentBallProps> = ({
     })) || [];
 
   return (
-    <>
+    <BallFrame>
       <Orb
         first={first}
         second={second}
@@ -51,11 +53,23 @@ const ScentBall: React.FC<ScentBallProps> = ({
           </ModalContent>
         </ModalOverlay>
       )}
-    </>
+      <AddInfo>
+        <InfoBox onClick={() => handleScentInfo(accords)}>
+          <InfoSvg />
+        </InfoBox>
+      </AddInfo>
+    </BallFrame>
   );
 };
 
 export default ScentBall;
+
+const BallFrame = styled.div``;
+
+const AddInfo = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -75,26 +89,41 @@ const ModalContent = styled.div`
   border-radius: 8px;
 `;
 
-//#fff, violet, #0ff ,
 const Orb = styled.div<ScentBallProps>`
   animation: spin 4s linear infinite;
-  width: 250px;
-  height: 250px;
-  margin: auto;
+  width: 110px;
+  height: 110px;
   margin-top: 40px;
   border-radius: 50%;
-  box-shadow: inset 0 0 50px ${(props) => props.first},
-    inset 20px 0 60px ${(props) => props.second},
-    inset -20px 0 60px ${(props) => props.third},
-    inset 20px 0 100px ${(props) => props.first},
-    inset -20px 0 100px ${(props) => props.second},
-    0 0 50px ${(props) => props.first},
-    -10px 0 20px ${(props) => props.first},
-    10px 0 20px ${(props) => props.first};
+  box-shadow: inset 0 0 25px ${(props) => props.first},
+    inset 10px 0 40px ${(props) => props.second},
+    inset -10px 0 40px ${(props) => props.third},
+    inset 10px 0 50px ${(props) => props.first},
+    inset -15px 0 50px ${(props) => props.second},
+    0 0 25px ${(props) => props.first},
+    -15px 0 15px ${(props) => props.first},
+    15px 0 15px ${(props) => props.first};
 
   @keyframes spin {
     100% {
       -webkit-transform: rotate(360deg);
       transform: rotate(360deg);
     }
+`;
+
+const InfoBox = styled.div`
+  position: relative;
+  top: -25px;
+  left: 88px;
+  background-color: var(--white-color);
+  padding: 4px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 `;
