@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FollowInfo } from '../../types/ProfileInfoType';
-import { FollowBtn } from '../Button/FollowBtn';
+import FollowBtn from '../Button/FollowBtn';
+import { USERID } from '../../api/apiController';
 
 interface FollowBoxProps {
   followList: FollowInfo[];
@@ -78,13 +79,17 @@ const FollowBox = ({ followList }: FollowBoxProps) => (
         <InfoBox>
           <FollowNickname>{follow.nickname}</FollowNickname>
           <FavScentList>
-            {follow.favScent.map((scent, index) => (
+            {follow.favorite.map((scent, index) => (
               <Scent key={index}>{scent}</Scent>
             ))}
           </FavScentList>
         </InfoBox>
         {/* 팔로잉 조회 시 isFollowing 값 안넘어옴 */}
-        <FollowBtn isFollow={follow.isFollowing ?? true} />
+        <FollowBtn
+          from={USERID}
+          to={follow.userId}
+          isFollow={follow.isFollowing ?? true}
+        />
       </FollowInfoBox>
     ))}
   </FollowListContainer>
