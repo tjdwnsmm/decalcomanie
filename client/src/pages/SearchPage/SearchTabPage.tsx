@@ -4,7 +4,7 @@ import FilteringBtn from '../../components/Button/FilteringBtn';
 import { styled } from 'styled-components';
 import FilterBox from '../../components/Search/FilterBox';
 import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
-import SearchResults from '../../components/Search/SearchResults';
+import SearchResults from '../../components/Search/SearchResults-more';
 import SortToggle, { SortOption } from '../../components/Search/SortToggle';
 import BottomNav from '../../components/common/BottomNav';
 import axios from '../../api/apiController';
