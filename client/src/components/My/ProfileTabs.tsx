@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { FeedProps } from '../../types/FeedInfoType';
+import { EachFeedInfo } from '../../types/FeedInfoType';
 import ProfileInfoBox from './ProfileInfoBox';
 
 interface FeedComponentProps {
-  feed: FeedProps;
+  feed: string;
 }
 
 const FeedBox = styled.div`
@@ -15,7 +15,7 @@ const FeedBox = styled.div`
 const ProfileTabs = ({ feed }: FeedComponentProps) => (
   <>
     <FeedBox>
-      <ProfileInfoBox img={feed.perfumeInfo.img} />
+      <ProfileInfoBox picture={feed} />
     </FeedBox>
   </>
 );

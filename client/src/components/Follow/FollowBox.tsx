@@ -5,7 +5,7 @@ import { FollowBtn } from '../Button/FollowBtn';
 
 interface FollowBoxProps {
   followList: FollowInfo[];
-  follow: FollowInfo;
+  follow?: FollowInfo;
 }
 
 /**
@@ -21,7 +21,7 @@ const FollowListContainer = styled.div`
   padding: 0px 25px;
 `;
 
-const FollowInfoBox = styled.div<FollowBoxProps>`
+const FollowInfoBox = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -78,10 +78,8 @@ const FollowBox = ({ followList }: FollowBoxProps) => (
         <InfoBox>
           <FollowNickname>{follow.nickname}</FollowNickname>
           <FavScentList>
-            {follow.favorite.map((scent, index) => (
-              <Scent key={index}>
-                {scent}
-              </Scent>
+            {follow.favScent.map((scent, index) => (
+              <Scent key={index}>{scent}</Scent>
             ))}
           </FavScentList>
         </InfoBox>

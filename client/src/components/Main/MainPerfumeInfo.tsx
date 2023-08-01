@@ -1,36 +1,38 @@
 import { styled } from 'styled-components';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 
-const perfumeInfo = {
-  brand: '딥디크',
-  name: '로파피에',
-  scent: ['미모사', '베르가못', '머스크'],
-  img: 'src/assets/img/perfume1.png',
-};
-const RecommendPerfume = () => {
+interface perfumeInfoProps {
+  perfumeInfo: PerfumeDetail;
+}
+const MainPerfumeInfo = ({ perfumeInfo }: perfumeInfoProps) => {
+  let scentString = perfumeInfo.accord
+    .slice(0, 3)
+    .map((scent) => scent.name)
+    .join(', ');
+  if (scentString.length > 8) {
+    scentString = scentString.slice(0, 8) + '...';
+  }
   return (
     <PerfumeInfoBox>
       <Image>
-        <img src={perfumeInfo.img}></img>
+        <img src={perfumeInfo.picture}></img>
       </Image>
       <InfoBox>
-        <Brand>{perfumeInfo.brand}</Brand>
+        <Brand>{perfumeInfo.brandName}</Brand>
         <Info>
-          <PerfumeName>{perfumeInfo.name}</PerfumeName>
-          <PerfumeScent>
-            {perfumeInfo.scent.map((scent, idx) => (
-              <span key={idx}>
-                {scent}
-                {idx === perfumeInfo.scent.length - 1 ? '' : ', '}
-              </span>
-            ))}
-          </PerfumeScent>
+          <PerfumeName>
+            {perfumeInfo.name.length > 8
+              ? perfumeInfo.name.slice(0, 8) + '...'
+              : perfumeInfo.name}
+          </PerfumeName>
+          <PerfumeScent>{scentString}</PerfumeScent>
         </Info>
       </InfoBox>
     </PerfumeInfoBox>
   );
 };
 
-export default RecommendPerfume;
+export default MainPerfumeInfo;
 
 const PerfumeInfoBox = styled.div`
   display: flex;
@@ -41,36 +43,38 @@ const InfoBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 70px;
+  margin-left: 65px;
   margin-top: 11px;
 `;
 
 const Brand = styled.div`
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 `;
 
 const Info = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 251px;
+  width: 261px;
   align-items: center;
 `;
 
 const PerfumeName = styled.div`
   font-size: 18px;
   font-weight: 700;
+  width: 70%;
 `;
 
 const PerfumeScent = styled.div`
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
+  text-align: right;
 `;
 
 const Image = styled.div`
-  width: 251px;
-  height: 251px;
+  width: 271px;
+  height: 271px;
   border-radius: 10px;
   background-color: var(--white-color);
   display: flex;

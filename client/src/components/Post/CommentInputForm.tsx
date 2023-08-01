@@ -33,8 +33,11 @@ const CommentInput = styled.input`
   border: none;
   outline: none;
 `;
+interface CommentButtonProps {
+  hasContent: boolean; // Add the hasContent prop and define its type
+}
 
-const CommentButton = styled.button`
+const CommentButton = styled.button<CommentButtonProps>`
   flex: 0 0 auto;
   width: 60px;
   height: 45px;
