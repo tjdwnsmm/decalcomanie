@@ -77,17 +77,31 @@ public class ArticleController {
         List<Integer> perfumeIdList = articleService.searchArticlePerfumeId(articleId);
         log.info(perfumeIdList.toString());
 
+        // 작성자: 프로필, 닉네임, 선호 비선호향
+        UserInfoDto userInfo = userService.getUserInfo(articleDto.getUserId());
+        System.out.println(userInfo);
+
         // 향수들의 평점도 가져온다
         List<GradeDto> rates = gradeService.searchGradesByPerfumeId(articleDto.getUserId(), perfumeIdList);
         log.info(rates.toString());
+
+        // 임베디드된 향수: 이름, 브랜드, 향수 사진 url
+        List<PerfumeDto> perfumes = new ArrayList<>();
+        for(int i: perfumeIdList) {
+            perfumes.add(perfumeService.getPerfume(i));
+        }
 
         // 댓글 리스트를 포함한다.
         List<CommentDto> comments = articleService.getComments(articleDto.getArticleId());
         System.out.println(comments);
 
-        //TODO
-        // 현재 데이터가 article 부분만 뜸
-        // isheart, isBookMark 정보를 ArticleResponse에 담아서 더 보내줘야함!!!
+        List<UserInfoDto> commentUsers = new ArrayList<>();
+        // 댓글 작성자정보들
+        for (CommentDto commentDto : comments) {
+            commentUsers.add(userService.getUserInfo(commentDto.getUserId()));
+        }
+
+
 
         // 좋아요 되었는지 확인
         boolean isHearted = articleService.checkHeartArticle(articleDto.getArticleId(), userId);
@@ -95,7 +109,8 @@ public class ArticleController {
         // 북마크 되었는지 확인
         boolean isBookmarked = articleService.checkBookmarkArticle(articleDto.getArticleId(), userId);
 
-        ArticleResponse articleResponse = new ArticleResponse(articleDto, comments, perfumeIdList, rates, isHearted, isBookmarked);
+        ArticleResponse articleResponse = new ArticleResponse(articleDto,  userInfo, comments, commentUsers,
+                perfumes, rates, isHearted, isBookmarked);
 
         System.out.println(articleResponse);
         return ResponseEntity.status(HttpStatus.OK).body(articleResponse);
