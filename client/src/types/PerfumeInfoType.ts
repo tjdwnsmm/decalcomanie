@@ -20,7 +20,7 @@ export interface ScentDto {
   scentId: number;
   name: string;
   rgb: string;
-  weight?: number;
+  weight: number;
 }
 
 /**

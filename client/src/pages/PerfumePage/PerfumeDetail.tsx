@@ -10,6 +10,7 @@ import { ScentNotes } from '../../components/Perfume/Detail/ScentNotes';
 import MoreInfo from '../../components/Perfume/Detail/MoreInfo';
 import axios, { USERID } from '../../api/apiController';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ReactComponent as InfoSvg } from '../../assets/icon/info.svg';
 
 const PerfumeDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -54,7 +55,7 @@ const PerfumeDetail = () => {
               picked={perfume.picked}
               count={perfume.pick}
               likeUrl="/perfume/pick"
-              dislikeUrl="/perfume/pick"
+              dislikeUrl="/perfume/dispick"
               perfumeId={perfume.perfumeId}
               userId={USERID}
             />
@@ -72,7 +73,14 @@ const PerfumeDetail = () => {
         first="white"
         second={perfume.accord[0].rgb}
         third={perfume.accord[1].rgb}
+        accords={perfume.accord}
       />
+      <CenterFrame>
+        <AddInfo>
+          <InfoSvg />
+          볼을 클릭해보세요
+        </AddInfo>
+      </CenterFrame>
       <MoreInfo longevity={perfume.longevity} sillage={perfume.sillage} />
       <MarginFrame margin="30px 0 20px ">
         <CenterFrame>
@@ -104,16 +112,31 @@ const PerfumeDetail = () => {
 
 export default PerfumeDetail;
 
+const AddInfo = styled.div`
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 14px;
+  margin: 20px 0;
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
 const LeftSection = styled.div`
   display: flex;
   flex-direction: column;
-  width: 200px;
+  width: 250px;
 `;
 
 const PerfumeInfo = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
+  padding: 0 20px;
   margin-top: 20px;
 `;
 
@@ -128,7 +151,7 @@ const PerfumeImg = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 130px;
+  width: 120px;
   height: 178px;
   border-radius: 10px;
   background-color: var(--white-color);
