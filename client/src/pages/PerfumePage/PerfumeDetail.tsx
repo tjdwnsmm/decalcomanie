@@ -54,7 +54,7 @@ const PerfumeDetail = () => {
               picked={perfume.picked}
               count={perfume.pick}
               likeUrl="/perfume/pick"
-              dislikeUrl="/perfume/dispick"
+              dislikeUrl="/perfume/pick"
               perfumeId={perfume.perfumeId}
               userId={USERID}
             />

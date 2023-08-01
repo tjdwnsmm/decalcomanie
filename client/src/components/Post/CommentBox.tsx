@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Comment } from '../../types/PostInfoTypes';
+import { Comment } from '../../types/PostInfoType';
 import { PostModalBtn } from '../Button/PostModalBtn';
 
 interface CommentBoxProps {
@@ -75,7 +75,11 @@ const getTimeString = (elapsedTime: number, createdAt: string): string => {
   } else if (elapsedTime < 10080) {
     return `${Math.floor(elapsedTime / 1440)}일 전`;
   } else {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    };
     return new Date(createdAt).toLocaleDateString('ko-KR', options);
   }
 };
