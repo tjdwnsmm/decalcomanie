@@ -5,10 +5,15 @@ import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
 import NewNickname from '../../components/Profile/NicknameModi';
 import ScentModi from '../../components/Profile/ScentModi';
 import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
+import { USERID } from '../../api/apiController';
 
 // 임시데이터
 const user: ProfileUpdateInfo = {
-  nickname: '김수민',
+  user: {
+    nickname: '김수민',
+    userId: USERID,
+    accessToken: 'dummy',
+  },
   favorite: ['시트러스', '플로럴'],
   hate: ['머스크', '스파이시'],
   img: 'src/assets/img/profile-img.png',
@@ -124,7 +129,7 @@ const ProfileUpdate = () => {
       </Profile>
       <MarginFrame margin="30px 40px">
         <UserInfoName>닉네임</UserInfoName>
-        <NewNickname nickname={user.nickname} />
+        <NewNickname nickname={user.user.nickname} />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>

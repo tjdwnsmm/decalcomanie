@@ -94,8 +94,8 @@ const FollowList = () => {
         followersCount={followersCount}
         followingCount={followingCount}
       />
-      {activeTab === 'followers' && <FollowBox followList={follwers}/>}
-      {activeTab === 'following' && <FollowBox followList={following}/>}
+      {activeTab === 'followers' && <FollowBox followList={follwers} />}
+      {activeTab === 'following' && <FollowBox followList={following} />}
     </Main>
   );
 };

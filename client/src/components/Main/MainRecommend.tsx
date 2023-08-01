@@ -7,18 +7,13 @@ const UserInfo = {
   scent: 0,
 };
 
-const weatherTitle = ['햇살이 따스한 오늘 🌞'];
-
-const scentTitle = ['경쾌하고 상큼한 시트러스'];
-
 const MainRecommend = () => {
   return (
     <MarginFrame margin="0 30px 0">
       <UserName>{UserInfo.name} 님,</UserName>
-      <WeatherInfo>{weatherTitle[UserInfo.weather]}</WeatherInfo>
       <ScentInfo>
-        <AccentText>{scentTitle[UserInfo.scent]}</AccentText>
-        어떠신가요?
+        <AccentText>이런 향수는 어떠신가요?</AccentText>
+        서랍에 담긴 향수들을 기반으로 추천드려요 🙂
       </ScentInfo>
     </MarginFrame>
   );
@@ -43,7 +38,7 @@ export const WeatherInfo = styled.div`
 `;
 const ScentInfo = styled.div`
   margin-top: 5px;
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.44px;
 `;
@@ -53,15 +48,4 @@ const AccentText = styled.div`
   font-weight: 800;
   letter-spacing: 0.6px;
   margin-bottom: 10px;
-  &:after {
-    content: '';
-    position: absolute;
-    left: 30px;
-    width: 80%;
-    height: 10px;
-    background-color: var(--secondary-color);
-    top: 160px;
-    z-index: -1;
-    border-radius: 10px;
-  }
 `;

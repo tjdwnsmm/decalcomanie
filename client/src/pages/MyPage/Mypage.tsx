@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 import { Main, MarginFrame } from '../../style';
-import { MyPageTab } from '../../components/TabBar/MypageTab.tsx';
+import { MyPageTab } from '../../components/TabBar/MypageTab';
 import ProfileImage from '../../components/My/ProfileImage';
 import OptionMenu from '../../components/My/OptionMenu';
 import LikesUnlikes from '../../components/Box/LikesUnlikes';
 import ProfileStats from '../../components/My/ProfileStats';
 import ProfileTabs from '../../components/My/ProfileTabs';
-import BottomNav from '../../components/common/BottomNav.tsx';
+import BottomNav from '../../components/common/BottomNav';
 
 // 중복 데이터를 변수로 추출
 const perfumeImages = [
@@ -26,16 +26,16 @@ interface TextProp {
 }
 
 const MypageText = styled.div<TextProp>`
-  font-size: ${(props) => props.size};
-  font-weight: ${(props) => props.fontweight};
-  color: ${(props) => props.color};
-  text-align: ${(props) => props.textalign};
+  font-size: ${(props) => props.size || 'inherit'};
+  font-weight: ${(props) => props.fontweight || 'normal'};
+  color: ${(props) => props.color || 'inherit'};
+  text-align: ${(props) => props.textalign || 'left'};
 `;
 
 // feeds 배열을 두 개의 열로 나누는 함수
-const splitFeeds = (arr) => {
-  const oddColumn = [];
-  const evenColumn = [];
+const splitFeeds = (arr: string[]): [string[], string[]] => {
+  const oddColumn: string[] = [];
+  const evenColumn: string[] = [];
 
   arr.forEach((feed, idx) => {
     if (idx % 2 === 1) {
@@ -78,12 +78,12 @@ export default function Mypage() {
         <MypageContainer>
           <Column>
             {firstColumnFeeds.map((img, idx) => (
-              <ProfileTabs key={idx} feed={{ perfumeInfo: { img } }} />
+              <ProfileTabs key={idx} feed={img} />
             ))}
           </Column>
           <Column>
             {secondColumnFeeds.map((img, idx) => (
-              <ProfileTabs key={idx} feed={{ perfumeInfo: { img } }} />
+              <ProfileTabs key={idx} feed={img} />
             ))}
           </Column>
         </MypageContainer>
