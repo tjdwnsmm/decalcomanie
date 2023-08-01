@@ -3,6 +3,7 @@ export interface PerfumeDetail {
   perfumeId: number;
   brandId: number;
   brandName: string;
+  name: string;
   nameOrg: string;
   picture: string;
   gender: number;
@@ -12,6 +13,7 @@ export interface PerfumeDetail {
   rate: number | null; // 평점
   longevity: number; // 지속력 (5점만점)
   sillage: number; // 잔향감 (4점만점)
+  picked: boolean; //
 }
 
 export interface ScentDto {

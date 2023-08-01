@@ -13,8 +13,10 @@ import Spinner from '../../components/common/Spinner';
 
 export interface Filter {
   brandName?: string[];
-  gender?: string[];
+  brandId?: number[];
+  gender?: number[];
   scent?: string[];
+  scentId?: number[];
 }
 
 const SearchTabPage: React.FC = () => {
@@ -36,6 +38,13 @@ const SearchTabPage: React.FC = () => {
   >(null);
 
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [sortOption, setSortOption] = useState<SortOption>(
+    SortOption.Popularity,
+  );
+
+  const handleSortChange = (newSortOption: SortOption) => {
+    setSortOption(newSortOption);
+  };
 
   const handleScroll = () => {
     setScrollPosition(window.scrollY);
@@ -80,12 +89,36 @@ const SearchTabPage: React.FC = () => {
           scent: [],
         })
         .then((res) => {
+          console.log(`초기응답 ${res.data}`);
           setSearchResults(res.data);
           setOriginSearchResults(res.data);
           localStorage.setItem('searchResults', JSON.stringify(res.data));
         });
     }
   }, []);
+
+  useEffect(() => {
+    if (searchResults && searchResults.length > 0) {
+      const sortedResults = sortResults(searchResults);
+      setSearchResults(sortedResults);
+      console.log('정렬완료');
+    }
+  }, [searchResults, sortOption]);
+
+  const sortResults = (results: PerfumeDetail[]) => {
+    switch (sortOption) {
+      case SortOption.Popularity:
+        return results.sort((a, b) => b.pick - a.pick);
+      case SortOption.Grade:
+        return results.sort((a, b) => {
+          const rateA = a.rate !== null ? a.rate : 0;
+          const rateB = b.rate !== null ? b.rate : 0;
+          return rateB - rateA;
+        });
+      default:
+        return results;
+    }
+  };
 
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
@@ -131,14 +164,14 @@ const SearchTabPage: React.FC = () => {
     setModalOpen(!modalOpen);
   };
 
-  //![수정] filter.scent 부분 문자열로 넘겨주는게 아니라 향 id 로 넘겨줘야됨!!
   const filterSearch = async (filter: Filter) => {
+    console.log(filter);
     try {
       const response = await axios.post('/perfume/search', {
         keyword: searchKeyword,
-        brand: filter.brandName ? filter.brandName : [],
-        gender: filter.gender ? [filter.gender] : [],
-        scent: filter.scent ? filter.scent : [],
+        brand: filter.brandId ? filter.brandId : [],
+        gender: filter.gender ? filter.gender : [],
+        scent: filter.scentId ? filter.scentId : [],
       });
       console.log(response);
       return response.data;
@@ -155,23 +188,14 @@ const SearchTabPage: React.FC = () => {
     setModalOpen(false); // 모달 닫기
     setFilter(filter);
     console.log(
-      `나 적용된 필터! 💫: ${JSON.stringify(filter)} filter 갯수는 : ${
-        Object.entries(filter).length
-      } 개!
+      `나 적용된 필터! 💫: ${JSON.stringify(
+        filter,
+      )} filter 갯수는 : ${calcFilteringNum(filter)} 개!
       }`,
     );
-    calcFilteringNum(filter);
+    setSearchResults(null);
     const filterDatas = await filterSearch(filter);
     setSearchResults(filterDatas); // 검색 결과
-    localStorage.setItem('searchResults', JSON.stringify(filterDatas));
-  };
-
-  const [sortOption, setSortOption] = useState<SortOption>(
-    SortOption.Popularity,
-  );
-
-  const handleSortChange = (newSortOption: SortOption) => {
-    setSortOption(newSortOption);
   };
 
   /**
@@ -180,8 +204,10 @@ const SearchTabPage: React.FC = () => {
    */
   const calcFilteringNum = (filter: Filter) => {
     let cnt = 0;
-    Object.entries(filter).map((category) => {
-      cnt += category[1].length;
+    Object.entries(filter).map(([key, value]) => {
+      if (key !== 'brandId' && key !== 'scentId') {
+        cnt += value?.length || 0;
+      }
     });
     return cnt;
   };

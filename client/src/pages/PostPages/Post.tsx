@@ -19,16 +19,6 @@ const perfumes = [
     name: '오 드 퍼퓸 도손',
     img: 'src/assets/img/perfume_doson.png',
   },
-  {
-    brand: '아쿠아 디 파르마',
-    name: '미르토 디 파나레아',
-    img: 'src/assets/img/perfume_aqua.png',
-  },
-  {
-    brand: '딥디크',
-    name: '오 드 퍼퓸 도손',
-    img: 'src/assets/img/perfume_doson.png',
-  },
 ];
 
 const PostTitle = styled.div`

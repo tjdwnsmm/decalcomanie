@@ -6,6 +6,7 @@ export interface Perfume {
 }
 
 export interface PostInfo {
+  articleId: number;
   profileImg: string;
   writer: string;
   createdAt: string;

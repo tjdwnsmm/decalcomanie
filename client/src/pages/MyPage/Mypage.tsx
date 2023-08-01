@@ -70,7 +70,7 @@ export default function Mypage() {
         <OptionMenu />
         <ProfileImage />
         <MypageText size="18px" fontweight="bold" textalign="center">
-          닉네임은여덟글자
+          김수민
         </MypageText>
         <LikesUnlikes />
         <ProfileStats />

@@ -25,6 +25,7 @@ const post: Post = {
     },
   ],
   postInfo: {
+    articleId: 1,
     profileImg: '../../src/assets/img/profile-user.png',
     writer: '김싸피',
     createdAt: '2023-07-12T12:34:56.789+09:00',
