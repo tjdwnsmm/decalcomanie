@@ -6,14 +6,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
     private String userId;
-
-    private String accessToken;
 
     private String nickname;
 
@@ -22,8 +20,6 @@ public class UserDto {
     private int age;
 
     private int gender;
-
-    private String refreshToken;
 
     private String picture;
 }
