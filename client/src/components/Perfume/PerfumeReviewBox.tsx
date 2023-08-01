@@ -55,9 +55,9 @@ function PerfumeReviewBox({ rate, brand, name, img }: PerfumeReviewInfo) {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       if (i <= rate) {
-        stars.push(<FillStarSvg alt="" key={i} />);
+        stars.push(<FillStarSvg key={i} />);
       } else {
-        stars.push(<EmptyStarSvg alt="" key={i} />);
+        stars.push(<EmptyStarSvg key={i} />);
       }
     }
 

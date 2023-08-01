@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { PerfumeInfo } from '../../types/FeedInfoType';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 
 const ImgDiv = styled.div`
   display: flex;
@@ -20,11 +20,15 @@ const ImgBox = styled.div`
   }
 `;
 
-const ProfileInfoBox = ({ img }: PerfumeInfo) => (
+interface ImgBoxProps {
+  picture: string;
+}
+
+const ProfileInfoBox = ({ picture }: ImgBoxProps) => (
   <>
     <ImgDiv>
       <ImgBox>
-        <img src={img} />
+        <img src={picture} />
       </ImgBox>
     </ImgDiv>
   </>

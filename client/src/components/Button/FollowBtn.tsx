@@ -1,6 +1,10 @@
 import { styled } from 'styled-components';
 import { useState } from 'react';
 
+interface FollowBtnProps {
+  isFollow: boolean;
+}
+
 export const FollowBtn = ({ isFollow }: FollowBtnProps) => {
   const [followed, setFollowed] = useState(isFollow);
 

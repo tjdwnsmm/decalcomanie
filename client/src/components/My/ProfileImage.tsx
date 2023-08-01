@@ -2,12 +2,16 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { ReactComponent as ProfileImg } from '../../assets/img/profile-img.svg';
 
-const Image = styled.div`
+interface ImageProps {
+  imageUrl: string;
+}
+
+const Image = styled.div<ImageProps>`
   width: 150px;
   height: 150px;
   border-radius: 100%;
   background-color: var(--primary-color);
-  background-image: ${({ imageUrl }: { imageUrl: string }) =>
+  background-image: ${({ imageUrl }) =>
     imageUrl ? `url(${imageUrl})` : 'none'};
   background-size: cover;
   z-index: 0;
@@ -87,7 +91,7 @@ export default function ProfileImage() {
         <LoaderInner2 />
         <LoaderInner3 />
         <ImageDiv>
-          <Image>
+          <Image imageUrl="">
             <ProfileImg />
           </Image>
         </ImageDiv>
