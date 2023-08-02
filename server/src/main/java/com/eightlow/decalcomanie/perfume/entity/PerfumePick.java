@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.Table;
 
 @Entity
 @IdClass(PerfumePickRequest.class)
@@ -16,6 +17,7 @@ import javax.persistence.IdClass;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "perfumepick")
 public class PerfumePick {
     @Id
     private String userId;

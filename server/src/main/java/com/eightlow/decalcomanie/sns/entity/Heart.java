@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.Table;
 
 @Entity
 @Getter
@@ -16,6 +17,7 @@ import javax.persistence.IdClass;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(HeartPk.class)
+@Table(name="heart")
 public class Heart {
     @Id
     private int articleId;
