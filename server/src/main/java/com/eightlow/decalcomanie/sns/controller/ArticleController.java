@@ -41,6 +41,7 @@ public class ArticleController {
     private final CommentDtoMapper commentDtoMapper;
     private final PerfumeMapper perfumeMapper;
 
+    // 글 작성
     @PostMapping("/create")
     public ResponseEntity<Response> createArticle(@RequestBody @Valid CreateArticleRequest createArticleRequest) {
         ArticleDto articleDto = articleDtoMapper.fromCreateArticleRequest(createArticleRequest);
@@ -58,14 +59,17 @@ public class ArticleController {
         // grade 테이블을 통해서 평균을 내준다 (perfume id 갯수 카운트, rate 더하기 로)
         // perfume service 호출해서 값을 넣어준다.
 
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.builder()
                         .message("글이 정상 등록되었습니다.")
                         .build());
     }
 
+
+    // 글 상세 조회 
     @GetMapping("/search/{articleId}")
-    public ResponseEntity<ArticleResponse> getDetailById(@PathVariable int articleId) {
+    public ResponseEntity<ArticleResponse> getDetailById(@RequestHeader(value = "userId") String userId, @PathVariable int articleId) {
         ArticleDto articleDto = articleService.searchArticleByArticleId(articleId);
         System.out.println(articleDto.getUserId());
 
@@ -81,10 +85,17 @@ public class ArticleController {
         List<CommentDto> comments = articleService.getComments(articleDto.getArticleId());
         System.out.println(comments);
 
-        ArticleResponse articleResponse = new ArticleResponse(articleDto, comments, perfumeIdList, rates);
         //TODO
         // 현재 데이터가 article 부분만 뜸
         // isheart, isBookMark 정보를 ArticleResponse에 담아서 더 보내줘야함!!!
+
+        // 좋아요 되었는지 확인
+        boolean isHearted = articleService.checkHeartArticle(articleDto.getArticleId(), userId);
+
+        // 북마크 되었는지 확인
+        boolean isBookmarked = articleService.checkBookmarkArticle(articleDto.getArticleId(), userId);
+
+        ArticleResponse articleResponse = new ArticleResponse(articleDto, comments, perfumeIdList, rates, isHearted, isBookmarked);
 
         System.out.println(articleResponse);
         return ResponseEntity.status(HttpStatus.OK).body(articleResponse);
@@ -101,7 +112,7 @@ public class ArticleController {
         List<ArticleDto> articles = articleService.searchArticleByUserId(userId);
         System.out.println(articles);
 
-        List<FeedResponse> responses  = getFeedInfoForArticles(articles);
+        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
@@ -113,42 +124,43 @@ public class ArticleController {
         // TODO: 사용자의 follower list를 받아와서 그 사용자들의 피드를 조회해야함 (정렬은 최신순으로)
         List<ArticleDto> articles = articleService.searchArticlesOfFollowingUser(userId);
         log.info(articles.toString());
-        List<FeedResponse> responses  = getFeedInfoForArticles(articles);
+        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     @GetMapping("/feed/popularity")
-    public ResponseEntity<List<FeedResponse>> getPopularArticles() {
+    public ResponseEntity<List<FeedResponse>> getPopularArticles(@RequestHeader(value = "userId") String userId) {
         List<ArticleDto> articles= articleService.searchPopularArticles();
 
-        List<FeedResponse> responses  = getFeedInfoForArticles(articles);
+        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     @GetMapping("/feed/latest")
-    public ResponseEntity<List<FeedResponse>> getLatestArticles() {
+    public ResponseEntity<List<FeedResponse>> getLatestArticles(@RequestHeader(value = "userId") String userId) {
         List<ArticleDto> articles= articleService.searchLatestArticles();
         log.info(articles.toString());
 
-        List<FeedResponse> responses  = getFeedInfoForArticles(articles);
+        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     // 향수별 피드 조회
     @GetMapping("/perfume/{perfumeId}")
-    public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@PathVariable int perfumeId) {
+    public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@RequestHeader(value = "userId") String userId, @PathVariable int perfumeId) {
         List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);
         log.info(articles.toString());
-        List<FeedResponse> responses  = getFeedInfoForArticles(articles);
+        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     // 조회 파트 끝
 
+    // 글 수정
     @PutMapping("/update")
     public ResponseEntity<Response> modifyArticle(@RequestBody @Valid
                                                         UpdateArticleRequest updateArticleRequest) {
@@ -167,6 +179,7 @@ public class ArticleController {
         return resultMessage(status);
     }
 
+    //글 삭제
     @DeleteMapping("/delete/{articleId}")
     public ResponseEntity<Response> deleteArticle(@RequestHeader(value = "userId") String userId, @PathVariable int articleId) {
         // 글 삭제
@@ -194,6 +207,7 @@ public class ArticleController {
 
 
     /* 댓글 작업 part*/
+    // 댓글 작성
     @PostMapping("/comment/create")
     public ResponseEntity<Response> createComment(@RequestBody CommentRequest commentRequest) {
         CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
@@ -205,6 +219,7 @@ public class ArticleController {
                         .build());
     }
 
+    // 댓글 수정
     @PutMapping("/comment/update")
     public ResponseEntity<Response> updateComment(@RequestBody CommentRequest commentRequest) {
         CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
@@ -215,6 +230,7 @@ public class ArticleController {
 //        return ResponseEntity.status(HttpStatus.OK).body();
     }
 
+    // 댓글 삭제
     @DeleteMapping("/comment/delete/{commentId}")
     public ResponseEntity<Response> deleteComment(@RequestBody CommentRequest commentRequest) {
         CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
@@ -254,7 +270,8 @@ public class ArticleController {
         int status = articleService.cancelBookmarkArticle(bookmarkDto);
         return resultMessage(status);
     }
-
+    
+    // response 메세지를 만들어주는 공통 메서드 
     private ResponseEntity<Response> resultMessage(int status) {
         if (status == 200) {
             return ResponseEntity.status(HttpStatus.OK)
@@ -273,8 +290,9 @@ public class ArticleController {
                             .build());
         }
     }
-
-    private List<FeedResponse> getFeedInfoForArticles(List<ArticleDto> articles){
+    
+    // 피드 정보 조회 (사용자 정보, 글 정보, 포함된 향수 정보를 포함)
+    private List<FeedResponse> getFeedInfoForArticles(String userId, List<ArticleDto> articles){
         // 각 article에 담긴 사용자 정보와 향수 정보를 담아둔 Dto의 리스트
         List<FeedResponse> feedResponses = new ArrayList<>();
 
@@ -292,7 +310,10 @@ public class ArticleController {
             PerfumeDto perfumeDto = perfumeService.getPerfume(perfumeIdList.get(0));
             log.info(String.valueOf(perfumeDto));
 
-            feedResponses.add(new FeedResponse(userInfoDto, article, perfumeDto));
+            boolean isHearted = articleService.checkHeartArticle(article.getArticleId(), userId);
+            boolean isBookmarked = articleService.checkBookmarkArticle(article.getArticleId(), userId);
+
+            feedResponses.add(new FeedResponse(userInfoDto, article, perfumeDto, isHearted, isBookmarked));
         }
         return feedResponses;
     }
