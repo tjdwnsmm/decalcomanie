@@ -205,4 +205,10 @@ public class OAuthController {
         oAuthService.signOut((String) request.getAttribute("userId"));
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @PostMapping("/withdrawal")
+    public ResponseEntity deleteUser(HttpServletRequest request) {
+        oAuthService.deleteUser((String) request.getAttribute("userId"));
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }
