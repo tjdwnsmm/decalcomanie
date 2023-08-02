@@ -77,6 +77,9 @@ public class ArticleController {
     public ResponseEntity<ArticleResponse> getDetailById(@RequestHeader(value = "userId") String userId, @PathVariable int articleId, HttpServletRequest req) {
         ArticleDto articleDto = articleService.searchArticleByArticleId(articleId);
         System.out.println(articleDto.getUserId());
+        
+        // 사용자가 글 작성자를 팔로우 했는지
+        boolean isFollowed = userService.isFollowing(userId, articleDto.getUserId());
 
         //articleId를 통해서 게시물의 임베디드된 향수를 가져온다.
         List<Integer> perfumeIdList = articleService.searchArticlePerfumeId(articleId);
@@ -101,32 +104,32 @@ public class ArticleController {
         System.out.println(comments);
 
         //사용자의 팔로우 목록을 받아온다.
-        List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
+        List<FollowingResponse> followers = userService.getFollowingUsers(userId);
+
         System.out.println("tjoejtoijfilsjlfjs;dlj");
-        System.out.println(followerInfoResponses);
+
 
         List<UserInfoDto> commentUsers = new ArrayList<>();
-
+        boolean flag = false;
         // 댓글 작성자정보들
         for (CommentDto commentDto : comments) {
-            UserInfoDto userInfoDto = null;
+            UserInfoDto userInfoDto = userService.getUserInfo(commentDto.getUserId());
             // 사용자의 follower 목록을 보고 follow 여부를 넣어준다.
-            for (FollowingResponse followerInfoResponse : followerInfoResponses) {
-                if(followerInfoResponse.getUserId().equals(commentDto.getUserId())) {
-                    System.out.println("inininininin");
-                    userInfoDto = userService.getUserInfo(commentDto.getUserId());
-                    System.out.println(userInfoDto);
-
-                    commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
-                            userInfoDto.getHates(), true));
-
-                    break;
+            if(followers != null) {
+                for (FollowingResponse followerInfoResponse : followers) {
+                    if(followerInfoResponse.getUserId().equals(commentDto.getUserId())) {
+                        System.out.println("inininininin");
+                        userInfoDto = userService.getUserInfo(commentDto.getUserId());
+                        System.out.println(userInfoDto);
+                        flag = true;
+                        break;
+                    }
                 }
-                commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
-                        userInfoDto.getHates(), false));
-
-
             }
+
+            commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
+                    userInfoDto.getHates(), flag));
+
 
         }
 
@@ -136,7 +139,7 @@ public class ArticleController {
         // 북마크 되었는지 확인
         boolean isBookmarked = articleService.checkBookmarkArticle(articleDto.getArticleId(), userId);
 
-        ArticleResponse articleResponse = new ArticleResponse(articleDto,  userInfo, comments, commentUsers,
+        ArticleResponse articleResponse = new ArticleResponse(articleDto,  userInfo, isFollowed,comments, commentUsers,
                 perfumes, rates, isHearted, isBookmarked);
 
         System.out.println(articleResponse);
@@ -258,6 +261,7 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.builder()
                         .message("댓글이 정상 등록되었습니다.")
+
                         .build());
     }
 
@@ -338,6 +342,9 @@ public class ArticleController {
         // 각 article에 담긴 사용자 정보와 향수 정보를 담아둔 Dto의 리스트
         List<FeedResponse> feedResponses = new ArrayList<>();
 
+        //사용자의 팔로우 목록을 받아온다.
+        List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
+
         // articleId를 보고 사용자 정보와 향수 정보를 담음
         for(ArticleDto article: articles){
             // TODO: perfumeId가 하나만 필요함으로 추후 쿼리 최적화가 필요!!
@@ -348,8 +355,7 @@ public class ArticleController {
 
             UserInfoDto userInfoDto = userService.getUserInfo(article.getUserId());
 
-            //사용자의 팔로우 목록을 받아온다.
-            List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
+
             boolean isFollowed = false;
             for (FollowingResponse followerInfoResponse : followerInfoResponses) {
                 if (followerInfoResponse.getUserId().equals(userInfoDto.getUser().getUserId())) {

@@ -15,20 +15,20 @@ import java.util.List;
 public class ArticleResponse extends LikeAndBookmarkResponse{
     private ArticleDto articleDto;
     private UserInfoDto userInfoDto;
+    private boolean isFollowed;
     private List<CommentDto> comments;
     private List<UserInfoDto> commmentUsers;
     private List<PerfumeDto> perfumeInfos;
     private List<GradeDto> gradeDto;
 
-    public ArticleResponse(ArticleDto articleDto, UserInfoDto userInfoDto,
-                           List<CommentDto> comments, List<UserInfoDto> commmentUsers, List<PerfumeDto> perfumeInfos,
-                           List<GradeDto> gradeDto, boolean isHearted, boolean isBookmarked) {
+    public ArticleResponse(ArticleDto articleDto, UserInfoDto userInfo, boolean isFollowed, List<CommentDto> comments, List<UserInfoDto> commentUsers, List<PerfumeDto> perfumes, List<GradeDto> rates, boolean isHearted, boolean isBookmarked) {
         super(isHearted, isBookmarked);
         this.articleDto = articleDto;
-        this.userInfoDto = userInfoDto;
+        this.userInfoDto = userInfo;
+        this.isFollowed = isFollowed;
         this.comments = comments;
-        this.commmentUsers = commmentUsers;
-        this.perfumeInfos = perfumeInfos;
-        this.gradeDto = gradeDto;
+        this.commmentUsers = commentUsers;
+        this.perfumeInfos = perfumes;
+        this.gradeDto = rates;
     }
 }
