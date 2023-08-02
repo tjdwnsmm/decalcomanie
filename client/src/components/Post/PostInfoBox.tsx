@@ -27,7 +27,7 @@ const PostInfoBoxContainer = styled.div`
 
 const WriterInfoBox = styled.div`
   display: flex;
-  align-items: start;
+  align-items: center;
   flex-direction: row;
   margin: 20px 0px 10px;
 `;
@@ -40,6 +40,7 @@ const ProfileImg = styled.img`
 
 const InfoBox = styled.div`
   display: flex;
+  align-items: center
   flex: 1;
   flex-direction: column;
   margin: 0px 8px;
@@ -49,7 +50,7 @@ const InfoBoxRow = styled.div`
   display: flex;
   flex-flow: wrap;
   align-items: flex-end;
-  margin-top: 3px;
+  margin: 3px 0px;
 `;
 
 const Writer = styled.div`
@@ -130,6 +131,7 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
     hearted,
   } = postInfo;
 
+  const hasScent = userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
   // isWriter: 글 작성자와 request.user의 일치 여부를 나타내는 로직 구현
   // 같을 경우 팔로우 버튼이 아닌 글 수정/삭제 모달을 띄우기 위해
   // 현재는 임시로 설정
@@ -145,10 +147,12 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
             <Writer>{userInfoDto.user.nickname}</Writer>
             <CreatedAt>{formatDateTime(articleDto.createdAt)}</CreatedAt>
           </InfoBoxRow>
+          {hasScent && (
           <InfoBoxRow>
             <FavScent>{userInfoDto.favorities?.map((fav) => `#${fav.name}  `)}</FavScent>
             <NoFavScent>{userInfoDto.hates?.map((fav) => `#${fav.name}  `)}</NoFavScent>
           </InfoBoxRow>
+          )}
         </InfoBox>
         {/* {!isWriter && <FollowBtn
           // 글 상세 api 연결하면서 수정 필
