@@ -51,6 +51,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 <PerfumeInfo onClick={() => handleClick(feed.perfumeId)}>
                   <ImgBox>
                     <img src={feed.picture}></img>
+                    <PerfumeScent>
+                      {feed.accord.slice(0, 3).map((scent, idx) => (
+                        <ScentBox key={idx} color={scent.rgb} />
+                      ))}
+                    </PerfumeScent>
                   </ImgBox>
                   <TextInfo>
                     <PerfumeBrand>{feed.brandName}</PerfumeBrand>
@@ -59,11 +64,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                         ? feed.name.slice(0, 9) + '..'
                         : feed.name}
                     </PerfumeName>
-                    <PerfumeScent>
-                      {feed.accord.slice(0, 3).map((scent, idx) => (
-                        <ScentBox key={idx} color={scent.rgb} />
-                      ))}
-                    </PerfumeScent>
                   </TextInfo>
                 </PerfumeInfo>
                 <ButtonFrame>
@@ -92,15 +92,17 @@ export default SearchResults;
 const PerfumeScent = styled.div`
   margin-top: 10px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  margin-right: -12px;
+  // margin-right: -12px;
   gap: 4px;
+  margin-top: -1px;
 `;
 
 const ScentBox = styled.div<{ color: string }>`
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 4px;
   background-color: ${(props) => props.color};
 `;
@@ -119,7 +121,7 @@ const PerfumeBox = styled(SecondaryBox)`
   padding: 15px;
   flex-direction: column;
   width: 140px;
-  height: 185px;
+  height: 175px;
   flex: 1 0 calc(50% - 20px);
   overflow: hidden;
 `;
@@ -135,13 +137,13 @@ const TextInfo = styled.div`
   display: flex;
   flex-direction: column;
   width: 90%;
-  margin: 15px 12px;
+  margin: 15px 12px 0px;
 `;
 const PerfumeBrand = styled.div`
   color: var(--black-color);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 `;
 const PerfumeName = styled.div`
   color: var(--black-color);
@@ -150,16 +152,17 @@ const PerfumeName = styled.div`
 `;
 
 const ImgBox = styled.div`
-  width: 90%;
-  height: 110px;
+  width: 100%;
+  height: 120px;
   display: flex;
   align-items: center;
   background: var(--white-color);
   border-radius: 10px;
-  justify-content: center;
-
+  justify-content: space-evenly;
+  margin: 0 10px;
+  gap: 1px;
   img {
-    width: 80px;
+    width: 70px;
   }
 `;
 
@@ -184,5 +187,3 @@ const Button = styled.button`
     color: var(--white-color);
   }
 `;
-
-const Scent = styled.span``;

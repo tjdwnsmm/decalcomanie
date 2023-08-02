@@ -77,9 +77,9 @@ const InfoBox = styled.div`
 const ProfileBox = styled.div`
   display: flex;
   align-items: center;
-  gap: 3px;
-  font-size: 12px;
-  font-weight: 600;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 500;
 `;
 const IconBox = styled.div`
   display: flex;
@@ -95,10 +95,10 @@ const FeedBox = styled.div`
 
 const ContentBox = styled.div`
   display: flex;
-  font-size: 12px;
-  font-weight: 300;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 18px;
-  margin: 10px;
+  margin: 15px 10px;
 `;
 
 const Follow = styled.div`

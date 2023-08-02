@@ -45,12 +45,12 @@ const PerfumeInfoBox = ({ feed }: PerfumeInfoBoxProps) => (
 export default PerfumeInfoBox;
 
 const PerfumeRate = styled.div`
-  font-weight: 500;
+  font-weight: 400;
   font-size: 12px;
   display: flex;
   align-items: center;
   gap: 3px;
-  color: var(--primary-color);
+  // color: var(--primary-color);
   margin-bottom: 10px;
 `;
 const PerfumeBox = styled(SecondaryBox)`
@@ -64,9 +64,9 @@ const TextInfo = styled.div`
 `;
 const PerfumeBrand = styled.div`
   color: var(--black-color);
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 5px;
 `;
 const PerfumeName = styled.div`
   color: var(--black-color);
@@ -74,10 +74,10 @@ const PerfumeName = styled.div`
   font-weight: 600;
 `;
 const PerfumeScent = styled.div`
-  margin-top: 18px;
+  margin-top: 20px;
   color: var(--black-color);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
 `;
 const ImgBox = styled.div`
   width: 110px;

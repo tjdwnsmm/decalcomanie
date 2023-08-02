@@ -123,19 +123,19 @@ const TextInfo = styled.div`
 `;
 
 const PerfumeRate = styled.div`
-  font-weight: 500;
+  font-weight: 400;
   font-size: 12px;
   display: flex;
   align-items: center;
   gap: 3px;
-  color: var(--primary-color);
+  // color: var(--primary-color);
   margin-bottom: 10px;
 `;
 
 const PerfumeBrand = styled.div`
   color: var(--black-color);
-  font-size: 11px;
-  font-weight: 400;
+  font-size: 13px;
+  font-weight: 500;
   margin-bottom: 5px;
 `;
 const PerfumeName = styled.div`
@@ -146,8 +146,8 @@ const PerfumeName = styled.div`
 const PerfumeScent = styled.div`
   margin-top: 28px;
   color: var(--black-color);
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 14px;
+  font-weight: 600;
 `;
 const ImgBox = styled.div`
   width: 110px;
