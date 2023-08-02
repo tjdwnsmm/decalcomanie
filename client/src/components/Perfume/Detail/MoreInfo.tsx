@@ -39,11 +39,12 @@ export default MoreInfo;
 const Info = styled.div`
   display: flex;
   flex-direction: column;
+  width: 230px;
 `;
 
-const ProgressBar = styled.div`
+export const ProgressBar = styled.div`
   margin: 0px;
-  width: 350px;
+  width: 230px;
   background: var(--white-color);
   border-radius: 30px;
 `;
@@ -53,7 +54,7 @@ interface ProgressProps {
   score: number;
 }
 
-const Progress = styled.div<ProgressProps>`
+export const Progress = styled.div<ProgressProps>`
   padding: 2px;
   border-radius: 30px;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25),
@@ -64,7 +65,7 @@ const Progress = styled.div<ProgressProps>`
     animation: ${progressAnimation(score, total)} 3s;
   `};
 `;
-const progressAnimation = (score: number, total: number) => keyframes`
+export const progressAnimation = (score: number, total: number) => keyframes`
   0% {
     width: 5%;
     background-color: var(--primary-color);
@@ -75,13 +76,13 @@ const progressAnimation = (score: number, total: number) => keyframes`
   }
 `;
 
-const Bar = styled.div`
-  height: 14px;
+export const Bar = styled.div`
+  height: 10px;
   border-radius: 30px;
   background-image: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.3),
-    rgba(255, 255, 255, 0.05)
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.2)
   );
   transition: 0.4s linear;
   transition-property: width, background-color;
@@ -96,7 +97,7 @@ const EachInfo = styled.div`
 const MoreTitle = styled.div`
   font-weight: 700;
   color: var(--primary-color);
-  font-size: 18px;
+  font-size: 16px;
   margin-left: 3px;
 `;
 const MoreDetail = styled.div`
@@ -104,9 +105,11 @@ const MoreDetail = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-top: 20px;
+  width: 250px;
 `;
 const Score = styled.span`
   margin-right: 20px;
   color: var(--primary-color);
   font-weight: 500;
+  font-size: 15px;
 `;

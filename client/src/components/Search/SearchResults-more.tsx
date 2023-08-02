@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
 import SecondaryBox from '../Box/SecondaryBox';
-import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import Spinner from '../common/Spinner';
 import { useNavigate } from 'react-router-dom';
 import axios, { USERID } from '../../api/apiController';
-import { ReactComponent as StarSvg } from '../../assets/icon/fill-star.svg';
 
 interface SearchResultsProps {
   results: PerfumeDetail[] | null;
@@ -24,13 +23,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   addUrl,
 }) => {
   const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(false);
     console.log(results);
   }, [results]);
 
-  const navigate = useNavigate();
   const handleClick = (perfumeId: number) => {
     navigate(`/perfume-detail/${perfumeId}`);
   };
@@ -46,34 +45,26 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     <>
       {!loading && results?.length ? (
         <PerfumeList>
-          <MarginFrame margin="-4px 0" />
           {results.map((feed) => (
             <div key={feed.perfumeId}>
               <PerfumeBox>
                 <PerfumeInfo onClick={() => handleClick(feed.perfumeId)}>
-                  <TextInfo>
-                    <PerfumeRate>
-                      <StarSvg />
-                      {feed.rate ? feed.rate : 4.2}
-                    </PerfumeRate>
-                    <PerfumeBrand>{feed.brandName}</PerfumeBrand>
-                    <PerfumeName>
-                      {feed.name.length > 12
-                        ? feed.name.slice(0, 12) + '...'
-                        : feed.name}
-                    </PerfumeName>
-                    <PerfumeScent>
-                      {feed.accord.slice(0, 3).map((scent, idx) => (
-                        <span key={idx}>
-                          {scent.name}
-                          {idx === 2 ? '' : ', '}
-                        </span>
-                      ))}
-                    </PerfumeScent>
-                  </TextInfo>
                   <ImgBox>
                     <img src={feed.picture}></img>
+                    <PerfumeScent>
+                      {feed.accord.slice(0, 3).map((scent, idx) => (
+                        <ScentBox key={idx} color={scent.rgb} />
+                      ))}
+                    </PerfumeScent>
                   </ImgBox>
+                  <TextInfo>
+                    <PerfumeBrand>{feed.brandName}</PerfumeBrand>
+                    <PerfumeName>
+                      {feed.name.length > 9
+                        ? feed.name.slice(0, 9) + '..'
+                        : feed.name}
+                    </PerfumeName>
+                  </TextInfo>
                 </PerfumeInfo>
                 <ButtonFrame>
                   {isButton && (
@@ -98,68 +89,80 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
 export default SearchResults;
 
-const PerfumeList = styled.div`
+const PerfumeScent = styled.div`
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  margin: 20px;
+  align-items: center;
+  justify-content: flex-end;
+  // margin-right: -12px;
+  gap: 4px;
+  margin-top: -1px;
+`;
+
+const ScentBox = styled.div<{ color: string }>`
+  width: 11px;
+  height: 11px;
+  border-radius: 4px;
+  background-color: ${(props) => props.color};
+`;
+
+const PerfumeList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin: 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px;
 `;
 
 const PerfumeBox = styled(SecondaryBox)`
-  padding: 25px 15px;
+  padding: 15px;
   flex-direction: column;
+  width: 140px;
+  height: 175px;
+  flex: 1 0 calc(50% - 20px);
+  overflow: hidden;
 `;
 
 const PerfumeInfo = styled.div`
   display: flex;
+  flex-direction : column;
   align-items: center;
-  justify-content: space-around;
 }
 `;
 
 const TextInfo = styled.div`
   display: flex;
   flex-direction: column;
-  width: 60%;
+  width: 90%;
+  margin: 15px 12px 0px;
 `;
-
-const PerfumeRate = styled.div`
-  font-weight: 400;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  // color: var(--primary-color);
-  margin-bottom: 10px;
-`;
-
 const PerfumeBrand = styled.div`
   color: var(--black-color);
   font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 5px;
+  font-weight: 600;
+  margin-bottom: 4px;
 `;
 const PerfumeName = styled.div`
   color: var(--black-color);
-  font-size: 18px;
+  font-size: 16.2px;
   font-weight: 600;
 `;
-const PerfumeScent = styled.div`
-  margin-top: 28px;
-  color: var(--black-color);
-  font-size: 14px;
-  font-weight: 600;
-`;
+
 const ImgBox = styled.div`
-  width: 110px;
-  height: 110px;
+  width: 100%;
+  height: 120px;
   display: flex;
   align-items: center;
   background: var(--white-color);
   border-radius: 10px;
-  justify-content: center;
-
+  justify-content: space-evenly;
+  margin: 0 10px;
+  gap: 1px;
   img {
-    width: 80px;
+    width: 70px;
   }
 `;
 
@@ -184,5 +187,3 @@ const Button = styled.button`
     color: var(--white-color);
   }
 `;
-
-const Scent = styled.span``;

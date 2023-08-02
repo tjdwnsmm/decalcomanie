@@ -10,7 +10,7 @@ const UserInfo = {
 
 const NoRecommend = () => {
   return (
-    <MarginFrame margin="0 30px 0">
+    <MarginFrame margin="30px 30px 0">
       <UserName>{UserInfo.name} 님,</UserName>
       <DrawerInfo>서랍에 향수가 없으시네요? </DrawerInfo>
       <MoreInfo>가지고 있는 향수를 등록해주세요!</MoreInfo>
@@ -22,10 +22,12 @@ export default NoRecommend;
 
 const DrawerInfo = styled(WeatherInfo)`
   color: var(--black-color);
+  margin-top: 8px;
+  font-size: 27px;
 `;
 
 const MoreInfo = styled.div`
-  font-size: 14px;
-  font-weight: 400;
-  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 18px;
 `;

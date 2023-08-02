@@ -80,11 +80,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
           (list: PerfumeDetail) =>
             list.nameOrg.includes(keyword) || list.name.includes(keyword),
         )
-        .map((perfume: PerfumeDetail) =>
-          perfume.nameOrg.length > 30
-            ? perfume.nameOrg.slice(0, 30) + '...'
-            : perfume.nameOrg,
-        )
+        .map((perfume: PerfumeDetail) => perfume.nameOrg)
         .slice(0, 8);
       setSearchResults(filteredResults);
       setIsFetching(false);
@@ -141,7 +137,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
                 }}
               >
                 <a href="#">
-                  {search.length > 30 ? search.slice(0, 30) + '...' : search}
+                  {search.length > 20 ? search.slice(0, 20) + '...' : search}
                 </a>
               </AutoSearchData>
             ))}
