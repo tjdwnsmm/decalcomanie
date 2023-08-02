@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Getter
 @Builder(toBuilder = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "notelist")
 public class NoteList {
 
     @Id
