@@ -14,4 +14,11 @@ public class UserInfoDto {
     private UserDto user;
     private List<ScentDto> favorities;
     private List<ScentDto> hates;
+    private boolean isFollowing;
+
+    public UserInfoDto(UserDto dto, List<ScentDto> favorite, List<ScentDto> hate) {
+        this.user = dto;
+        this.favorities = favorite;
+        this.hates = hate;
+    }
 }
