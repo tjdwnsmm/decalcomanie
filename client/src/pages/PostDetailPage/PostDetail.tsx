@@ -48,7 +48,7 @@ const PostDetail = () => {
           <CommentBox key={idx} comment={comment} commentUser={postDetailData.commmentUsers[idx]} />
         ))}
       </CommentListBox>
-      <CommentInputForm />
+      <CommentInputForm articleId={postDetailData.articleDto.articleId}/>
     </Main>
   );
 };
