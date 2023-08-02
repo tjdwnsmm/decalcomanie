@@ -42,7 +42,7 @@ const DetailEtcInfoSection = ({ perfume }: DetailEtcProps) => {
             <Bar2></Bar2>
           </Progress2>
         </ProgressBar2>{' '}
-        <>🌇</>
+        <>🌚</>
       </CenterFrame2>
     </EtcFrame>
   );

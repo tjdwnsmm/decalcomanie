@@ -37,7 +37,14 @@ const SeasonSuitabilityChart: React.FC<SeasonSuitabilityChartProps> = ({
         />
         <XAxis dataKey="season" />
         <YAxis hide />
-        <Tooltip />
+        <Tooltip
+          formatter={(value: number) => `${value.toFixed(2)}%`}
+          contentStyle={{
+            fontWeight: '400',
+            color: 'var(--primary-color)',
+            border: 'none',
+          }}
+        />
         <Bar dataKey="degree" fill="#8884d8" barSize={40} />
       </BarChart>
     </MarginFrame>
