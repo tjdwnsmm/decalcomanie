@@ -110,8 +110,9 @@ const PerfumeList = styled.div`
   flex-wrap: wrap;
   margin: 14px;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
   gap: 10px;
+  padding: 2px;
 `;
 
 const PerfumeBox = styled(SecondaryBox)`
