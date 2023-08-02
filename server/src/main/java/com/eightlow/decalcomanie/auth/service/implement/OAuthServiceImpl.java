@@ -35,12 +35,25 @@ public class OAuthServiceImpl implements IOAuthService {
     }
 
     @Override
+    @Transactional
     public void updateRefreshToken(String refreshToken, String userId) {
         UserCredential userCredential = oAuthRepository.findByUserId(userId);
-        userCredential.toBuilder()
+
+        UserCredential reissueUser = userCredential.toBuilder()
                 .refreshToken(refreshToken)
                 .build();
 
-        oAuthRepository.save(userCredential);
+        oAuthRepository.save(reissueUser);
+    }
+
+    @Override
+    @Transactional
+    public void signOut(String userId) {
+        UserCredential userCredential = oAuthRepository.findByUserId(userId);
+        UserCredential signOutUser = userCredential.toBuilder()
+                .refreshToken("")
+                .build();
+
+        oAuthRepository.save(signOutUser);
     }
 }

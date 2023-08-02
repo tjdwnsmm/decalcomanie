@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class PerfumeApiController {
 
     // 향수 상세보기
     @GetMapping("/detail/{userId}/{perfumeId}")
-    public ResponseEntity<PerfumeDto> perfumeDetail(@PathVariable("userId") String userId, @PathVariable("perfumeId") int perfumeId) {
+    public ResponseEntity<PerfumeDto> perfumeDetail(@PathVariable("userId") String userId, @PathVariable("perfumeId") int perfumeId, HttpServletRequest req) {
         if(!perfumeService.isExistingPerfume(perfumeId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -76,7 +77,7 @@ public class PerfumeApiController {
 
     // 향수 찜, 찜 해제
     @PostMapping("/pick")
-    public ResponseEntity<Map<String, Boolean>> pick(@RequestBody PerfumePickRequest request) {
+    public ResponseEntity<Map<String, Boolean>> pick(@RequestBody PerfumePickRequest request, HttpServletRequest req) {
         if(!perfumeService.isExistingPerfume(request.getPerfumeId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -89,7 +90,7 @@ public class PerfumeApiController {
 
     // 찜한 향수 보기
     @GetMapping("/picked/{userId}")
-    public ResponseEntity<List<PerfumeDto>> picked(@PathVariable("userId") String userId) {
+    public ResponseEntity<List<PerfumeDto>> picked(@PathVariable("userId") String userId, HttpServletRequest req) {
         return new ResponseEntity<>(perfumeService.findAllPickedPerfume(userId), HttpStatus.OK);
     }
 

@@ -8,6 +8,7 @@ import com.eightlow.decalcomanie.auth.entity.UserCredential;
 import com.eightlow.decalcomanie.auth.jwt.JwtUtils;
 import com.eightlow.decalcomanie.auth.service.IOAuthService;
 import com.eightlow.decalcomanie.auth.service.JwtService;
+import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.user.dto.UserDto;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.repository.UserRepository;
@@ -23,6 +24,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -45,6 +50,8 @@ public class OAuthController {
         // 카카오에서 넘겨받은 access code로 accessToken 요청
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
+
+        System.out.println("access code : " + code);
 
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
@@ -72,6 +79,8 @@ public class OAuthController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("accessToken : " + oAuthToken.getAccessToken());
 
         // accessToken으로 카카오에 사용자 정보 요청
         RestTemplate rt2 = new RestTemplate();
@@ -107,11 +116,11 @@ public class OAuthController {
             String accessToken = jwtService.generateAccessToken(nickname, userCredential.getUserId());
             String refreshToken = jwtService.generateRefreshToken(nickname, userCredential.getUserId());
 
-            userCredential.toBuilder()
-                           .refreshToken(refreshToken)
-                           .build();
+            UserCredential loginUser = userCredential.toBuilder()
+                    .refreshToken(refreshToken)
+                    .build();
 
-            oAuthService.signIn(userCredential);
+            oAuthService.signIn(loginUser);
 
             LoginResponse loginResponse = LoginResponse.builder()
                     .userId(userCredential.getUserId())
@@ -130,6 +139,9 @@ public class OAuthController {
 
         String accessToken = jwtService.generateAccessToken(kakaoProfile.getId().toString(), userId.toString());
         String refreshToken = jwtService.generateRefreshToken(kakaoProfile.getId().toString(), userId.toString());
+
+        System.out.println(kakaoProfile.getId());
+        System.out.println(kakaoProfile.getKakaoAccount().getEmail());
 
         userCredential = UserCredential.builder()
                 .userId(userId.toString())
@@ -162,12 +174,9 @@ public class OAuthController {
     }
 
     @GetMapping("/reissue")
-    public ResponseEntity reissue(@RequestHeader HttpHeaders header) {
-        System.out.println(header.getFirst("refreshToken"));
+    public ResponseEntity reissue(@RequestHeader HttpHeaders header, HttpServletResponse response) throws IOException {
         if (jwtService.isValidToken(header.getFirst("refreshToken"))) {
             HttpHeaders responseHeader = new HttpHeaders();
-
-            System.out.println("Token valid!");
 
             Jws<Claims> claims = JwtUtils.parseToken(header.getFirst("refreshToken"), secretKey);
             String userId = claims.getBody().get("userId", String.class);
@@ -181,13 +190,19 @@ public class OAuthController {
 
             oAuthService.updateRefreshToken(refreshToken, userId);
 
-            System.out.println("new accessToken generated : " + accessToken);
-            System.out.println("new refreshToken generated : " + refreshToken);
-
             return new ResponseEntity(responseHeader, HttpStatus.OK);
         }
 
-        System.out.println("refreshToken 인증 실패! 로그아웃");
+        String redirect_uri="http://localhost:5173/login";
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.sendRedirect(redirect_uri);
+
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+    }
+
+    @PostMapping("/signout")
+    public ResponseEntity signOut(HttpServletRequest request) {
+        oAuthService.signOut((String) request.getAttribute("userId"));
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

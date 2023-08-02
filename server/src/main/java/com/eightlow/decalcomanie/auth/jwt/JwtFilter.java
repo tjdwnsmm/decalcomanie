@@ -39,8 +39,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authorization.split(" ")[1];
 
         try {
-            String nickname = JwtUtils.parseToken(token, secretKey).getBody().get("nickname", String.class);
-            logger.info("nickname : " + nickname);
+            Jws<Claims> claims = JwtUtils.parseToken(token, secretKey);
+            String nickname = claims.getBody().get("nickname", String.class);
+            String userId = claims.getBody().get("userId", String.class);
 
             // 권한 부여
             UsernamePasswordAuthenticationToken authenticationToken =
@@ -49,6 +50,9 @@ public class JwtFilter extends OncePerRequestFilter {
             // 상세정보 추가
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+            request.setAttribute("userId", userId);
+
             filterChain.doFilter(request, response);
         } catch (SecurityException e) {
             logger.info("Invalid JWT signature.");

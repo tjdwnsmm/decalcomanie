@@ -32,8 +32,6 @@ public class JwtService {
         try {
             String userId = JwtUtils.parseToken(refreshToken, secretKey).getBody().get("userId", String.class);
 
-            System.out.println("userId : " + userId);
-
             String checkToken = oAuthRepository.findByUserId(userId).getRefreshToken();
             return refreshToken.equals(checkToken);
         } catch (Exception e) {
