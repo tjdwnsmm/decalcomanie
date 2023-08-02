@@ -9,6 +9,7 @@ import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { USERID } from '../../api/apiController';
 import { useEffect, useState } from 'react';
+import { FollowBtn } from '../Button/FollowBtn';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
@@ -44,6 +45,7 @@ const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
           <ProfileBox>
             <img src={'src/assets/img/profile-user.png'} />
             {feed.userInfoDto.user.nickname}
+            <Follow>팔로우</Follow>
           </ProfileBox>
           <IconBox>
             <LikeBtn
@@ -97,4 +99,9 @@ const ContentBox = styled.div`
   font-weight: 300;
   line-height: 18px;
   margin: 10px;
+`;
+
+const Follow = styled.div`
+  margin-left: 10px;
+  color: var(--primary-color);
 `;

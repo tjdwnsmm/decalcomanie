@@ -6,6 +6,7 @@ import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
 import Spinner from '../common/Spinner';
 import { useNavigate } from 'react-router-dom';
 import axios, { USERID } from '../../api/apiController';
+import { ReactComponent as StarSvg } from '../../assets/icon/fill-star.svg';
 
 interface SearchResultsProps {
   results: PerfumeDetail[] | null;
@@ -51,6 +52,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               <PerfumeBox>
                 <PerfumeInfo onClick={() => handleClick(feed.perfumeId)}>
                   <TextInfo>
+                    <PerfumeRate>
+                      <StarSvg />
+                      {feed.rate ? feed.rate : 4.2}
+                    </PerfumeRate>
                     <PerfumeBrand>{feed.brandName}</PerfumeBrand>
                     <PerfumeName>
                       {feed.name.length > 12
@@ -116,6 +121,17 @@ const TextInfo = styled.div`
   flex-direction: column;
   width: 60%;
 `;
+
+const PerfumeRate = styled.div`
+  font-weight: 500;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+`;
+
 const PerfumeBrand = styled.div`
   color: var(--black-color);
   font-size: 11px;
