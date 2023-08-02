@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -26,32 +27,32 @@ public class UserApiController {
 
     // 사용자 향수 등록, 삭제
     @PostMapping("/perfume/manage")
-    public ResponseEntity<String> modifyUserPerfume(@RequestBody UserPerfumeDto request) {
+    public ResponseEntity<String> modifyUserPerfume(@RequestBody UserPerfumeDto request, HttpServletRequest req) {
         String userMessage = userService.modifyUserPerfume(userPerfumeMapper.toEntity(request));
         return new ResponseEntity<>(userMessage, HttpStatus.CREATED);
     }
 
     // 사용자 향수 조회
     @GetMapping("/perfume/{userId}")
-    public ResponseEntity<List<PerfumeDto>> getUserPerfume(@PathVariable String userId) {
+    public ResponseEntity<List<PerfumeDto>> getUserPerfume(@PathVariable String userId, HttpServletRequest req) {
         return new ResponseEntity<>(userService.getUserPerfume(userId), HttpStatus.OK);
     }
 
     // 팔로우
     @PostMapping("/follow")
-    public ResponseEntity<String> followUser(@RequestBody FollowDto request) {
+    public ResponseEntity<String> followUser(@RequestBody FollowDto request, HttpServletRequest req) {
         return new ResponseEntity<>(userService.followUser(request.getFollowing(), request.getFollowed()), HttpStatus.CREATED);
     }
 
     // 팔로잉 목록 조회
     @GetMapping("/following/{userId}")
-    public ResponseEntity<List<FollowingResponse>> getFollowingUsers(@PathVariable String userId) {
+    public ResponseEntity<List<FollowingResponse>> getFollowingUsers(@PathVariable String userId, HttpServletRequest req) {
         return new ResponseEntity<>(userService.getFollowingUsers(userId), HttpStatus.OK);
     }
 
     // 팔로우 목록 조회
     @GetMapping("/follower/{userId}")
-    public ResponseEntity<List<FollowerResponse>> getFollowers(@PathVariable String userId) {
+    public ResponseEntity<List<FollowerResponse>> getFollowers(@PathVariable String userId, HttpServletRequest req) {
         return new ResponseEntity<>(userService.getFollowers(userId), HttpStatus.OK);
     }
 

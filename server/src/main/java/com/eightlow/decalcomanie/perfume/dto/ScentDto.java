@@ -11,6 +11,8 @@ public class ScentDto {
 
     private float weight;
 
+    private String nameOrg;
+
     private String name;
 
     private String rgb;
