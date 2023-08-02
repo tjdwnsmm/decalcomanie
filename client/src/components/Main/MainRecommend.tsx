@@ -2,13 +2,12 @@ import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
 import { ReactComponent as ArrowSvg } from '../../assets/icon/nextArrow.svg';
 import { useNavigate } from 'react-router';
+import Logo from '../common/Logo';
 const UserInfo = {
   name: '김수민',
   weather: 0,
   scent: 0,
 };
-
-const favScent = ['시트러스', '프레시 스파이시', '아로마틱'];
 
 const MainRecommend = () => {
   const navigate = useNavigate();
@@ -17,25 +16,42 @@ const MainRecommend = () => {
   };
   return (
     <MarginFrame margin="0 30px 35px">
-      <UserName>{UserInfo.name} 님,</UserName>
-      <ScentInfo>
-        <AccentText>
-          <span>이런 향수는 어떠세요 ?</span>
-        </AccentText>
-        <GoToDrawer onClick={handleDrawer}>
-          내 서랍 보기 <ArrowSvg />
-        </GoToDrawer>
-      </ScentInfo>
+      <Frame>
+        <LeftSection>
+          <UserName>{UserInfo.name} 님,</UserName>
+          <ScentInfo>
+            <AccentText>
+              <div>오늘의 추천 향수를 </div>
+              <div>만나보세요 🖐</div>
+            </AccentText>
+          </ScentInfo>
+        </LeftSection>
+        <RightSection>
+          <Logo />
+        </RightSection>
+      </Frame>
+      <GoToDrawer onClick={handleDrawer}>
+        내 서랍 보기 <ArrowSvg />
+      </GoToDrawer>
     </MarginFrame>
   );
 };
 
 export default MainRecommend;
 
+const Frame = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 80px;
+`;
+const LeftSection = styled.div``;
+const RightSection = styled.div`
+  margin-top: -30px;
+`;
 export const UserName = styled.div`
   display: flex;
   margin-top: 50px;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 700;
   letter-spacing: 0.44px;
 `;
@@ -55,11 +71,11 @@ const ScentInfo = styled.div`
 `;
 
 const AccentText = styled.div`
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   letter-spacing: 0.6px;
   margin-bottom: 10px;
-  margin-top: 10px;
+  margin-top: 5px;
   span {
   }
 `;

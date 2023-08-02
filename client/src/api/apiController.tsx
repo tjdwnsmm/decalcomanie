@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const BASE_URL = 'http://localhost:8080';
-//'http://i9a708.p.ssafy.io:8080'
+//export const BASE_URL = 'http://i9a708.p.ssafy.io:8080'
 export const USERID = '07161c43-bc03-44f6-95c1-a56d440a23bf';
 // axios.defaults.withCredentials = true;
 

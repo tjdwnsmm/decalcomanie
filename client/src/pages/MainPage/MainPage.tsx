@@ -6,15 +6,22 @@ import MainRecommend from '../../components/Main/MainRecommend';
 import NoRecommend from '../../components/Main/NoRecommend';
 import FloatingDrawerBtn from '../../components/Button/FloatingDrawerBtn';
 import BottomNav from '../../components/common/BottomNav';
-import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
 import MainSwiper from '../../components/Carousel/MainSwiper';
 import MoreRateInfo from '../../components/Main/MoreRateInfo';
+import MainScent from '../../components/Main/MainScent';
 
 /**
  * !API 로 바꿀것!
  */
 const season = '여름';
 const time = '낮';
+
+const favScent: ScentDto[] = [
+  { scentId: 1, weight: 100, name: '시트러스', rgb: '#F9FF52' },
+  { scentId: 20, weight: 93, name: '흙 내음', rgb: '#544838' },
+  { scentId: 9, weight: 86, name: '우디', rgb: '#774414' },
+];
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -80,6 +87,9 @@ const MainPage = () => {
                   <div className="subtitle">
                     서랍에 담은 향수들에 기반한 맞춤 추천 결과입니다
                   </div>
+                  <>
+                    <MainScent accord={favScent} />
+                  </>
                 </Info>
                 <MainSwiper perfumes={perfumes} />
               </>
@@ -140,7 +150,7 @@ const Frame = styled.div`
 `;
 
 const Info = styled.div`
-  margin: 40px 30px;
+  margin: 40px 30px 20px;
   .title {
     font-weight: 700;
     font-size: 23px;
