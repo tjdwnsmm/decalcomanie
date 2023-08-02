@@ -11,12 +11,15 @@ import java.util.List;
 @ToString
 public class FeedResponse extends LikeAndBookmarkResponse {
     private UserInfoDto userInfoDto;
+    private boolean isFollowed;
     private ArticleDto articleDtos;
     private PerfumeDto perfumeDtos;
 
-    public FeedResponse(UserInfoDto userInfoDto, ArticleDto article, PerfumeDto perfumeDto, boolean isHearted, boolean isBookmarked) {
+
+    public FeedResponse(UserInfoDto userInfoDto, boolean isFollowed, ArticleDto article, PerfumeDto perfumeDto, boolean isHearted, boolean isBookmarked) {
         super(isHearted, isBookmarked);
         this.userInfoDto = userInfoDto;
+        this.isFollowed = isFollowed;
         this.articleDtos = article;
         this.perfumeDtos = perfumeDto;
     }
