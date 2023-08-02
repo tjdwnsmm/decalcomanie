@@ -69,18 +69,18 @@ const formatNumber = (number: number): string => {
 export default function ProfileStats() {
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    navigate('/follow-list');
+  const handleClick = (initialActiveTab: 'follower' | 'following') => {
+    navigate(`/follow-list?initialActiveTab=${initialActiveTab}`);
   };
 
   return (
     <StatsDiv>
       <StatsBox>
-        <CountBox onClick={handleClick}>
+        <CountBox onClick={() => handleClick('follower')}>
           <BoxText size="13pt" color="var(--primary-color)" fontweight="700">
-            {formatNumber(data.following)}
+            {formatNumber(data.follower)}
           </BoxText>
-          <BoxText size="9.5pt">Following</BoxText>
+          <BoxText size="9.5pt">Follower</BoxText>
         </CountBox>
         <Bar />
         <div>
@@ -90,11 +90,11 @@ export default function ProfileStats() {
           <BoxText size="9.5pt">Post</BoxText>
         </div>
         <Bar />
-        <CountBox onClick={handleClick}>
+        <CountBox onClick={() => handleClick('following')}>
           <BoxText size="13pt" color="var(--primary-color)" fontweight="700">
-            {formatNumber(data.follower)}
+            {formatNumber(data.following)}
           </BoxText>
-          <BoxText size="9.5pt">Followers</BoxText>
+          <BoxText size="9.5pt">Following</BoxText>
         </CountBox>
       </StatsBox>
     </StatsDiv>

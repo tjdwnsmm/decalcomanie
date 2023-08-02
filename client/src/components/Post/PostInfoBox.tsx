@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { PostInfo } from '../../types/PostInfoType';
-import { FollowBtn } from '../Button/FollowBtn';
+import FollowBtn from '../Button/FollowBtn';
 import { PostModalBtn } from '../Button/PostModalBtn';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
@@ -158,7 +158,11 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
             <NoFavScent>{nofavScent?.map((fav) => `#${fav}  `)}</NoFavScent>
           </InfoBoxRow>
         </InfoBox>
-        {!isWriter && <FollowBtn isFollow={isFollow} />}
+        {!isWriter && <FollowBtn
+          // 글 상세 api 연결하면서 수정 필
+          from={USERID}
+          to={USERID}
+          isFollow={isFollow} />}
         {isWriter && <PostModalBtn />}
       </WriterInfoBox>
       <ContentBox>{content}</ContentBox>

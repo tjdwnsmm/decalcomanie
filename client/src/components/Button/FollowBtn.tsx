@@ -1,25 +1,12 @@
 import { styled } from 'styled-components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from '../../api/apiController';
 
 interface FollowBtnProps {
+  from: string;
+  to: string;
   isFollow: boolean;
 }
-
-export const FollowBtn = ({ isFollow }: FollowBtnProps) => {
-  const [followed, setFollowed] = useState(isFollow);
-
-  const handleFollowClick = () => {
-    setFollowed(!followed);
-  };
-
-  return (
-    <>
-      <Button isFollowing={followed} onClick={handleFollowClick}>
-        {followed ? '팔로잉' : '팔로우'}
-      </Button>
-    </>
-  );
-};
 
 const Button = styled.div<{ isFollowing?: boolean }>`
   display: flex;
@@ -40,3 +27,43 @@ const Button = styled.div<{ isFollowing?: boolean }>`
   border-radius: 10px;
   cursor: pointer;
 `;
+
+const FollowBtn = ({ from, to, isFollow }: FollowBtnProps) => {
+  const [followed, setFollowed] = useState(isFollow);
+
+  useEffect(() => {
+    setFollowed(isFollow);
+  }, [isFollow]);
+
+  const handleFollowClick = async () => {
+    try {
+      await sendFollowStatus('/user/follow');
+      setFollowed(!followed);
+      console.log(followed);
+    } catch (error) {
+      console.error('에러: ', error);
+    }
+  };
+
+  const sendFollowStatus = async (url: string) => {
+    try {
+      const requestData = { from, to };
+      const response = await axios.post(url, requestData);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(error, url);
+      return [];
+    }
+  };
+
+  return (
+    <>
+      <Button isFollowing={followed} onClick={handleFollowClick}>
+        {followed ? '팔로잉' : '팔로우'}
+      </Button>
+    </>
+  );
+};
+
+export default FollowBtn;
