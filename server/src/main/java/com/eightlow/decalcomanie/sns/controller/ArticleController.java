@@ -15,6 +15,9 @@ import com.eightlow.decalcomanie.sns.mapper.CommentDtoMapper;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
 import com.eightlow.decalcomanie.sns.service.IGradeService;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
+import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
+import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
+import com.eightlow.decalcomanie.user.mapper.FollowMapper;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,7 @@ public class ArticleController {
 
     private final ArticleDtoMapper articleDtoMapper;
     private final CommentDtoMapper commentDtoMapper;
+    private final FollowMapper followMapper;
     private final PerfumeMapper perfumeMapper;
 
     // 글 작성
@@ -95,13 +99,35 @@ public class ArticleController {
         List<CommentDto> comments = articleService.getComments(articleDto.getArticleId());
         System.out.println(comments);
 
+        //사용자의 팔로우 목록을 받아온다.
+        List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
+        System.out.println("tjoejtoijfilsjlfjs;dlj");
+        System.out.println(followerInfoResponses);
+
         List<UserInfoDto> commentUsers = new ArrayList<>();
+
         // 댓글 작성자정보들
         for (CommentDto commentDto : comments) {
-            commentUsers.add(userService.getUserInfo(commentDto.getUserId()));
+            UserInfoDto userInfoDto = null;
+            // 사용자의 follower 목록을 보고 follow 여부를 넣어준다.
+            for (FollowingResponse followerInfoResponse : followerInfoResponses) {
+                if(followerInfoResponse.getUserId().equals(commentDto.getUserId())) {
+                    System.out.println("inininininin");
+                    userInfoDto = userService.getUserInfo(commentDto.getUserId());
+                    System.out.println(userInfoDto);
+
+                    commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
+                            userInfoDto.getHates(), true));
+
+                    break;
+                }
+                commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
+                        userInfoDto.getHates(), false));
+
+
+            }
+
         }
-
-
 
         // 좋아요 되었는지 확인
         boolean isHearted = articleService.checkHeartArticle(articleDto.getArticleId(), userId);
@@ -320,6 +346,16 @@ public class ArticleController {
             // TODO: 공병 태그 (아마 perfumeId 0번 ), 즉 향수가 아무것도 임베디드 안된 상황을 구현 헤야함!!
 
             UserInfoDto userInfoDto = userService.getUserInfo(article.getUserId());
+
+            //사용자의 팔로우 목록을 받아온다.
+            List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
+            boolean isFollowed = false;
+            for (FollowingResponse followerInfoResponse : followerInfoResponses) {
+                if (followerInfoResponse.getUserId().equals(userInfoDto.getUser().getUserId())) {
+                    isFollowed = true;
+                    break;
+                }
+            }
             
             // 하나만 필요함으로 get(0)을 수행함
             PerfumeDto perfumeDto = perfumeService.getPerfume(perfumeIdList.get(0));
@@ -328,7 +364,7 @@ public class ArticleController {
             boolean isHearted = articleService.checkHeartArticle(article.getArticleId(), userId);
             boolean isBookmarked = articleService.checkBookmarkArticle(article.getArticleId(), userId);
 
-            feedResponses.add(new FeedResponse(userInfoDto, article, perfumeDto, isHearted, isBookmarked));
+            feedResponses.add(new FeedResponse(userInfoDto, isFollowed, article, perfumeDto, isHearted, isBookmarked));
         }
         return feedResponses;
     }
