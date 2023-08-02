@@ -19,22 +19,30 @@ const MainSwiper = ({ perfumes }: MainCarouselProps) => {
   };
 
   return (
-    <SwiperContainer>
-      <Swiper slidesPerView={3} spaceBetween={20}>
-        {perfumes.map((perfume, index) => (
-          <SwiperSlide key={index}>
-            <div
-              className="each-slide"
-              onClick={() => {
-                handlePerfumeInfo(perfume.perfumeId);
-              }}
-            >
-              <MainPerfumeInfo perfumeInfo={perfume} />
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </SwiperContainer>
+    <>
+      <Info>
+        <div className="title">김수민님을 위한 추천</div>
+        <div className="subtitle">
+          서랍에 담은 향수들에 기반한 맞춤 추천 결과입니다
+        </div>
+      </Info>
+      <SwiperContainer>
+        <Swiper slidesPerView={3} spaceBetween={20}>
+          {perfumes.map((perfume, index) => (
+            <SwiperSlide key={index}>
+              <div
+                className="each-slide"
+                onClick={() => {
+                  handlePerfumeInfo(perfume.perfumeId);
+                }}
+              >
+                <MainPerfumeInfo perfumeInfo={perfume} />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </SwiperContainer>
+    </>
   );
 };
 
@@ -54,19 +62,22 @@ const SwiperContainer = styled.div`
     display: -webkit-inline-box;
   }
 `;
-const RecommendButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 235px;
-  height: 16px;
-  margin: 15px auto;
-  border-radius: 5px;
-  background: var(--primary-color);
-  color: var(--white-color);
-  padding: 9px 13px;
-  font-size: 13px;
-  font-weight: 500;
+const Info = styled.div`
+  margin: 40px 30px;
+  .title {
+    font-weight: 700;
+    font-size: 23px;
+  }
+  .subtitle {
+    font-size: 15px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  span {
+    color: var(--primary-color);
+  }
 `;
 
 export default MainSwiper;

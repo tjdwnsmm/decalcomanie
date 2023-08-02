@@ -5,7 +5,6 @@ import NoRecommend from '../../components/Main/NoRecommend';
 import FloatingDrawerBtn from '../../components/Button/FloatingDrawerBtn';
 import BottomNav from '../../components/common/BottomNav';
 import { useNavigate } from 'react-router-dom';
-import MainCarousel from '../../components/Carousel/MainCarousel';
 import { styled } from 'styled-components';
 import { LikeBtn } from '../../components/Button/LikeBtn';
 import { USERID } from '../../api/apiController';
@@ -45,56 +44,57 @@ const MainPage = () => {
   return (
     <Main>
       <Frame>
-        {isDrawer ? (
-          <>
-            <MainRecommend />
-            <MainSwiper perfumes={perfumes} />
-            {/* <MainCarousel perfumes={perfumes} /> */}
-          </>
-        ) : (
-          <>
-            <NoRecommend />
-            <MarginFrame margin="20px auto">
-              <CenterFrame>
-                <ConfirmButton
-                  color="primary"
-                  background="primary"
-                  onClick={handleSearchPerfume}
-                >
-                  내 향수 찾으러 가기
-                </ConfirmButton>
-              </CenterFrame>
-            </MarginFrame>
-          </>
-        )}
-        <RecommendTab>
-          <Info>
-            <div className="title">{season}에 잘 어울려요</div>
-            <div className="subtitle">{nowDate()} 기준</div>
-            {perfumes.map((perfume) => (
-              <PerfumeEach>
-                <img src={perfume.picture} alt="" />
-                <div className="info">
-                  <div className="txt">
-                    <div className="brand">{perfume.brandName}</div>
-                    <div className="title">{perfume.name}</div>
-                    <div className="scent">
-                      {getScentString(perfume.accord)}
+        {isDrawer && <MainRecommend />}
+        <BackFrame>
+          {isDrawer ? (
+            <>
+              <MainSwiper perfumes={perfumes} />
+            </>
+          ) : (
+            <>
+              <NoRecommend />
+              <MarginFrame margin="20px auto">
+                <CenterFrame>
+                  <ConfirmButton
+                    color="primary"
+                    background="primary"
+                    onClick={handleSearchPerfume}
+                  >
+                    내 향수 찾으러 가기
+                  </ConfirmButton>
+                </CenterFrame>
+              </MarginFrame>
+            </>
+          )}
+          <RecommendTab>
+            <Info>
+              <div className="title">{season}에 잘 어울려요</div>
+              <div className="subtitle">{nowDate()} 기준</div>
+              {perfumes.map((perfume) => (
+                <PerfumeEach>
+                  <img src={perfume.picture} alt="" />
+                  <div className="info">
+                    <div className="txt">
+                      <div className="brand">{perfume.brandName}</div>
+                      <div className="title">{perfume.name}</div>
+                      <div className="scent">
+                        {getScentString(perfume.accord)}
+                      </div>
                     </div>
+                    <LikeBtn
+                      count={perfume.pick}
+                      dislikeUrl="/perfume/pick"
+                      likeUrl="/perfume/pick"
+                      picked={perfume.picked}
+                      perfumeId={perfume.perfumeId}
+                      userId={USERID}
+                    />
                   </div>
-                  <LikeBtn
-                    count={perfume.pick}
-                    dislikeUrl="/perfume/pick"
-                    likeUrl="/perfume/pick"
-                    picked={perfume.picked}
-                    perfumeId={perfume.perfumeId}
-                    userId={USERID}
-                  />
-                </div>
-              </PerfumeEach>
-            ))}
-          </Info>
-        </RecommendTab>
+                </PerfumeEach>
+              ))}
+            </Info>
+          </RecommendTab>
+        </BackFrame>
       </Frame>
       <FloatingDrawerBtn />
       <BottomNav />
@@ -104,9 +104,19 @@ const MainPage = () => {
 
 export default MainPage;
 
+const BackFrame = styled.div`
+  background-color: var(--background-color);
+  padding: 10px 0 120px;
+  border-radius: 25px 25px 0 0;
+`;
 const Frame = styled.div`
-  padding-bottom: 130px;
   overflow: scroll;
+  background: linear-gradient(
+    180deg,
+    rgba(249, 202, 245, 0.64) 0%,
+    rgba(209, 167, 226, 0.74) 10.67%,
+    #6d51b4 28%
+  );
 `;
 
 const RecommendTab = styled.div`
