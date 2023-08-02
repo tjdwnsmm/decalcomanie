@@ -1,6 +1,7 @@
 import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
-
+import { ReactComponent as ArrowSvg } from '../../assets/icon/nextArrow.svg';
+import { useNavigate } from 'react-router';
 const UserInfo = {
   name: '김수민',
   weather: 0,
@@ -10,14 +11,20 @@ const UserInfo = {
 const favScent = ['시트러스', '프레시 스파이시', '아로마틱'];
 
 const MainRecommend = () => {
+  const navigate = useNavigate();
+  const handleDrawer = () => {
+    navigate('my-drawer');
+  };
   return (
-    <MarginFrame margin="0 30px 40px">
+    <MarginFrame margin="0 30px 35px">
       <UserName>{UserInfo.name} 님,</UserName>
       <ScentInfo>
         <AccentText>
-          <span>이런 향수 어떠세요 ?</span>
+          <span>이런 향수는 어떠세요 ?</span>
         </AccentText>
-        {/* 서랍에 담긴 향수들을 기반으로 추천드려요 🙂 */}
+        <GoToDrawer onClick={handleDrawer}>
+          내 서랍 보기 <ArrowSvg />
+        </GoToDrawer>
       </ScentInfo>
     </MarginFrame>
   );
@@ -27,7 +34,7 @@ export default MainRecommend;
 
 export const UserName = styled.div`
   display: flex;
-  margin-top: 45px;
+  margin-top: 50px;
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 0.44px;
@@ -52,7 +59,25 @@ const AccentText = styled.div`
   font-weight: 700;
   letter-spacing: 0.6px;
   margin-bottom: 10px;
-
+  margin-top: 10px;
   span {
+  }
+`;
+
+const GoToDrawer = styled.div`
+  color: var(--primary-color);
+  margin: 10px 0 0 5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  svg g path {
+    stroke: var(--primary-color);
+  }
+
+  svg {
+    margin-top: 2px;
+    width: 20px;
+    height: 30px;
   }
 `;
