@@ -14,6 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(CommentPk.class)
+@Table(name="comment")
 public class Comment extends BaseEntity {
     @Id
     private int commentId;
