@@ -44,9 +44,9 @@ const PostDetail = () => {
       />
       <PostInfoBox postInfo={postDetailData} />
       <CommentListBox>
-        {/* {post.comments.map((comment, idx) => (
-          <CommentBox key={idx} comment={comment} />
-        ))} */}
+        {postDetailData.comments.map((comment, idx) => (
+          <CommentBox key={idx} comment={comment} commentUser={postDetailData.commmentUsers[idx]} />
+        ))}
       </CommentListBox>
       <CommentInputForm />
     </Main>

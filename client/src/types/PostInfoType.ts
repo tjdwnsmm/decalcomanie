@@ -43,6 +43,9 @@ export interface commentDto {
 
 export interface commmentUsers {
   user: user;
+  // favorities: scent[];
+  // hates: scent[];
+  // following: boolean;
 }
 
 export interface perfumeInfos {

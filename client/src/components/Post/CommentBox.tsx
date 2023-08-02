@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Comment } from '../../types/PostInfoType';
+import { commentDto, commmentUsers } from '../../types/PostInfoType';
 import { PostModalBtn } from '../Button/PostModalBtn';
 
 interface CommentBoxProps {
-  comment: Comment;
+  comment: commentDto;
+  commentUser: commmentUsers;
 }
 
 const CommentBoxContainer = styled.div`
@@ -58,8 +59,8 @@ const Content = styled.div`
 const getElapsedTime = (createdAt: string): number => {
   const createdAtDate = new Date(createdAt);
   const currentTime = new Date();
-  console.log('작성시간', createdAtDate);
-  console.log(currentTime);
+  // console.log('작성시간', createdAtDate);
+  // console.log(currentTime);
   const diff = currentTime.getTime() - createdAtDate.getTime(); // 단위: (ms)
   const elapsedTime = Math.floor(diff / 1000 / 60);
   return elapsedTime;
@@ -84,11 +85,11 @@ const getTimeString = (elapsedTime: number, createdAt: string): string => {
   }
 };
 
-const CommentBox = ({ comment }: CommentBoxProps) => {
+const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
   // 요청보낸 사람이 댓글 작성자일 때만 수정/삭제 나오도록
   // 임시로 설정
-  const CurrentUser = '복이';
-  const isWriter = comment.writer === CurrentUser ? true : false;
+  // const CurrentUser = '복이';
+  // const isWriter = comment.writer === CurrentUser ? true : false;
 
   const [elapsedTime, setElapsedTime] = useState(
     getElapsedTime(comment.createdAt),
@@ -114,15 +115,15 @@ const CommentBox = ({ comment }: CommentBoxProps) => {
 
   return (
     <CommentBoxContainer>
-      <ProfileImage src={comment.profileImg} alt="프로필" />
+      <ProfileImage src={commentUser.user.picture} alt="프로필" />
       <CommentContent>
         <InfoBox>
-          <UserNickname>{comment.writer}</UserNickname>
+          <UserNickname>{commentUser.user.nickname}</UserNickname>
           <CreatedAt>{getTimeString(elapsedTime, comment.createdAt)}</CreatedAt>
         </InfoBox>
         <Content>{comment.content}</Content>
       </CommentContent>
-      {isWriter && <PostModalBtn />}
+      {/* {isWriter && <PostModalBtn />} */}
     </CommentBoxContainer>
   );
 };
