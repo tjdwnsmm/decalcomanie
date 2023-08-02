@@ -20,6 +20,7 @@ const PerfumeReviewBoxContainer = styled.div`
 
 const StarRatingContainer = styled.div`
   display: flex;
+  margin-bottom: 15px;
 `;
 
 const TextInfoContainer = styled.div`
@@ -31,19 +32,19 @@ const TextInfoContainer = styled.div`
 const PerfumeBrand = styled.div`
   color: var(--black-color);
   font-size: 13px;
-  font-weight: 400;
-  padding: 10px 0px;
+  font-weight: 600;
+  padding: 5px 0px;
 `;
 
 const PerfumeName = styled.div`
   color: var(--black-color);
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
 `;
 
 const ImgBox = styled.div`
-  width: 130px;
-  height: 130px;
+  width: 120px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;

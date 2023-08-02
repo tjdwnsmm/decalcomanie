@@ -3,42 +3,51 @@ import styled from 'styled-components';
 import useDebounce from '../../hooks/useDebounce';
 import { ReactComponent as InputCancelSvg } from '../../assets/icon/input-cancel.svg';
 import { ReactComponent as SearchSvg } from '../../assets/icon/search.svg';
-
-// API로 받아오는 MovieData (현재 랜덤 API 이용)
-interface MovieData {
-  city: string;
-  growth_from_2000_to_2013: string;
-  latitude: number;
-  longitude: number;
-  population: string;
-  rank: string;
-  state: string;
-}
-
-interface Movie {
-  includes(data: string): boolean;
-  city: string;
-}
+import Spinner from '../common/Spinner';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import axios from '../../api/apiController';
 
 interface SearchBoxProps {
   onSearch: (keyword: string, booleanCheck: boolean) => void;
   placeholder: string;
-  fetchURL: string;
+  dataList?: PerfumeDetail[] | null;
+  fetchURL?: string;
+}
+
+export interface dataByUrlProps {
+  name: string;
+  brandId?: number;
+  scentId?: number;
 }
 
 /**
  *
  * @param onSearch : 검색
  * @param placeholder : 검색 input바의 placeholder
- * @param fetchURL : 호출 보낼 API url
+ * @param dataList : 향수 이름 목록
+ * @param fetchUrl : url 로부터 api 호출로 data 넘기는 경우
  */
 const SearchBar: React.FC<SearchBoxProps> = ({
   onSearch,
   placeholder,
+  dataList,
   fetchURL,
 }) => {
   const [keyword, setKeyword] = useState<string>('');
-  const [searchResults, setSearchResults] = useState<MovieData[]>([]);
+  const [searchResults, setSearchResults] = useState<string[]>([]);
+  const [isSearch, setIsSearch] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const [dataByURL, setDataByURL] = useState<dataByUrlProps[]>([]);
+
+  useEffect(() => {
+    if (fetchURL) {
+      axios.get(fetchURL).then((res) => {
+        const dataArray = res.data.map((data: dataByUrlProps) => data);
+        setDataByURL(dataArray);
+      });
+    }
+  }, []);
 
   /**
    * @param event : 입력값이 바뀔때마다
@@ -48,26 +57,39 @@ const SearchBar: React.FC<SearchBoxProps> = ({
     setKeyword(newKeyword);
     onSearch(newKeyword, false);
   };
-
-  /**
-   * @summary : API 를 통해 데이터 받아옴
-   */
-  const fetchData = async () => {
-    const res = await fetch(fetchURL);
-    const data = await res.json();
-    return data.slice(0, 100);
-  };
-
   /**
    * @summary : 받아온 데이터를 입력 값을 포함하는 여부로 filtering (8개까지)
    */
   const updateData = async () => {
-    const res = await fetchData();
-    const filteredResults = res
-      .filter((list: Movie) => list.city.includes(keyword))
-      .slice(0, 8);
-    setSearchResults(filteredResults);
-    //filtering 된 결과값은 따로 저장
+    setIsFetching(true);
+    if (fetchURL) {
+      const filteredResults = dataByURL
+        .filter((list: dataByUrlProps) =>
+          list.name.toLowerCase().includes(keyword.toLowerCase()),
+        )
+        .map((data: dataByUrlProps) => data.name)
+        .slice(0, 8);
+      console.log(filteredResults);
+      setSearchResults(filteredResults);
+      setIsFetching(false);
+    }
+    //
+    if (dataList) {
+      const filteredResults = dataList
+        .filter(
+          (list: PerfumeDetail) =>
+            list.nameOrg.includes(keyword) || list.name.includes(keyword),
+        )
+        .map((perfume: PerfumeDetail) =>
+          perfume.nameOrg.length > 30
+            ? perfume.nameOrg.slice(0, 30) + '...'
+            : perfume.nameOrg,
+        )
+        .slice(0, 8);
+      setSearchResults(filteredResults);
+      setIsFetching(false);
+      //filtering 된 결과값은 따로 저장
+    }
   };
 
   // 키워드가 변경되면 api를 호출
@@ -85,6 +107,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
   const clearKeyword = () => {
     setKeyword('');
     onSearch('', false);
+    setIsSearch(false);
   };
 
   return (
@@ -103,7 +126,9 @@ const SearchBar: React.FC<SearchBoxProps> = ({
         )}
       </SearchBox>
 
-      {searchResults.length > 0 && keyword ? (
+      {isFetching ? (
+        <Spinner />
+      ) : searchResults.length > 0 && keyword && !isSearch ? (
         <AutoSearchContainer>
           <AutoSearchWrap>
             {searchResults.map((search, idx) => (
@@ -111,17 +136,21 @@ const SearchBar: React.FC<SearchBoxProps> = ({
                 key={idx}
                 onClick={() => {
                   setKeyword('');
-                  onSearch(search.city, true);
+                  onSearch(search, true);
+                  setIsSearch(false);
                 }}
               >
-                <a href="#">{search.city}</a>
+                <a href="#">
+                  {search.length > 30 ? search.slice(0, 30) + '...' : search}
+                </a>
               </AutoSearchData>
             ))}
           </AutoSearchWrap>
         </AutoSearchContainer>
       ) : (
         searchResults.length === 0 &&
-        keyword && (
+        keyword &&
+        !isSearch && (
           <AutoSearchContainer>
             <AutoSearchWrap>
               <AutoSearchData>

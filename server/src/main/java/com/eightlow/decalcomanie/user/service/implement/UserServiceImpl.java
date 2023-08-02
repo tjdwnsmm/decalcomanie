@@ -97,6 +97,7 @@ public class UserServiceImpl implements IUserService {
             FollowingResponse response = new FollowingResponse(userInfoDto.getUser().getUserId(),
                     userInfoDto.getUser().getNickname(),
                     userInfoDto.getFavorities(),
+                    userInfoDto.getHates(),
                     userInfoDto.getUser().getPicture());
 
             result.add(response);
@@ -118,12 +119,13 @@ public class UserServiceImpl implements IUserService {
             FollowerResponse response = new FollowerResponse(userInfoDto.getUser().getUserId(),
                     userInfoDto.getUser().getNickname(),
                     userInfoDto.getFavorities(),
+                    userInfoDto.getHates(),
                     userInfoDto.getUser().getPicture(),
                     isFollowing(userId, userInfoDto.getUser().getUserId()));
 
             result.add(response);
         }
-
+        System.out.println(result);
         return result;
     }
 
