@@ -1,14 +1,11 @@
 package com.eightlow.decalcomanie.auth.service.implement;
 
 import com.eightlow.decalcomanie.auth.entity.UserCredential;
-import com.eightlow.decalcomanie.auth.jwt.JwtUtils;
 import com.eightlow.decalcomanie.auth.respository.OAuthRepository;
 import com.eightlow.decalcomanie.auth.service.IOAuthService;
 import com.eightlow.decalcomanie.user.entity.User;
 import com.eightlow.decalcomanie.user.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

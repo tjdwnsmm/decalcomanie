@@ -1,5 +1,6 @@
 package com.eightlow.decalcomanie.common.config;
 
+import com.eightlow.decalcomanie.auth.jwt.JwtExceptionFilter;
 import com.eightlow.decalcomanie.auth.jwt.JwtFilter;
 import com.eightlow.decalcomanie.auth.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtService jwtService;
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -36,6 +38,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(new JwtFilter(jwtService, secretKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtFilter.class)
                 .build();
     }
 }

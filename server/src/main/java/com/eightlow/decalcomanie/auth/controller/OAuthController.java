@@ -116,7 +116,7 @@ public class OAuthController {
             LoginResponse loginResponse = LoginResponse.builder()
                     .userId(userCredential.getUserId())
                     .email(userCredential.getEmail())
-                    .userName(nickname)
+                    .nickname(nickname)
                     .build();
 
             HttpHeaders responseHeaders = new HttpHeaders();
@@ -150,7 +150,7 @@ public class OAuthController {
 
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(userId.toString())
-                .userName(userInfo.getNickname())
+                .nickname(userInfo.getNickname())
                 .email(userCredential.getEmail())
                 .build();
 
@@ -158,7 +158,7 @@ public class OAuthController {
         responseHeaders.set("accessToken", accessToken);
         responseHeaders.set("refreshToken", refreshToken);
 
-        return new ResponseEntity<>(loginResponse, responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(loginResponse, responseHeaders, HttpStatus.CREATED);
     }
 
     @GetMapping("/reissue")
@@ -171,10 +171,10 @@ public class OAuthController {
 
             Jws<Claims> claims = JwtUtils.parseToken(header.getFirst("refreshToken"), secretKey);
             String userId = claims.getBody().get("userId", String.class);
-            String userName = claims.getBody().get("userName", String.class);
+            String nickname = claims.getBody().get("nickname", String.class);
 
-            String accessToken = jwtService.generateAccessToken(userName, userId);
-            String refreshToken = jwtService.generateRefreshToken(userName, userId);
+            String accessToken = jwtService.generateAccessToken(nickname, userId);
+            String refreshToken = jwtService.generateRefreshToken(nickname, userId);
 
             responseHeader.set("accessToken", accessToken);
             responseHeader.set("refreshToken", refreshToken);

@@ -12,9 +12,9 @@ public class JwtUtils {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
     }
 
-    public static String createJwt(String userName, String userId, String secretKey, int expiredMs) {
+    public static String createJwt(String nickname, String userId, String secretKey, int expiredMs) {
         Claims claims = Jwts.claims();
-        claims.put("userName", userName);
+        claims.put("nickname", nickname);
         claims.put("userId", userId);
 
         return Jwts.builder()
