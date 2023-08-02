@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SearchBar from '../../components/Search/SearchBar';
 import FilteringBtn from '../../components/Button/FilteringBtn';
 import { styled } from 'styled-components';
 import FilterBox from '../../components/Search/FilterBox';
-import { CenterFrame, ConfirmButton, Main } from '../../style';
+import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
 import SearchResults from '../../components/Search/SearchResults';
 import SortToggle, { SortOption } from '../../components/Search/SortToggle';
+import BottomNav from '../../components/common/BottomNav';
+import axios from '../../api/apiController';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import Spinner from '../../components/common/Spinner';
 
-export interface PerfumeResult {
-  brand: string;
-  name: string;
-}
-
-interface Filter {
-  brand?: string[];
-  gender?: string;
+export interface Filter {
+  brandName?: string[];
+  brandId?: number[];
+  gender?: number[];
   scent?: string[];
+  scentId?: number[];
 }
 
 const SearchTabPage: React.FC = () => {
@@ -29,24 +30,131 @@ const SearchTabPage: React.FC = () => {
   const [filter, setFilter] = useState<Filter>({});
 
   //검색 결과 창
-  const [searchResults, setSearchResults] = useState<PerfumeResult[]>([]);
+  const [searchResults, setSearchResults] = useState<PerfumeDetail[] | null>(
+    null,
+  );
+  const [originSearchResults, setOriginSearchResults] = useState<
+    PerfumeDetail[] | null
+  >(null);
 
-  /**
-   *
-   * @param event 살시간으로 입력받는 단어를 검색어로 설정
-   */
-  const handleSearchKeywordChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setSearchKeyword(event.target.value); // 검색할 단어
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [sortOption, setSortOption] = useState<SortOption>(
+    SortOption.Popularity,
+  );
+
+  const handleSortChange = (newSortOption: SortOption) => {
+    setSortOption(newSortOption);
+  };
+
+  const handleScroll = () => {
+    setScrollPosition(window.scrollY);
+    console.log(`스크롤 위치 : ${scrollPosition}`);
+    // localStorage.setItem('scrollPosition', scrollPosition.toString());
+  };
+
+  useEffect(() => {
+    const storedScrollPosition = localStorage.getItem('scrollPosition');
+    if (storedScrollPosition) {
+      const scrollY = parseInt(storedScrollPosition);
+      scrollToStoredPosition(scrollY);
+    }
+
+    // console.log(`스크롤 위치 : ${scrollPosition}`);
+    // localStorage.setItem('scrollPosition', scrollPosition.toString());
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      const scrollY = window.scrollY;
+      localStorage.setItem('scrollPosition', scrollY.toString());
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrollPosition]);
+
+  const scrollToStoredPosition = (scrollY: number) => {
+    window.scrollTo(0, scrollY);
+  };
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('searchResults');
+
+    if (storedData) {
+      setSearchResults(JSON.parse(storedData));
+      setOriginSearchResults(JSON.parse(storedData));
+    } else {
+      axios
+        .post('/perfume/search', {
+          keyword: '',
+          brand: [],
+          gender: [],
+          scent: [],
+        })
+        .then((res) => {
+          console.log(`초기응답 ${res.data}`);
+          setSearchResults(res.data);
+          setOriginSearchResults(res.data);
+          localStorage.setItem('searchResults', JSON.stringify(res.data));
+        });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (searchResults && searchResults.length > 0) {
+      const sortedResults = sortResults(searchResults);
+      setSearchResults(sortedResults);
+      console.log('정렬완료');
+    }
+  }, [searchResults, sortOption]);
+
+  const sortResults = (results: PerfumeDetail[]) => {
+    switch (sortOption) {
+      case SortOption.Popularity:
+        return results.sort((a, b) => b.pick - a.pick);
+      case SortOption.Grade:
+        return results.sort((a, b) => {
+          const rateA = a.rate !== null ? a.rate : 0;
+          const rateB = b.rate !== null ? b.rate : 0;
+          return rateB - rateA;
+        });
+      default:
+        return results;
+    }
   };
 
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
    */
-  const handleSearch = (keyword: string, isSearch: boolean) => {
+  const handleSearch = async (keyword: string, isSearch: boolean) => {
     console.log(`💨 ${keyword} and ${isSearch}`);
-    setSearchResults([]);
+    if (!isSearch) {
+      setSearchKeyword(keyword);
+    } else {
+      setSearchKeyword('');
+      setSearchResults([]);
+      try {
+        console.log(`진짜 데이터 검색 : ${searchResults}`);
+        const data = await searchPerfume(keyword);
+        setSearchResults(data);
+      } catch (error) {
+        console.error(error);
+        setSearchResults([]);
+      }
+    }
+  };
+
+  const searchPerfume = async (keyword: string) => {
+    try {
+      const response = await axios.post('/perfume/search', {
+        keyword: keyword,
+        brand: [],
+        gender: [],
+        scent: [],
+      });
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   };
 
   /**
@@ -56,29 +164,38 @@ const SearchTabPage: React.FC = () => {
     setModalOpen(!modalOpen);
   };
 
+  const filterSearch = async (filter: Filter) => {
+    console.log(filter);
+    try {
+      const response = await axios.post('/perfume/search', {
+        keyword: searchKeyword,
+        brand: filter.brandId ? filter.brandId : [],
+        gender: filter.gender ? filter.gender : [],
+        scent: filter.scentId ? filter.scentId : [],
+      });
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
   /**
    *
    * @param filter 현재 적용된 필터 정보 - interface Filter로 관리
    */
-  const handleApplyFilters = (filter: Filter) => {
+  const handleApplyFilters = async (filter: Filter) => {
     setModalOpen(false); // 모달 닫기
     setFilter(filter);
     console.log(
-      `나 적용된 필터! 💫: ${JSON.stringify(filter)} filter 갯수는 : ${
-        Object.entries(filter).length
-      } 개!
+      `나 적용된 필터! 💫: ${JSON.stringify(
+        filter,
+      )} filter 갯수는 : ${calcFilteringNum(filter)} 개!
       }`,
     );
-    calcFilteringNum(filter);
-    setSearchResults([]); // 검색 결과
-  };
-
-  const [sortOption, setSortOption] = useState<SortOption>(
-    SortOption.Popularity,
-  );
-
-  const handleSortChange = (newSortOption: SortOption) => {
-    setSortOption(newSortOption);
+    setSearchResults(null);
+    const filterDatas = await filterSearch(filter);
+    setSearchResults(filterDatas); // 검색 결과
   };
 
   /**
@@ -87,8 +204,10 @@ const SearchTabPage: React.FC = () => {
    */
   const calcFilteringNum = (filter: Filter) => {
     let cnt = 0;
-    Object.entries(filter).map((category) => {
-      cnt += category[1].length;
+    Object.entries(filter).map(([key, value]) => {
+      if (key !== 'brandId' && key !== 'scentId') {
+        cnt += value?.length || 0;
+      }
     });
     return cnt;
   };
@@ -108,15 +227,32 @@ const SearchTabPage: React.FC = () => {
           <SearchBar
             onSearch={handleSearch}
             placeholder="검색어를 입력해주세요"
-            fetchURL="https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json"
+            dataList={originSearchResults}
           />
-          {/*sorting*/}
-          <SortArea>
-            <SortToggle onSortChange={handleSortChange} />
-          </SortArea>
 
-          {/* 검색 결과 */}
-          <SearchResults results={searchResults} isButton={false} />
+          {searchKeyword.length === 0 && (
+            <>
+              {/*sorting*/}
+              <SortArea>
+                <SortToggle onSortChange={handleSortChange} />
+              </SortArea>
+
+              {/* 검색 결과 */}
+
+              {searchResults ? (
+                <SearchResults
+                  results={searchResults}
+                  isButton={false}
+                  addUrl=""
+                />
+              ) : (
+                <MarginFrame margin="120px auto">
+                  <Spinner />
+                </MarginFrame>
+              )}
+            </>
+          )}
+          <BottomNav />
         </>
       )}
 

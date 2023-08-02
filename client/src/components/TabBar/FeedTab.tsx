@@ -30,8 +30,8 @@ export const FeedTab = ({ setNowActive }: FeedTabProps) => {
         팔로잉
       </Tab>
       <Tab
-        active={activeTab === 'popular'}
-        onClick={() => handleTabClick('popular')}
+        active={activeTab === 'popularity'}
+        onClick={() => handleTabClick('popularity')}
       >
         인기순
       </Tab>

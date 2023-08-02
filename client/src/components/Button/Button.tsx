@@ -6,14 +6,14 @@ export const PostButton = styled.button`
   align-items: center;
   background-color: var(--primary-color);
   color: var(--white-color);
-  width: 340px;
+  width: 330px;
   height: 50px;
-  font-size: 13px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 700;
   border-radius: 10px;
   border: none;
-  box-shadow: 5px 5px 5px gray;
-  margin: 20px;
+  box-shadow: 5px 5px 5px var(--gray-color);
+  margin: 15px 30px;
   &:hover {
     cursor: pointer;
   }

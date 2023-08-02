@@ -1,24 +1,37 @@
 import styled from 'styled-components';
 import SecondaryBox from '../Box/SecondaryBox';
-import { PerfumeInfo } from '../../types/FeedInfoType';
+import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
 
 /**
- * @param {PerfumeInfo} PerfumeInfo
+ * @param {PerfumeDetail} PerfumeInfo
  * @summary
  *  TextInfo : 향수 브랜드명, 향수 명, 대표 향 계열 txt
  *  ImgBox : 향수 이미지
  */
 
-const PerfumeInfoBox = ({ brand, name, scent, img }: PerfumeInfo) => (
+interface PerfumeInfoBoxProps {
+  feed: PerfumeDetail;
+}
+
+const extractAccordNames = (accord: ScentDto[]): string => {
+  return accord
+    .slice(0, 3)
+    .map((scent) => scent.name)
+    .join(', ');
+};
+
+const PerfumeInfoBox = ({ feed }: PerfumeInfoBoxProps) => (
   <>
     <PerfumeBox>
       <TextInfo>
-        <PerfumeBrand>{brand}</PerfumeBrand>
-        <PerfumeName>{name}</PerfumeName>
-        <PerfumeScent>{scent}</PerfumeScent>
+        <PerfumeBrand>{feed.brandName}</PerfumeBrand>
+        <PerfumeName>
+          {feed.name.length > 14 ? feed.name.slice(0, 14) + '...' : feed.name}
+        </PerfumeName>
+        <PerfumeScent>{extractAccordNames(feed.accord)}</PerfumeScent>
       </TextInfo>
       <ImgBox>
-        <img src={img}></img>
+        <img src={feed.picture}></img>
       </ImgBox>
     </PerfumeBox>
   </>
@@ -26,8 +39,8 @@ const PerfumeInfoBox = ({ brand, name, scent, img }: PerfumeInfo) => (
 
 export default PerfumeInfoBox;
 const PerfumeBox = styled(SecondaryBox)`
-  justify-content: space-around;
-  padding: 25px 0px;
+  justify-content: space-between;
+  padding: 25px 20px;
   align-items: center;
 `;
 const TextInfo = styled.div`
@@ -59,4 +72,8 @@ const ImgBox = styled.div`
   background: var(--white-color);
   border-radius: 10px;
   justify-content: center;
+
+  img {
+    width: 70px;
+  }
 `;

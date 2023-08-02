@@ -11,8 +11,7 @@ const Android12Switch = MUstyled(Switch)(({ theme }) => ({
     {
       backgroundColor: 'var(--primary-color)',
     },
-  '& .css-j204z7-MuiFormControlLabel-root':
-  {
+  '& .css-j204z7-MuiFormControlLabel-root': {
     display: 'flex',
     marginRight: 0,
   },
@@ -48,14 +47,28 @@ const Section = styled.div`
   display: flex;
   justify-content: end;
   align-items: center;
-  font-weight: bold;
-  width: 340px;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: -15px;
+
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .css-12mgemd {
+      margin-top: 2px;
+    }
+  }
 `;
 
 export default function CustomizedSwitches() {
   return (
     <Section>
-      공병<Tooltip></Tooltip>
+      <div className="title">
+        공병<Tooltip></Tooltip>
+      </div>
       <FormGroup>
         <FormControlLabel control={<Android12Switch />} label="" />
       </FormGroup>
