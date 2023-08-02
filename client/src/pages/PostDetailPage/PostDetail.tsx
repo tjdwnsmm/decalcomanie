@@ -31,10 +31,18 @@ const PostDetail = () => {
     fetchPostDetailData();
   }, [id]);
 
+  // 게시글 없을 때(임시)
+  if (!postDetailData) {
+    return false;
+  }
+
   return (
     <Main>
-      <PerfumeReviewCarousel grades={postDetailData?.gradeDto} perfumes={postDetailData?.perfumeInfos} />
-      {/* <PostInfoBox postInfo={post.postInfo} /> */}
+      <PerfumeReviewCarousel
+        grades={postDetailData.gradeDto}
+        perfumes={postDetailData.perfumeInfos}
+      />
+      <PostInfoBox postInfo={postDetailData} />
       <CommentListBox>
         {/* {post.comments.map((comment, idx) => (
           <CommentBox key={idx} comment={comment} />

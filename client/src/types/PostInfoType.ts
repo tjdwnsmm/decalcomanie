@@ -19,10 +19,17 @@ export interface user {
   picture: string | null;
 }
 
+export interface scent {
+  // scentId: number;
+  // weight: number;
+  name: string;
+  // rgb: string;
+}
+
 export interface userInfoDto {
   user: user;
-  favorities: string[];
-  hates: string[];
+  favorities: scent[];
+  hates: scent[];
 }
 
 export interface commentDto {

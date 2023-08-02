@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { PostInfo } from '../../types/PostInfoType';
+import { PostDetailData } from '../../types/PostInfoType';
 import FollowBtn from '../Button/FollowBtn';
 import { PostModalBtn } from '../Button/PostModalBtn';
 import { LikeBtn } from '../Button/LikeBtn';
@@ -106,7 +106,7 @@ const CommentCount = styled.span`
 `;
 
 interface PostInfoBoxProps {
-  postInfo: PostInfo;
+  postInfo: PostDetailData;
 }
 
 const formatDateTime = (datetimeStr: string) => {
@@ -124,62 +124,53 @@ const formatDateTime = (datetimeStr: string) => {
 
 const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
   const {
-    articleId,
-    profileImg,
-    writer,
-    createdAt,
-    favScent,
-    nofavScent,
-    isFollow,
-    likeCount,
-    isLike,
-    isScrap,
-    content,
-    commentCount,
+    articleDto,
+    bookmarked,
+    userInfoDto,
+    hearted,
   } = postInfo;
 
   // isWriter: 글 작성자와 request.user의 일치 여부를 나타내는 로직 구현
   // 같을 경우 팔로우 버튼이 아닌 글 수정/삭제 모달을 띄우기 위해
   // 현재는 임시로 설정
   // const isWriter = true;
-  const isWriter = false;
+  // const isWriter = false;
 
   return (
     <PostInfoBoxContainer>
       <WriterInfoBox>
-        <ProfileImg src={profileImg} alt="프로필 사진" />
+        <ProfileImg src={userInfoDto.user.picture} />
         <InfoBox>
           <InfoBoxRow>
-            <Writer>{writer}</Writer>
-            <CreatedAt>{formatDateTime(createdAt)}</CreatedAt>
+            <Writer>{userInfoDto.user.nickname}</Writer>
+            <CreatedAt>{formatDateTime(articleDto.createdAt)}</CreatedAt>
           </InfoBoxRow>
           <InfoBoxRow>
-            <FavScent>{favScent?.map((fav) => `#${fav}  `)}</FavScent>
-            <NoFavScent>{nofavScent?.map((fav) => `#${fav}  `)}</NoFavScent>
+            <FavScent>{userInfoDto.favorities?.map((fav) => `#${fav.name}  `)}</FavScent>
+            <NoFavScent>{userInfoDto.hates?.map((fav) => `#${fav.name}  `)}</NoFavScent>
           </InfoBoxRow>
         </InfoBox>
-        {!isWriter && <FollowBtn
+        {/* {!isWriter && <FollowBtn
           // 글 상세 api 연결하면서 수정 필
           from={USERID}
           to={USERID}
           isFollow={isFollow} />}
-        {isWriter && <PostModalBtn />}
+        {isWriter && <PostModalBtn />} */}
       </WriterInfoBox>
-      <ContentBox>{content}</ContentBox>
+      <ContentBox>{articleDto.content}</ContentBox>
       <IconBox>
         <LikeBtn
-          picked={isLike}
-          count={likeCount}
+          picked={hearted}
+          count={articleDto.heart}
           likeUrl="/sns/like"
           dislikeUrl="/sns/dislike"
-          articleId={articleId}
+          articleId={articleDto.articleId}
           userId={USERID}
         />
-        <ScrapBtn articleId={articleId} userId={USERID} isScrap={isScrap} />
+        <ScrapBtn articleId={articleDto.articleId} userId={USERID} isScrap={bookmarked} />
       </IconBox>
-      {/* 댓글 개수부분을 Comment 관련 파일에서 count해서 출력 ? */}
       <CommentCount>
-        {commentCount === 0 ? '댓글이 없습니다.' : `${commentCount}개의 댓글`}
+        {articleDto.comment === 0 ? '댓글이 없습니다.' : `${articleDto.comment}개의 댓글`}
       </CommentCount>
     </PostInfoBoxContainer>
   );
