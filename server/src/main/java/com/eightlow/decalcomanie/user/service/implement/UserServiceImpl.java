@@ -163,4 +163,22 @@ public class UserServiceImpl implements IUserService {
         UserInfoDto userInfoDto = new UserInfoDto(userMapper.toDto(user), favorite, hate);
         return userInfoDto;
     }
+
+    // 사용자 개인 추천 향수
+    @Override
+    public List<PerfumeDto> recommendUserPerfume(String userId) {
+        // 사용자가 보유하고 있는 향수 정보를 가져온다.
+        List<UserPerfume> userPerfumes = userPerfumeRepository.findByUserId(userId);
+        List<PerfumeDto> result = new ArrayList<>();
+
+        for(UserPerfume perfume : userPerfumes) {
+            result.add(perfumeService.getPerfume(perfume.getPerfumeId()));
+        }
+
+        System.out.println(result.toArray());
+
+        return result;
+    }
+
+
 }
