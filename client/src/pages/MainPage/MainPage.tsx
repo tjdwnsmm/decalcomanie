@@ -134,13 +134,12 @@ const BackFrame = styled.div<BackFrameProps>`
   padding: 10px 0 120px;
   border-radius: 30px 30px 0 0;
   box-shadow: 0px 5px 22px rgba(0, 0, 0, 0.1);
-  transition: top 0.3s; /* Add a transition for smooth animation */
-  position: ${(props) => (props.sticky ? 'sticky' : 'static')};
-  top: ${(props) => (props.sticky ? '0' : 'auto')};
+  width: 390px;
 `;
 
 const Frame = styled.div`
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: clip;
   background: linear-gradient(
     180deg,
     rgba(249, 202, 245, 0.44) 0%,

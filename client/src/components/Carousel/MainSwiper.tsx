@@ -36,7 +36,11 @@ const MainSwiper = ({ perfumes }: MainCarouselProps) => {
 };
 
 const SwiperContainer = styled.div`
-  margin: 0 30px;
+  margin: 0 0 0 30px;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+
   .swiper {
     width: 100%;
   }
