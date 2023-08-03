@@ -8,7 +8,6 @@ import com.eightlow.decalcomanie.auth.entity.UserCredential;
 import com.eightlow.decalcomanie.auth.jwt.JwtUtils;
 import com.eightlow.decalcomanie.auth.service.IOAuthService;
 import com.eightlow.decalcomanie.auth.service.JwtService;
-import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.user.dto.UserDto;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.repository.UserRepository;
@@ -24,7 +23,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -46,12 +44,10 @@ public class OAuthController {
     private String secretKey;
 
     @GetMapping("/kakao/callback")
-    public @ResponseBody ResponseEntity<LoginResponse> kakaoCallback(String code) {
+    public @ResponseBody ResponseEntity<LoginResponse> kakaoCallback(String code, HttpServletResponse res) throws IOException {
         // 카카오에서 넘겨받은 access code로 accessToken 요청
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-
-        System.out.println("access code : " + code);
 
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
@@ -75,12 +71,10 @@ public class OAuthController {
         OAuthToken oAuthToken = null;
 
         try {
-             oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+            oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-        System.out.println("accessToken : " + oAuthToken.getAccessToken());
 
         // accessToken으로 카카오에 사용자 정보 요청
         RestTemplate rt2 = new RestTemplate();
@@ -140,9 +134,6 @@ public class OAuthController {
         String accessToken = jwtService.generateAccessToken(kakaoProfile.getId().toString(), userId.toString());
         String refreshToken = jwtService.generateRefreshToken(kakaoProfile.getId().toString(), userId.toString());
 
-        System.out.println(kakaoProfile.getId());
-        System.out.println(kakaoProfile.getKakaoAccount().getEmail());
-
         userCredential = UserCredential.builder()
                 .userId(userId.toString())
                 .email(kakaoProfile.getKakaoAccount().getEmail())
@@ -174,7 +165,7 @@ public class OAuthController {
     }
 
     @GetMapping("/reissue")
-    public ResponseEntity reissue(@RequestHeader HttpHeaders header, HttpServletResponse response) throws IOException {
+    public ResponseEntity<String> reissue(@RequestHeader HttpHeaders header, HttpServletResponse response) throws IOException {
         if (jwtService.isValidToken(header.getFirst("refreshToken"))) {
             HttpHeaders responseHeader = new HttpHeaders();
 
@@ -190,14 +181,10 @@ public class OAuthController {
 
             oAuthService.updateRefreshToken(refreshToken, userId);
 
-            return new ResponseEntity(responseHeader, HttpStatus.OK);
+            return new ResponseEntity("refreshToken 재발급 완료!", responseHeader, HttpStatus.OK);
         }
 
-        String redirect_uri="http://localhost:5173/login";
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.sendRedirect(redirect_uri);
-
-        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity("refreshToken 대조 실패! 로그아웃", HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping("/signout")
@@ -221,3 +208,4 @@ public class OAuthController {
         return new ResponseEntity(HttpStatus.OK);
     }
 }
+
