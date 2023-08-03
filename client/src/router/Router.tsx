@@ -13,6 +13,7 @@ import MainPage from '../pages/MainPage/MainPage';
 import ProfileUpdate from '../pages/MyPage/ProfileUpdate';
 import LoginPage from '../pages/LoginPage/LoginPage';
 import KakaoAuthHandle from '../pages/LoginPage/KakaoAuthHandler';
+import KakaoAuthRefreshHandle from '../pages/LoginPage/KakaoAuthRefreshHandler';
 
 export default function Router() {
   return (
@@ -32,6 +33,7 @@ export default function Router() {
         {/* <Route path="/follow-list" element={<FollowList />}></Route> */}
         <Route path="/profile-update" element={<ProfileUpdate />}></Route>
         <Route path="/oauth/kakao/callback" element={<KakaoAuthHandle />} />
+        <Route path="/oauth/kakao/token" element={<KakaoAuthRefreshHandle />} />
       </Routes>
     </BrowserRouter>
   );

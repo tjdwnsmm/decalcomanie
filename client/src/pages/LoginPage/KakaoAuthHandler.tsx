@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import axios from '../../api/apiController';
 
-const KakaoAuthHandle = () => {
+const KakaoAuthHandler = () => {
   useEffect(() => {
     // URL로부터 코드 획득
     const code = new URL(window.location.href).searchParams.get('code');
@@ -9,7 +9,11 @@ const KakaoAuthHandle = () => {
     const fetchTokens = async () => {
       try {
         // 서버로 코드를 보내고 응답 받기
-        const response = await axios.get(`oauth/signin?code=${code}`);
+        const response = await axios.get(`oauth/signin`, {
+          headers: {
+            code: code,
+          },
+        });
 
         // 응답 헤더에서 Access Token과 Refresh Token 추출
         const accessToken = response.headers['access-token'];
@@ -34,4 +38,4 @@ const KakaoAuthHandle = () => {
   );
 };
 
-export default KakaoAuthHandle;
+export default KakaoAuthHandler;
