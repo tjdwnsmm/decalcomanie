@@ -43,18 +43,20 @@ public class OAuthController {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @GetMapping("/kakao/callback")
-    public @ResponseBody ResponseEntity<LoginResponse> kakaoCallback(String code, HttpServletResponse res) throws IOException {
+    @GetMapping("/signin")
+    public ResponseEntity<LoginResponse> kakaoCallback(@RequestHeader HttpHeaders header) {
         // 카카오에서 넘겨받은 access code로 accessToken 요청
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
+
+        String code = header.getFirst("code");
 
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
-        params.add("redirect_uri", "http://localhost:8080/oauth/kakao/callback");
+        params.add("redirect_uri", "http://localhost:5173/oauth/kakao/callback");
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
