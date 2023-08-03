@@ -13,4 +13,6 @@ public interface IOAuthService {
     void updateRefreshToken(String refreshToken, String userId);
 
     void signOut(String userId);
+
+    void deleteUser(String userId);
 }
