@@ -9,7 +9,6 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Deprecated
 public class PerfumePickRequest implements Serializable {
     private String userId;
 

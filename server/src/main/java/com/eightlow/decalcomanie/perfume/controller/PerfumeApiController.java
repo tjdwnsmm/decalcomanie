@@ -3,6 +3,7 @@ package com.eightlow.decalcomanie.perfume.controller;
 import com.eightlow.decalcomanie.perfume.dto.BrandDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.perfume.dto.request.PerfumePickRequest;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +26,15 @@ public class PerfumeApiController {
 
     // 향수 검색
     @PostMapping("/search")
-    public ResponseEntity<List<PerfumeDto>> searchPerfume(@RequestBody PerfumeSearchRequest request) {
+    public ResponseEntity<List<PerfumeDto>> searchPerfume(@RequestBody(required = false) PerfumeSearchRequest request) {
         List<PerfumeDto> perfumes = perfumeService.findMatchingPerfumes(request);
-        
+
         return new ResponseEntity<>(perfumes, HttpStatus.OK);
     }
 
     // 향수 상세보기
-    @GetMapping("/detail/{perfumeId}")
-    public ResponseEntity<PerfumeDto> perfumeDetail(@PathVariable("perfumeId") int perfumeId, HttpServletRequest req) {
+    @GetMapping("/detail/{userId}/{perfumeId}")
+    public ResponseEntity<PerfumeDto> perfumeDetail(@PathVariable("userId") String userId, @PathVariable("perfumeId") int perfumeId, HttpServletRequest req) {
         if(!perfumeService.isExistingPerfume(perfumeId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -42,7 +43,7 @@ public class PerfumeApiController {
 
         if(perfumeDto != null) {
             PerfumeDto pdto = perfumeDto.toBuilder()
-                    .picked(perfumeService.isPickedPerfume(perfumeId, (String)req.getAttribute("userId")))
+                    .picked(perfumeService.isPickedPerfume(perfumeId, userId))
                     .build();
             return new ResponseEntity<>(pdto, HttpStatus.OK);
         }
@@ -76,21 +77,21 @@ public class PerfumeApiController {
 
     // 향수 찜, 찜 해제
     @PostMapping("/pick")
-    public ResponseEntity<Map<String, Boolean>> pick(@RequestBody Map<String, Integer> request, HttpServletRequest req) {
-        if(!perfumeService.isExistingPerfume(request.get("perfumeId"))) {
+    public ResponseEntity<Map<String, Boolean>> pick(@RequestBody PerfumePickRequest request, HttpServletRequest req) {
+        if(!perfumeService.isExistingPerfume(request.getPerfumeId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         Map<String, Boolean> responseMap = new HashMap<>();
-        responseMap.put("isPicked", perfumeService.pickPerfume((String)req.getAttribute("userId"), request.get("perfumeId")));
+        responseMap.put("isPicked", perfumeService.pickPerfume(request.getUserId(), request.getPerfumeId()));
 
         return new ResponseEntity<>(responseMap, HttpStatus.OK);
     }
 
     // 찜한 향수 보기
-    @GetMapping("/picked")
-    public ResponseEntity<List<PerfumeDto>> picked(HttpServletRequest req) {
-        return new ResponseEntity<>(perfumeService.findAllPickedPerfume((String)req.getAttribute("userId")), HttpStatus.OK);
+    @GetMapping("/picked/{userId}")
+    public ResponseEntity<List<PerfumeDto>> picked(@PathVariable("userId") String userId, HttpServletRequest req) {
+        return new ResponseEntity<>(perfumeService.findAllPickedPerfume(userId), HttpStatus.OK);
     }
 
 }
