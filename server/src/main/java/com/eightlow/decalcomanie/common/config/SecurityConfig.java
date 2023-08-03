@@ -32,9 +32,15 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .csrf().disable()
                 .authorizeRequests()
+<<<<<<< HEAD
 //                .antMatchers("/**").permitAll()
                 .antMatchers("/oauth/**").permitAll()
                 .anyRequest().authenticated()
+=======
+                //.antMatchers("/oauth/**").permitAll()
+                .antMatchers("/**").permitAll()
+                //.anyRequest().authenticated()
+>>>>>>> bd54f7e ([S09P12A708-307 #32] feat: recommand user perfume api test)
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
