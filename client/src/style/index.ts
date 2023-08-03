@@ -1,7 +1,8 @@
 import { styled } from 'styled-components';
 
 export const Main = styled.div`
-  height: calc(var(--vh, 1vh) * 100);
+  height: 100dvh;
+  // height: calc(var(--vh, 1vh) * 100);
   overflow-y: scroll;
   overflow-x: clip;
 `;
