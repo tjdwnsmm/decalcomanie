@@ -20,9 +20,6 @@ public class User {
     @Column(name="userId")
     private String userId;
 
-    @Column(name="accessToken")
-    private String accessToken;
-
     @Column(name="nickname")
     private String nickname;
 
@@ -34,9 +31,6 @@ public class User {
 
     @Column(name="gender")
     private int gender;
-
-    @Column(name="refreshToken")
-    private String refreshToken;
 
     @Column(name="picture")
     private String picture;

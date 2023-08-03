@@ -123,8 +123,8 @@ public class OAuthController {
             oAuthService.signIn(loginUser);
 
             LoginResponse loginResponse = LoginResponse.builder()
-                    .userId(userCredential.getUserId())
-                    .email(userCredential.getEmail())
+//                    .userId(userCredential.getUserId())
+//                    .email(userCredential.getEmail())
                     .nickname(nickname)
                     .build();
 
@@ -161,9 +161,9 @@ public class OAuthController {
         oAuthService.register(userCredential, userMapper.toEntity(userInfo));
 
         LoginResponse loginResponse = LoginResponse.builder()
-                .userId(userId.toString())
+//                .userId(userId.toString())
                 .nickname(userInfo.getNickname())
-                .email(userCredential.getEmail())
+//                .email(userCredential.getEmail())
                 .build();
 
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -206,8 +206,17 @@ public class OAuthController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PostMapping("/withdrawal")
+    @DeleteMapping("/withdrawal")
     public ResponseEntity deleteUser(HttpServletRequest request) {
+        // TODO: 해당 회원이 찜한 향수 모두 삭제
+
+        // TODO: 해당 회원이 스크랩한 글 모두 스크랩 해제
+
+        // TODO: 해당 회원이 쓴 글의 userId 모두 유령프로필의 userId로 변경
+
+        // TODO: 해당 회원이 쓴 댓글 모두 삭제
+
+        // TODO: 팔로우 테이블에서 해당 회원이 포함된 모든 항목을 제거
         oAuthService.deleteUser((String) request.getAttribute("userId"));
         return new ResponseEntity(HttpStatus.OK);
     }
