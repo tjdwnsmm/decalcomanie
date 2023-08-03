@@ -28,7 +28,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/sns")
@@ -48,7 +50,7 @@ public class ArticleController {
 
     // 글 작성
     @PostMapping("/create")
-    public ResponseEntity<Response> createArticle(@RequestBody @Valid CreateArticleRequest createArticleRequest, HttpServletRequest req) {
+    public ResponseEntity<Map<String, String>> createArticle(@RequestBody @Valid CreateArticleRequest createArticleRequest, HttpServletRequest req) {
         ArticleDto articleDto = articleDtoMapper.fromCreateArticleRequest(createArticleRequest);
         int articleId = articleService.createArticle(articleDto);
 
@@ -64,11 +66,11 @@ public class ArticleController {
         // grade 테이블을 통해서 평균을 내준다 (perfume id 갯수 카운트, rate 더하기 로)
         // perfume service 호출해서 값을 넣어준다.
 
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.builder()
-                        .message("글이 정상 등록되었습니다.")
-                        .build());
+        Map<String, String> res = new HashMap<>();
+        res.put("articleId", String.valueOf(articleId));
+        res.put("message", "글이 정상 등록되었습니다.");
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(res);
     }
 
 
