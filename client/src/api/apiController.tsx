@@ -33,9 +33,11 @@ const setRefreshToken = (refreshToken: string) => {
 instance.interceptors.request.use(
   (config) => {
     const accessToken = getAccessToken();
+    console.log(`보내기 > ${accessToken}`);
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+    console.log(config);
     return config;
   },
   (error) => Promise.reject(error),
@@ -46,7 +48,7 @@ instance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
+    console.log(error.response);
     //401 에러면 refresh token 보내기
     if (error.response.status === 401 && getRefreshToken()) {
       const navigate = useNavigate();
