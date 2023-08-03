@@ -30,6 +30,7 @@ export interface userInfoDto {
   user: user;
   favorities: scent[];
   hates: scent[];
+  following: boolean;
 }
 
 export interface commentDto {
@@ -73,4 +74,5 @@ export interface PostDetailData {
   gradeDto: gradeDto[];
   hearted: boolean;
   bookmarked: boolean;
+  followed: boolean;
 }

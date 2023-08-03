@@ -86,7 +86,6 @@ const FollowBox = ({ followList }: FollowBoxProps) => (
         </InfoBox>
         {/* 팔로잉 조회 시 isFollowing 값 안넘어옴 */}
         <FollowBtn
-          from={USERID}
           to={follow.userId}
           isFollow={follow.isFollowing ?? true}
         />

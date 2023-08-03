@@ -27,9 +27,9 @@ const PostInfoBoxContainer = styled.div`
 
 const WriterInfoBox = styled.div`
   display: flex;
-  align-items: center;
+  justify-content: space-between;
   flex-direction: row;
-  margin: 20px 0px 10px;
+  margin: 20px 2px 10px;
 `;
 
 const ProfileImg = styled.img`
@@ -40,10 +40,9 @@ const ProfileImg = styled.img`
 
 const InfoBox = styled.div`
   display: flex;
-  align-items: center
-  flex: 1;
+  justify-content: center;
   flex-direction: column;
-  margin: 0px 8px;
+  margin: 0px 10px;
 `;
 
 const InfoBoxRow = styled.div`
@@ -66,20 +65,12 @@ const CreatedAt = styled.div`
   margin-left: 10px;
 `;
 
-const FavScent = styled.div`
+const Scent = styled.div`
   display: flex;
-  color: var(--primary-color);
+  color: ${(props) => (props.color === 'fav' ? 'var(--primary-color)' : 'var(--gray-color)')};
   font-size: 10px;
   font-weight: 500;
-  margin-right: 10px;
-`;
-
-const NoFavScent = styled.div`
-  display: flex;
-  color: var(--gray-color);
-  font-size: 10px;
-  font-weight: 500;
-  margin-top: 2px;
+  margin-right: 5px;
 `;
 
 const ContentBox = styled.div`
@@ -129,37 +120,40 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
     bookmarked,
     userInfoDto,
     hearted,
+    followed,
   } = postInfo;
 
   const hasScent = userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
-  // isWriter: 글 작성자와 request.user의 일치 여부를 나타내는 로직 구현
-  // 같을 경우 팔로우 버튼이 아닌 글 수정/삭제 모달을 띄우기 위해
-  // 현재는 임시로 설정
-  // const isWriter = true;
-  // const isWriter = false;
+  const isMyPost = USERID === articleDto.userId;
 
   return (
     <PostInfoBoxContainer>
       <WriterInfoBox>
-        <ProfileImg src={userInfoDto.user.picture} />
-        <InfoBox>
-          <InfoBoxRow>
-            <Writer>{userInfoDto.user.nickname}</Writer>
-            <CreatedAt>{formatDateTime(articleDto.createdAt)}</CreatedAt>
-          </InfoBoxRow>
-          {hasScent && (
-          <InfoBoxRow>
-            <FavScent>{userInfoDto.favorities?.map((fav) => `#${fav.name}  `)}</FavScent>
-            <NoFavScent>{userInfoDto.hates?.map((fav) => `#${fav.name}  `)}</NoFavScent>
-          </InfoBoxRow>
-          )}
-        </InfoBox>
-        {/* {!isWriter && <FollowBtn
-          // 글 상세 api 연결하면서 수정 필
-          from={USERID}
-          to={USERID}
-          isFollow={isFollow} />}
-        {isWriter && <PostModalBtn />} */}
+        <div style={{ display: 'flex' }}>
+          <ProfileImg src={userInfoDto.user.picture} />
+          <InfoBox>
+            <InfoBoxRow>
+              <Writer>{userInfoDto.user.nickname}</Writer>
+              <CreatedAt>{formatDateTime(articleDto.createdAt)}</CreatedAt>
+            </InfoBoxRow>
+            {hasScent && (
+            <InfoBoxRow>
+              {userInfoDto.favorities?.map((scent) => (
+                <Scent color="fav">#{scent.name}</Scent>
+              ))}
+              {userInfoDto.hates?.map((scent) => (
+                <Scent color="hate">#{scent.name}</Scent>
+              ))}
+            </InfoBoxRow>
+            )}
+          </InfoBox>
+        </div>
+        <div style={{ height: '42px', display: 'flex', alignItems: 'center' }}>
+          {!isMyPost && <FollowBtn
+            to={articleDto.userId}
+            isFollow={followed} />}
+          {isMyPost && <PostModalBtn />}
+        </div>
       </WriterInfoBox>
       <ContentBox>{articleDto.content}</ContentBox>
       <IconBox>
