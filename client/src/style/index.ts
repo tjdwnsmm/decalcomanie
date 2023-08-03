@@ -6,6 +6,14 @@ export const Main = styled.div`
   overflow-x: clip;
 `;
 
+// js
+function setScreenSize() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+setScreenSize();
+window.addEventListener('resize', setScreenSize);
+
 interface ButtonProps {
   background?: 'primary' | 'secondary';
   color?: 'primary' | 'secondary';
