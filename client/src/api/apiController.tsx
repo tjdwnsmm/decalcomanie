@@ -1,28 +1,77 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
-export const BASE_URL = 'http://localhost:8080';
-//export const BASE_URL = 'http://i9a708.p.ssafy.io:8080'
 export const USERID = '07161c43-bc03-44f6-95c1-a56d440a23bf';
 // axios.defaults.withCredentials = true;
+export const BASE_URL = 'http://localhost:8080';
 
-// 사용자 정의 구성을 사용하는 axios 인스턴스 생성
-export default axios.create({
+const instance = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
     userId: USERID,
-    // Authorization: `Bearer`, 토큰
   },
 });
 
-// 요청 인터셉터 추가
-axios.interceptors.request.use(
-  (config) => config,
+const getAccessToken = () => {
+  return localStorage.getItem('accessToken');
+};
+
+const getRefreshToken = () => {
+  return localStorage.getItem('refreshToken');
+};
+
+const setAccessToken = (accessToken: string) => {
+  localStorage.setItem('accessToken', accessToken);
+};
+
+const setRefreshToken = (refreshToken: string) => {
+  localStorage.setItem('refreshToken', refreshToken);
+};
+
+//Request 🧑
+instance.interceptors.request.use(
+  (config) => {
+    const accessToken = getAccessToken();
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
   (error) => Promise.reject(error),
 );
 
-// 응답 인터셉터 추가
-axios.interceptors.response.use(
+// Response 🧑
+instance.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error),
+  async (error) => {
+    const originalRequest = error.config;
+
+    //401 에러면 refresh token 보내기
+    if (error.response.status === 401 && getRefreshToken()) {
+      const navigate = useNavigate();
+      try {
+        const response = await axios.post(`/oauth/reissue`, {
+          refreshToken: getRefreshToken(),
+        });
+
+        //access token 을 다시 setting 하고 origin request 를 재요청
+        setAccessToken(response.data.accessToken);
+        setRefreshToken(response.data.refreshToken);
+        originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
+        return axios(originalRequest);
+      } catch (error) {
+        // 만약 refreshToken 보내도 error 가 뜨면 login 화면으로 보내기 -> redirect
+        console.log('Error refreshing token:', error);
+
+        navigate('/login'); // 로그인화면으로 보내기
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+      }
+    }
+
+    return Promise.reject(error);
+  },
 );
+
+export default instance;
