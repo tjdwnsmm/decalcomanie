@@ -5,7 +5,6 @@ export const Main = styled.div`
   overflow-y: scroll;
   overflow-x: clip;
 `;
-
 // js
 export function setScreenSize() {
   let vh = window.innerHeight * 0.01;
