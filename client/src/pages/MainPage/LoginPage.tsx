@@ -1,18 +1,46 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { Main, MarginFrame } from '../../style';
 import { RESTAPI_KEY } from '../../api/apikey';
 import Logo from '../../components/common/Logo';
+import axios from 'axios';
 
 const LoginPage = () => {
-  const redirect_uri = 'http://localhost:8080/oauth/kakao/callback'; //Redirect URI
+  const navigate = useNavigate();
+  const redirect_uri = 'http://localhost:8080/oauth/kakao/callback'; // Redirect URI
 
   const kakaoLogin = () => {
     const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${RESTAPI_KEY}&redirect_uri=${redirect_uri}&response_type=code`;
     window.location.href = kakaoAuthUrl;
+  };
 
+  const handleTokenResponse = () => {
     const code = new URL(window.location.href).searchParams.get('code');
     console.log(code);
+    if (code) {
+      axios
+        .post(
+          'your_backend_endpoint',
+          { code },
+          { headers: { 'Content-Type': 'application/json' } },
+        )
+        .then((response) => {
+          const { accessToken, refreshToken } = response.data;
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', refreshToken);
+          navigate('/');
+        })
+        .catch((error) => {
+          console.error('Error handling tokens:', error);
+        });
+    }
   };
+
+  // Call the function to handle the token response
+  useEffect(() => {
+    handleTokenResponse();
+  }, []);
 
   return (
     <MainInLogin>
