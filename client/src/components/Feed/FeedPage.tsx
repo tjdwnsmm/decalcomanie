@@ -9,7 +9,7 @@ import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { USERID } from '../../api/apiController';
 import { useEffect, useState } from 'react';
-import { FollowBtn } from '../Button/FollowBtn';
+import FollowBtn from '../Button/FollowBtn';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
