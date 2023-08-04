@@ -1,11 +1,12 @@
 import styled from 'styled-components';
-import { FeedProps } from '../../types/FeedInfoType';
+import { EachFeedInfo } from '../../types/FeedInfoType';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { CommentBtn } from '../Button/CommentBtn';
+import { useNavigate } from 'react-router-dom';
 
 interface FeedComponentProps {
-  feed: FeedProps;
+  feed: EachFeedInfo;
 }
 
 /**
@@ -18,35 +19,55 @@ ContentBox : 피드 게시물 내용
 IconBox : 좋아요 아이콘, 좋아요 수, 댓글 수, 댓글 아이콘
 */
 
-const FeedPageOnly = ({ feed }: FeedComponentProps) => (
-  <>
-    <FeedBox>
-      <InfoBox>
-        <ProfileBox>
-          <LeftProfile>
-            <img src={feed.profileImg} />
-            <ProfileInfoBox>
-              {feed.writer}
-              <Scent>
-                <FavScent>{feed.favScent?.map((fav) => `#${fav}  `)}</FavScent>
-                <NoFavScent>
-                  {feed.nofavScent?.map((fav) => `#${fav}  `)}
-                </NoFavScent>
-              </Scent>
-            </ProfileInfoBox>
-          </LeftProfile>
-          <ScrapBtn />
-        </ProfileBox>
-      </InfoBox>
+const favScent = ['우디', '플로럴', '시트러스'];
+const nofavScent = ['스파이시', '머스크'];
+const FeedPageOnly = ({ feed }: FeedComponentProps) => {
+  const navigate = useNavigate();
+  const handleDetail = (articleId: number) => {
+    navigate(`/post-detail/${articleId}`);
+  };
 
-      <ContentBox>{feed.content}</ContentBox>
-      <IconBox>
-        <LikeBtn count={feed.like} />
-        <CommentBtn count={feed.comment} />
-      </IconBox>
-    </FeedBox>
-  </>
-);
+  return (
+    <>
+      <FeedBox>
+        <InfoBox>
+          <ProfileBox>
+            <LeftProfile>
+              <img src="../../src/assets/img/profile-img.png" />
+              <ProfileInfoBox>
+                {'닉네임'}
+                <Scent>
+                  <FavScent>{favScent?.map((fav) => `#${fav}  `)}</FavScent>
+                  <NoFavScent>
+                    {nofavScent?.map((fav) => `#${fav}  `)}
+                  </NoFavScent>
+                </Scent>
+              </ProfileInfoBox>
+            </LeftProfile>
+            <ScrapBtn
+              isScrap={feed.bookmarked}
+              articleId={feed.articleDtos.articleId}
+            />
+          </ProfileBox>
+        </InfoBox>
+
+        <ContentBox onClick={() => handleDetail(feed.articleDtos.articleId)}>
+          {feed.articleDtos.content}
+        </ContentBox>
+        <IconBox>
+          <LikeBtn
+            picked={feed.hearted}
+            count={feed.articleDtos.heart}
+            likeUrl="/sns/like"
+            dislikeUrl="/sns/dislike"
+            articleId={feed.articleDtos.articleId}
+          />
+          <CommentBtn count={feed.articleDtos.comment} />
+        </IconBox>
+      </FeedBox>
+    </>
+  );
+};
 
 export default FeedPageOnly;
 

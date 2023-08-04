@@ -3,7 +3,7 @@ import { styled } from 'styled-components';
 
 export enum SortOption {
   Popularity = 'popularity',
-  Latest = 'latest',
+  Grade = 'grade',
 }
 
 interface SortToggleProps {
@@ -22,7 +22,7 @@ const SortToggle: React.FC<SortToggleProps> = ({ onSortChange }) => {
   return (
     <Select value={sortOption} onChange={handleToggle}>
       <option value="popularity">인기순</option>
-      <option value="latest">최신순</option>
+      <option value="grade">평점순</option>
     </Select>
   );
 };
