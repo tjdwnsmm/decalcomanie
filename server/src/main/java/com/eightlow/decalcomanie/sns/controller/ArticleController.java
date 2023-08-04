@@ -155,7 +155,7 @@ public class ArticleController {
      */
 
     // 사용자가 쓴 글을 조회(내가 쓴글 조회)
-    @GetMapping("/user")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<FeedResponse>> getArticleByUserId(HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
         System.out.println(userId);
