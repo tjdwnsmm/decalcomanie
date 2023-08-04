@@ -16,6 +16,7 @@ interface SearchBoxProps {
 
 export interface dataByUrlProps {
   name: string;
+  nameOrg: string;
   brandId?: number;
   scentId?: number;
 }
@@ -47,6 +48,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
         setDataByURL(dataArray);
       });
     }
+    // console.log('받아온 데이터 - ', dataByURL);
   }, []);
 
   /**
@@ -62,10 +64,14 @@ const SearchBar: React.FC<SearchBoxProps> = ({
    */
   const updateData = async () => {
     setIsFetching(true);
+
+    //이 부분은 데이터 이름으로 바로 검색 가능한 경우 ex. 브랜드, 성별
     if (fetchURL) {
       const filteredResults = dataByURL
-        .filter((list: dataByUrlProps) =>
-          list.name.toLowerCase().includes(keyword.toLowerCase()),
+        .filter(
+          (list: dataByUrlProps) =>
+            list.nameOrg.toLowerCase().includes(keyword.toLowerCase()) ||
+            list.name.includes(keyword),
         )
         .map((data: dataByUrlProps) => data.name)
         .slice(0, 8);
@@ -73,14 +79,16 @@ const SearchBar: React.FC<SearchBoxProps> = ({
       setSearchResults(filteredResults);
       setIsFetching(false);
     }
-    //
+
+    // 향수 전체 이름으로 검색할 떄 사용
     if (dataList) {
       const filteredResults = dataList
         .filter(
           (list: PerfumeDetail) =>
-            list.nameOrg.includes(keyword) || list.name.includes(keyword),
+            list.nameOrg.toLowerCase().includes(keyword.toLowerCase()) ||
+            list.name.includes(keyword),
         )
-        .map((perfume: PerfumeDetail) => perfume.nameOrg)
+        .map((perfume: PerfumeDetail) => perfume.name)
         .slice(0, 8);
       setSearchResults(filteredResults);
       setIsFetching(false);
