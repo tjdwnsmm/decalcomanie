@@ -15,7 +15,6 @@ import com.eightlow.decalcomanie.sns.mapper.CommentDtoMapper;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
 import com.eightlow.decalcomanie.sns.service.IGradeService;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
-import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.mapper.FollowMapper;
 import com.eightlow.decalcomanie.user.service.IUserService;
@@ -51,13 +50,15 @@ public class ArticleController {
     // 글 작성
     @PostMapping("/create")
     public ResponseEntity<Map<String, String>> createArticle(@RequestBody @Valid CreateArticleRequest createArticleRequest, HttpServletRequest req) {
-        ArticleDto articleDto = articleDtoMapper.fromCreateArticleRequest(createArticleRequest);
+        String userId = articleService.getUserIdFromRequest(req);
+        CreateArticleRequest createArticleReq = createArticleRequest.toBuilder().userId(userId).build();
+        ArticleDto articleDto = articleDtoMapper.fromCreateArticleRequest(createArticleReq);
         int articleId = articleService.createArticle(articleDto);
 
         // grade테이블에도 향수에대한 평가 넣어주기
-        gradeService.createOrModifyGradeFromRequest(createArticleRequest.getUserId(),
+        gradeService.createOrModifyGradeFromRequest(userId,
                 createArticleRequest.getPerfumeId(), createArticleRequest.getRate());
-        
+
         // 게시물에 임베디드된 향수들을 테이블에 저장
         articleService.createArticlePerfume(articleId, createArticleRequest.getPerfumeId());
 
@@ -74,12 +75,13 @@ public class ArticleController {
     }
 
 
-    // 글 상세 조회 
+    // 글 상세 조회
     @GetMapping("/search/{articleId}")
-    public ResponseEntity<ArticleResponse> getDetailById(@RequestHeader(value = "userId") String userId, @PathVariable int articleId, HttpServletRequest req) {
+    public ResponseEntity<ArticleResponse> getDetailById(@PathVariable int articleId, HttpServletRequest req) {
         ArticleDto articleDto = articleService.searchArticleByArticleId(articleId);
         System.out.println(articleDto.getUserId());
-        
+        String userId = articleService.getUserIdFromRequest(req);
+        System.out.println(userId);
         // 사용자가 글 작성자를 팔로우 했는지
         boolean isFollowed = userService.isFollowing(userId, articleDto.getUserId());
 
@@ -153,8 +155,9 @@ public class ArticleController {
      */
 
     // 사용자가 쓴 글을 조회(내가 쓴글 조회)
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<FeedResponse>> getArticleByUserId(@PathVariable String userId, HttpServletRequest req) {
+    @GetMapping("/user")
+    public ResponseEntity<List<FeedResponse>> getArticleByUserId(HttpServletRequest req) {
+        String userId = articleService.getUserIdFromRequest(req);
         System.out.println(userId);
         List<ArticleDto> articles = articleService.searchArticleByUserId(userId);
         System.out.println(articles);
@@ -166,8 +169,8 @@ public class ArticleController {
 
     // 팔로워의 피드를 조희
     @GetMapping("/feed/following")
-    public ResponseEntity<List<FeedResponse>> getFollowingArticles(@RequestHeader(value = "userId") String userId, HttpServletRequest req) {
-
+    public ResponseEntity<List<FeedResponse>> getFollowingArticles(HttpServletRequest req) {
+        String userId = articleService.getUserIdFromRequest(req);
         // TODO: 사용자의 follower list를 받아와서 그 사용자들의 피드를 조회해야함 (정렬은 최신순으로)
         List<ArticleDto> articles = articleService.searchArticlesOfFollowingUser(userId);
         log.info(articles.toString());
@@ -177,7 +180,8 @@ public class ArticleController {
     }
 
     @GetMapping("/feed/popularity")
-    public ResponseEntity<List<FeedResponse>> getPopularArticles(@RequestHeader(value = "userId") String userId, HttpServletRequest req) {
+    public ResponseEntity<List<FeedResponse>> getPopularArticles(HttpServletRequest req) {
+        String userId = articleService.getUserIdFromRequest(req);
         List<ArticleDto> articles= articleService.searchPopularArticles();
 
         List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
@@ -186,7 +190,8 @@ public class ArticleController {
     }
 
     @GetMapping("/feed/latest")
-    public ResponseEntity<List<FeedResponse>> getLatestArticles(@RequestHeader(value = "userId") String userId, HttpServletRequest req) {
+    public ResponseEntity<List<FeedResponse>> getLatestArticles(HttpServletRequest req) {
+        String userId = articleService.getUserIdFromRequest(req);
         List<ArticleDto> articles= articleService.searchLatestArticles();
         log.info(articles.toString());
 
@@ -197,7 +202,8 @@ public class ArticleController {
 
     // 향수별 피드 조회
     @GetMapping("/perfume/{perfumeId}")
-    public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@RequestHeader(value = "userId") String userId, @PathVariable int perfumeId, HttpServletRequest req) {
+    public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@PathVariable int perfumeId, HttpServletRequest req) {
+        String userId = articleService.getUserIdFromRequest(req);
         List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);
         log.info(articles.toString());
         List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
@@ -210,9 +216,12 @@ public class ArticleController {
     // 글 수정
     @PutMapping("/update")
     public ResponseEntity<Response> modifyArticle(@RequestBody @Valid
-                                                        UpdateArticleRequest updateArticleRequest, HttpServletRequest req) {
-        ArticleDto articleDto = articleDtoMapper.fromUpdateArticleRequest(updateArticleRequest);
-        int status = articleService.updateArticle(articleDto);
+                                                  UpdateArticleRequest updateArticleRequest, HttpServletRequest req) {
+        String userId = articleService.getUserIdFromRequest(req);
+        UpdateArticleRequest updateArticleReq = updateArticleRequest.toBuilder().userId(userId).build();
+        ArticleDto articleDto = articleDtoMapper.fromUpdateArticleRequest(updateArticleReq);
+
+        int status = articleService.updateArticle(articleDto, userId);
 
         // 글 수정이 성공 한 경우
         if(status == 200) {
@@ -228,10 +237,11 @@ public class ArticleController {
 
     //글 삭제
     @DeleteMapping("/delete/{articleId}")
-    public ResponseEntity<Response> deleteArticle(@RequestHeader(value = "userId") String userId, @PathVariable int articleId, HttpServletRequest req) {
+    public ResponseEntity<Response> deleteArticle(@PathVariable int articleId, HttpServletRequest req) {
+        String userId = articleService.getUserIdFromRequest(req);
         // 글 삭제
         int status = articleService.deleteArticle(userId, articleId);
-        
+
         //글 삭제가 정상적으로 되었다면 댓글, 게시물 향수, 평가한 평점 정보 삭제 실행
         if(status == 200) {
             // 글삭제시 그 게시물에 달린 댓글 전부 삭제
@@ -257,20 +267,29 @@ public class ArticleController {
     // 댓글 작성
     @PostMapping("/comment/create")
     public ResponseEntity<Response> createComment(@RequestBody CommentRequest commentRequest, HttpServletRequest req) {
-        CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
+        String userId = articleService.getUserIdFromRequest(req);
+        CommentRequest creq = commentRequest.toBuilder()
+                .userId(userId)
+                .build();
+
+        CommentDto commentDto = commentDtoMapper.fromCommentRequest(creq);
+
         articleService.createComment(commentDto);
 //        return ResponseEntity.status(HttpStatus.OK).body();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Response.builder()
                         .message("댓글이 정상 등록되었습니다.")
-
                         .build());
     }
 
     // 댓글 수정
     @PutMapping("/comment/update")
     public ResponseEntity<Response> updateComment(@RequestBody CommentRequest commentRequest, HttpServletRequest req) {
-        CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
+        String userId = articleService.getUserIdFromRequest(req);
+        CommentRequest creq = commentRequest.toBuilder()
+                .userId(userId)
+                .build();
+        CommentDto commentDto = commentDtoMapper.fromCommentRequest(creq);
         System.out.println(commentDto);
         ResponseEntity<Response> response = articleService.updateComment(commentDto);
         return response;
@@ -281,13 +300,15 @@ public class ArticleController {
     // 댓글 삭제
     @DeleteMapping("/comment/delete/{commentId}")
     public ResponseEntity<Response> deleteComment(@RequestBody CommentRequest commentRequest, HttpServletRequest req) {
+        String userId = articleService.getUserIdFromRequest(req);
+        commentRequest.builder().userId(userId).build();
         CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
         System.out.println(commentDto);
         // 댓글 삭제
         int statusCode = articleService.deleteComment(commentDto);
 
         // 댓글 삭제시 article 테이블의 comment의 갯수를 줄여준다
-        articleService.modifyCommentCount(commentDto.getArticleId());
+        articleService.decreaseCommentCount(commentDto.getArticleId());
 
         return resultMessage(statusCode);
     }
@@ -297,29 +318,37 @@ public class ArticleController {
 
     @PostMapping("/like")
     public ResponseEntity<Response> likeArticle(@RequestBody HeartDto heartDto, HttpServletRequest req) {
-        int status = articleService.likeArticle(heartDto);
+        String userId = articleService.getUserIdFromRequest(req);
+        HeartDto heart = heartDto.toBuilder().userId(userId).build();
+        int status = articleService.likeArticle(heart);
         return resultMessage(status);
     }
 
     @PostMapping("/dislike")
     public ResponseEntity<Response> dislikeArticle(@RequestBody HeartDto heartDto, HttpServletRequest req) {
-        int status = articleService.dislikeArticle(heartDto);
+        String userId = articleService.getUserIdFromRequest(req);
+        HeartDto heart = heartDto.toBuilder().userId(userId).build();
+        int status = articleService.dislikeArticle(heart);
         return resultMessage(status);
     }
 
     @PostMapping("/bookmark")
     public ResponseEntity<Response> bookmarkArticle(@RequestBody BookMarkDto bookmarkDto, HttpServletRequest req) {
-        int status = articleService.bookmarkArticle(bookmarkDto);
+        String userId = articleService.getUserIdFromRequest(req);
+        BookMarkDto bookmark = bookmarkDto.toBuilder().userId(userId).build();
+        int status = articleService.bookmarkArticle(bookmark);
         return resultMessage(status);
     }
 
     @PostMapping("/cancelBookmark")
     public ResponseEntity<Response> cancelBookmarkedArticle(@RequestBody BookMarkDto bookmarkDto, HttpServletRequest req) {
-        int status = articleService.cancelBookmarkArticle(bookmarkDto);
+        String userId = articleService.getUserIdFromRequest(req);
+        BookMarkDto bookmark = bookmarkDto.toBuilder().userId(userId).build();
+        int status = articleService.cancelBookmarkArticle(bookmark);
         return resultMessage(status);
     }
-    
-    // response 메세지를 만들어주는 공통 메서드 
+
+    // response 메세지를 만들어주는 공통 메서드
     private ResponseEntity<Response> resultMessage(int status) {
         if (status == 200) {
             return ResponseEntity.status(HttpStatus.OK)
@@ -338,7 +367,7 @@ public class ArticleController {
                             .build());
         }
     }
-    
+
     // 피드 정보 조회 (사용자 정보, 글 정보, 포함된 향수 정보를 포함)
     private List<FeedResponse> getFeedInfoForArticles(String userId, List<ArticleDto> articles){
         // 각 article에 담긴 사용자 정보와 향수 정보를 담아둔 Dto의 리스트
@@ -365,7 +394,7 @@ public class ArticleController {
                     break;
                 }
             }
-            
+
             // 하나만 필요함으로 get(0)을 수행함
             PerfumeDto perfumeDto = perfumeService.getPerfume(perfumeIdList.get(0));
             log.info(String.valueOf(perfumeDto));

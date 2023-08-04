@@ -3,7 +3,7 @@ package com.eightlow.decalcomanie.sns.dto.request;
 import lombok.*;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor

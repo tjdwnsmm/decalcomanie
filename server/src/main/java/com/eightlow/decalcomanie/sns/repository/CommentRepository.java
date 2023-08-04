@@ -17,10 +17,6 @@ public interface CommentRepository extends JpaRepository<Comment, CommentPk> {
     Optional<Comment> findByArticleIdAndCommentId(int articleId, int commentId);
 
     void deleteByArticleIdAndCommentId(int articleId, int commentId);
-    @Modifying(clearAutomatically = true)
-    @Transactional
-    @Query("UPDATE Article a SET a.comment = a.comment - 1 WHERE a.articleId = :articleId")
-    void decreaseCommentCount(@Param("articleId") int articleId);
 
     List<Comment> findByArticleId(int articleId);
 
