@@ -19,7 +19,7 @@ export const MyDrawerPage = () => {
   const [perfumeList, setPerfumeList] = useState<PerfumeDetail[] | null>(null);
 
   useEffect(() => {
-    axios.get(`/user/perfume/${USERID}`).then((res) => {
+    axios.get(`/user/perfume`).then((res) => {
       setPerfumeList(res.data);
       console.log(res.data);
     });
@@ -38,7 +38,7 @@ export const MyDrawerPage = () => {
   const handleClose = () => {
     navigate('/');
   };
-  const handleSearchPerfume = () => {
+  const handleSearchPerfume = async () => {
     navigate('/search-myperfume');
   };
 

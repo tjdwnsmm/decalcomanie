@@ -36,10 +36,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   };
 
   const handleAddPerfume = (perfumeId: number) => {
-    axios
-      .post(addUrl, { perfumeId: perfumeId, userId: USERID })
-      .then((res) => console.log(res.data));
-    navigate(`/my-drawer`);
+    axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
+      console.log('data 추가!', res.data);
+      navigate(`/my-drawer`);
+    });
   };
 
   return (
