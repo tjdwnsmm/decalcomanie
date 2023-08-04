@@ -26,45 +26,30 @@ const favScent: ScentDto[] = [
 const MainPage = () => {
   const navigate = useNavigate();
   const [isDrawer, setDrawer] = useState(true);
-  const [backFrameSticky, setBackFrameSticky] = useState(false);
   const backFrameRef = useRef<HTMLDivElement>(null);
+  const [nickname, setNickname] = useState('');
 
   const handleSearchPerfume = () => {
     navigate('/search-myperfume');
   };
 
   useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0,
-    };
-
-    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-      const [entry] = entries;
-      setBackFrameSticky(entry.isIntersecting);
-    };
-
-    const observer = new IntersectionObserver(handleIntersection, options);
-    if (backFrameRef.current) {
-      observer.observe(backFrameRef.current);
+    const nickname = localStorage.getItem('nickname');
+    if (nickname) {
+      setNickname(nickname);
+    } else {
+      navigate('/login');
     }
-
-    return () => {
-      if (backFrameRef.current) {
-        observer.unobserve(backFrameRef.current);
-      }
-    };
   }, []);
 
   return (
     <Main>
       <Frame>
         {isDrawer ? (
-          <MainRecommend />
+          <MainRecommend nickname={nickname} />
         ) : (
           <>
-            <NoRecommend />
+            <NoRecommend nickname={nickname} />
             <MarginFrame margin="25px auto 40px">
               <CenterFrame>
                 <ConfirmButton
@@ -79,11 +64,11 @@ const MainPage = () => {
           </>
         )}
         <div ref={backFrameRef}>
-          <BackFrame sticky={backFrameSticky}>
+          <BackFrame>
             {isDrawer && (
               <>
                 <Info>
-                  <div className="title">김수민님을 위한 추천</div>
+                  <div className="title">{nickname}님을 위한 추천</div>
                   <div className="subtitle">
                     서랍에 담은 향수들에 기반한 맞춤 추천 결과입니다
                   </div>
@@ -120,11 +105,8 @@ const MainPage = () => {
 };
 
 export default MainPage;
-interface BackFrameProps {
-  sticky: boolean;
-}
 
-const BackFrame = styled.div<BackFrameProps>`
+const BackFrame = styled.div`
   background: linear-gradient(
     180deg,
     var(--white-color) 0%,
