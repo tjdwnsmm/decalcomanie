@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.spec.PSource;
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -63,7 +62,7 @@ public class ArticleServiceImpl implements IArticleService {
 
     @Override
     @Transactional
-    public int updateArticle(ArticleDto articleDto, String userId) {
+    public int updateArticle(ArticleDto articleDto) {
         log.info("ArticleServiceImpl::: updateArticle start");
 
         // 수정하려는 글의 articleId를 가져옴
@@ -77,15 +76,15 @@ public class ArticleServiceImpl implements IArticleService {
             // 글이 존재하는 경우, 수정 작업 진행
             Article existingArticle = optionalArticle.get();
 
-            // 글의 userId와 수정하려는 userId를 비교하여 일치하는지 확인
-            if (existingArticle.getUserId().equals(userId)) {
+            // 댓글의 userId와 수정하려는 userId를 비교하여 일치하는지 확인
+            if (existingArticle.getUserId().equals(articleDto.getUserId())) {
                 // 일치하는 경우, 수정 작업 진행
                 // 수정할 내용을 업데이트
                 articleDto.toBuilder().updatedAt(LocalDateTime.now()).build();
                 System.out.println(LocalDateTime.now());
                 // existingArticle.setContent(commentDto.getContent());
 
-                // 수정된 글 저장
+                // 수정된 댓글 저장
                 Article article = articleRepository.save(articleMapper.toEntity(articleDto));
 
                 log.info("ArticleServiceImpl::: finish ", String.valueOf(article));
@@ -247,9 +246,6 @@ public class ArticleServiceImpl implements IArticleService {
         Comment comment = commentRepository.save(commentMapper.toEntity(commentDto));
         
         // TODO: 댓글 갯수 하나 늘려 주는 부분 추가 필요
-        // 게시물의 heart갯수 + 1
-        articleRepository.increaseCommentCount(commentDto.getArticleId());
-
         log.info("ArticleServiceImpl::: finish ", String.valueOf(comment));
     }
 
@@ -343,19 +339,11 @@ public class ArticleServiceImpl implements IArticleService {
     }
 
     @Override
-    public void increaseCommentCount(int articleId) {
-        log.info("ArticleServiceImpl::: modifyCommentCount start");
-        // 주어진 articleId 의 comment 갯수를 하나 늘린다.
-        articleRepository.increaseCommentCount(articleId);
-        log.info("ArticleServiceImpl::: finish ");
-    }
-
-    @Override
     @Transactional
-    public void decreaseCommentCount(int articleId) {
+    public void modifyCommentCount(int articleId) {
         log.info("ArticleServiceImpl::: modifyCommentCount start");
         // 주어진 articleId 의 comment 갯수를 하나 줄인다.
-        articleRepository.decreaseCommentCount(articleId);
+        commentRepository.decreaseCommentCount(articleId);
         log.info("ArticleServiceImpl::: finish ");
     }
 
@@ -455,13 +443,5 @@ public class ArticleServiceImpl implements IArticleService {
         }
 
         return false;
-    }
-    
-    
-    // request로 부터 userId를 뽑아내는 공통메서드
-    @Override
-    public String getUserIdFromRequest(HttpServletRequest request) {
-        String userId = (String) request.getAttribute("userId");
-        return userId;
     }
 }
