@@ -1,36 +1,41 @@
 import { styled } from 'styled-components';
 import { Main, MarginFrame } from '../../style';
-import { RESTAPI_KEY } from '../../api/apikey';
-
+import Logo from '../../components/common/Logo';
+import { KAKAO_AUTH_URL } from './KakaoAuth';
+import { ReactComponent as KakaoSvg } from '../../assets/img/KakaoTalk_logo.svg';
 const LoginPage = () => {
-  const redirect_uri = 'http://localhost:8080/oauth/kakao/callback'; //Redirect URI
-
   const kakaoLogin = () => {
-    const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${RESTAPI_KEY}&redirect_uri=${redirect_uri}&response_type=code`;
-    window.location.href = kakaoAuthUrl;
-
-    const code = new URL(window.location.href).searchParams.get('code');
-    console.log(code);
+    window.location.href = KAKAO_AUTH_URL;
   };
 
   return (
-    <Main>
-      <MarginFrame margin="100px 0">
+    <MainInLogin>
+      <MarginFrame margin="280px 0 0">
+        <Logo />
+      </MarginFrame>
+      <MarginFrame margin="550px 0 0">
         <KakaoBox onClick={kakaoLogin}>
-          <img id="icon-img" src="src/assets/img/kakao_logo.png" />
+          <KakaoSvg />
+          {/* <img id="icon-img" src="src/assets/img/kakao_logo.png" /> */}
           카카오톡으로 로그인
         </KakaoBox>
       </MarginFrame>
-    </Main>
+    </MainInLogin>
   );
 };
 
 export default LoginPage;
 
+const MainInLogin = styled(Main)`
+  background-color: var(--secondary-color);
+`;
+
 const KakaoBox = styled.div`
-  width: 100%;
+  width: 340px;
   height: 44px;
+  margin: auto;
   margin-bottom: 8px;
+  border-radius: 5px;
   font-size: 15px;
   font-weight: bold;
   color: #000000cb;
@@ -40,10 +45,11 @@ const KakaoBox = styled.div`
   justify-content: center;
   cursor: pointer;
 
-  img {
+  svg {
     margin-right: 2%;
     margin-top: 6px;
     margin-bottom: 6px;
     width: 40px;
+    height: 40px;
   }
 `;

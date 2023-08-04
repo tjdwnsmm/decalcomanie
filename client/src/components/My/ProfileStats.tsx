@@ -5,7 +5,7 @@ import { ReactComponent as Bar } from '../../assets/img/bar.svg';
 
 interface TextProp {
   size?: string;
-  fontweight?: string;
+  fontWeight?: string;
   color?: string;
 }
 
@@ -27,7 +27,7 @@ const BoxText = styled.div<TextProp>`
   align-items: center;
   width: 60px;
   font-size: ${(props) => props.size};
-  font-weight: ${(props) => props.fontweight};
+  font-weight: ${(props) => props.fontWeight};
   color: ${(props) => props.color};
 `;
 
@@ -77,21 +77,21 @@ export default function ProfileStats() {
     <StatsDiv>
       <StatsBox>
         <CountBox onClick={() => handleClick('follower')}>
-          <BoxText size="13pt" color="var(--primary-color)" fontweight="700">
+          <BoxText size="13pt" color="var(--primary-color)" fontWeight="700">
             {formatNumber(data.follower)}
           </BoxText>
           <BoxText size="9.5pt">Follower</BoxText>
         </CountBox>
         <Bar />
         <div>
-          <BoxText size="13pt" color="var(--primary-color)" fontweight="700">
+          <BoxText size="13pt" color="var(--primary-color)" fontWeight="700">
             {formatNumber(data.post)}
           </BoxText>
           <BoxText size="9.5pt">Post</BoxText>
         </div>
         <Bar />
         <CountBox onClick={() => handleClick('following')}>
-          <BoxText size="13pt" color="var(--primary-color)" fontweight="700">
+          <BoxText size="13pt" color="var(--primary-color)" fontWeight="700">
             {formatNumber(data.following)}
           </BoxText>
           <BoxText size="9.5pt">Following</BoxText>

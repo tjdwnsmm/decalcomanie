@@ -9,24 +9,27 @@ const MainPerfumeInfo = ({ perfumeInfo }: perfumeInfoProps) => {
     .slice(0, 3)
     .map((scent) => scent.name)
     .join(', ');
-  if (scentString.length > 8) {
-    scentString = scentString.slice(0, 8) + '...';
+  if (scentString.length > 10) {
+    scentString = scentString.slice(0, 10) + '..';
   }
   return (
     <PerfumeInfoBox>
       <Image>
         <img src={perfumeInfo.picture}></img>
+        <PerfumeScent>
+          {perfumeInfo.accord.slice(0, 3).map((scent, idx) => (
+            <ScentBox key={idx} color={scent.rgb} />
+          ))}
+        </PerfumeScent>
       </Image>
       <InfoBox>
         <Brand>{perfumeInfo.brandName}</Brand>
-        <Info>
-          <PerfumeName>
-            {perfumeInfo.name.length > 8
-              ? perfumeInfo.name.slice(0, 8) + '...'
-              : perfumeInfo.name}
-          </PerfumeName>
-          <PerfumeScent>{scentString}</PerfumeScent>
-        </Info>
+
+        <PerfumeName>
+          {perfumeInfo.name.length > 9
+            ? perfumeInfo.name.slice(0, 8) + '..'
+            : perfumeInfo.name}
+        </PerfumeName>
       </InfoBox>
     </PerfumeInfoBox>
   );
@@ -38,50 +41,55 @@ const PerfumeInfoBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 150px;
+  flex-wrap: wrap;
+  margin: 0;
 `;
 const InfoBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 65px;
   margin-top: 11px;
+  margin-left: 5px;
 `;
 
 const Brand = styled.div`
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   margin-bottom: 2px;
 `;
 
-const Info = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 261px;
-  align-items: center;
-`;
-
 const PerfumeName = styled.div`
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
-  width: 70%;
 `;
 
 const PerfumeScent = styled.div`
-  font-size: 12px;
-  font-weight: 400;
-  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 5px;
+`;
+
+const ScentBox = styled.div<{ color: string }>`
+  width: 9px;
+  height: 9px;
+  border-radius: 4px;
+  background-color: ${(props) => props.color};
 `;
 
 const Image = styled.div`
-  width: 271px;
-  height: 271px;
+  width: 100px;
+  height: 120px;
   border-radius: 10px;
   background-color: var(--white-color);
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
-  margin: 39px auto 0;
   img {
-    width: 130px;
+    width: 62px;
+    height: 95px;
   }
 `;

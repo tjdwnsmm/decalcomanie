@@ -7,8 +7,8 @@ import {
 import PerfumeInfoBox from '../Perfume/PerfumeInfoBox';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
-import { USERID } from '../../api/apiController';
 import { useEffect, useState } from 'react';
+import FollowBtn from '../Button/FollowBtn';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
@@ -44,6 +44,7 @@ const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
           <ProfileBox>
             <img src={'src/assets/img/profile-user.png'} />
             {feed.userInfoDto.user.nickname}
+            <Follow>팔로우</Follow>
           </ProfileBox>
           <IconBox>
             <LikeBtn
@@ -52,12 +53,10 @@ const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
               likeUrl="/sns/like"
               dislikeUrl="/sns/dislike"
               articleId={feed.articleDtos.articleId}
-              userId={USERID}
             />
             <ScrapBtn
               isScrap={feed.bookmarked}
               articleId={feed.articleDtos.articleId}
-              userId={USERID}
             />
           </IconBox>
         </InfoBox>
@@ -75,9 +74,9 @@ const InfoBox = styled.div`
 const ProfileBox = styled.div`
   display: flex;
   align-items: center;
-  gap: 3px;
-  font-size: 12px;
-  font-weight: 600;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 500;
 `;
 const IconBox = styled.div`
   display: flex;
@@ -93,8 +92,13 @@ const FeedBox = styled.div`
 
 const ContentBox = styled.div`
   display: flex;
-  font-size: 12px;
-  font-weight: 300;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 18px;
-  margin: 10px;
+  margin: 15px 10px;
+`;
+
+const Follow = styled.div`
+  margin-left: 10px;
+  color: var(--primary-color);
 `;

@@ -6,11 +6,10 @@ import axios from '../../api/apiController';
 
 interface ScrapProps {
   articleId: number;
-  userId: string;
   isScrap: boolean;
 }
 
-export const ScrapBtn = ({ isScrap, articleId, userId }: ScrapProps) => {
+export const ScrapBtn = ({ isScrap, articleId }: ScrapProps) => {
   const [scrap, setScrap] = useState(false);
 
   useEffect(() => {
@@ -33,7 +32,7 @@ export const ScrapBtn = ({ isScrap, articleId, userId }: ScrapProps) => {
 
   const sendScrapStatus = async (url: string) => {
     try {
-      const requestData = { articleId: articleId, userId: userId };
+      const requestData = { articleId: articleId };
       const response = await axios.post(url, requestData);
       console.log(response.data);
       return response.data;

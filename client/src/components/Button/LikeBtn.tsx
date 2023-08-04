@@ -11,7 +11,6 @@ interface LikeBtnProps {
   dislikeUrl: string;
   articleId?: number;
   perfumeId?: number;
-  userId: string;
 }
 
 /** @param {number} count : 좋아요 수 */
@@ -22,7 +21,6 @@ export const LikeBtn = ({
   dislikeUrl,
   articleId,
   perfumeId,
-  userId,
 }: LikeBtnProps) => {
   const [liked, setLiked] = useState(false);
   const [nowCount, setCount] = useState(0);
@@ -53,8 +51,8 @@ export const LikeBtn = ({
   const sendLikeStatus = async (url: string) => {
     try {
       const requestData = url.includes('sns')
-        ? { articleId: articleId, userId: userId }
-        : { perfumeId: perfumeId, userId: userId };
+        ? { articleId: articleId }
+        : { perfumeId: perfumeId };
 
       const response = await axios.post(url, requestData);
       console.log(response.data);

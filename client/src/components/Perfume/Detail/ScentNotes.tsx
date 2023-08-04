@@ -46,7 +46,7 @@ export const ScentNotes = ({ noteLists, closeModal }: ScentNoteProps) => {
             </Note>
           ))}
         </NoteList>
-        <NoteTitle>{'Bottom'}</NoteTitle>
+        <NoteTitle>{'Base'}</NoteTitle>
         <NoteList>
           {noteInfos[2].map((notes: NoteListDto, idx) => (
             <Note>

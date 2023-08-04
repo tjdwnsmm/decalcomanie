@@ -1,58 +1,56 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { styled } from 'styled-components';
 import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
 import MainRecommend from '../../components/Main/MainRecommend';
 import NoRecommend from '../../components/Main/NoRecommend';
 import FloatingDrawerBtn from '../../components/Button/FloatingDrawerBtn';
 import BottomNav from '../../components/common/BottomNav';
-import { useNavigate } from 'react-router-dom';
-import MainCarousel from '../../components/Carousel/MainCarousel';
-import { styled } from 'styled-components';
-import { LikeBtn } from '../../components/Button/LikeBtn';
-import { USERID } from '../../api/apiController';
-import { ScentDto } from '../../types/PerfumeInfoType';
+import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
+import MainSwiper from '../../components/Carousel/MainSwiper';
+import MoreRateInfo from '../../components/Main/MoreRateInfo';
+import MainScent from '../../components/Main/MainScent';
 
-const nowDate = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = ('0' + (today.getMonth() + 1)).slice(-2);
-  const day = ('0' + today.getDate()).slice(-2);
-  const dateString = year + '-' + month + '-' + day;
-  return dateString;
-};
-
+/**
+ * !API 로 바꿀것!
+ */
 const season = '여름';
+const time = '낮';
+
+const favScent: ScentDto[] = [
+  { scentId: 1, weight: 100, name: '시트러스', rgb: '#F9FF52' },
+  { scentId: 20, weight: 93, name: '흙 내음', rgb: '#544838' },
+  { scentId: 9, weight: 86, name: '우디', rgb: '#774414' },
+];
+
 const MainPage = () => {
-  const [isDrawer, setDrawer] = useState(true);
   const navigate = useNavigate();
+  const [isDrawer, setDrawer] = useState(true);
+  const backFrameRef = useRef<HTMLDivElement>(null);
+  const [nickname, setNickname] = useState('');
 
   const handleSearchPerfume = () => {
     navigate('/search-myperfume');
   };
 
-  const getScentString = (perfumeInfo: ScentDto[]) => {
-    let scentString = perfumeInfo
-      .slice(0, 3)
-      .map((scent) => scent.name)
-      .join(', ');
-    if (scentString.length > 20) {
-      scentString = scentString.slice(0, 20) + '...';
+  useEffect(() => {
+    const nickname = localStorage.getItem('nickname');
+    if (nickname) {
+      setNickname(nickname);
+    } else {
+      navigate('/login');
     }
-
-    return scentString;
-  };
+  }, []);
 
   return (
     <Main>
       <Frame>
         {isDrawer ? (
-          <>
-            <MainRecommend />
-            <MainCarousel perfumes={perfumes} />
-          </>
+          <MainRecommend nickname={nickname} />
         ) : (
           <>
-            <NoRecommend />
-            <MarginFrame margin="20px auto">
+            <NoRecommend nickname={nickname} />
+            <MarginFrame margin="25px auto 40px">
               <CenterFrame>
                 <ConfirmButton
                   color="primary"
@@ -65,34 +63,40 @@ const MainPage = () => {
             </MarginFrame>
           </>
         )}
-        <RecommendTab>
-          <Info>
-            <div className="title">{season}에 잘 어울려요</div>
-            <div className="subtitle">{nowDate()} 기준</div>
-            {perfumes.map((perfume) => (
-              <PerfumeEach>
-                <img src={perfume.picture} alt="" />
-                <div className="info">
-                  <div className="txt">
-                    <div className="brand">{perfume.brandName}</div>
-                    <div className="title">{perfume.name}</div>
-                    <div className="scent">
-                      {getScentString(perfume.accord)}
-                    </div>
+        <div ref={backFrameRef}>
+          <BackFrame>
+            {isDrawer && (
+              <>
+                <Info>
+                  <div className="title">{nickname}님을 위한 추천</div>
+                  <div className="subtitle">
+                    서랍에 담은 향수들에 기반한 맞춤 추천 결과입니다
                   </div>
-                  <LikeBtn
-                    count={perfume.pick}
-                    dislikeUrl="/perfume/pick"
-                    likeUrl="/perfume/pick"
-                    picked={perfume.picked}
-                    perfumeId={perfume.perfumeId}
-                    userId={USERID}
-                  />
-                </div>
-              </PerfumeEach>
-            ))}
-          </Info>
-        </RecommendTab>
+                  <>
+                    <MainScent accord={favScent} />
+                  </>
+                </Info>
+                <MainSwiper perfumes={perfumes} />
+              </>
+            )}
+            {isDrawer ? (
+              <MoreRateInfo
+                title={`${season}에 잘어울려요 🌞`}
+                perfumes={perfumes}
+              />
+            ) : (
+              <MoreRateInfo
+                title={`${season}에 잘어울려요 🌞`}
+                perfumes={perfumes}
+                first={true}
+              />
+            )}
+            <MoreRateInfo
+              title={`${time} 시간대에 인기가 많아요 🌞`}
+              perfumes={perfumes}
+            />
+          </BackFrame>
+        </div>
       </Frame>
       <FloatingDrawerBtn />
       <BottomNav />
@@ -102,60 +106,49 @@ const MainPage = () => {
 
 export default MainPage;
 
-const Frame = styled.div`
-  padding-bottom: 130px;
-  overflow: scroll;
+const BackFrame = styled.div`
+  background: linear-gradient(
+    180deg,
+    var(--white-color) 0%,
+    var(--background-color) 15%
+  );
+  // background-color: var(--background-color);
+  padding: 10px 0 120px;
+  border-radius: 30px 30px 0 0;
+  box-shadow: 0px 5px 22px rgba(0, 0, 0, 0.1);
+  width: 390px;
 `;
 
-const RecommendTab = styled.div`
-  display: flex;
-  margin: 45px 0 0 30px;
+const Frame = styled.div`
+  overflow-y: scroll;
+  overflow-x: clip;
+  background: linear-gradient(
+    180deg,
+    rgba(249, 202, 245, 0.44) 0%,
+    rgba(239, 223, 251, 0.63) 7.31%,
+    rgba(236, 228, 252, 0.68) 15%
+  );
 `;
 
 const Info = styled.div`
+  margin: 40px 30px 20px;
   .title {
     font-weight: 700;
     font-size: 23px;
   }
   .subtitle {
-    font-size: 11px;
+    font-size: 15px;
     margin-top: 5px;
     margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  span {
+    color: var(--primary-color);
   }
 `;
 
-const PerfumeEach = styled.div`
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  img {
-    width: 55px;
-    border-radius: 10px;
-  }
-
-  .info {
-    width: 260px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-  }
-
-  .title {
-    font-size: 15px;
-  }
-
-  .brand {
-    font-size: 11px;
-    font-weight: 600;
-  }
-
-  .scent {
-    margin-top: 8px;
-  }
-`;
-const perfumes = [
+const perfumes: PerfumeDetail[] = [
   {
     perfumeId: 1004,
     name: '알루어 홈므 스포츠 콜롱',
@@ -186,6 +179,312 @@ const perfumes = [
         scentId: 5,
         weight: 61.0,
         name: '아로마틱',
+        rgb: '#37a089',
+      },
+      {
+        scentId: 9,
+        weight: 54.0,
+        name: 'woody',
+        rgb: '#774414',
+      },
+      {
+        scentId: 16,
+        weight: 53.0,
+        name: 'fresh',
+        rgb: '#9be5ed',
+      },
+    ],
+    note: [
+      {
+        noteListId: 135,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 77,
+        noteName: 'Lemon',
+      },
+      {
+        noteListId: 136,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 75,
+        noteName: 'Bergamot',
+      },
+      {
+        noteListId: 137,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 80,
+        noteName: 'Orange',
+      },
+      {
+        noteListId: 138,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 76,
+        noteName: 'Grapefruit',
+      },
+      {
+        noteListId: 139,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 82,
+        noteName: 'Mandarin Orange',
+      },
+      {
+        noteListId: 140,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 165,
+        noteName: 'Aldehydes',
+      },
+      {
+        noteListId: 141,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 17,
+        noteName: 'Neroli',
+      },
+      {
+        noteListId: 142,
+        perfumeId: 1004,
+        type: 'Middle',
+        noteId: 205,
+        noteName: 'Fir',
+      },
+      {
+        noteListId: 143,
+        perfumeId: 1004,
+        type: 'Middle',
+        noteId: 321,
+        noteName: 'Spicy Notes',
+      },
+      {
+        noteListId: 144,
+        perfumeId: 1004,
+        type: 'Middle',
+        noteId: 390,
+        noteName: 'Elemi',
+      },
+      {
+        noteListId: 145,
+        perfumeId: 1004,
+        type: 'Base',
+        noteId: 4,
+        noteName: 'Musk',
+      },
+      {
+        noteListId: 146,
+        perfumeId: 1004,
+        type: 'Base',
+        noteId: 158,
+        noteName: 'Pepper',
+      },
+      {
+        noteListId: 147,
+        perfumeId: 1004,
+        type: 'Base',
+        noteId: 41,
+        noteName: 'Cedar',
+      },
+      {
+        noteListId: 148,
+        perfumeId: 1004,
+        type: 'Base',
+        noteId: 2,
+        noteName: 'Vetiver',
+      },
+      {
+        noteListId: 149,
+        perfumeId: 1004,
+        type: 'Base',
+        noteId: 73,
+        noteName: 'Tonka Bean',
+      },
+    ],
+  },
+  {
+    perfumeId: 1004,
+    name: '알루어 홈므 스포츠 콜롱',
+    nameOrg: 'Allure Homme Sport Cologne',
+    brandName: '샤넬',
+    brandId: 1,
+    picture: 'https://fimgs.net/mdimg/perfume/375x500.1004.jpg',
+    gender: 0,
+    rate: null,
+    longevity: 3.06,
+    sillage: 2.22,
+    picked: false,
+    pick: 0,
+    accord: [
+      {
+        scentId: 1,
+        weight: 100.0,
+        name: 'citrus',
+        rgb: '#F9FF52',
+      },
+      {
+        scentId: 2,
+        weight: 62.0,
+        name: 'fresh spicy',
+        rgb: '#83C928',
+      },
+      {
+        scentId: 5,
+        weight: 61.0,
+        name: 'aromatic',
+        rgb: '#37a089',
+      },
+      {
+        scentId: 9,
+        weight: 54.0,
+        name: 'woody',
+        rgb: '#774414',
+      },
+      {
+        scentId: 16,
+        weight: 53.0,
+        name: 'fresh',
+        rgb: '#9be5ed',
+      },
+    ],
+    note: [
+      {
+        noteListId: 135,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 77,
+        noteName: 'Lemon',
+      },
+      {
+        noteListId: 136,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 75,
+        noteName: 'Bergamot',
+      },
+      {
+        noteListId: 137,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 80,
+        noteName: 'Orange',
+      },
+      {
+        noteListId: 138,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 76,
+        noteName: 'Grapefruit',
+      },
+      {
+        noteListId: 139,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 82,
+        noteName: 'Mandarin Orange',
+      },
+      {
+        noteListId: 140,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 165,
+        noteName: 'Aldehydes',
+      },
+      {
+        noteListId: 141,
+        perfumeId: 1004,
+        type: 'Top',
+        noteId: 17,
+        noteName: 'Neroli',
+      },
+      {
+        noteListId: 142,
+        perfumeId: 1004,
+        type: 'Middle',
+        noteId: 205,
+        noteName: 'Fir',
+      },
+      {
+        noteListId: 143,
+        perfumeId: 1004,
+        type: 'Middle',
+        noteId: 321,
+        noteName: 'Spicy Notes',
+      },
+      {
+        noteListId: 144,
+        perfumeId: 1004,
+        type: 'Middle',
+        noteId: 390,
+        noteName: 'Elemi',
+      },
+      {
+        noteListId: 145,
+        perfumeId: 1004,
+        type: 'Base',
+        noteId: 4,
+        noteName: 'Musk',
+      },
+      {
+        noteListId: 146,
+        perfumeId: 1004,
+        type: 'Base',
+        noteId: 158,
+        noteName: 'Pepper',
+      },
+      {
+        noteListId: 147,
+        perfumeId: 1004,
+        type: 'Base',
+        noteId: 41,
+        noteName: 'Cedar',
+      },
+      {
+        noteListId: 148,
+        perfumeId: 1004,
+        type: 'Base',
+        noteId: 2,
+        noteName: 'Vetiver',
+      },
+      {
+        noteListId: 149,
+        perfumeId: 1004,
+        type: 'Base',
+        noteId: 73,
+        noteName: 'Tonka Bean',
+      },
+    ],
+  },
+  {
+    perfumeId: 1004,
+    name: '알루어 홈므 스포츠 콜롱',
+    nameOrg: 'Allure Homme Sport Cologne',
+    brandName: '샤넬',
+    brandId: 1,
+    picture: 'https://fimgs.net/mdimg/perfume/375x500.1004.jpg',
+    gender: 0,
+    rate: null,
+    longevity: 3.06,
+    sillage: 2.22,
+    picked: false,
+    pick: 0,
+    accord: [
+      {
+        scentId: 1,
+        weight: 100.0,
+        name: 'citrus',
+        rgb: '#F9FF52',
+      },
+      {
+        scentId: 2,
+        weight: 62.0,
+        name: 'fresh spicy',
+        rgb: '#83C928',
+      },
+      {
+        scentId: 5,
+        weight: 61.0,
+        name: 'aromatic',
         rgb: '#37a089',
       },
       {
