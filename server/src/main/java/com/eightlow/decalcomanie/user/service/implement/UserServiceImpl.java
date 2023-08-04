@@ -2,7 +2,9 @@ package com.eightlow.decalcomanie.user.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
+import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
@@ -18,12 +20,11 @@ import com.eightlow.decalcomanie.user.repository.UserPerfumeRepository;
 import com.eightlow.decalcomanie.user.repository.UserRepository;
 import com.eightlow.decalcomanie.user.repository.UserScentRepository;
 import com.eightlow.decalcomanie.user.service.IUserService;
-import com.nimbusds.jose.util.Pair;
+import com.mysema.commons.lang.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -38,6 +39,7 @@ public class UserServiceImpl implements IUserService {
     private final FollowMapper followMapper;
     private final UserMapper userMapper;
     private final ScentMapper scentMapper;
+    private final PerfumeRepository perfumeRepository;
 
     @Override
     public String modifyUserPerfume(UserPerfume userPerfume) {
@@ -171,13 +173,13 @@ public class UserServiceImpl implements IUserService {
         // 사용자 향 단위 벡터 계산
         List<Double> userPerfumeVector = userAccordVector(userId);
         // 사용자 향과 모든 향수 유사도 계산
-        List<Pair<PerfumeDto,Integer>> result = caclulate(userPerfumeVector);
+        List<Pair<PerfumeDto, Double>> result = caclulate(userPerfumeVector);
         // 탑 10 추출
         List<PerfumeDto> perfumeList = new ArrayList<>();
-        for (Pair<PerfumeDto, Integer> pair : result) {
-            perfumeList.add(pair.getLeft());
+        for (Pair<PerfumeDto, Double> pair : result) {
+            perfumeList.add(pair.getFirst());
         }
-        // rsult의 상단 10개하여 반환
+        // result의 상단 10개하여 반환
         return perfumeList.subList(0, Math.min(result.size(),10));
     }
 
@@ -242,10 +244,18 @@ public class UserServiceImpl implements IUserService {
     }
 
     // 모든 향수들과 유사도를 계산하는 함수
-    public List<Pair<PerfumeDto,Integer>> caclulate(List<Double> userPerfumeVector){
-        List<Pair<PerfumeDto,Integer>> result = new ArrayList<>();
+    public List<Pair<PerfumeDto,Double>> caclulate(List<Double> userPerfumeVector){
+        List<Pair<PerfumeDto,Double>> result = new ArrayList<>();
         // 1. 모든 향수를 불러오기
+        List<Perfume> allPerfume = perfumeRepository.findAll();
         // 2. 각 향수와 유저 벡터와 곱하여 계산하고 결과 데이터에 추가
+        for(Perfume perfume : allPerfume) {
+            double sum = 0.0;
+            for(Double userAccordWeight : userPerfumeVector){
+
+            }
+            result.add(new Pair<>(new PerfumeDto(perfume),sum));
+        }
         // 3. 결과데이터를 유사도를 기준으로 정렬
         return result;
     }

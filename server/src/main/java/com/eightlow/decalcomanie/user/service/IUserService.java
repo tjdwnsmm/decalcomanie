@@ -1,6 +1,7 @@
 package com.eightlow.decalcomanie.user.service;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.user.dto.FollowDto;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;

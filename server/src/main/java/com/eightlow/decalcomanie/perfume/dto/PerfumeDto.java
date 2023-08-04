@@ -1,5 +1,6 @@
 package com.eightlow.decalcomanie.perfume.dto;
 
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import lombok.*;
 
 import java.util.List;
@@ -38,4 +39,9 @@ public class PerfumeDto {
     private List<ScentDto> accord;
 
     private List<NoteListDto> note;
+
+    public PerfumeDto(Perfume perfume) {
+        this.perfumeId = perfume.getPerfumeId();
+        // TODO 향 리스트도 추가를 해야됨
+    }
 }
