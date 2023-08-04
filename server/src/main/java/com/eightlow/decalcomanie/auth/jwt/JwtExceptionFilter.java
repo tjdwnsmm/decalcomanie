@@ -2,6 +2,7 @@ package com.eightlow.decalcomanie.auth.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
+import org.aspectj.bridge.Message;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -36,13 +37,22 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         final Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        body.put("error", "Unauthorized");
+
+        // 기간 만료는 UNAUTHORIZED, 잘못된 토큰은 FORBIDDEN을 반환하여 로그아웃 처리
+        if(ex.getMessage().equals("토큰 기한 만료")) {
+            body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+            body.put("error", "Unauthorized");
+            res.setStatus(HttpStatus.UNAUTHORIZED.value());
+        } else {
+            body.put("status", HttpServletResponse.SC_FORBIDDEN);
+            body.put("error", "Invalid");
+            res.setStatus(HttpStatus.FORBIDDEN.value());
+        }
+
         // ex.getMessage() 에는 jwtException을 발생시키면서 입력한 메세지가 들어있다.
         body.put("message", ex.getMessage());
         body.put("path", req.getServletPath());
         final ObjectMapper mapper = new ObjectMapper();
-        res.setStatus(HttpStatus.UNAUTHORIZED.value());
 
         mapper.writeValue(res.getOutputStream(), body);
     }
