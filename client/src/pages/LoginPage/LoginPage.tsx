@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { Main, MarginFrame } from '../../style';
 import Logo from '../../components/common/Logo';
 import { KAKAO_AUTH_URL } from './KakaoAuth';
-
+import { ReactComponent as KakaoSvg } from '../../assets/img/KakaoTalk_logo.svg';
 const LoginPage = () => {
   const kakaoLogin = () => {
     window.location.href = KAKAO_AUTH_URL;
@@ -15,7 +15,8 @@ const LoginPage = () => {
       </MarginFrame>
       <MarginFrame margin="550px 0 0">
         <KakaoBox onClick={kakaoLogin}>
-          <img id="icon-img" src="src/assets/img/kakao_logo.png" />
+          <KakaoSvg />
+          {/* <img id="icon-img" src="src/assets/img/kakao_logo.png" /> */}
           카카오톡으로 로그인
         </KakaoBox>
       </MarginFrame>
@@ -44,10 +45,11 @@ const KakaoBox = styled.div`
   justify-content: center;
   cursor: pointer;
 
-  img {
+  svg {
     margin-right: 2%;
     margin-top: 6px;
     margin-bottom: 6px;
     width: 40px;
+    height: 40px;
   }
 `;
