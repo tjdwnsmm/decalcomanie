@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
-//    boolean existsById(int articleId);
+    //    boolean existsById(int articleId);
     Optional<Article> findByArticleId(int articleId);
 
     @Query("SELECT a  FROM Article a WHERE a.userId = :userId ORDER BY a.createdAt DESC")
@@ -27,6 +27,16 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query("SELECT a FROM Article a ORDER BY a.createdAt DESC")
     @Transactional
     List<Article> findArticlesOrderByCreateTime();
+
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("UPDATE Article a SET a.comment = a.comment + 1 WHERE a.articleId = :articleId")
+    void increaseCommentCount(@Param("articleId") int articleId);
+
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("UPDATE Article a SET a.comment = a.comment - 1 WHERE a.articleId = :articleId")
+    void decreaseCommentCount(@Param("articleId") int articleId);
 
     @Modifying
     @Transactional
