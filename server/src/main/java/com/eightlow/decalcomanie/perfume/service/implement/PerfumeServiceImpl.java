@@ -58,6 +58,8 @@ public class PerfumeServiceImpl implements IPerfumeService {
     // 검색 조건에 맞는 향수 조회
     @Override
     public List<PerfumeDto> findMatchingPerfumes(PerfumeSearchRequest condition) {
+        System.out.println("최초 함수 콜 : " + System.currentTimeMillis());
+
         List<Perfume> searchResult = queryFactory
                 .selectFrom(perfume)
                 .where(
@@ -68,6 +70,8 @@ public class PerfumeServiceImpl implements IPerfumeService {
                 )
                 .fetch();
 
+        System.out.println("키워드 검색 완료 후 : " + System.currentTimeMillis());
+
         return getPerfumeDtosFrom(searchResult);
     }
 
@@ -75,21 +79,29 @@ public class PerfumeServiceImpl implements IPerfumeService {
     private List<PerfumeDto> getPerfumeDtosFrom(List<Perfume> searchResult) {
         List<PerfumeDto> searchedPerfumes = new ArrayList<>();
 
+        System.out.println("향수 추가정보 채우기 전 : " + System.currentTimeMillis());
+
         for (Perfume p : searchResult) {
             searchedPerfumes.add(mergePerfumeDetails(p));
         }
+
+        System.out.println("향수 추가정보 채운 후 : " + System.currentTimeMillis());
 
         return searchedPerfumes;
     }
 
     // 각각의 향수에 대하여 scents와 noteList 정보를 추가해준다
     private PerfumeDto mergePerfumeDetails(Perfume perfume) {
+        System.out.println("향 계열과 노트 정보, 브랜드 정보 채우기 전 : " + System.currentTimeMillis());
+
         List<ScentDto> scents = createScentDto(perfume.getPerfumeId());
         List<NoteListDto> noteList = getNoteList(perfume.getPerfumeId());
 
         PerfumeDto pdto = perfumeMapper.toDto(perfume);
 
         Brand brand = brandRepository.findOneByBrandId(perfume.getBrandId());
+
+        System.out.println("향 계열과 노트 정보, 브랜드 정보 채운 후 : " + System.currentTimeMillis());
 
         PerfumeDto updatedDto = pdto.toBuilder()
                 .accord(scents)
@@ -219,7 +231,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
     }
 
     private BooleanExpression keywordEq(String keyword) {
-        return StringUtils.hasText(keyword) ? perfume.nameOrg.containsIgnoreCase(keyword) : null;
+        return StringUtils.hasText(keyword) ? perfume.nameOrg.containsIgnoreCase(keyword).or(perfume.name.containsIgnoreCase(keyword)) : null;
     }
 
     private BooleanExpression brandEq(List<Integer> brand) {
