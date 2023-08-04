@@ -3,13 +3,12 @@ import { MarginFrame } from '../../style';
 import { ReactComponent as ArrowSvg } from '../../assets/icon/nextArrow.svg';
 import { useNavigate } from 'react-router';
 import Logo from '../common/Logo';
-const UserInfo = {
-  name: '김수민',
-  weather: 0,
-  scent: 0,
-};
 
-const MainRecommend = () => {
+interface Props {
+  nickname: string;
+}
+
+const MainRecommend = ({ nickname }: Props) => {
   const navigate = useNavigate();
   const handleDrawer = () => {
     navigate('my-drawer');
@@ -18,7 +17,7 @@ const MainRecommend = () => {
     <MarginFrame margin="0 30px 35px">
       <Frame>
         <LeftSection>
-          <UserName>{UserInfo.name} 님,</UserName>
+          <UserName>{nickname} 님,</UserName>
           <ScentInfo>
             <AccentText>
               <div>오늘의 추천 향수를 </div>

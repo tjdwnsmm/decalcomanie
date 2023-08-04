@@ -2,16 +2,14 @@ import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
 import { UserName, WeatherInfo } from './MainRecommend';
 
-const UserInfo = {
-  name: '김수민',
-  weather: 0,
-  scent: 0,
-};
+interface Props {
+  nickname: string;
+}
 
-const NoRecommend = () => {
+const NoRecommend = ({ nickname }: Props) => {
   return (
     <MarginFrame margin="30px 30px 0">
-      <UserName>{UserInfo.name} 님,</UserName>
+      <UserName>{nickname} 님,</UserName>
       <DrawerInfo>서랍에 향수가 없으시네요? </DrawerInfo>
       <MoreInfo>가지고 있는 향수를 등록해주세요!</MoreInfo>
     </MarginFrame>

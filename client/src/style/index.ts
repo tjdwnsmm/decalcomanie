@@ -15,7 +15,7 @@ export function setScreenSize() {
 interface ButtonProps {
   background?: 'primary' | 'secondary';
   color?: 'primary' | 'secondary';
-  fontweight?: string | '400';
+  fontWeight?: string | '400';
 }
 
 export const ConfirmButton = styled.button<ButtonProps>`
@@ -30,7 +30,7 @@ export const ConfirmButton = styled.button<ButtonProps>`
   color: ${(props) =>
     props.color === 'primary' ? 'var(--white-color)' : 'var(--black-color)'};
   font-size: 16px;
-  font-weight: ${(props) => props.fontweight};
+  font-weight: ${(props) => props.fontWeight};
   cursor: pointer;
 `;
 interface CenterProps {

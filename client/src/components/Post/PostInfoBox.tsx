@@ -158,11 +158,14 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
             <NoFavScent>{nofavScent?.map((fav) => `#${fav}  `)}</NoFavScent>
           </InfoBoxRow>
         </InfoBox>
-        {!isWriter && <FollowBtn
-          // 글 상세 api 연결하면서 수정 필
-          from={USERID}
-          to={USERID}
-          isFollow={isFollow} />}
+        {!isWriter && (
+          <FollowBtn
+            // 글 상세 api 연결하면서 수정 필
+            from={USERID}
+            to={USERID}
+            isFollow={isFollow}
+          />
+        )}
         {isWriter && <PostModalBtn />}
       </WriterInfoBox>
       <ContentBox>{content}</ContentBox>
@@ -173,9 +176,8 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
           likeUrl="/sns/like"
           dislikeUrl="/sns/dislike"
           articleId={articleId}
-          userId={USERID}
         />
-        <ScrapBtn articleId={articleId} userId={USERID} isScrap={isScrap} />
+        <ScrapBtn articleId={articleId} isScrap={isScrap} />
       </IconBox>
       {/* 댓글 개수부분을 Comment 관련 파일에서 count해서 출력 ? */}
       <CommentCount>

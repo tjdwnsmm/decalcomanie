@@ -4,7 +4,6 @@ import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import { LikeBtn } from '../Button/LikeBtn';
 import { RateBtn } from '../Button/RateBtn';
 import ScentList from './Detail/ScentList';
-import { USERID } from '../../api/apiController';
 import ScentBall from './Detail/ScentBall';
 
 interface PerfumeInfoSectionProps {
@@ -22,7 +21,6 @@ const PerfumeInfoSection: React.FC<PerfumeInfoSectionProps> = ({ perfume }) => {
             likeUrl="/perfume/pick"
             dislikeUrl="/perfume/pick"
             perfumeId={perfume.perfumeId}
-            userId={USERID}
           />
           <RateBtn count={perfume.rate ? perfume.rate : 0} />
         </PerfumeIcon>

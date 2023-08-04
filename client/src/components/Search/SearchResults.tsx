@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
 import SecondaryBox from '../Box/SecondaryBox';
-import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import Spinner from '../common/Spinner';
 import { useNavigate } from 'react-router-dom';
-import axios, { USERID } from '../../api/apiController';
+import axios from '../../api/apiController';
 import { ReactComponent as StarSvg } from '../../assets/icon/fill-star.svg';
 
 interface SearchResultsProps {
@@ -36,10 +36,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   };
 
   const handleAddPerfume = (perfumeId: number) => {
-    axios
-      .post(addUrl, { perfumeId: perfumeId, userId: USERID })
-      .then((res) => console.log(res.data));
-    navigate(`/my-drawer`);
+    axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
+      console.log('data 추가!', res.data);
+      navigate(`/my-drawer`);
+    });
   };
 
   return (

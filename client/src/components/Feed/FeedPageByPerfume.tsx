@@ -4,7 +4,6 @@ import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { CommentBtn } from '../Button/CommentBtn';
 import { useNavigate } from 'react-router-dom';
-import { USERID } from '../../api/apiController';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
@@ -48,7 +47,6 @@ const FeedPageOnly = ({ feed }: FeedComponentProps) => {
             <ScrapBtn
               isScrap={feed.bookmarked}
               articleId={feed.articleDtos.articleId}
-              userId={USERID}
             />
           </ProfileBox>
         </InfoBox>
@@ -63,7 +61,6 @@ const FeedPageOnly = ({ feed }: FeedComponentProps) => {
             likeUrl="/sns/like"
             dislikeUrl="/sns/dislike"
             articleId={feed.articleDtos.articleId}
-            userId={USERID}
           />
           <CommentBtn count={feed.articleDtos.comment} />
         </IconBox>
