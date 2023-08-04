@@ -2,7 +2,7 @@ import { Main } from '../../style';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import { useEffect, useState } from 'react';
 import { ScentNotes } from '../../components/Perfume/Detail/ScentNotes';
-import axios, { USERID } from '../../api/apiController';
+import axios from '../../api/apiController';
 import { useNavigate, useParams } from 'react-router-dom';
 import PerfumeInfoSection from '../../components/Perfume/PerfumeInfoSection';
 import PerfumeImageSection from '../../components/Perfume/PerfumeImageSection';
@@ -15,7 +15,7 @@ const PerfumeDetailPage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    axios.get(`/perfume/detail/${USERID}/${id}`).then((res) => {
+    axios.get(`/perfume/detail/${id}`).then((res) => {
       setPerfume(res.data);
       console.log(res.data);
     });

@@ -143,7 +143,7 @@ const ProfileUpdate = () => {
         <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>
       </MarginFrame>
       <CenterBackground>
-        <FixedPostButton background="primary" color="primary" fontweight="700">
+        <FixedPostButton background="primary" color="primary" fontWeight="700">
           수정하기
         </FixedPostButton>
       </CenterBackground>

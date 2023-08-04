@@ -59,11 +59,11 @@ export const MyDrawerPage = () => {
         <>
           <MarginFrame margin="240px 10px" />
           <CenterFrame direction="column">
-            <DrawerText size="25px" fontweight="700">
+            <DrawerText size="25px" fontWeight="700">
               아직 향수가 없어요 😥
             </DrawerText>
             <MarginFrame margin="8px 0 0" />
-            <DrawerText size="18px" color="var(--gray-color)" fontweight="600">
+            <DrawerText size="18px" color="var(--gray-color)" fontWeight="600">
               가지고 있는 향수를 서랍에 담아보세요.
             </DrawerText>
             <MarginFrame margin="50px 0 0" />
@@ -74,14 +74,14 @@ export const MyDrawerPage = () => {
         <>
           <MarginFrame margin="30px 10px">
             <CenterFrame direction="column">
-              <DrawerText size="25px" fontweight="700">
+              <DrawerText size="25px" fontWeight="700">
                 이런 향수들을 좋아하시는군요 ?
               </DrawerText>
               <MarginFrame margin="8px 0 0" />
               <DrawerText
                 size="16px"
                 color="var(--gray-color)"
-                fontweight="500"
+                fontWeight="500"
               >
                 서랍에 담긴 향수를 기반으로 추천해드릴게요.
               </DrawerText>
@@ -106,14 +106,14 @@ export const MyDrawerPage = () => {
 
 interface TextProp {
   size?: string;
-  fontweight?: string;
+  fontWeight?: string;
   color?: string;
 }
 
 const Button = styled.div``;
 const DrawerText = styled.div<TextProp>`
   font-size: ${(props) => props.size};
-  font-weight: ${(props) => props.fontweight};
+  font-weight: ${(props) => props.fontWeight};
   color: ${(props) => props.color};
 `;
 

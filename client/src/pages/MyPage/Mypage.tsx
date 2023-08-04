@@ -20,14 +20,14 @@ const perfumeImages = [
 
 interface TextProp {
   size?: string;
-  fontweight?: string;
+  fontWeight?: string;
   color?: string;
   textalign?: string;
 }
 
 const MypageText = styled.div<TextProp>`
   font-size: ${(props) => props.size || 'inherit'};
-  font-weight: ${(props) => props.fontweight || 'normal'};
+  font-weight: ${(props) => props.fontWeight || 'normal'};
   color: ${(props) => props.color || 'inherit'};
   text-align: ${(props) => props.textalign || 'left'};
 `;
@@ -69,7 +69,7 @@ export default function Mypage() {
       <MarginFrame margin="10px 0">
         <OptionMenu />
         <ProfileImage />
-        <MypageText size="18px" fontweight="bold" textalign="center">
+        <MypageText size="18px" fontWeight="bold" textalign="center">
           김수민
         </MypageText>
         <LikesUnlikes />

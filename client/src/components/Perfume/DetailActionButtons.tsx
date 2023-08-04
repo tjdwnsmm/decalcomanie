@@ -16,7 +16,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   return (
     <MarginFrame margin="30px 0 20px ">
       <CenterFrame>
-        <ConfirmButton fontweight="600" onClick={handleOpenModal}>
+        <ConfirmButton fontWeight="600" onClick={handleOpenModal}>
           자세한 노트 정보 확인하기
         </ConfirmButton>
       </CenterFrame>
@@ -25,7 +25,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         <ConfirmButton
           color="primary"
           background="primary"
-          fontweight="500"
+          fontWeight="500"
           onClick={handleFeed}
         >
           다른 사용자들의 글을 구경해보세요
