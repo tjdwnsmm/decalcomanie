@@ -196,6 +196,7 @@ const SearchTabPage: React.FC = () => {
     setSearchResults(null);
     const filterDatas = await filterSearch(filter);
     setSearchResults(filterDatas); // 검색 결과
+    localStorage.setItem('searchResults', JSON.stringify(filterDatas));
   };
 
   /**
@@ -240,11 +241,14 @@ const SearchTabPage: React.FC = () => {
               {/* 검색 결과 */}
 
               {searchResults ? (
-                <SearchResults
-                  results={searchResults}
-                  isButton={false}
-                  addUrl=""
-                />
+                <>
+                  <SearchResults
+                    results={searchResults}
+                    isButton={false}
+                    addUrl=""
+                  />
+                  <MarginFrame margin="100px 0"></MarginFrame>
+                </>
               ) : (
                 <MarginFrame margin="120px auto">
                   <Spinner />
