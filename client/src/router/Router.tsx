@@ -13,25 +13,29 @@ import MainPage from '../pages/MainPage/MainPage';
 import ProfileUpdate from '../pages/MyPage/ProfileUpdate';
 import LoginPage from '../pages/LoginPage/LoginPage';
 import KakaoAuthHandle from '../pages/LoginPage/KakaoAuthHandler';
-import KakaoAuthRefreshHandle from '../pages/LoginPage/KakaoAuthRefreshHandler';
+import PrivateRoute from './PrivateRoute';
+
 export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />}></Route>
-        <Route path="/" element={<MainPage />}></Route>
-        <Route path="/main-feed" element={<MainFeed />}></Route>
-        <Route path="/perfume-feed/:id" element={<PerfumeFeed />}></Route>
-        <Route path="/search" element={<SearchTabPage />}></Route>
-        <Route path="/search-myperfume" element={<SearchMyPerfume />}></Route>
-        <Route path="/post" element={<Post />}></Route>
-        <Route path="/mypage" element={<Mypage />}></Route>
-        <Route path="/post-detail/:id" element={<PostDetail />}></Route>
-        <Route path="/perfume-detail/:id" element={<PerfumeDetail />}></Route>
-        <Route path="/my-drawer" element={<MyDrawerPage />}></Route>
-        {/* <Route path="/follow-list" element={<FollowList />}></Route> */}
-        <Route path="/profile-update" element={<ProfileUpdate />}></Route>
         <Route path="/oauth/kakao/callback" element={<KakaoAuthHandle />} />
+
+        <Route element={<PrivateRoute />}>
+          <Route path="/" element={<MainPage />}></Route>
+          <Route path="/main-feed" element={<MainFeed />}></Route>
+          <Route path="/perfume-feed/:id" element={<PerfumeFeed />}></Route>
+          <Route path="/search" element={<SearchTabPage />}></Route>
+          <Route path="/search-myperfume" element={<SearchMyPerfume />}></Route>
+          <Route path="/post" element={<Post />}></Route>
+          <Route path="/mypage" element={<Mypage />}></Route>
+          <Route path="/post-detail/:id" element={<PostDetail />}></Route>
+          <Route path="/perfume-detail/:id" element={<PerfumeDetail />}></Route>
+          <Route path="/my-drawer" element={<MyDrawerPage />}></Route>
+          {/* <Route path="/follow-list" element={<FollowList />}></Route> */}
+          <Route path="/profile-update" element={<ProfileUpdate />}></Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
