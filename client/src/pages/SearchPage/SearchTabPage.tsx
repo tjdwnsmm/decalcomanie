@@ -196,7 +196,7 @@ const SearchTabPage: React.FC = () => {
     setSearchResults(null);
     const filterDatas = await filterSearch(filter);
     setSearchResults(filterDatas); // 검색 결과
-    localStorage.setItem('searchResults', JSON.stringify(filterDatas));
+    // localStorage.setItem('searchResults', JSON.stringify(filterDatas));
   };
 
   /**
