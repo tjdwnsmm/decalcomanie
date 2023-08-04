@@ -7,7 +7,7 @@ import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
 import { useNavigate } from 'react-router-dom';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import Spinner from '../../components/common/Spinner';
-import axios, { USERID } from '../../api/apiController';
+import axios from '../../api/apiController';
 
 export interface Perfume {
   name: string;

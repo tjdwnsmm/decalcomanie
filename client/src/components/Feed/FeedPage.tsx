@@ -7,7 +7,6 @@ import {
 import PerfumeInfoBox from '../Perfume/PerfumeInfoBox';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
-import { USERID } from '../../api/apiController';
 import { useEffect, useState } from 'react';
 import FollowBtn from '../Button/FollowBtn';
 
@@ -54,12 +53,10 @@ const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
               likeUrl="/sns/like"
               dislikeUrl="/sns/dislike"
               articleId={feed.articleDtos.articleId}
-              userId={USERID}
             />
             <ScrapBtn
               isScrap={feed.bookmarked}
               articleId={feed.articleDtos.articleId}
-              userId={USERID}
             />
           </IconBox>
         </InfoBox>
