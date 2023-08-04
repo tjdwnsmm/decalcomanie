@@ -8,6 +8,7 @@ import com.eightlow.decalcomanie.sns.dto.response.Response;
 import org.springframework.http.ResponseEntity;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +20,7 @@ public interface IArticleService {
     int createArticle(ArticleDto articleDto);
     void createArticlePerfume(int articleId, List<Integer> perfumes);
 
-    int updateArticle(ArticleDto articleDto);
+    int updateArticle(ArticleDto articleDto, String userId);
 
     int deleteArticle(String userId, int articleId);
     void deleteArticlePerfumeByArticleId(int articleId);
@@ -39,7 +40,9 @@ public interface IArticleService {
     void createComment(CommentDto commentDto);
     ResponseEntity<Response> updateComment(CommentDto commentDto);
     int deleteComment(CommentDto commentDto);
-    void modifyCommentCount(int articleId);
+    void increaseCommentCount(int articleId);
+
+    void decreaseCommentCount(int articleId);
 
     List<CommentDto> getComments(int articleId);
 
@@ -56,4 +59,7 @@ public interface IArticleService {
     boolean checkHeartArticle(int articleId, String userId);
 
     boolean checkBookmarkArticle(int articleId, String userId);
+
+
+    String getUserIdFromRequest(HttpServletRequest request);
 }
