@@ -20,6 +20,7 @@ public class SecurityConfig {
 
     private final JwtService jwtService;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final CorsConfig corsConfig;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -27,13 +28,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                .addFilter(corsConfig.corsFilter())
                 .httpBasic().disable()
                 .csrf().disable()
-                .cors().and()
                 .authorizeRequests()
+<<<<<<< HEAD
                 //.antMatchers("/oauth/**").permitAll()
                 .antMatchers("/**").permitAll()
                 //.anyRequest().authenticated()
+=======
+//                .antMatchers("/**").permitAll()
+                .antMatchers("/oauth/**").permitAll()
+                .anyRequest().authenticated()
+>>>>>>> f301386c0bc624e63e9f6cd9d4a6a368bc40a534
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
