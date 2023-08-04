@@ -114,6 +114,15 @@ const SearchBar: React.FC<SearchBoxProps> = ({
     setIsSearch(false);
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    //향수 이름 검색에 ENTER 지원
+    if (e.key === 'Enter' && dataList) {
+      setKeyword('');
+      onSearch(keyword, true);
+      setIsSearch(false);
+    }
+  };
+
   return (
     <>
       <SearchBox>
@@ -122,6 +131,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
           value={keyword}
           onChange={handleKeywordChange}
           placeholder={placeholder}
+          onKeyDown={handleKeyPress}
         />
         {keyword && (
           <ExitBox onClick={clearKeyword}>
