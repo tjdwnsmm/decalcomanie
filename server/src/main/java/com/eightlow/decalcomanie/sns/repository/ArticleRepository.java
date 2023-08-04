@@ -28,16 +28,6 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Transactional
     List<Article> findArticlesOrderByCreateTime();
 
-    @Modifying(clearAutomatically = true)
-    @Transactional
-    @Query("UPDATE Article a SET a.comment = a.comment + 1 WHERE a.articleId = :articleId")
-    void increaseCommentCount(@Param("articleId") int articleId);
-
-    @Modifying(clearAutomatically = true)
-    @Transactional
-    @Query("UPDATE Article a SET a.comment = a.comment - 1 WHERE a.articleId = :articleId")
-    void decreaseCommentCount(@Param("articleId") int articleId);
-
     @Modifying
     @Transactional
     @Query("UPDATE Article a SET a.heart = a.heart + 1 WHERE a.articleId = :articleId")

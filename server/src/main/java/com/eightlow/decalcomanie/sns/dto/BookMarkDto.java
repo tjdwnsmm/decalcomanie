@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.repository.Modifying;
 
 @Getter
-@SuperBuilder(toBuilder = true)
+@SuperBuilder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
