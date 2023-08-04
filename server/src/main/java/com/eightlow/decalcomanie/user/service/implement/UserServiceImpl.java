@@ -2,7 +2,9 @@ package com.eightlow.decalcomanie.user.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
+import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
@@ -18,12 +20,12 @@ import com.eightlow.decalcomanie.user.repository.UserPerfumeRepository;
 import com.eightlow.decalcomanie.user.repository.UserRepository;
 import com.eightlow.decalcomanie.user.repository.UserScentRepository;
 import com.eightlow.decalcomanie.user.service.IUserService;
+import com.mysema.commons.lang.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -37,6 +39,7 @@ public class UserServiceImpl implements IUserService {
     private final FollowMapper followMapper;
     private final UserMapper userMapper;
     private final ScentMapper scentMapper;
+    private final PerfumeRepository perfumeRepository;
 
     @Override
     public String modifyUserPerfume(UserPerfume userPerfume) {
@@ -167,6 +170,21 @@ public class UserServiceImpl implements IUserService {
     // 사용자 개인 추천 향수
     @Override
     public List<PerfumeDto> recommendUserPerfume(String userId) {
+        // 사용자 향 단위 벡터 계산
+        List<Double> userPerfumeVector = userAccordVector(userId);
+        // 사용자 향과 모든 향수 유사도 계산
+        List<Pair<PerfumeDto, Double>> result = caclulate(userPerfumeVector);
+        // 탑 10 추출
+        List<PerfumeDto> perfumeList = new ArrayList<>();
+        for (Pair<PerfumeDto, Double> pair : result) {
+            perfumeList.add(pair.getFirst());
+        }
+        // result의 상단 10개하여 반환
+        return perfumeList.subList(0, Math.min(result.size(),10));
+    }
+
+    // 사용자 향 단뒤 벡터 계산
+    public List<Double> userAccordVector(String userId) {
         // 사용자가 보유하고 있는 향수 정보를 가져온다.
         List<UserPerfume> userPerfumes = userPerfumeRepository.findByUserId(userId);
         List<PerfumeDto> result = new ArrayList<>();
@@ -177,8 +195,52 @@ public class UserServiceImpl implements IUserService {
 
         System.out.println(result.toArray());
 
+        return null;
+    }
+
+    // 향리스트를 향퍼센트 리스트로 변환해주는 함수
+    public List<Double> sumAccordWeight(List<ScentDto> accordlist){
+        List<Double> result = new ArrayList<>();
+        int sum = 0;
+        for(ScentDto scentDto : accordlist){
+            sum += scentDto.getWeight();
+        }
+        for(ScentDto scentDto : accordlist){
+            Double accordPercent = (double) scentDto.getWeight() / (double) sum;
+            result.add(accordPercent);
+        }
         return result;
     }
 
+    // 고정 값 리스트들을 퍼센트 리스트로 변환 해주는 함수
+    public List<Double> staticListToPercentList(List<Double> staticList){
+        List<Double> result = new ArrayList<>();
+        Double sum = 0.0;
+        for(double a : staticList){
+            sum += a;
+        }
+        for(double b : staticList){
+            Double percent = b / sum;
+            result.add(percent);
+        }
+        return result;
+    }
+
+    // 모든 향수들과 유사도를 계산하는 함수
+    public List<Pair<PerfumeDto,Double>> caclulate(List<Double> userPerfumeVector){
+        List<Pair<PerfumeDto,Double>> result = new ArrayList<>();
+        // 1. 모든 향수를 불러오기
+        List<Perfume> allPerfume = perfumeRepository.findAll();
+        // 2. 각 향수와 유저 벡터와 곱하여 계산하고 결과 데이터에 추가
+        for(Perfume perfume : allPerfume) {
+            double sum = 0.0;
+            for(Double userAccordWeight : userPerfumeVector){
+
+            }
+            result.add(new Pair<>(new PerfumeDto(perfume),sum));
+        }
+        // 3. 결과데이터를 유사도를 기준으로 정렬
+        return result;
+    }
 
 }
