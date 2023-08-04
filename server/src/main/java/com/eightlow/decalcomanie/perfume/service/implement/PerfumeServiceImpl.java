@@ -43,6 +43,9 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return mergePerfumeDetails(perfumeRepository.findOneByPerfumeId(perfumeId));
     }
 
+    @Override
+    public List<PerfumeDto> findAllPerfume() { return perfumeMapper.toDto(perfumeRepository.findAll()); }
+
     // 전체 브랜드 조회
     @Override
     public List<BrandDto> findAllBrand() {
