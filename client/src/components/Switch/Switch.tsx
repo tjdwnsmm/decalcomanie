@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { styled as MUstyled } from '@mui/material/styles';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -63,14 +64,22 @@ const Section = styled.div`
   }
 `;
 
-export default function CustomizedSwitches() {
+export default function CustomizedSwitches({ isChecked, setIsChecked }) {
+  const handleToggle = () => {
+    setIsChecked((prev) => !prev);
+  };
+
   return (
     <Section>
       <div className="title">
         공병<Tooltip></Tooltip>
       </div>
       <FormGroup>
-        <FormControlLabel control={<Android12Switch />} label="" />
+        <FormControlLabel
+          onChange={handleToggle}
+          control={<Android12Switch checked={isChecked} />}
+          label=""
+        />
       </FormGroup>
     </Section>
   );

@@ -1,23 +1,29 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
-import { PostButton, CancleButton } from '../../components/Button/Button.js';
+import axios from '../../api/apiController';
 import CustomizedSwitches from '../../components/Switch/Switch.js';
 import ContextBox from '../../components/Box/AddContext.js';
 import AddRating from '../../components/Rating/Rating.js';
-import AddCarousel from '../../components/Box/AddCarousel.js';
+import {
+  AddCarousel,
+  NonAddCarousel,
+} from '../../components/Box/AddCarousel.js';
 import { ConfirmButton, Main, MarginFrame } from '../../style/index.js';
-import { ReactComponent as CancelSvg } from '../../assets/img/close.svg';
-import { useNavigate } from 'react-router-dom';
 
-const perfumes = [
+interface PerfumesProps {
+  perfumeId: [number];
+  content: string;
+  rate: [number];
+  userId: string;
+}
+
+const perfumes: PerfumesProps[] = [
   {
-    brand: '아쿠아 디 파르마',
-    name: '미르토 디 파나레아',
-    img: 'src/assets/img/perfume_aqua.png',
-  },
-  {
-    brand: '딥디크',
-    name: '오 드 퍼퓸 도손',
-    img: 'src/assets/img/perfume_doson.png',
+    perfumeId: [12],
+    content: 'test content',
+    rate: [4.5],
+    userId: '07161c43-bc03-44f6-95c1-a56d440a23bf',
   },
 ];
 
@@ -53,32 +59,61 @@ const LeftTitleAlign = styled(TitleAlign)`
 
 export default function Post() {
   const navigate = useNavigate();
+  const [isChecked, setIsChecked] = useState<boolean>(true);
 
-  // test alert
-  const postAlert = () => {
-    alert('글을 등록하시겠습니까?');
+  const [perfumeId, setPerfumeId] = useState<number[]>([]);
+  const [content, setContent] = useState<string>('');
+  const [rate, setRate] = useState<number[]>([]);
+  const userId = '07161c43-bc03-44f6-95c1-a56d440a23bf';
+
+  // 글 내용 변경 콜백 함수
+  const handleContentChange = (newContent: string) => {
+    setContent(newContent);
   };
 
-  const cancleAlert = () => {
-    alert('취소하시겠습니까?');
-    navigate('/main-feed');
+  // 글 등록하기 버튼을 클릭했을 때 호출되는 함수
+  const handlePostClick = async () => {
+    try {
+      const requestData = {
+        // 향수 임베디드 전 테스트 용도
+        perfumeId: perfumes[0].perfumeId,
+        content,
+        // 향수 임베디드 전 테스트 용도
+        rate: perfumes[0].rate,
+        userId,
+      };
+
+      const response = await axios.post('/sns/create/', requestData, {});
+
+      console.log('API 응답:', response.data);
+      // 작성 글 상세 페이지로 이동
+      navigate(`/post-detail/${response.data.articleId}`);
+    } catch (error) {
+      console.error('API 요청 전송 에러:', error);
+    }
   };
 
   return (
     <Main>
       <PostTitle>
         <TitleAlign>글 작성하기</TitleAlign>
-        <CancelSvg onClick={() => cancleAlert()} />
       </PostTitle>
       <div>
-        <AddCarousel perfumes={perfumes} />
-        <CustomizedSwitches></CustomizedSwitches>
+        {isChecked ? <AddCarousel perfumes={perfumes} /> : <NonAddCarousel />}
+        {perfumes.length === 0 ? (
+          <CustomizedSwitches
+            isChecked={!isChecked}
+            setIsChecked={setIsChecked}
+          />
+        ) : (
+          <CustomizedSwitches isChecked={!isChecked} setIsChecked={!isChecked}/>
+        )}
       </div>
 
       <PostBody>
         <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
-        <ContextBox />
-        {perfumes.length !== 0 && (
+        <ContextBox onContentChange={handleContentChange} />
+        {isChecked && perfumes.length !== 0 && (
           <MarginFrame margin="15px 0">
             <LeftTitleAlign>평점</LeftTitleAlign>
             <MarginFrame margin="10px 0 40px">
@@ -88,10 +123,14 @@ export default function Post() {
         )}
       </PostBody>
       <Buttons>
-        <ConfirmButton color="primary" background="primary" onClick={postAlert}>
+        <ConfirmButton
+          color="primary"
+          background="primary"
+          onClick={handlePostClick}
+        >
           글 등록하기
         </ConfirmButton>
-        <ConfirmButton onClick={cancleAlert}>취소</ConfirmButton>
+        <ConfirmButton>취소</ConfirmButton>
       </Buttons>
     </Main>
   );
@@ -101,7 +140,7 @@ const Buttons = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-contents: center;
+  justify-content: center;
   gap: 10px;
   padding-bottom: 10px;
 `;

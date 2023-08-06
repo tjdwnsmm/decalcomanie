@@ -19,26 +19,23 @@ interface PerfumeReviewCarouselProps {
 const EmptyBox = styled.div`
   display: flex;
   justify-content: center;
-  justify-content: center;
   align-items: center;
   width: 340px;
   height: 140px;
   background-color: var(--white-color);
+  border-radius: 10px;
 `;
 
-const NotEmptyBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 340px;
-  height: 140px;
-  border: 1.25px dashed var(--primary-color);
-  margin: 5px 5px;
-  border-radius: 10px;
+const NonEmptyBox = styled(EmptyBox)`
+  background-color: var(--gray-color);
+  opacity: 55%;
 `;
 
 const StyledAddButtonSvg = styled(AddButtonSvg)`
   margin-top: 15px;
+`;
+
+const ClickableAddButtonSvg = styled(StyledAddButtonSvg)`
   &:hover {
     cursor: pointer;
   }
@@ -55,15 +52,6 @@ const TextArea = styled.span`
   height: 140px;
 `;
 
-const Button = styled.button`
-  background: none;
-  border: none;
-  color: var(--primary-color);
-  font-size: 25px;
-  font-weight: bold;
-  cursor: pointer;
-  opacity: 80%;
-`;
 // ---------------------------------------------
 const PerfumeReviewBoxContainer = styled.div`
   display: flex;
@@ -109,6 +97,7 @@ interface ReviewBoxProps {
   name: string;
   img: string;
 }
+
 function PerfumeReviewBox({ brand, name, img }: ReviewBoxProps) {
   return (
     <CenterFrame>
@@ -125,7 +114,7 @@ function PerfumeReviewBox({ brand, name, img }: ReviewBoxProps) {
   );
 }
 
-export default function AddCarousel({ perfumes }: PerfumeReviewCarouselProps) {
+export function AddCarousel({ perfumes }: PerfumeReviewCarouselProps) {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const navigate = useNavigate();
 
@@ -136,7 +125,7 @@ export default function AddCarousel({ perfumes }: PerfumeReviewCarouselProps) {
           <EmptyBox>
             <TextArea>
               향수를 추가해주세요
-              <StyledAddButtonSvg
+              <ClickableAddButtonSvg
                 onClick={() => {
                   navigate('/search-myperfume');
                 }}
@@ -165,19 +154,44 @@ export default function AddCarousel({ perfumes }: PerfumeReviewCarouselProps) {
             />
           ))}
           <CenterFrame>
-            <NotEmptyBox>
+            <EmptyBox>
               <TextArea>
                 향수를 추가해주세요
-                <StyledAddButtonSvg
+                <ClickableAddButtonSvg
                   onClick={() => {
                     navigate('/search-myperfume');
                   }}
                 />
               </TextArea>
-            </NotEmptyBox>
+            </EmptyBox>
           </CenterFrame>
         </Carousel>
       )}
+    </CarouselBox>
+  );
+}
+
+export function NonAddCarousel() {
+  return (
+    <CarouselBox>
+      <Carousel
+        // 캐러셀 설정
+        numberOfCards={1}
+        leftChevron={<PrevSvg />}
+        rightChevron={<NextSvg />}
+        chevronWidth={80}
+        showSlither={false}
+        outsideChevron={false}
+      >
+        <CenterFrame>
+          <NonEmptyBox>
+            <TextArea>
+              향수를 추가해주세요
+              <StyledAddButtonSvg />
+            </TextArea>
+          </NonEmptyBox>
+        </CenterFrame>
+      </Carousel>
     </CarouselBox>
   );
 }
