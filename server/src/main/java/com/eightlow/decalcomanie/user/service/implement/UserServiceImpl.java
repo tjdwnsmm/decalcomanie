@@ -187,6 +187,7 @@ public class UserServiceImpl implements IUserService {
     public List<Double> userAccordVector(String userId) {
         // 사용자가 보유하고 있는 향수 정보를 가져온다.
         List<UserPerfume> userPerfumes = userPerfumeRepository.findByUserId(userId);
+<<<<<<< HEAD
         List<PerfumeDto> result = new ArrayList<>();
 
         for(UserPerfume perfume : userPerfumes) {
@@ -196,6 +197,34 @@ public class UserServiceImpl implements IUserService {
         System.out.println(result.toArray());
 
         return null;
+=======
+        // 사용자의 향수 x 향 테이블
+        List<List<Double>> userPerfumePercentTable = new ArrayList<>();
+
+        // 사용자의 향수 x 향 테이블 계산
+        for(UserPerfume perfume : userPerfumes) {
+            PerfumeDto userPerfume = perfumeService.getPerfume(perfume.getPerfumeId());
+            List<Double> accordPercent = sumAccordWeight(userPerfume.getAccord());
+            userPerfumePercentTable.add(accordPercent);
+        }
+
+        List<Double> userAccordPercent = new ArrayList<>();
+        // 사용자의 향 벡터 계산
+        // 향 별 계산
+        for(int i=0; i<= userPerfumePercentTable.get(0).size(); i++){
+            Double accordSum = 0.0;
+            // 사용자별 계산
+            for(List<Double> userPerfumePercent : userPerfumePercentTable){
+                accordSum += userPerfumePercent.get(i);
+            }
+            userAccordPercent.add(accordSum);
+        }
+        List<Double> result = new ArrayList<>();
+        result = staticListToPercentList(userAccordPercent);
+
+
+        return result;
+>>>>>>> b159bdcb66d67cb0dc5d2205a08b47199d4d281b
     }
 
     // 향리스트를 향퍼센트 리스트로 변환해주는 함수
