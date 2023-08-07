@@ -5,7 +5,7 @@ import FollowBtn from '../Button/FollowBtn';
 import { PostModalBtn } from '../Button/PostModalBtn';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
-import { USERID } from '../../api/apiController';
+import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 /**
 @summary
@@ -124,7 +124,7 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
   } = postInfo;
 
   const hasScent = userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
-  const isMyPost = USERID === articleDto.userId;
+  const isMyPost = getLoggedInUserNickname() === userInfoDto.user.nickname;
 
   return (
     <PostInfoBoxContainer>
@@ -163,9 +163,8 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
           likeUrl="/sns/like"
           dislikeUrl="/sns/dislike"
           articleId={articleDto.articleId}
-          userId={USERID}
         />
-        <ScrapBtn articleId={articleDto.articleId} userId={USERID} isScrap={bookmarked} />
+        <ScrapBtn articleId={articleDto.articleId} isScrap={bookmarked} />
       </IconBox>
       <CommentCount>
         {articleDto.comment === 0 ? '댓글이 없습니다.' : `${articleDto.comment}개의 댓글`}
