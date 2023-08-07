@@ -67,6 +67,13 @@ const SearchTabPage: React.FC = () => {
   };
 
   useEffect(() => {
+    axios.get('/perfume/search/names').then((res) => {
+      const fullNames = res.data;
+      setOriginSearchResults(fullNames);
+    });
+  }, []);
+
+  useEffect(() => {
     if (newSearch && searchResults && searchResults.length > 0) {
       const sortedResults = sortResults(searchResults);
       setSearchResults(sortedResults);

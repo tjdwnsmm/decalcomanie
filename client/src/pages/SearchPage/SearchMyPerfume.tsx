@@ -9,6 +9,7 @@ import { useFetchDatas } from '../../components/Search/useFetchData';
 import useIntersect from '../../hooks/useIntersect';
 import { styled } from 'styled-components';
 import Spinner from '../../components/common/Spinner';
+import FloatingTopBtn from '../../components/Button/FloatingTopBtn';
 
 const SearchMyPerfume: React.FC = () => {
   //현재 검색할 단어
@@ -37,6 +38,12 @@ const SearchMyPerfume: React.FC = () => {
     }
   });
 
+  useEffect(() => {
+    axios.get('/perfume/search/names').then((res) => {
+      const fullNames = res.data;
+      setOriginSearchResults(fullNames);
+    });
+  }, []);
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
    */
@@ -84,12 +91,16 @@ const SearchMyPerfume: React.FC = () => {
       />
       {searchKeyword.length === 0 &&
         (newSearch ? (
-          searchResults?.length > 0 && (
+          searchResults?.length > 0 ? (
             <SearchResults
               results={searchResults}
               isButton={true}
               addUrl="/user/perfume/manage"
             />
+          ) : (
+            <MarginFrame margin="120px auto">
+              <Spinner />
+            </MarginFrame>
           )
         ) : datas.length > 0 ? (
           <>
@@ -107,6 +118,7 @@ const SearchMyPerfume: React.FC = () => {
             <Spinner />
           </MarginFrame>
         ))}
+      <FloatingTopBtn />
     </Main>
   );
 };
