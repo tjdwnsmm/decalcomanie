@@ -1,5 +1,6 @@
 package com.eightlow.decalcomanie.perfume.dto;
 
+import com.eightlow.decalcomanie.perfume.entity.Brand;
 import lombok.*;
 
 import java.util.List;

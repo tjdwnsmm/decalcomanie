@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
+
 @Getter
 @Builder(toBuilder = true)
 @Entity
@@ -24,8 +26,9 @@ public class Perfume {
     @Column(name = "nameOrg")
     private String nameOrg;
 
-    @Column(name = "brandId")
-    private int brandId;
+    @ManyToOne
+    @JoinColumn(name = "brandId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Brand brand;
 
     @Column(name = "picture")
     private String picture;
@@ -45,4 +48,11 @@ public class Perfume {
     @Column(name = "pick")
     private int pick;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "perfumeId")
+    private List<Accord> accord;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "perfumeId")
+    private List<NoteList> note;
 }

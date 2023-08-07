@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -22,13 +19,15 @@ public class NoteList {
     @Column(name = "noteListId")
     private int noteListId;
 
-    @Column(name = "perfumeId")
-    private int perfumeId;
+    @ManyToOne
+    @JoinColumn(name = "perfumeId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Perfume perfume;
 
     @Column(name = "type")
     private String type;
 
-    @Column(name = "noteId")
-    private int noteId;
+    @ManyToOne
+    @JoinColumn(name = "noteId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Note note;
 
 }

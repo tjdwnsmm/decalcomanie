@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -24,10 +21,12 @@ public class Accord {
     @Column(name = "weight")
     private float weight;
 
-    @Column(name = "perfumeId")
-    private int perfumeId;
+    @ManyToOne
+    @JoinColumn(name = "perfumeId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Perfume perfume;
 
-    @Column(name = "scentId")
-    private int scentId;
+    @ManyToOne
+    @JoinColumn(name = "scentId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Scent scent;
 }
 
