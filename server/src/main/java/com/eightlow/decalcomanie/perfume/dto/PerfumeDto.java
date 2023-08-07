@@ -38,4 +38,5 @@ public class PerfumeDto {
     private List<ScentDto> accord;
 
     private List<NoteListDto> note;
+
 }
