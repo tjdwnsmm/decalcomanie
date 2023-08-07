@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { commentDto, commmentUsers } from '../../types/PostInfoType';
-import { PostModalBtn } from '../Button/PostModalBtn';
+import CommentModalBtn from '../Button/CommentModalBtn';
+import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface CommentBoxProps {
   comment: commentDto;
@@ -86,10 +87,7 @@ const getTimeString = (elapsedTime: number, createdAt: string): string => {
 };
 
 const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
-  // 요청보낸 사람이 댓글 작성자일 때만 수정/삭제 나오도록
-  // 임시로 설정
-  // const CurrentUser = '복이';
-  // const isWriter = comment.writer === CurrentUser ? true : false;
+  const isMyComment = getLoggedInUserNickname() === commentUser.user.nickname;
 
   const [elapsedTime, setElapsedTime] = useState(
     getElapsedTime(comment.createdAt),
@@ -123,7 +121,7 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
         </InfoBox>
         <Content>{comment.content}</Content>
       </CommentContent>
-      {/* {isWriter && <PostModalBtn />} */}
+      {isMyComment && <CommentModalBtn comment={comment}/>}
     </CommentBoxContainer>
   );
 };
