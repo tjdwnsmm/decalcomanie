@@ -6,11 +6,12 @@ import { ReactComponent as SearchSvg } from '../../assets/icon/search.svg';
 import Spinner from '../common/Spinner';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import axios from '../../api/apiController';
+import { AutoSearch } from '../../types/SearchType';
 
 interface SearchBoxProps {
   onSearch: (keyword: string, booleanCheck: boolean) => void;
   placeholder: string;
-  dataList?: PerfumeDetail[] | null;
+  dataList?: AutoSearch[] | null;
   fetchURL?: string;
 }
 
@@ -84,11 +85,11 @@ const SearchBar: React.FC<SearchBoxProps> = ({
     if (dataList) {
       const filteredResults = dataList
         .filter(
-          (list: PerfumeDetail) =>
+          (list: AutoSearch) =>
             list.nameOrg.toLowerCase().includes(keyword.toLowerCase()) ||
             list.name.includes(keyword),
         )
-        .map((perfume: PerfumeDetail) => perfume.name)
+        .map((perfume: AutoSearch) => perfume.name)
         .slice(0, 8);
       setSearchResults(filteredResults);
       setIsFetching(false);
@@ -115,6 +116,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
+    console.log(e);
     //향수 이름 검색에 ENTER 지원
     if (e.key === 'Enter' && dataList) {
       setKeyword('');

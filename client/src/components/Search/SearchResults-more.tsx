@@ -46,7 +46,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       {!loading && results?.length ? (
         <PerfumeList>
           {results.map((feed) => (
-            <div key={feed.perfumeId}>
+            <div>
               <PerfumeBox>
                 <PerfumeInfo onClick={() => handleClick(feed.perfumeId)}>
                   <ImgBox>
