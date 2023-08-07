@@ -12,6 +12,7 @@ import javax.persistence.*;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "userscent")
 public class UserScent {
     @Id
     @Column(name="userScentId")
