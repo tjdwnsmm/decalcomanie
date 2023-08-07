@@ -244,13 +244,14 @@ public class ArticleServiceImpl implements IArticleService {
     @Transactional
     public void createComment(CommentDto commentDto) {
         log.info("ArticleServiceImpl::: createComment start");
-        Comment comment = commentRepository.save(commentMapper.toEntity(commentDto));
+
+        commentRepository.save(commentMapper.toEntity(commentDto));
 
         // TODO: 댓글 갯수 하나 늘려 주는 부분 추가 필요
         // 게시물의 heart갯수 + 1
         articleRepository.increaseCommentCount(commentDto.getArticleId());
 
-        log.info("ArticleServiceImpl::: finish ", String.valueOf(comment));
+        log.info("ArticleServiceImpl::: finish ");
     }
 
     @Override

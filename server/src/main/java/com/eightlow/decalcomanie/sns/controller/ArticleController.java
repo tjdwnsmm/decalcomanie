@@ -266,7 +266,7 @@ public class ArticleController {
     /* 댓글 작업 part*/
     // 댓글 작성
     @PostMapping("/comment/create")
-    public ResponseEntity<Response> createComment(@RequestBody CommentRequest commentRequest, HttpServletRequest req) {
+    public ResponseEntity<List<CommentDto>> createComment(@RequestBody CommentRequest commentRequest, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
         CommentRequest creq = commentRequest.toBuilder()
                 .userId(userId)
@@ -275,11 +275,12 @@ public class ArticleController {
         CommentDto commentDto = commentDtoMapper.fromCommentRequest(creq);
 
         articleService.createComment(commentDto);
+
+        // 전체 댓글 리스트 반환을 위한 댓글 조회 (최적화로 쓴 댓글만 보내주도록 하면 되지 않을까?)
+        List<CommentDto> comments = articleService.getComments(creq.getArticleId());
+
 //        return ResponseEntity.status(HttpStatus.OK).body();
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(Response.builder()
-                        .message("댓글이 정상 등록되었습니다.")
-                        .build());
+        return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
 
     // 댓글 수정
