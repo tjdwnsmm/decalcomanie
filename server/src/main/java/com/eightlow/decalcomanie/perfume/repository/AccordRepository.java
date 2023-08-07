@@ -14,8 +14,8 @@ public interface AccordRepository extends JpaRepository<Accord, Integer> {
 
     Accord findOneByAccordId(int accordId);
 
-    @Query("SELECT perfumeId FROM Accord WHERE scentId = :scentId")
+    @Query("SELECT a.perfume.perfumeId FROM Accord a WHERE a.scent.scentId = :scentId")
     List<Integer> findPerfumeIdsByScentId(@Param(value="scentId") int scentId);
 
-    List<Accord> findAllByPerfumeId(int perfumeId);
+    List<Accord> findAllByPerfume_PerfumeId(int perfumeId);
 }

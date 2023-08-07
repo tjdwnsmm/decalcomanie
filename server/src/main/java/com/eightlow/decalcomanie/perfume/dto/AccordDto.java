@@ -1,5 +1,7 @@
 package com.eightlow.decalcomanie.perfume.dto;
 
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
+import com.eightlow.decalcomanie.perfume.entity.Scent;
 import lombok.*;
 
 @Getter
@@ -11,7 +13,7 @@ public class AccordDto {
 
     private float weight;
 
-    private int perfumeId;
+    private Perfume perfume;
 
-    private int scentId;
+    private Scent scent;
 }

@@ -1,18 +1,15 @@
 package com.eightlow.decalcomanie.perfume.entity;
 
-import com.eightlow.decalcomanie.perfume.dto.request.PerfumePickRequest;
+import com.eightlow.decalcomanie.perfume.dto.PerfumePickId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@IdClass(PerfumePickRequest.class)
+@IdClass(PerfumePickId.class)
 @Getter
 @Builder(toBuilder = true)
 @AllArgsConstructor
@@ -23,5 +20,7 @@ public class PerfumePick {
     private String userId;
 
     @Id
-    private int perfumeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "perfumeId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Perfume perfume;
 }

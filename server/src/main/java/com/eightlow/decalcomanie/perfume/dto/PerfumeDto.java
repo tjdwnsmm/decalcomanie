@@ -1,5 +1,6 @@
 package com.eightlow.decalcomanie.perfume.dto;
 
+import com.eightlow.decalcomanie.perfume.entity.Brand;
 import lombok.*;
 
 import java.util.List;
@@ -38,5 +39,7 @@ public class PerfumeDto {
     private List<ScentDto> accord;
 
     private List<NoteListDto> note;
+
+    private List<OccasionDto> occasion;
 
 }

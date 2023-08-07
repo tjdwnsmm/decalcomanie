@@ -4,6 +4,7 @@ import com.eightlow.decalcomanie.perfume.dto.BrandDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
+import com.eightlow.decalcomanie.perfume.dto.response.PerfumeNameResponse;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -91,6 +92,11 @@ public class PerfumeApiController {
     @GetMapping("/picked")
     public ResponseEntity<List<PerfumeDto>> picked(HttpServletRequest req) {
         return new ResponseEntity<>(perfumeService.findAllPickedPerfume((String)req.getAttribute("userId")), HttpStatus.OK);
+    }
+
+    @GetMapping("/search/names")
+    public ResponseEntity<List<PerfumeNameResponse>> getNames() {
+        return new ResponseEntity<>(perfumeService.findAllNames(), HttpStatus.OK);
     }
 
 }
