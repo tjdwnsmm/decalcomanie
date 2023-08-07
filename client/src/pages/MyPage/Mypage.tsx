@@ -8,6 +8,7 @@ import LikesUnlikes from '../../components/Box/LikesUnlikes';
 import ProfileStats from '../../components/My/ProfileStats';
 import ProfileTabs from '../../components/My/ProfileTabs';
 import BottomNav from '../../components/common/BottomNav';
+import axios from '../../api/apiController';
 
 // 중복 데이터를 변수로 추출
 const perfumeImages = [
@@ -70,7 +71,7 @@ export default function Mypage() {
         <OptionMenu />
         <ProfileImage />
         <MypageText size="18px" fontWeight="bold" textalign="center">
-          김수민
+          userDto.nickname
         </MypageText>
         <LikesUnlikes />
         <ProfileStats />
