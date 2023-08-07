@@ -1,12 +1,27 @@
+import { Favorite } from '@mui/icons-material';
 import React from 'react';
 import { styled } from 'styled-components';
+
+interface Res {
+  res: {
+    favorite: string[];
+    hate: string[];
+  };
+}
+
+const testRes: Res = {
+  res: {
+    favorite: ['우디', '플로럴', '시트러스'],
+    hate: ['머스크', '코코넛', '스파이시'],
+  },
+};
 
 const BoxDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0px 10px;
-  margin-bottom: 10px;
+  margin-top: 10px;
 `;
 
 const LikeBox = styled.div`
@@ -28,17 +43,17 @@ const UnlikeBox = styled(LikeBox)`
 
 export default function LikesUnlikes() {
   return (
-    <p>
+    <>
       <BoxDiv>
-        <LikeBox>우디</LikeBox>
-        <LikeBox>플로럴</LikeBox>
-        <LikeBox>시트러스</LikeBox>
+        <LikeBox>{testRes.res.favorite[0]}</LikeBox>
+        <LikeBox>{testRes.res.favorite[1]}</LikeBox>
+        <LikeBox>{testRes.res.favorite[2]}</LikeBox>
       </BoxDiv>
       <BoxDiv>
-        <UnlikeBox>머스크</UnlikeBox>
-        <UnlikeBox>코코넛</UnlikeBox>
-        <UnlikeBox>스파이시</UnlikeBox>
+        <UnlikeBox>{testRes.res.favorite[0]}</UnlikeBox>
+        <UnlikeBox>{testRes.res.favorite[1]}</UnlikeBox>
+        <UnlikeBox>{testRes.res.favorite[2]}</UnlikeBox>
       </BoxDiv>
-    </p>
+    </>
   );
 }
