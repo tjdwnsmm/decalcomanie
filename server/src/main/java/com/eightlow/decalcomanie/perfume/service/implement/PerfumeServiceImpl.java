@@ -178,7 +178,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
     }
 
     private BooleanExpression brandEq(List<Integer> brand) {
-        return brand.size() > 0 ? perfume.brandId.in(brand) : null;
+        return brand.size() > 0 ? perfume.brand.brandId.in(brand) : null;
     }
 
     private BooleanExpression genderEq(List<Integer> gender) {
