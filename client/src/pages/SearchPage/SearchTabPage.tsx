@@ -50,7 +50,7 @@ const SearchTabPage: React.FC = () => {
   const [newSearch, setNewSearch] = useState(false);
 
   const { data, hasNextPage, isFetching, fetchNextPage, isLoading } =
-    useFetchDatas(filter, searchKeyword, newSearch);
+    useFetchDatas({ filter, searchKeyword, newSearch });
 
   const datas = useMemo(() => (data ? data : []), [data]);
 
@@ -67,12 +67,16 @@ const SearchTabPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (searchResults && searchResults.length > 0) {
+    if (newSearch && searchResults && searchResults.length > 0) {
       const sortedResults = sortResults(searchResults);
       setSearchResults(sortedResults);
       console.log('정렬완료');
+    } else if (!newSearch && datas?.length > 0) {
+      const sortedResults = sortResults(datas);
+      setSearchResults(sortedResults);
+      console.log('정렬완료');
     }
-  }, [searchResults, sortOption]);
+  }, [searchResults || datas, sortOption]);
 
   const sortResults = (results: PerfumeDetail[]) => {
     switch (sortOption) {

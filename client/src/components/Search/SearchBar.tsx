@@ -142,7 +142,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
         )}
       </SearchBox>
 
-      {isFetching ? (
+      {isFetching && keyword ? (
         <Spinner />
       ) : searchResults.length > 0 && keyword && !isSearch ? (
         <AutoSearchContainer>

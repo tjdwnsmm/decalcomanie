@@ -3,11 +3,16 @@ import axios from '../../api/apiController';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import { Filter } from '../../pages/SearchPage/SearchTabPage';
 
-export const useFetchDatas = (
-  filter: Filter,
-  keyword: string,
-  newSearch: boolean,
-) => {
+interface FetchProps {
+  filter?: Filter;
+  searchKeyword: string;
+  newSearch: boolean;
+}
+export const useFetchDatas = ({
+  filter,
+  searchKeyword,
+  newSearch,
+}: FetchProps) => {
   const [datas, setDatas] = useState<PerfumeDetail[]>([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [isLastPage, setIsLastPage] = useState(false);
@@ -17,10 +22,10 @@ export const useFetchDatas = (
     try {
       setIsLoading(true); // Set isLoading to true before making the API call
       const response = await axios.post('/perfume/search', {
-        keyword: keyword,
-        brand: filter.brandId ? filter.brandId : [],
-        gender: filter.gender ? filter.gender : [],
-        scent: filter.scentId ? filter.scentId : [],
+        keyword: searchKeyword,
+        brand: filter?.brandId ? filter.brandId : [],
+        gender: filter?.gender ? filter.gender : [],
+        scent: filter?.scentId ? filter.scentId : [],
       });
 
       console.log(`적용된 필터 ! : ${JSON.stringify(filter)}`);

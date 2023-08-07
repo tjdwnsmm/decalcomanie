@@ -17,10 +17,14 @@ export const MainFeed = () => {
   const [nowActive, setNowActive] = useState('popularity');
   const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
   const navigate = useNavigate();
+  const [isLoading, setLoading] = useState(false);
 
   const fetchFeedsForTab = (tab: string) => {
+    // setFeeds(null);
+    setLoading(true);
     axios.get(`/sns/feed/${tab}`).then((res) => {
       setFeeds(res.data);
+      setLoading(false);
       // console.log(res.data);
     });
   };
@@ -28,14 +32,6 @@ export const MainFeed = () => {
   useEffect(() => {
     fetchFeedsForTab(nowActive);
   }, [nowActive]);
-
-  if (!feeds) {
-    return (
-      <MarginFrame margin="240px 0 0">
-        <Spinner />
-      </MarginFrame>
-    );
-  }
 
   const handleDetail = (articleId: number) => {
     navigate(`/post-detail/${articleId}`);
@@ -50,9 +46,15 @@ export const MainFeed = () => {
     <Main>
       <FeedTab setNowActive={handleTabClick} />
       <Feeds>
-        {feeds.map((feed, idx) => (
-          <FeedPage key={idx} feed={feed} handleDetail={handleDetail} />
-        ))}
+        {!isLoading && feeds ? (
+          feeds.map((feed, idx) => (
+            <FeedPage key={idx} feed={feed} handleDetail={handleDetail} />
+          ))
+        ) : (
+          <MarginFrame margin="240px 0 0">
+            <Spinner />
+          </MarginFrame>
+        )}
       </Feeds>
       <FloatingWriteBtn />
       <BottomNav />
@@ -63,7 +65,7 @@ export const MainFeed = () => {
 const Feeds = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  height: 100%;
-  padding-bottom: 200px;
+  overflow-y: scroll;
+  overflow-x: clip;
+  padding-bottom: 100px;
 `;
