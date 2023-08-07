@@ -11,7 +11,7 @@ import java.util.List;
 public interface NoteListRepository extends JpaRepository<NoteList, Integer> {
     List<NoteList> findAll();
 
-    Note findOneByNoteId(int noteListId);
+    Note findOneByNote_NoteId(int noteListId);
 
-    List<NoteList> findAllByPerfumeId(int perfumeId);
+    List<NoteList> findAllByPerfume_PerfumeId(int perfumeId);
 }

@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface PerfumePickRepository extends JpaRepository<PerfumePick, Integer> {
 
-    PerfumePick findByUserIdAndPerfumeId(String userId, int perfumeId);
+    PerfumePick findByUserIdAndPerfume_PerfumeId(String userId, int perfumeId);
 
-    void deleteByUserIdAndPerfumeId(String userId, int perfumeId);
+    void deleteByUserIdAndPerfume_PerfumeId(String userId, int perfumeId);
 
     List<PerfumePick> findByUserId(String userId);
 }

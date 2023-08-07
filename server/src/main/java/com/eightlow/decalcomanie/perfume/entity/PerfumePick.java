@@ -1,7 +1,6 @@
 package com.eightlow.decalcomanie.perfume.entity;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumePickId;
-import com.eightlow.decalcomanie.perfume.dto.request.PerfumePickRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
