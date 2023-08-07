@@ -2,9 +2,11 @@ import Rating from '@mui/material/Rating';
 import Stack from '@mui/material/Stack';
 import { styled as MUstyled } from '@mui/material/styles';
 import { styled } from 'styled-components';
+import { perfumeInfos, gradeDto } from '../../types/PostInfoType';
 
-interface Perfume {
-  name: string;
+interface AddRatingProps {
+  perfumes: perfumeInfos[];
+  grades: gradeDto[];
 }
 
 interface PerfumeRatingBoxProps {
@@ -30,16 +32,21 @@ function PerfumeRatingBox({ name }: PerfumeRatingBoxProps) {
   return <>{name}</>;
 }
 
-export default function AddRating({ perfumes }: { perfumes: Perfume[] }) {
+export default function AddRating({ perfumes, grades }: AddRatingProps) {
   return (
     <>
       <Stack spacing={0}>
-        {perfumes.map((perfume, index) => (
-          <StyledDiv>
-            <PerfumeRatingBox key={index} name={perfume.name} />
-            <StyledRating name="half-rating" defaultValue={0} precision={1} />
-          </StyledDiv>
-        ))}
+        {perfumes.map((perfume) => {
+          const grade = grades.find((item) => item.perfumeId === perfume.perfumeId);
+          const rate = grade ? grade.rate : 0;
+
+          return (
+            <StyledDiv key={perfume.perfumeId}>
+              <PerfumeRatingBox name={perfume.nameOrg} />
+              <StyledRating name={`rating-${perfume.perfumeId}`} defaultValue={rate} precision={1} />
+            </StyledDiv>
+          );
+        })}
       </Stack>
     </>
   );

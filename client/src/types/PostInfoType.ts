@@ -13,17 +13,17 @@ export interface user {
   accessToken: string;
   nickname: string;
   deletedAt: string | null;
-  // age: number;
-  // gender: number;
-  // refreshToken: string;
+  age: number;
+  gender: number;
+  refreshToken: string;
   picture: string | null;
 }
 
 export interface scent {
-  // scentId: number;
-  // weight: number;
+  scentId: number;
+  weight: number;
   name: string;
-  // rgb: string;
+  rgb: string;
 }
 
 export interface userInfoDto {
@@ -36,17 +36,17 @@ export interface userInfoDto {
 export interface commentDto {
   createdAt: string;
   updatedAt: string;
-  // commentId: number;
-  // articleId: number;
-  // userId: string;
+  commentId: number;
+  articleId: number;
+  userId: string;
   content: string;
 }
 
 export interface commmentUsers {
   user: user;
-  // favorities: scent[];
-  // hates: scent[];
-  // following: boolean;
+  favorities: scent[];
+  hates: scent[];
+  following: boolean;
 }
 
 export interface perfumeInfos {

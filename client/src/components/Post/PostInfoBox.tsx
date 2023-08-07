@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { PostDetailData } from '../../types/PostInfoType';
 import FollowBtn from '../Button/FollowBtn';
-import { PostModalBtn } from '../Button/PostModalBtn';
+import PostModalBtn from '../Button/PostModalBtn';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import getLoggedInUserNickname from '../../api/loggedInUserNickname';
@@ -152,7 +152,7 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
           {!isMyPost && <FollowBtn
             to={articleDto.userId}
             isFollow={followed} />}
-          {isMyPost && <PostModalBtn />}
+          {isMyPost && <PostModalBtn articleId={articleDto.articleId} />}
         </div>
       </WriterInfoBox>
       <ContentBox>{articleDto.content}</ContentBox>

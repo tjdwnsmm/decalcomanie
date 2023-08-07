@@ -115,7 +115,7 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
 
   return (
     <CommentBoxContainer>
-      <ProfileImage src={commentUser.user.picture} alt="프로필" />
+      <ProfileImage src={commentUser.user.picture} />
       <CommentContent>
         <InfoBox>
           <UserNickname>{commentUser.user.nickname}</UserNickname>
