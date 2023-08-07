@@ -2,9 +2,14 @@ package com.eightlow.decalcomanie.user.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
+import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
+import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
+import com.eightlow.decalcomanie.user.dto.PerfumeWeight;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
+import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.entity.Follow;
@@ -13,6 +18,7 @@ import com.eightlow.decalcomanie.user.entity.UserPerfume;
 import com.eightlow.decalcomanie.user.entity.UserScent;
 import com.eightlow.decalcomanie.user.mapper.FollowMapper;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
+import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.repository.FollowRepository;
 import com.eightlow.decalcomanie.user.repository.UserPerfumeRepository;
 import com.eightlow.decalcomanie.user.repository.UserRepository;
@@ -22,8 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -37,6 +42,9 @@ public class UserServiceImpl implements IUserService {
     private final FollowMapper followMapper;
     private final UserMapper userMapper;
     private final ScentMapper scentMapper;
+    private final PerfumeRepository perfumeRepository;
+    private final UserPerfumeMapper userPerfumeMapper;
+    private final PerfumeMapper perfumeMapper;
 
     @Override
     public String modifyUserPerfume(UserPerfume userPerfume) {
@@ -163,4 +171,106 @@ public class UserServiceImpl implements IUserService {
         UserInfoDto userInfoDto = new UserInfoDto(userMapper.toDto(user), favorite, hate);
         return userInfoDto;
     }
+
+    // 사용자 개인 추천 향수
+    @Override
+    public List<PerfumeDto> recommendUserPerfume(String userId) {
+        // 사용자 향 단위 벡터 계산
+        List<Double> userPerfumeVector = userAccordVector(userId);
+
+        // 사용자 향과 모든 향수 유사도 계산
+        List<PerfumeWeight> result = caclulate(userPerfumeVector);
+
+        // 탑 10 추출
+        List<PerfumeDto> perfumeList = new ArrayList<>();
+        for (PerfumeWeight pair : result) {
+            perfumeList.add(pair.getFirst());
+        }
+        // result의 상단 10개하여 반환
+        return perfumeList.subList(0, Math.min(result.size(),10));
+    }
+
+    // 사용자 향 단뒤 벡터 계산
+    public List<Double> userAccordVector(String userId) {
+        // 사용자가 보유하고 있는 향수 정보를 가져온다.
+        List<UserPerfume> userPerfumes = userPerfumeRepository.findByUserId(userId);
+        List<UserPerfumeDto> userPerfumesDto = userPerfumeMapper.toDto(userPerfumes);
+
+        // 사용자의 향수 x 향 테이블
+        List<List<Double>> userPerfumePercentTable = new ArrayList<>();
+
+        // 사용자의 향수 x 향 테이블 계산
+        for(UserPerfumeDto perfume : userPerfumesDto) {
+            PerfumeDto userPerfume = perfumeService.getPerfume(perfume.getPerfumeId());
+            List<Double> accordPercent = sumAccordWeight(userPerfume.getAccord());
+            userPerfumePercentTable.add(accordPercent);
+        }
+
+        List<Double> userAccordPercent = new ArrayList<>();
+        // 사용자의 향 벡터 계산
+        // 향 별 계산
+        for(int i=0; i<= userPerfumePercentTable.get(0).size(); i++){
+            Double accordSum = 0.0;
+            // 사용자별 계산
+            for(List<Double> userPerfumePercent : userPerfumePercentTable){
+                accordSum += userPerfumePercent.get(i);
+            }
+            userAccordPercent.add(accordSum);
+        }
+        List<Double> result = new ArrayList<>();
+        result = staticListToPercentList(userAccordPercent);
+
+        return result;
+    }
+
+    // 향리스트를 향퍼센트 리스트로 변환해주는 함수
+    public List<Double> sumAccordWeight(List<ScentDto> accordlist){
+        List<Double> result = new ArrayList<>();
+        int sum = 0;
+        for(ScentDto scentDto : accordlist){
+            sum += scentDto.getWeight();
+        }
+        for(ScentDto scentDto : accordlist){
+            Double accordPercent = (double) scentDto.getWeight() / (double) sum;
+            result.add(accordPercent);
+        }
+        return result;
+    }
+
+    // 고정 값 리스트들을 퍼센트 리스트로 변환 해주는 함수
+    public List<Double> staticListToPercentList(List<Double> staticList){
+        List<Double> result = new ArrayList<>();
+        Double sum = 0.0;
+        for(double a : staticList){
+            sum += a;
+        }
+        for(double b : staticList){
+            Double percent = b / sum;
+            result.add(percent);
+        }
+        return result;
+    }
+
+    // 모든 향수들과 유사도를 계산하는 함수
+    public List<PerfumeWeight> caclulate(List<Double> userPerfumeVector){
+        List<PerfumeWeight> result = new ArrayList<>();
+        // 1. 모든 향수를 불러오기
+        List<Perfume> allPerfume = perfumeRepository.findAll();
+        List<PerfumeDto> allPerfumeDto = perfumeMapper.toDto(allPerfume);
+        // 2. 각 향수와 유저 벡터와 곱하여 계산하고 결과 데이터에 추가
+        for(PerfumeDto perfume : allPerfumeDto) {
+            double sum = 0.0;
+            // 향수를 리스트로 변환
+            List<Double> accordPercent = sumAccordWeight(perfume.getAccord());
+            for(int i=0; i<=userPerfumeVector.size(); i++){
+                sum += accordPercent.get(i)*userPerfumeVector.get(i);
+            }
+            result.add(new PerfumeWeight(perfume,sum));
+        }
+        // 3. 결과데이터를 유사도를 기준으로 정렬
+        Collections.sort(result);
+
+        return result;
+    }
+
 }

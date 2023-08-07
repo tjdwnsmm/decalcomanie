@@ -13,6 +13,8 @@ import java.util.UUID;
 public interface IPerfumeService {
     public PerfumeDto getPerfume(int perfumeId);
 
+    public List<PerfumeDto> findAllPerfume();
+
     public List<BrandDto> findAllBrand();
 
     public List<ScentDto> findAllScent();
