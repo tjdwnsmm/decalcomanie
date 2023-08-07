@@ -40,4 +40,6 @@ public class PerfumeDto {
 
     private List<NoteListDto> note;
 
+    private List<OccasionDto> occasion;
+
 }

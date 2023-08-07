@@ -2,10 +2,12 @@ package com.eightlow.decalcomanie.perfume.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.*;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
+import com.eightlow.decalcomanie.perfume.dto.response.PerfumeNameResponse;
 import com.eightlow.decalcomanie.perfume.entity.*;
 import com.eightlow.decalcomanie.perfume.mapper.*;
 import com.eightlow.decalcomanie.perfume.repository.*;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +25,6 @@ import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
 @Transactional
 @RequiredArgsConstructor
 public class PerfumeServiceImpl implements IPerfumeService {
-
     private final PerfumeRepository perfumeRepository;
     private final BrandRepository brandRepository;
     private final ScentRepository scentRepository;
@@ -32,11 +34,12 @@ public class PerfumeServiceImpl implements IPerfumeService {
     private final BrandMapper brandMapper;
     private final ScentMapper scentMapper;
     private final JPAQueryFactory queryFactory;
+    private final EntityManager em;
 
     // id로 개별 향수 조회
     @Override
     public PerfumeDto getPerfume(int perfumeId) {
-        return perfumeMapper.toDto(perfumeRepository.findOneByPerfumeId(perfumeId));
+        return perfumeMapper.toDto(em.find(Perfume.class, perfumeId));
     }
 
     @Override
@@ -74,20 +77,29 @@ public class PerfumeServiceImpl implements IPerfumeService {
     @Override
     @Transactional
     public boolean pickPerfume(String userId, int perfumeId) {
-        Perfume perfume = perfumeRepository.findOneByPerfumeId(perfumeId);
+        Perfume perfume = em.find(Perfume.class, perfumeId);
 
         // 이미 같은 데이터가 있는지 확인
-        PerfumePick existingPick = perfumePickRepository.findByUserIdAndPerfume_PerfumeId(userId, perfume.getPerfumeId());
+        PerfumePickId pd = PerfumePickId.builder()
+                .userId(userId)
+                .perfume(perfumeId)
+                .build();
+
+        PerfumePick existingPick = em.find(PerfumePick.class, pd);
 
         // 같은 데이터가 이미 있으면 삭제하고, 없으면 새로 추가
         if (existingPick != null) {
-            perfumePickRepository.deleteByUserIdAndPerfume_PerfumeId(userId, perfume.getPerfumeId());
-            updatePickCount(perfume.getPerfumeId(), -1);
+            perfumePickRepository.delete(existingPick);
+            updatePickCount(perfume, -1);
             return false;
         } else {
-            PerfumePick newPick = new PerfumePick(userId, perfume);
+            PerfumePick newPick = PerfumePick.builder()
+                    .userId(userId)
+                    .perfume(perfume)
+                    .build();
+
             perfumePickRepository.save(newPick);
-            updatePickCount(perfume.getPerfumeId(), 1);
+            updatePickCount(perfume, 1);
             return true;
         }
     }
@@ -98,6 +110,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
         PerfumePick existingPick = perfumePickRepository.findByUserIdAndPerfume_PerfumeId(userId, perfumeId);
 
         if (existingPick == null) return false;
+
         return true;
     }
 
@@ -107,6 +120,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
         Perfume existingPerfume = perfumeRepository.findOneByPerfumeId(perfumeId);
 
         if (existingPerfume == null) return false;
+
         return true;
     }
 
@@ -141,17 +155,21 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return scentRepository.findOneByScentId(scentId);
     }
 
+    @Override
+    public List<PerfumeNameResponse> findAllNames() {
+        List<PerfumeNameResponse> searchResult = queryFactory
+                .select(Projections.constructor(PerfumeNameResponse.class, perfume.name, perfume.nameOrg))
+                .from(perfume)
+                .fetch();
+
+        return searchResult;
+    }
+
     // 향수 찜 또는 찜 해제 시에 향수 전체 찜 개수에 반영
-    public void updatePickCount(int perfumeId, int value) {
-        Perfume perfume = perfumeRepository.findOneByPerfumeId(perfumeId);
+    public void updatePickCount(Perfume perfume, int value) {
+//        Perfume perfume = perfumeRepository.findOneByPerfumeId(perfumeId);
         if (perfume != null) {
-            int currentPick = perfume.getPick();
-
-            Perfume updatedPerfume = perfume.toBuilder()
-                    .pick(currentPick + value)
-                    .build();
-
-            perfumeRepository.save(updatedPerfume);
+            perfume.updatePick(value);
         }
     }
 

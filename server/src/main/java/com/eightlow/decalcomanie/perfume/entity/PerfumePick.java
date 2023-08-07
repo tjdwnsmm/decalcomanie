@@ -20,7 +20,7 @@ public class PerfumePick {
     private String userId;
 
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "perfumeId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Perfume perfume;
 }

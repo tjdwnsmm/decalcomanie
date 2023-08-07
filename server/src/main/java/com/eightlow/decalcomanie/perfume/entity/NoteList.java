@@ -19,7 +19,7 @@ public class NoteList {
     @Column(name = "noteListId")
     private int noteListId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "perfumeId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Perfume perfume;
 

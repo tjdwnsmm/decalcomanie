@@ -26,7 +26,7 @@ public class Perfume {
     @Column(name = "nameOrg")
     private String nameOrg;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brandId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Brand brand;
 
@@ -48,11 +48,19 @@ public class Perfume {
     @Column(name = "pick")
     private int pick;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "perfumeId")
+    @OneToMany(mappedBy = "perfume")
     private List<Accord> accord;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "perfumeId")
+    @OneToMany(mappedBy = "perfume")
     private List<NoteList> note;
+
+    @OneToMany(mappedBy = "perfume")
+    private List<PerfumePick> perfumePicks;
+
+    @OneToMany(mappedBy = "perfume")
+    private List<SeasonTime> occasion;
+
+    public void updatePick(int pick) {
+        this.pick += pick;
+    }
 }

@@ -12,21 +12,16 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "accord")
-public class Accord {
+@Table(name = "seasontime")
+public class SeasonTime {
     @Id
-    @Column(name = "accordId")
-    private int accordId;
-
-    @Column(name = "weight")
-    private float weight;
+    private int seasonTimeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "perfumeId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Perfume perfume;
 
-    @ManyToOne
-    @JoinColumn(name = "scentId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Scent scent;
-}
+    private String occasion;
 
+    private float weight;
+}
