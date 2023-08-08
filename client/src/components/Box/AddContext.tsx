@@ -22,18 +22,23 @@ const StyledReactQuill = styled(ReactQuill)`
   }
 `;
 
-export default function ContextBox() {
-  const [content, setContent] = useState('');
+interface ContextBoxProps {
+  newContent: string;
+  handleChange: (value: string) => void;
+}
 
-  const handleChange = (value: string) => {
-    setContent(value);
-  };
+export default function ContextBox({ newContent, handleChange }: ContextBoxProps) {
+  // const [newContent, setContent] = useState(content);
+
+  // const handleChange = (value: string) => {
+  //   setContent(value);
+  // };
 
   return (
     <>
       <StyledReactQuill
         modules={modules}
-        value={content}
+        value={newContent}
         onChange={handleChange}
       />
     </>

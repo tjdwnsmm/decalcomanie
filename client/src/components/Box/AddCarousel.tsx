@@ -5,15 +5,10 @@ import Carousel from 'react-items-carousel';
 import { ReactComponent as AddButtonSvg } from '../../assets/img/add-button.svg';
 import { ReactComponent as PrevSvg } from '../../assets/icon/prevBack.svg';
 import { CenterFrame } from '../../style';
-
-interface Perfume {
-  brand: string;
-  name: string;
-  img: string;
-}
+import { perfumeInfos } from '../../types/PostInfoType';
 
 interface PerfumeReviewCarouselProps {
-  perfumes: Perfume[];
+  perfumes: perfumeInfos[];
 }
 
 const EmptyBox = styled.div`
@@ -109,6 +104,7 @@ interface ReviewBoxProps {
   name: string;
   img: string;
 }
+
 function PerfumeReviewBox({ brand, name, img }: ReviewBoxProps) {
   return (
     <CenterFrame>
@@ -159,9 +155,9 @@ export default function AddCarousel({ perfumes }: PerfumeReviewCarouselProps) {
           {perfumes.map((perfume, index) => (
             <PerfumeReviewBox
               key={index}
-              brand={perfume.brand}
-              name={perfume.name}
-              img={perfume.img}
+              brand={perfume.brandName}
+              name={perfume.nameOrg}
+              img={perfume.picture}
             />
           ))}
           <CenterFrame>

@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, KeyboardEvent } from 'react';
 import styled from 'styled-components';
-import { Comment } from '../../types/PostInfoType';
-import { PostModalBtn } from '../Button/PostModalBtn';
+import { commentDto, commmentUsers } from '../../types/PostInfoType';
+import CommentModalBtn from '../Button/CommentModalBtn';
+import axios from '../../api/apiController';
+import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface CommentBoxProps {
-  comment: Comment;
+  comment: commentDto;
+  commentUser: commmentUsers;
 }
 
 const CommentBoxContainer = styled.div`
@@ -55,11 +58,32 @@ const Content = styled.div`
   line-height: 17px;
 `;
 
+const StyledTextarea = styled.textarea<{ isEditing: boolean }>`
+  display: ${({ isEditing }) => (isEditing ? 'block' : 'none')};
+  width: 75%;
+  height: 16px;
+  border: 1px solid var(--gray-color);
+  background-color: var(--background-color);
+  resize: none;
+  padding: 8px 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+`;
+
+const ModiBtn = styled.button< { isEditable: boolean } >`
+  height: 32px;
+  border: none;
+  background-color: var(--background-color);
+  font-size: 16px;
+  color: ${({ isEditable }) => (isEditable ? 'var(--primary-color)' : 'var(--gray-color)')};
+  cursor: ${({ isEditable }) => (isEditable ? 'pointer' : '')};
+`;
+
 const getElapsedTime = (createdAt: string): number => {
   const createdAtDate = new Date(createdAt);
   const currentTime = new Date();
-  console.log('작성시간', createdAtDate);
-  console.log(currentTime);
+  // console.log('작성시간', createdAtDate);
+  // console.log(currentTime);
   const diff = currentTime.getTime() - createdAtDate.getTime(); // 단위: (ms)
   const elapsedTime = Math.floor(diff / 1000 / 60);
   return elapsedTime;
@@ -84,22 +108,21 @@ const getTimeString = (elapsedTime: number, createdAt: string): string => {
   }
 };
 
-const CommentBox = ({ comment }: CommentBoxProps) => {
-  // 요청보낸 사람이 댓글 작성자일 때만 수정/삭제 나오도록
-  // 임시로 설정
-  const CurrentUser = '복이';
-  const isWriter = comment.writer === CurrentUser ? true : false;
+const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
+  const isMyComment = getLoggedInUserNickname() === commentUser.user.nickname;
 
   const [elapsedTime, setElapsedTime] = useState(
     getElapsedTime(comment.createdAt),
   );
+  const [isEditing, setEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(comment.content);
+  const [isEditable, setIsEditable] = useState(false);
 
-  // 페이지가 처음 로드될 때 작성 시간과 현재 시간의 차이를 업데이트
+  // 댓글 작성 시간 관련
   useEffect(() => {
     setElapsedTime(getElapsedTime(comment.createdAt));
   }, [comment.createdAt]);
 
-  // 새로고침할 때 작성 시간과 현재 시간의 차이를 업데이트
   const handlePageRefresh = () => {
     setElapsedTime(getElapsedTime(comment.createdAt));
   };
@@ -112,17 +135,66 @@ const CommentBox = ({ comment }: CommentBoxProps) => {
     };
   }, [comment.createdAt]);
 
+  // 댓글 수정사항 관련
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setEditedContent(newValue);
+    setIsEditable(newValue.trim() !== comment.content && newValue.length > 0);
+  };
+
+  const handleEditClick = async () => {
+    if (editedContent.trim().length > 0) {
+      try {
+        const response = await axios.put('/sns/comment/update', {
+          articleId: comment.articleId,
+          commentId: comment.commentId,
+          content: editedContent,
+        });
+        console.log('댓글이 수정되었습니다:', response.data);
+        setEditedContent('');
+        setEditing(false);
+        window.location.reload();
+      } catch (error) {
+        console.error('댓글 수정 중 오류:', error);
+      }
+    }
+  };
+
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && isEditable) {
+      event.preventDefault();
+      handleEditClick();
+    }
+  };
+
   return (
     <CommentBoxContainer>
-      <ProfileImage src={comment.profileImg} alt="프로필" />
+      <ProfileImage src={commentUser.user.picture} />
       <CommentContent>
         <InfoBox>
-          <UserNickname>{comment.writer}</UserNickname>
+          <UserNickname>{commentUser.user.nickname}</UserNickname>
           <CreatedAt>{getTimeString(elapsedTime, comment.createdAt)}</CreatedAt>
         </InfoBox>
-        <Content>{comment.content}</Content>
+        {!isEditing && <Content>{comment.content}</Content>}
+        {isEditing && (
+          <InfoBox>
+            <StyledTextarea
+              isEditing={isEditing}
+              value={editedContent}
+              onChange={handleContentChange}
+              onKeyPress={handleKeyPress}
+            />
+            <ModiBtn isEditable={isEditable} onClick={handleEditClick}>수정</ModiBtn>
+          </InfoBox>
+        )}
       </CommentContent>
-      {isWriter && <PostModalBtn />}
+      {isMyComment && !isEditing && (
+        <CommentModalBtn
+          comment={comment}
+          isEditing={isEditing}
+          setEditing={setEditing}
+        />
+      )}
     </CommentBoxContainer>
   );
 };

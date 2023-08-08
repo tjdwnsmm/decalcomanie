@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as PostModalSvg } from '../../assets/icon/more-vert.svg';
 import axios from '../../api/apiController';
+import { commentDto } from '../../types/PostInfoType';
 
 const Button = styled.button`
   background: none;
@@ -59,15 +60,16 @@ const ConfirmationText = styled.p`
   padding: 0px 30px;
 `;
 
-interface PostModalBtnProps {
-  articleId: number;
+interface CommentModalBtnProps {
+  comment: commentDto;
+  isEditing: boolean;
+  setEditing: (isEditing: boolean) => void;
 }
 
-const PostModalBtn = ({ articleId }: PostModalBtnProps) => {
+const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProps) => {
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmationOpen, setConfirmationOpen] = useState(false);
-  const navigate = useNavigate();
 
   const handleModalToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setModalPosition({ x: event.clientX, y: event.clientY });
@@ -75,7 +77,7 @@ const PostModalBtn = ({ articleId }: PostModalBtnProps) => {
   };
 
   const handleEditClick = () => {
-    navigate(`/post-update/${articleId}`);
+    setEditing(true);
     setModalOpen(false);
   };
 
@@ -92,12 +94,17 @@ const PostModalBtn = ({ articleId }: PostModalBtnProps) => {
 
   const handleConfirmDelete = async () => {
     try {
-      const response = await axios.delete(`/sns/delete/${articleId}`);
+      const requestData = {
+        commentId: comment.commentId,
+        articleId: comment.articleId,
+      };
+      const response = await axios.delete(`/sns/comment/delete/${comment.commentId}`, requestData);
       console.log(response.data);
       setConfirmationOpen(false);
-      navigate('/main-feed');
+      window.location.reload();
     } catch (error) {
       console.error(error);
+      setConfirmationOpen(false);
     }
   };
 
@@ -127,4 +134,4 @@ const PostModalBtn = ({ articleId }: PostModalBtnProps) => {
   );
 };
 
-export default PostModalBtn;
+export default CommentModalBtn;

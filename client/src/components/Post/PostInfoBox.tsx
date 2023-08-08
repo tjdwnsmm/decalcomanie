@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { PostInfo } from '../../types/PostInfoType';
+import { PostDetailData } from '../../types/PostInfoType';
 import FollowBtn from '../Button/FollowBtn';
-import { PostModalBtn } from '../Button/PostModalBtn';
+import PostModalBtn from '../Button/PostModalBtn';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
-import { USERID } from '../../api/apiController';
+import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 /**
 @summary
@@ -27,9 +27,9 @@ const PostInfoBoxContainer = styled.div`
 
 const WriterInfoBox = styled.div`
   display: flex;
-  align-items: start;
+  justify-content: space-between;
   flex-direction: row;
-  margin: 20px 0px 10px;
+  margin: 20px 2px 10px;
 `;
 
 const ProfileImg = styled.img`
@@ -40,16 +40,16 @@ const ProfileImg = styled.img`
 
 const InfoBox = styled.div`
   display: flex;
-  flex: 1;
+  justify-content: center;
   flex-direction: column;
-  margin: 0px 8px;
+  margin: 0px 10px;
 `;
 
 const InfoBoxRow = styled.div`
   display: flex;
   flex-flow: wrap;
   align-items: flex-end;
-  margin-top: 3px;
+  margin: 3px 0px;
 `;
 
 const Writer = styled.div`
@@ -65,20 +65,12 @@ const CreatedAt = styled.div`
   margin-left: 10px;
 `;
 
-const FavScent = styled.div`
+const Scent = styled.div`
   display: flex;
-  color: var(--primary-color);
+  color: ${(props) => (props.color === 'fav' ? 'var(--primary-color)' : 'var(--gray-color)')};
   font-size: 10px;
   font-weight: 500;
-  margin-right: 10px;
-`;
-
-const NoFavScent = styled.div`
-  display: flex;
-  color: var(--gray-color);
-  font-size: 10px;
-  font-weight: 500;
-  margin-top: 2px;
+  margin-right: 5px;
 `;
 
 const ContentBox = styled.div`
@@ -106,7 +98,7 @@ const CommentCount = styled.span`
 `;
 
 interface PostInfoBoxProps {
-  postInfo: PostInfo;
+  postInfo: PostDetailData;
 }
 
 const formatDateTime = (datetimeStr: string) => {
@@ -124,64 +116,58 @@ const formatDateTime = (datetimeStr: string) => {
 
 const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
   const {
-    articleId,
-    profileImg,
-    writer,
-    createdAt,
-    favScent,
-    nofavScent,
-    isFollow,
-    likeCount,
-    isLike,
-    isScrap,
-    content,
-    commentCount,
+    articleDto,
+    bookmarked,
+    userInfoDto,
+    hearted,
+    followed,
   } = postInfo;
 
-  // isWriter: 글 작성자와 request.user의 일치 여부를 나타내는 로직 구현
-  // 같을 경우 팔로우 버튼이 아닌 글 수정/삭제 모달을 띄우기 위해
-  // 현재는 임시로 설정
-  // const isWriter = true;
-  const isWriter = false;
+  const hasScent = userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
+  const isMyPost = getLoggedInUserNickname() === userInfoDto.user.nickname;
 
   return (
     <PostInfoBoxContainer>
       <WriterInfoBox>
-        <ProfileImg src={profileImg} alt="프로필 사진" />
-        <InfoBox>
-          <InfoBoxRow>
-            <Writer>{writer}</Writer>
-            <CreatedAt>{formatDateTime(createdAt)}</CreatedAt>
-          </InfoBoxRow>
-          <InfoBoxRow>
-            <FavScent>{favScent?.map((fav) => `#${fav}  `)}</FavScent>
-            <NoFavScent>{nofavScent?.map((fav) => `#${fav}  `)}</NoFavScent>
-          </InfoBoxRow>
-        </InfoBox>
-        {!isWriter && (
-          <FollowBtn
-            // 글 상세 api 연결하면서 수정 필
-            from={USERID}
-            to={USERID}
-            isFollow={isFollow}
-          />
-        )}
-        {isWriter && <PostModalBtn />}
+        <div style={{ display: 'flex' }}>
+          <ProfileImg src={userInfoDto.user.picture} />
+          <InfoBox>
+            <InfoBoxRow>
+              <Writer>{userInfoDto.user.nickname}</Writer>
+              <CreatedAt>{formatDateTime(articleDto.createdAt)}</CreatedAt>
+            </InfoBoxRow>
+            {hasScent && (
+            <InfoBoxRow>
+              {userInfoDto.favorities?.map((scent) => (
+                <Scent color="fav">#{scent.name}</Scent>
+              ))}
+              {userInfoDto.hates?.map((scent) => (
+                <Scent color="hate">#{scent.name}</Scent>
+              ))}
+            </InfoBoxRow>
+            )}
+          </InfoBox>
+        </div>
+        <div style={{ height: '42px', display: 'flex', alignItems: 'center' }}>
+          {!isMyPost && <FollowBtn
+            to={articleDto.userId}
+            isFollow={followed} />}
+          {isMyPost && <PostModalBtn articleId={articleDto.articleId} />}
+        </div>
       </WriterInfoBox>
-      <ContentBox>{content}</ContentBox>
+      <ContentBox>{articleDto.content}</ContentBox>
       <IconBox>
         <LikeBtn
-          picked={isLike}
-          count={likeCount}
+          picked={hearted}
+          count={articleDto.heart}
           likeUrl="/sns/like"
           dislikeUrl="/sns/dislike"
-          articleId={articleId}
+          articleId={articleDto.articleId}
         />
-        <ScrapBtn articleId={articleId} isScrap={isScrap} />
+        <ScrapBtn articleId={articleDto.articleId} isScrap={bookmarked} />
       </IconBox>
-      {/* 댓글 개수부분을 Comment 관련 파일에서 count해서 출력 ? */}
       <CommentCount>
-        {commentCount === 0 ? '댓글이 없습니다.' : `${commentCount}개의 댓글`}
+        {articleDto.comment === 0 ? '댓글이 없습니다.' : `${articleDto.comment}개의 댓글`}
       </CommentCount>
     </PostInfoBoxContainer>
   );
