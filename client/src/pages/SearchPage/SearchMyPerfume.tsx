@@ -25,8 +25,16 @@ const SearchMyPerfume: React.FC = () => {
 
   //필터나 검색어를 이용한 검색
   const [newSearch, setNewSearch] = useState(false);
+  const [lastPick, setLastPick] = useState(-1);
+  const [lastPerfumeId, setLastPerfumeId] = useState(-1);
+
   const { data, hasNextPage, isFetching, fetchNextPage, isLoading } =
-    useFetchDatas({ searchKeyword, newSearch });
+    useFetchDatas({
+      searchKeyword,
+      newSearch,
+      lastPick,
+      lastPerfumeId,
+    });
 
   const datas = useMemo(() => (data ? data : []), [data]);
 
@@ -34,7 +42,10 @@ const SearchMyPerfume: React.FC = () => {
     observer.unobserve(entry.target);
     if (hasNextPage && !isFetching) {
       fetchNextPage();
-      console.log('나 지금 받아온 데이터!', datas);
+      console.log('✅ 이전까지 받아온 데이터!', datas);
+      // datas = [];
+      setLastPerfumeId(datas[datas.length - 1].perfumeId);
+      setLastPick(datas[datas.length - 1].pick);
     }
   });
 
@@ -55,10 +66,10 @@ const SearchMyPerfume: React.FC = () => {
       setSearchKeyword('');
       setSearchResults([]);
       try {
-        console.log(`진짜 데이터 검색 : ${searchResults}`);
         const data = await searchPerfume(keyword);
         setSearchResults(data);
         setNewSearch(true);
+        console.log(`진짜 데이터 검색 : ${searchResults}`);
       } catch (error) {
         console.error(error);
         setSearchResults([]);
@@ -73,8 +84,11 @@ const SearchMyPerfume: React.FC = () => {
         brand: [],
         gender: [],
         scent: [],
+        dataSize: 50,
+        lastPick: null,
+        lastPerfumeId: null,
       });
-      console.log(response);
+      // console.log(response);
       return response.data;
     } catch (error) {
       console.error(error);
