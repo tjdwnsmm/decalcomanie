@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
-import axios, { USERID } from '../../api/apiController';
+import axios from '../../api/apiController';
 import { Main } from '../../style';
 import { ReactComponent as LeftArrow } from '../../assets/icon/left-arrow.svg';
 import FollowTab from '../../components/TabBar/FollowTab';
 import FollowBox from '../../components/Follow/FollowBox';
 import { FollowInfo } from '../../types/ProfileInfoType';
-
-interface FollowListProps {
-  initialActiveTab: 'follower' | 'following';
-  userId: string;
-}
 
 const Button = styled.button`
   background: none;
@@ -20,11 +15,12 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-const FollowList = ({ initialActiveTab }: FollowListProps) => {
+const FollowList = () => {
+  const { id } = useParams<{ id: string }>();
+  const userId = id === 'my-follow' ? '' : `/${id}`;
+
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'follower' | 'following'>(
-    initialActiveTab,
-  );
+  const [activeTab, setActiveTab] = useState<'follower' | 'following'>('follower');
   const [follower, setFollower] = useState<FollowInfo[]>([]);
   const [following, setFollowing] = useState<FollowInfo[]>([]);
   const [followerCount, setFollowerCount] = useState<number>(0);
@@ -40,11 +36,11 @@ const FollowList = ({ initialActiveTab }: FollowListProps) => {
     const fetchFollowData = async () => {
       try {
         // 팔로워 목록 조회
-        const followerResponse = await axios.get(`/user/follower/${USERID}`);
+        const followerResponse = await axios.get(`/user/follower${userId}`);
         setFollower(followerResponse.data);
 
         // 팔로잉 목록 조회
-        const followingResponse = await axios.get(`/user/following/${USERID}`);
+        const followingResponse = await axios.get(`/user/following${userId}`);
         setFollowing(followingResponse.data);
 
         // 팔로워 수, 팔로잉 수 조회
@@ -56,15 +52,15 @@ const FollowList = ({ initialActiveTab }: FollowListProps) => {
     };
 
     fetchFollowData();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     // URL에서 초기 activeTab 값 가져오기
     const params = new URLSearchParams(location.search);
     const initialActiveTabFromURL = params.get('initialActiveTab');
 
-    // 유효한 값인지 확인 후 설정하기
-    if (initialActiveTabFromURL === 'follower' || initialActiveTabFromURL === 'following') {
+    // 기본값이 follower이므로 following이라는 값이 들어올 때만 ActiveTab 세팅
+    if (initialActiveTabFromURL === 'following') {
       setActiveTab(initialActiveTabFromURL);
     }
   }, [location]);
