@@ -1,8 +1,7 @@
 import { styled } from 'styled-components';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ReactComponent as PostModalSvg } from '../../assets/icon/more-vert.svg';
-import axios from '../../api/apiController';
+import instance from '../../api/apiController';
 import { commentDto } from '../../types/PostInfoType';
 
 const Button = styled.button`
@@ -77,6 +76,7 @@ const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProp
   };
 
   const handleEditClick = () => {
+    // 수정모드
     setEditing(true);
     setModalOpen(false);
   };
@@ -95,11 +95,11 @@ const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProp
   const handleConfirmDelete = async () => {
     try {
       const requestData = {
-        commentId: comment.commentId,
         articleId: comment.articleId,
       };
-      const response = await axios.delete(`/sns/comment/delete/${comment.commentId}`, requestData);
-      console.log(response.data);
+      await instance.delete(`/sns/comment/delete/${comment.commentId}`, {
+        data: requestData,
+      });
       setConfirmationOpen(false);
       window.location.reload();
     } catch (error) {
