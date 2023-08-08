@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import axios from '../../api/apiController';
-import { Main } from '../../style';
+import { Main, MarginFrame } from '../../style';
 import { ReactComponent as LeftArrow } from '../../assets/icon/left-arrow.svg';
 import FollowTab from '../../components/TabBar/FollowTab';
 import FollowBox from '../../components/Follow/FollowBox';
@@ -13,6 +13,21 @@ const Button = styled.button`
   border: none;
   margin: 24px 18px 0px;
   cursor: pointer;
+`;
+
+const NoFollow = styled.div`
+  width: 84%;
+  padding: 5% 8%;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+
+  .goFollow {
+    font-size: 16px;
+    border: none;
+    background-color: var(--background-color);
+    cursor: pointer;
+  }
 `;
 
 const FollowList = () => {
@@ -75,8 +90,21 @@ const FollowList = () => {
         followerCount={followerCount}
         followingCount={followingCount}
       />
-      {activeTab === 'follower' && <FollowBox followList={follower} />}
-      {activeTab === 'following' && <FollowBox followList={following} />}
+      {activeTab === 'follower' && ((followerCount > 0) ? (
+        <FollowBox followList={follower} />
+      ) : (
+        <NoFollow>
+          {id}님을 팔로워하는 사람이 없어요.
+          <MarginFrame margin='10px 0px'>
+            <button className='goFollow' onClick={() => navigate('/mypage')}>팔로우하러 가기</button>
+          </MarginFrame>
+        </NoFollow>
+      ))}
+      {activeTab === 'following' && ((followingCount > 0) ? (
+        <FollowBox followList={following} />
+      ) : (
+        <NoFollow>{id}님이 팔로잉하는 사람이 없어요.</NoFollow>
+      ))}
     </Main>
   );
 };
