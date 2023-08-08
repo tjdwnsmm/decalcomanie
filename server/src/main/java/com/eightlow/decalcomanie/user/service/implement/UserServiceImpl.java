@@ -181,6 +181,8 @@ public class UserServiceImpl implements IUserService {
         // 사용자 향 단위 벡터 계산
         List<Double> userPerfumeVector = userAccordVector(userId);
 
+        System.out.println(userPerfumeVector.toString());
+
         // 사용자 향과 모든 향수 유사도 계산
         List<PerfumeWeight> result = caclulate(userPerfumeVector);
 
@@ -188,6 +190,7 @@ public class UserServiceImpl implements IUserService {
         List<PerfumeDto> perfumeList = new ArrayList<>();
         for (PerfumeWeight pair : result) {
             perfumeList.add(pair.getFirst());
+            System.out.print(pair.getFirst().getPerfumeId()+", ");
         }
         // result의 상단 10개하여 반환
         return perfumeList.subList(0, Math.min(result.size(),10));

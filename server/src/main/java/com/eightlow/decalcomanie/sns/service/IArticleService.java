@@ -18,7 +18,7 @@ public interface IArticleService {
      */
     boolean existArticleById(int id);
     int createArticle(ArticleDto articleDto);
-    void createArticlePerfume(int articleId, List<Integer> perfumes);
+//    void createArticlePerfume(int articleId, List<Integer> perfumes);
 
     int updateArticle(ArticleDto articleDto, String userId);
 
