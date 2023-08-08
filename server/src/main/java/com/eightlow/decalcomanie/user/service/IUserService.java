@@ -28,4 +28,8 @@ public interface IUserService {
 
     // 사용자 개인 추천 향수
     List<PerfumeDto> recommendUserPerfume(String userId);
+
+    List<FollowerResponse> getOtherFollowingUsers(String userId, String myId);
+
+    List<FollowerResponse> getOtherFollowers(String userId, String myId);
 }
