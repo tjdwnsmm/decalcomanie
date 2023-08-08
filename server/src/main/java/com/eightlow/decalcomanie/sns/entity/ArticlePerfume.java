@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="articleperfume")
+@Table(name="articleperfume", indexes = @Index(name = "articleperfume_idx", columnList = "articleId"))
 public class ArticlePerfume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +21,6 @@ public class ArticlePerfume {
     private int articleId;
 
     private int perfumeId;
+
+    private int rate;
 }

@@ -132,16 +132,16 @@ public class ArticleServiceImpl implements IArticleService {
         return 200;
     }
 
-    @Override
-    @Transactional
-    public void createArticlePerfume(int articleId, List<Integer> perfumes) {
-        log.info("ArticleServiceImpl::: createArticlePerfume start");
-        for (int i = 0; i < perfumes.size(); i++) {
-            ArticlePerfumeDto articlePerfumeDto = new ArticlePerfumeDto(articleId, perfumes.get(i));
-            articlePerfumeRepository.save(articlePerfumeMapper.toEntity(articlePerfumeDto));
-        }
-        log.info("ArticleServiceImpl::: finish ");
-    }
+//    @Override
+//    @Transactional
+//    public void createArticlePerfume(int articleId, List<Integer> perfumes) {
+//        log.info("ArticleServiceImpl::: createArticlePerfume start");
+//        for (int i = 0; i < perfumes.size(); i++) {
+//            ArticlePerfumeDto articlePerfumeDto = new ArticlePerfumeDto(articleId, perfumes.get(i));
+//            articlePerfumeRepository.save(articlePerfumeMapper.toEntity(articlePerfumeDto));
+//        }
+//        log.info("ArticleServiceImpl::: finish ");
+//    }
 
 
     @Override
