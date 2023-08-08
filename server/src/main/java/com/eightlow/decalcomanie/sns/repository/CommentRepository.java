@@ -12,9 +12,11 @@ import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
-    Optional<Comment> findByArticleIdAndCommentId(int articleId, int commentId);
+    Optional<Comment> findByCommentId(int commentId);
 
-    void deleteByArticleIdAndCommentId(int articleId, int commentId);
+    @Modifying(clearAutomatically = true)
+    @Query("DELETE FROM Comment c WHERE c.commentId = :commentId")
+    void deleteByCommentId(@Param(value = "commentId") int commentId);
 
     List<Comment> findByArticleId(int articleId);
 

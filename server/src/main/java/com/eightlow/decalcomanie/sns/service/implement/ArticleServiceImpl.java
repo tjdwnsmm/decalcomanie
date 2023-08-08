@@ -263,7 +263,7 @@ public class ArticleServiceImpl implements IArticleService {
         int articleId = commentDto.getArticleId();
 
         // 해당 commentId를 가진 댓글 조회
-        Optional<Comment> optionalComment = commentRepository.findByArticleIdAndCommentId(articleId, commentId);
+        Optional<Comment> optionalComment = commentRepository.findByCommentId(commentId);
 
         // 해당 commentId를 가진 댓글이 존재하는지 확인
         if (optionalComment.isPresent()) {
@@ -304,14 +304,12 @@ public class ArticleServiceImpl implements IArticleService {
     }
 
     @Override
-    public int deleteComment(CommentDto commentDto) {
+    public int deleteComment(int commentId, String userId) {
         log.info("ArticleServiceImpl::: updateComment start");
         // 수정하려는 댓글의 commentId를 가져옴
-        int commentId = commentDto.getCommentId();
-        int articleId = commentDto.getArticleId();
 
         // 해당 commentId를 가진 댓글 조회
-        Optional<Comment> optionalComment = commentRepository.findByArticleIdAndCommentId(articleId, commentId);
+        Optional<Comment> optionalComment = commentRepository.findByCommentId(commentId);
 
         // 해당 commentId를 가진 댓글이 존재하는지 확인
         if (optionalComment.isPresent()) {
@@ -320,10 +318,10 @@ public class ArticleServiceImpl implements IArticleService {
             System.out.println(existingComment);
 
             // 댓글의 userId와 수정하려는 userId를 비교하여 일치하는지 확인
-            if (existingComment.getUserId().equals(commentDto.getUserId())) {
+            if (existingComment.getUserId().equals(userId)) {
                 // 일치하는 경우, 삭제 작업 진행
                 try {
-                    commentRepository.deleteByArticleIdAndCommentId(existingComment.getArticleId(), existingComment.getCommentId());
+                    commentRepository.deleteByCommentId(existingComment.getCommentId());
                 } catch (Exception e) {
                     log.info(e.getMessage());
                 }

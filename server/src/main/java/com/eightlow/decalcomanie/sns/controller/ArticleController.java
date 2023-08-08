@@ -193,7 +193,7 @@ public class ArticleController {
     public ResponseEntity<List<FeedResponse>> getLatestArticles(HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
         List<ArticleDto> articles= articleService.searchLatestArticles();
-        log.info(articles.toString());
+//        log.info(articles.toString());
 
         List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
 
@@ -300,16 +300,16 @@ public class ArticleController {
 
     // 댓글 삭제
     @DeleteMapping("/comment/delete/{commentId}")
-    public ResponseEntity<Response> deleteComment(@RequestBody CommentRequest commentRequest, HttpServletRequest req) {
+    public ResponseEntity<Response> deleteComment(@PathVariable int commentId,@RequestBody CommentRequest commentRequest, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
-        commentRequest.builder().userId(userId).build();
-        CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
-        System.out.println(commentDto);
+//        commentRequest.builder().userId(userId).build();
+//        CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
+//        System.out.println(commentDto);
         // 댓글 삭제
-        int statusCode = articleService.deleteComment(commentDto);
+        int statusCode = articleService.deleteComment(commentId, userId);
 
         // 댓글 삭제시 article 테이블의 comment의 갯수를 줄여준다
-        articleService.decreaseCommentCount(commentDto.getArticleId());
+        articleService.decreaseCommentCount(commentRequest.getArticleId());
 
         return resultMessage(statusCode);
     }
@@ -376,9 +376,12 @@ public class ArticleController {
 
         //사용자의 팔로우 목록을 받아온다.
         List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
-
+        int cnt = 0;
         // articleId를 보고 사용자 정보와 향수 정보를 담음
         for(ArticleDto article: articles){
+            if (cnt == 100) {
+                break;
+            }
             // TODO: perfumeId가 하나만 필요함으로 추후 쿼리 최적화가 필요!!
             List<Integer> perfumeIdList = articleService.searchArticlePerfumeId(article.getArticleId());
             System.out.println(perfumeIdList);
@@ -404,6 +407,7 @@ public class ArticleController {
             boolean isBookmarked = articleService.checkBookmarkArticle(article.getArticleId(), userId);
 
             feedResponses.add(new FeedResponse(userInfoDto, isFollowed, article, perfumeDto, isHearted, isBookmarked));
+            cnt++;
         }
         return feedResponses;
     }
