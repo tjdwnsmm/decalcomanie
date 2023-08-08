@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { commentDto, commmentUsers } from '../../types/PostInfoType';
 import CommentModalBtn from '../Button/CommentModalBtn';
+import axios from '../../api/apiController';
 import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface CommentBoxProps {
@@ -57,6 +58,27 @@ const Content = styled.div`
   line-height: 17px;
 `;
 
+const StyledTextarea = styled.textarea<{ isEditing: boolean }>`
+  display: ${({ isEditing }) => (isEditing ? 'block' : 'none')};
+  width: 75%;
+  height: 16px;
+  border: 1px solid var(--gray-color);
+  background-color: var(--background-color);
+  resize: none;
+  padding: 8px 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+`;
+
+const ModiBtn = styled.button< { isEditable: boolean } >`
+  height: 32px;
+  border: none;
+  background-color: var(--background-color);
+  font-size: 16px;
+  color: ${({ isEditable }) => (isEditable ? 'var(--primary-color)' : 'var(--gray-color)')};
+  cursor: ${({ isEditable }) => (isEditable ? 'pointer' : '')};
+`;
+
 const getElapsedTime = (createdAt: string): number => {
   const createdAtDate = new Date(createdAt);
   const currentTime = new Date();
@@ -92,13 +114,15 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
   const [elapsedTime, setElapsedTime] = useState(
     getElapsedTime(comment.createdAt),
   );
+  const [isEditing, setEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(comment.content);
+  const [isEditable, setIsEditable] = useState(false);
 
-  // 페이지가 처음 로드될 때 작성 시간과 현재 시간의 차이를 업데이트
+  // 댓글 작성 시간 관련
   useEffect(() => {
     setElapsedTime(getElapsedTime(comment.createdAt));
   }, [comment.createdAt]);
 
-  // 새로고침할 때 작성 시간과 현재 시간의 차이를 업데이트
   const handlePageRefresh = () => {
     setElapsedTime(getElapsedTime(comment.createdAt));
   };
@@ -111,6 +135,35 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
     };
   }, [comment.createdAt]);
 
+  // 댓글 수정사항 관련
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setEditedContent(newValue);
+    setIsEditable(newValue !== comment.content && newValue.length > 0);
+  };
+
+  const handleEditClick = async () => {
+    if (editedContent.trim().length > 0) {
+      try {
+        const response = await axios.put('/sns/comment/update', {
+          articleId: comment.articleId,
+          commentId: comment.commentId,
+          content: editedContent,
+        });
+        console.log('댓글이 수정되었습니다:', response.data);
+        setEditedContent('');
+        setEditing(false);
+      } catch (error) {
+        console.error('댓글 수정 중 오류:', error);
+      }
+    }
+  };
+
+  const handleConfirmEdit = () => {
+    // TODO: 백엔드 API를 호출하여 editedContent를 수정한 내용으로 업데이트
+    setEditing(false); // 수정 모드 해제
+  };
+
   return (
     <CommentBoxContainer>
       <ProfileImage src={commentUser.user.picture} />
@@ -119,9 +172,25 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
           <UserNickname>{commentUser.user.nickname}</UserNickname>
           <CreatedAt>{getTimeString(elapsedTime, comment.createdAt)}</CreatedAt>
         </InfoBox>
-        <Content>{comment.content}</Content>
+        {!isEditing && <Content>{comment.content}</Content>}
+        {isEditing && (
+          <InfoBox>
+            <StyledTextarea
+              isEditing={isEditing}
+              value={editedContent}
+              onChange={handleContentChange}
+            />
+            <ModiBtn isEditable={isEditable} onClick={handleEditClick}>수정</ModiBtn>
+          </InfoBox>
+        )}
       </CommentContent>
-      {isMyComment && <CommentModalBtn comment={comment}/>}
+      {isMyComment && !isEditing && (
+        <CommentModalBtn
+          comment={comment}
+          isEditing={isEditing}
+          setEditing={setEditing}
+        />
+      )}
     </CommentBoxContainer>
   );
 };

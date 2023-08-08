@@ -46,9 +46,9 @@ const CommentButton = styled.button<CommentButtonProps>`
   background-color: var(--background-color);
   font-size: 16px;
   border: none;
-  cursor: pointer;
+  cursor: ${({ hasContent }) => (hasContent ? 'pointer' : '')};
   color: ${({ hasContent }) =>
-    hasContent ? 'var(--primary-color)' : 'var(--gray-color)'};
+    (hasContent ? 'var(--primary-color)' : 'var(--gray-color)')};
 `;
 
 function CommentInputForm({ articleId }: { articleId: number }) {

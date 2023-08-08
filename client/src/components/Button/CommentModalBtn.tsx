@@ -62,13 +62,14 @@ const ConfirmationText = styled.p`
 
 interface CommentModalBtnProps {
   comment: commentDto;
+  isEditing: boolean;
+  setEditing: (isEditing: boolean) => void;
 }
 
-const CommentModalBtn = ({ comment }: CommentModalBtnProps) => {
+const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProps) => {
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmationOpen, setConfirmationOpen] = useState(false);
-  const navigate = useNavigate();
 
   const handleModalToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setModalPosition({ x: event.clientX, y: event.clientY });
@@ -76,7 +77,7 @@ const CommentModalBtn = ({ comment }: CommentModalBtnProps) => {
   };
 
   const handleEditClick = () => {
-    // 수정 로직 구현
+    setEditing(true);
     setModalOpen(false);
   };
 
