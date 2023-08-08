@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from '../../api/apiController';
 import PerfumeReviewCarousel from '../../components/Carousel/PerfumeReviewCarousel';
 import PostInfoBox from '../../components/Post/PostInfoBox';
@@ -8,14 +8,27 @@ import CommentBox from '../../components/Post/CommentBox';
 import CommentInputForm from '../../components/Post/CommentInputForm';
 import { PostDetailData } from '../../types/PostInfoType';
 import { Main } from '../../style';
+import { ReactComponent as LeftArrow } from '../../assets/icon/left-arrow.svg';
 
 const CommentListBox = styled.div`
   margin-bottom: 80px;
 `;
 
+const Button = styled.button`
+  background: none;
+  border: none;
+  margin: 24px 18px 16px;
+  cursor: pointer;
+`;
+
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [postDetailData, setPostDetailData] = useState<PostDetailData | null>(null);
+  const navigate = useNavigate();
+
+  const handleLeftArrowClick = () => {
+    navigate(-1);
+  };
 
   useEffect(() => {
     const fetchPostDetailData = async () => {
@@ -38,6 +51,9 @@ const PostDetail = () => {
 
   return (
     <Main>
+      <Button onClick={handleLeftArrowClick}>
+        <LeftArrow />
+      </Button>
       <PerfumeReviewCarousel
         rates={postDetailData.rates}
         perfumes={postDetailData.perfumeInfos}
