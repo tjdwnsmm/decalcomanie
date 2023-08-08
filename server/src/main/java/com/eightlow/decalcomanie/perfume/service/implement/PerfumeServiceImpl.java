@@ -107,17 +107,22 @@ public class PerfumeServiceImpl implements IPerfumeService {
     // 이미 찜한 향수인지 체크
     @Override
     public boolean isPickedPerfume(int perfumeId, String userId) {
-        PerfumePick existingPick = perfumePickRepository.findByUserIdAndPerfume_PerfumeId(userId, perfumeId);
+        // 이미 같은 데이터가 있는지 확인
+        PerfumePickId pd = PerfumePickId.builder()
+                .userId(userId)
+                .perfume(perfumeId)
+                .build();
+
+        PerfumePick existingPick = em.find(PerfumePick.class, pd);
 
         if (existingPick == null) return false;
-
         return true;
     }
 
     // DB에 존재하는 향수인지 체크
     @Override
     public boolean isExistingPerfume(int perfumeId) {
-        Perfume existingPerfume = perfumeRepository.findOneByPerfumeId(perfumeId);
+        Perfume existingPerfume = em.find(Perfume.class, perfumeId);
 
         if (existingPerfume == null) return false;
 
@@ -127,7 +132,9 @@ public class PerfumeServiceImpl implements IPerfumeService {
     // 사용자가 찜한 향수 모두 조회
     @Override
     public List<PerfumeDto> findAllPickedPerfume(String userId) {
-        List<PerfumePick> searchResult = perfumePickRepository.findByUserId(userId);
+        List<PerfumePick> searchResult = em.createQuery("select p from PerfumePick p", PerfumePick.class)
+                .getResultList();
+
         List<PerfumeDto> searchedPerfumes = new ArrayList<>();
 
         for (PerfumePick p : searchResult) {
@@ -141,20 +148,17 @@ public class PerfumeServiceImpl implements IPerfumeService {
     // 향수 평점 업데이트
     @Override
     public void updatePerfumeRate(int perfumeId, float rate) {
-        Perfume perfume = perfumeRepository.findOneByPerfumeId(perfumeId);
-        Perfume updatedPerfume = perfume.toBuilder()
-                .rate(rate)
-                .build();
-
-        perfumeRepository.save(updatedPerfume);
+        Perfume perfume = em.find(Perfume.class, perfumeId);
+        perfume.updateRate(rate);
     }
 
     // 향 정보를 가져오기
     @Override
     public Scent getScentById(int scentId) {
-        return scentRepository.findOneByScentId(scentId);
+        return em.find(Scent.class, scentId);
     }
 
+    // 검색창 자동완성을 위해 향수 이름만 가져오기
     @Override
     public List<PerfumeNameResponse> findAllNames() {
         List<PerfumeNameResponse> searchResult = queryFactory
@@ -178,7 +182,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
     }
 
     private BooleanExpression brandEq(List<Integer> brand) {
-        return brand.size() > 0 ? perfume.brandId.in(brand) : null;
+        return brand.size() > 0 ? perfume.brand.brandId.in(brand) : null;
     }
 
     private BooleanExpression genderEq(List<Integer> gender) {
