@@ -1,7 +1,9 @@
 package com.eightlow.decalcomanie.user.service.implement;
 
+import com.eightlow.decalcomanie.perfume.dto.AccordDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.perfume.dto.ScentIdPercent;
 import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
@@ -261,14 +263,16 @@ public class UserServiceImpl implements IUserService {
         // 사용자의 향수 x 향 테이블 계산
         for(UserPerfumeDto perfume : userPerfumesDto) {
             PerfumeDto userPerfume = perfumeService.getPerfume(perfume.getPerfumeId());
-            List<Double> accordPercent = sumAccordWeight(userPerfume.getAccord());
-            userPerfumePercentTable.add(accordPercent);
+            List<ScentDto> scentDtoList = userPerfume.getAccord();
+            // TODO 여기서부터 다시 알고리즘 작성 시작
+
         }
 
         List<Double> userAccordPercent = new ArrayList<>();
         // 사용자의 향 벡터 계산
         // 향 별 계산
-        for(int i=0; i<= userPerfumePercentTable.get(0).size(); i++){
+        for(int i=0; i< userPerfumePercentTable.get(0).size(); i++){
+            System.out.println(userPerfumePercentTable.get(i).toString());
             Double accordSum = 0.0;
             // 사용자별 계산
             for(List<Double> userPerfumePercent : userPerfumePercentTable){
@@ -283,18 +287,20 @@ public class UserServiceImpl implements IUserService {
     }
 
     // 향리스트를 향퍼센트 리스트로 변환해주는 함수
-    public List<Double> sumAccordWeight(List<ScentDto> accordlist){
-        List<Double> result = new ArrayList<>();
+    public Map<Integer,Double> sumAccordWeight(List<ScentDto> accordlist){
+        Map<Integer,Double> result = new HashMap<>();
         int sum = 0;
         for(ScentDto scentDto : accordlist){
             sum += scentDto.getWeight();
         }
         for(ScentDto scentDto : accordlist){
             Double accordPercent = (double) scentDto.getWeight() / (double) sum;
+            scentDto.getScentId();
             result.add(accordPercent);
         }
         return result;
     }
+
 
     // 고정 값 리스트들을 퍼센트 리스트로 변환 해주는 함수
     public List<Double> staticListToPercentList(List<Double> staticList){
