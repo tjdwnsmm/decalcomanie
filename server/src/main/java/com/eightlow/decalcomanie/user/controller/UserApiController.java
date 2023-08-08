@@ -60,6 +60,18 @@ public class UserApiController {
         return new ResponseEntity<>(userService.getFollowers((String)req.getAttribute("userId")), HttpStatus.OK);
     }
 
+    // 다른 유저의 팔로잉 목록 조회
+    @GetMapping("/following/{userId}")
+    public ResponseEntity<List<FollowerResponse>> getOtherFollowingUsers(@PathVariable String userId, HttpServletRequest req) {
+        return new ResponseEntity<>(userService.getOtherFollowingUsers(userId, (String)req.getAttribute("userId")), HttpStatus.OK);
+    }
+
+    // 다른 유저의 팔로우 목록 조회
+    @GetMapping("/follower/{userId}")
+    public ResponseEntity<List<FollowerResponse>> getOtherFollowers(@PathVariable String userId, HttpServletRequest req) {
+        return new ResponseEntity<>(userService.getOtherFollowers(userId, (String)req.getAttribute("userId")), HttpStatus.OK);
+    }
+
     // 사용자 개인 추천 향수
     @GetMapping("/user/recommend/{userId}")
     public ResponseEntity<List<PerfumeDto>> recommend(@PathVariable String userId, HttpServletRequest req) {

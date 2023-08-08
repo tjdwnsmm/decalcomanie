@@ -95,20 +95,21 @@ public class UserServiceImpl implements IUserService {
         System.out.println("sdfsd" + myFollowing.toString());
         List<FollowingResponse> result = new ArrayList<>();
 
-        for(Follow follow : myFollowing) {
+        if(myFollowing.size() > 0) {
+            for(Follow follow : myFollowing) {
+                // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
+                UserInfoDto userInfoDto = getUserInfo(follow.getFollowed());
+                System.out.println(userInfoDto);
 
-            // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
-            UserInfoDto userInfoDto = getUserInfo(follow.getFollowed());
-            System.out.println(userInfoDto);
+                // 반환 포맷에 맞는 response 생성
+                FollowingResponse response = new FollowingResponse(userInfoDto.getUser().getUserId(),
+                        userInfoDto.getUser().getNickname(),
+                        userInfoDto.getFavorities(),
+                        userInfoDto.getHates(),
+                        userInfoDto.getUser().getPicture());
 
-            // 반환 포맷에 맞는 response 생성
-            FollowingResponse response = new FollowingResponse(userInfoDto.getUser().getUserId(),
-                    userInfoDto.getUser().getNickname(),
-                    userInfoDto.getFavorities(),
-                    userInfoDto.getHates(),
-                    userInfoDto.getUser().getPicture());
-
-            result.add(response);
+                result.add(response);
+            }
         }
 
         return result;
@@ -117,23 +118,25 @@ public class UserServiceImpl implements IUserService {
     // 팔로워 목록 조회
     @Override
     public List<FollowerResponse> getFollowers(String userId) {
-        List<Follow> myFollowing = followRepository.findByFollowed(userId);
+        List<Follow> myFollower = followRepository.findByFollowed(userId);
         List<FollowerResponse> result = new ArrayList<>();
 
-        for(Follow follow : myFollowing) {
-            // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
-            UserInfoDto userInfoDto = getUserInfo(follow.getFollowing());
+        if(myFollower.size() > 0) {
+            for(Follow follow : myFollower) {
+                // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
+                UserInfoDto userInfoDto = getUserInfo(follow.getFollowing());
 
-            FollowerResponse response = new FollowerResponse(userInfoDto.getUser().getUserId(),
-                    userInfoDto.getUser().getNickname(),
-                    userInfoDto.getFavorities(),
-                    userInfoDto.getHates(),
-                    userInfoDto.getUser().getPicture(),
-                    isFollowing(userId, userInfoDto.getUser().getUserId()));
+                FollowerResponse response = new FollowerResponse(userInfoDto.getUser().getUserId(),
+                        userInfoDto.getUser().getNickname(),
+                        userInfoDto.getFavorities(),
+                        userInfoDto.getHates(),
+                        userInfoDto.getUser().getPicture(),
+                        isFollowing(userId, userInfoDto.getUser().getUserId()));
 
-            result.add(response);
+                result.add(response);
+            }
         }
-        System.out.println(result);
+
         return result;
     }
 
@@ -188,6 +191,59 @@ public class UserServiceImpl implements IUserService {
         }
         // result의 상단 10개하여 반환
         return perfumeList.subList(0, Math.min(result.size(),10));
+    }
+
+    @Override
+    public List<FollowerResponse> getOtherFollowingUsers(String userId, String myId) {
+        // following 컬럼의 userId를 기준으로 조회
+        List<Follow> followings = followRepository.findByFollowing(userId);
+        List<FollowerResponse> result = new ArrayList<>();
+
+        if(followings.size() > 0) {
+            for(Follow follow : followings) {
+                // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
+                UserInfoDto userInfoDto = getUserInfo(follow.getFollowed());
+
+                FollowerResponse response = FollowerResponse.builder()
+                        .userId(userInfoDto.getUser().getUserId())
+                        .nickname(userInfoDto.getUser().getNickname())
+                        .favorite(userInfoDto.getFavorities())
+                        .hates(userInfoDto.getHates())
+                        .picture(userInfoDto.getUser().getPicture())
+                        .isFollowing(isFollowing(myId, userInfoDto.getUser().getUserId()))
+                        .build();
+
+                result.add(response);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<FollowerResponse> getOtherFollowers(String userId, String myId) {
+        List<Follow> followers = followRepository.findByFollowed(userId);
+        List<FollowerResponse> result = new ArrayList<>();
+
+        if(followers.size() > 0) {
+            for(Follow follow : followers) {
+                // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
+                UserInfoDto userInfoDto = getUserInfo(follow.getFollowing());
+
+                FollowerResponse response = FollowerResponse.builder()
+                        .userId(userInfoDto.getUser().getUserId())
+                        .nickname(userInfoDto.getUser().getNickname())
+                        .favorite(userInfoDto.getFavorities())
+                        .hates(userInfoDto.getHates())
+                        .picture(userInfoDto.getUser().getPicture())
+                        .isFollowing(isFollowing(myId, userInfoDto.getUser().getUserId()))
+                        .build();
+
+                result.add(response);
+            }
+        }
+
+        return result;
     }
 
     // 사용자 향 단뒤 벡터 계산
