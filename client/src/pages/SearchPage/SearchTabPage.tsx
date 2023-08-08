@@ -141,7 +141,7 @@ const SearchTabPage: React.FC = () => {
         brand: [],
         gender: [],
         scent: [],
-        dataSize: 50,
+        dataSize: 200,
       });
       console.log(response);
       return response.data;
@@ -159,7 +159,7 @@ const SearchTabPage: React.FC = () => {
         brand: filter.brandId ? filter.brandId : [],
         gender: filter.gender ? filter.gender : [],
         scent: filter.scentId ? filter.scentId : [],
-        dataSize: 50,
+        dataSize: 200,
       });
       console.log(response);
       return response.data;
