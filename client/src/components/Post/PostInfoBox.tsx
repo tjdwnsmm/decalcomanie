@@ -67,7 +67,8 @@ const CreatedAt = styled.div`
 
 const Scent = styled.div`
   display: flex;
-  color: ${(props) => (props.color === 'fav' ? 'var(--primary-color)' : 'var(--gray-color)')};
+  color: ${(props) =>
+    props.color === 'fav' ? 'var(--primary-color)' : 'var(--gray-color)'};
   font-size: 10px;
   font-weight: 500;
   margin-right: 5px;
@@ -115,43 +116,40 @@ const formatDateTime = (datetimeStr: string) => {
 };
 
 const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
-  const {
-    articleDto,
-    bookmarked,
-    userInfoDto,
-    hearted,
-    followed,
-  } = postInfo;
+  const { articleDto, bookmarked, userInfoDto, hearted, followed } = postInfo;
 
-  const hasScent = userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
+  const hasScent =
+    userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
   const isMyPost = getLoggedInUserNickname() === userInfoDto.user.nickname;
 
   return (
     <PostInfoBoxContainer>
       <WriterInfoBox>
         <div style={{ display: 'flex' }}>
-          <ProfileImg src={userInfoDto.user.picture} />
+          <ProfileImg
+            src={userInfoDto.user.picture ? userInfoDto.user.picture : ''}
+          />
           <InfoBox>
             <InfoBoxRow>
               <Writer>{userInfoDto.user.nickname}</Writer>
               <CreatedAt>{formatDateTime(articleDto.createdAt)}</CreatedAt>
             </InfoBoxRow>
             {hasScent && (
-            <InfoBoxRow>
-              {userInfoDto.favorities?.map((scent) => (
-                <Scent color="fav">#{scent.name}</Scent>
-              ))}
-              {userInfoDto.hates?.map((scent) => (
-                <Scent color="hate">#{scent.name}</Scent>
-              ))}
-            </InfoBoxRow>
+              <InfoBoxRow>
+                {userInfoDto.favorities?.map((scent) => (
+                  <Scent color="fav">#{scent.name}</Scent>
+                ))}
+                {userInfoDto.hates?.map((scent) => (
+                  <Scent color="hate">#{scent.name}</Scent>
+                ))}
+              </InfoBoxRow>
             )}
           </InfoBox>
         </div>
         <div style={{ height: '42px', display: 'flex', alignItems: 'center' }}>
-          {!isMyPost && <FollowBtn
-            to={articleDto.userId}
-            isFollow={followed} />}
+          {!isMyPost && (
+            <FollowBtn to={articleDto.userId} isFollow={followed} />
+          )}
           {isMyPost && <PostModalBtn articleId={articleDto.articleId} />}
         </div>
       </WriterInfoBox>
@@ -167,7 +165,9 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
         <ScrapBtn articleId={articleDto.articleId} isScrap={bookmarked} />
       </IconBox>
       <CommentCount>
-        {articleDto.comment === 0 ? '댓글이 없습니다.' : `${articleDto.comment}개의 댓글`}
+        {articleDto.comment === 0
+          ? '댓글이 없습니다.'
+          : `${articleDto.comment}개의 댓글`}
       </CommentCount>
     </PostInfoBoxContainer>
   );

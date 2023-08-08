@@ -70,12 +70,13 @@ const StyledTextarea = styled.textarea<{ isEditing: boolean }>`
   margin-top: 5px;
 `;
 
-const ModiBtn = styled.button< { isEditable: boolean } >`
+const ModiBtn = styled.button<{ isEditable: boolean }>`
   height: 32px;
   border: none;
   background-color: var(--background-color);
   font-size: 16px;
-  color: ${({ isEditable }) => (isEditable ? 'var(--primary-color)' : 'var(--gray-color)')};
+  color: ${({ isEditable }) =>
+    isEditable ? 'var(--primary-color)' : 'var(--gray-color)'};
   cursor: ${({ isEditable }) => (isEditable ? 'pointer' : '')};
 `;
 
@@ -160,16 +161,18 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
     }
   };
 
-  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && isEditable) {
-      event.preventDefault();
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && isEditable) {
+      e.preventDefault();
       handleEditClick();
     }
   };
 
   return (
     <CommentBoxContainer>
-      <ProfileImage src={commentUser.user.picture} />
+      <ProfileImage
+        src={commentUser.user.picture ? commentUser.user.picture : ''}
+      />
       <CommentContent>
         <InfoBox>
           <UserNickname>{commentUser.user.nickname}</UserNickname>
@@ -182,9 +185,13 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
               isEditing={isEditing}
               value={editedContent}
               onChange={handleContentChange}
-              onKeyPress={handleKeyPress}
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) =>
+                handleKeyPress(e)
+              }
             />
-            <ModiBtn isEditable={isEditable} onClick={handleEditClick}>수정</ModiBtn>
+            <ModiBtn isEditable={isEditable} onClick={handleEditClick}>
+              수정
+            </ModiBtn>
           </InfoBox>
         )}
       </CommentContent>

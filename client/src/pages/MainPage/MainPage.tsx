@@ -36,7 +36,7 @@ const MainPage = () => {
   };
 
   useEffect(() => {
-    axios.get('/user/recommend').then((res) => {
+    axios.get('/user/user/recommend').then((res) => {
       const datas = res.data;
       console.log(datas);
       setRecommendPerfume(datas);
