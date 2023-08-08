@@ -39,7 +39,7 @@ const PostDetail = () => {
   return (
     <Main>
       <PerfumeReviewCarousel
-        grades={postDetailData.gradeDto}
+        rates={postDetailData.rates}
         perfumes={postDetailData.perfumeInfos}
       />
       <PostInfoBox postInfo={postDetailData} />

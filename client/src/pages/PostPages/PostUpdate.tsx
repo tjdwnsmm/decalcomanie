@@ -119,7 +119,7 @@ export default function PostUpdate() {
           <MarginFrame margin="15px 0">
             <LeftTitleAlign>평점</LeftTitleAlign>
             <MarginFrame margin="10px 0 40px">
-              <AddRating perfumes={postDetailData.perfumeInfos} grades={postDetailData.gradeDto} />
+              <AddRating perfumes={postDetailData.perfumeInfos} rates={postDetailData.rates} />
             </MarginFrame>
           </MarginFrame>
         )}

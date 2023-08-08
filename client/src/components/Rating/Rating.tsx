@@ -2,11 +2,11 @@ import Rating from '@mui/material/Rating';
 import Stack from '@mui/material/Stack';
 import { styled as MUstyled } from '@mui/material/styles';
 import { styled } from 'styled-components';
-import { perfumeInfos, gradeDto } from '../../types/PostInfoType';
+import { perfumeInfos } from '../../types/PostInfoType';
 
 interface AddRatingProps {
   perfumes: perfumeInfos[];
-  grades: gradeDto[];
+  rates: number[];
 }
 
 interface PerfumeRatingBoxProps {
@@ -32,21 +32,16 @@ function PerfumeRatingBox({ name }: PerfumeRatingBoxProps) {
   return <>{name}</>;
 }
 
-export default function AddRating({ perfumes, grades }: AddRatingProps) {
+export default function AddRating({ perfumes, rates }: AddRatingProps) {
   return (
     <>
       <Stack spacing={0}>
-        {perfumes.map((perfume) => {
-          const grade = grades.find((item) => item.perfumeId === perfume.perfumeId);
-          const rate = grade ? grade.rate : 0;
-
-          return (
-            <StyledDiv key={perfume.perfumeId}>
-              <PerfumeRatingBox name={perfume.nameOrg} />
-              <StyledRating name={`rating-${perfume.perfumeId}`} defaultValue={rate} precision={1} />
-            </StyledDiv>
-          );
-        })}
+        {perfumes.map((perfume, index) => (
+          <StyledDiv key={perfume.perfumeId}>
+            <PerfumeRatingBox name={perfume.nameOrg} />
+            <StyledRating name={`rating-${perfume.perfumeId}`} defaultValue={rates[index]} precision={1} />
+          </StyledDiv>
+        ))}
       </Stack>
     </>
   );
