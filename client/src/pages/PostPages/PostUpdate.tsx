@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../api/apiController';
-import { PostButton, CancleButton } from '../../components/Button/Button.js';
-import CustomizedSwitches from '../../components/Switch/Switch.js';
-import ContextBox from '../../components/Box/AddContext.js';
-import AddRating from '../../components/Rating/Rating.js';
-import AddCarousel from '../../components/Box/AddCarousel.js';
-import { ConfirmButton, Main, MarginFrame } from '../../style/index.js';
+import CustomizedSwitches from '../../components/Switch/Switch';
+import ContextBox from '../../components/Box/AddContext';
+import AddRating from '../../components/Rating/Rating';
+import AddCarousel from '../../components/Box/AddCarousel';
+import { ConfirmButton, Main, MarginFrame } from '../../style/index';
 import { ReactComponent as CancelSvg } from '../../assets/img/close.svg';
 import { PostDetailData } from '../../types/PostInfoType';
 
