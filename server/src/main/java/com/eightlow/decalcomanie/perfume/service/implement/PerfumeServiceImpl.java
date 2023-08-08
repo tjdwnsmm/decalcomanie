@@ -66,8 +66,13 @@ public class PerfumeServiceImpl implements IPerfumeService {
                         scentEq(condition.getScent()),
                         brandEq(condition.getBrand()),
                         genderEq(condition.getGender()),
-                        keywordEq(condition.getKeyword())
+                        keywordEq(condition.getKeyword()),
+                        perfume.pick.loe(condition.getLastPick() == null ? 999999999 : condition.getLastPick()),
+                        perfume.perfumeId.gt(condition.getLastPerfumeId() == null ? 0 : condition.getLastPerfumeId())
                 )
+                .orderBy(perfume.pick.desc())
+                .orderBy(perfume.perfumeId.asc())
+                .limit(condition.getDataSize() == null ? 50 : condition.getDataSize())
                 .fetch();
 
         return perfumeMapper.toDto(searchResult);

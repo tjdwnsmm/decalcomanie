@@ -9,6 +9,4 @@ import java.util.List;
 @Repository
 public interface ScentRepository extends JpaRepository<Scent, Integer> {
     List<Scent> findAll();
-
-    Scent findOneByScentId(int scentId);
 }

@@ -9,6 +9,4 @@ import java.util.List;
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, Integer> {
     List<Brand> findAll();
-
-    Brand findOneByBrandId(int brandId);
 }

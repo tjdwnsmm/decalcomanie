@@ -8,10 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@Deprecated
 public interface NoteListRepository extends JpaRepository<NoteList, Integer> {
     List<NoteList> findAll();
-
-    Note findOneByNote_NoteId(int noteListId);
-
-    List<NoteList> findAllByPerfume_PerfumeId(int perfumeId);
 }

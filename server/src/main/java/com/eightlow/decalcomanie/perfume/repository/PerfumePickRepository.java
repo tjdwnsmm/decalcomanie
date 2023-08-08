@@ -4,14 +4,8 @@ import com.eightlow.decalcomanie.perfume.entity.PerfumePick;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
+@Deprecated
 public interface PerfumePickRepository extends JpaRepository<PerfumePick, Integer> {
 
-    PerfumePick findByUserIdAndPerfume_PerfumeId(String userId, int perfumeId);
-
-    void deleteByUserIdAndPerfume_PerfumeId(String userId, int perfumeId);
-
-    List<PerfumePick> findByUserId(String userId);
 }

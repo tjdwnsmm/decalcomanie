@@ -10,6 +10,4 @@ import java.util.List;
 @Repository
 public interface PerfumeRepository extends JpaRepository<Perfume, Integer> {
     List<Perfume> findAll();
-
-    Perfume findOneByPerfumeId(int perfumeId);
 }
