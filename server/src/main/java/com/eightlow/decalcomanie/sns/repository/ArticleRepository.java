@@ -20,6 +20,10 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query("SELECT a  FROM Article a WHERE a.userId = :userId ORDER BY a.createdAt DESC")
     List<Article> findByUserId(@Param(value = "userId") String userId);
 
+    @Modifying(clearAutomatically = true)
+    @Query("DELETE FROM Article a WHERE a.articleId = :articleId")
+    void deleteByArticleId(@Param(value = "articleId") int articleId);
+
     @Query("SELECT a  FROM Article a ORDER BY a.heart DESC")
     @Transactional
     List<Article> findArticlesOrderByHeart();

@@ -117,7 +117,7 @@ public class ArticleServiceImpl implements IArticleService {
             // 댓글의 userId와 수정하려는 userId를 비교하여 일치하는지 확인
             if (existingArticle.getUserId().equals(userId)) {
 
-                articleRepository.deleteById(articleId);
+                articleRepository.deleteByArticleId(articleId);
             } else {
                 // userId가 일치하지 않는 경우, 권한이 없음을 알리는 예외 또는 메시지를 반환
                 // throw new UnauthorizedAccessException("댓글을 수정할 권한이 없습니다.");
