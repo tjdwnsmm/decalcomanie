@@ -73,9 +73,9 @@ public class UserApiController {
     }
 
     // 사용자 개인 추천 향수
-    @GetMapping("/user/recommend/{userId}")
-    public ResponseEntity<List<PerfumeDto>> recommend(@PathVariable String userId, HttpServletRequest req) {
-        return new ResponseEntity<>(userService.recommendUserPerfume(userId), HttpStatus.OK);
+    @GetMapping("/user/recommend")
+    public ResponseEntity<List<PerfumeDto>> recommend(HttpServletRequest req) {
+        return new ResponseEntity<>(userService.recommendUserPerfume((String)req.getAttribute("userId")), HttpStatus.OK);
     }
 }
 
