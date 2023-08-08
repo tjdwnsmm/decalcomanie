@@ -39,7 +39,7 @@ public interface IArticleService {
      */
     void createComment(CommentDto commentDto);
     ResponseEntity<Response> updateComment(CommentDto commentDto);
-    int deleteComment(int commentId, String userId);
+    int deleteComment(CommentDto commentDto);
     void increaseCommentCount(int articleId);
 
     void decreaseCommentCount(int articleId);

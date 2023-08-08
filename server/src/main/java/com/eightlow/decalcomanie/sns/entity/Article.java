@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -32,4 +33,13 @@ public class Article extends BaseEntity {
 
     @ColumnDefault("0")
     private int comment;
+
+    @OneToMany(mappedBy = "article")
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "article")
+    private List<ArticlePerfume> articlePerfume;
+
+    @OneToMany(mappedBy = "article")
+    private List<Heart> heartUsers;
 }

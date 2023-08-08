@@ -1,5 +1,6 @@
 package com.eightlow.decalcomanie.sns.repository;
 
+import com.eightlow.decalcomanie.sns.entity.Article;
 import com.eightlow.decalcomanie.sns.entity.ArticlePerfume;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,10 +16,10 @@ public interface ArticlePerfumeRepository extends JpaRepository <ArticlePerfume,
     List<ArticlePerfume> findByArticleId(int articleId);
     List<ArticlePerfume> findByPerfumeId(int perfumeId);
 
-    List<ArticlePerfume> findByArticleIdAndPerfumeIdIn(int articleId, List<Integer> perfumeId);
+    List<ArticlePerfume> findByArticleIdAndPerfumeIdIn(Article article, List<Integer> perfumeId);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE ArticlePerfume ap SET ap.rate = :rate WHERE ap.articleId = :articleId AND ap.perfumeId = :perfumeId")
+    @Query("UPDATE ArticlePerfume ap SET ap.rate = :rate WHERE ap.article.articleId = :articleId AND ap.perfume.perfumeId = :perfumeId")
     void updateRateByArticleIdAndPerfumeId(@Param(value = "articleId") int articleId,
                                            @Param(value = "perfumeId") int perfumeId,
                                            @Param(value = "rate") int rate);

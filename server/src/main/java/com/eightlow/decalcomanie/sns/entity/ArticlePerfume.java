@@ -1,5 +1,6 @@
 package com.eightlow.decalcomanie.sns.entity;
 
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,9 +19,13 @@ public class ArticlePerfume {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int articlePerfumeId;
 
-    private int articleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "articleId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Article article;
 
-    private int perfumeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "perfumeId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Perfume perfume;
 
     private int rate;
 }
