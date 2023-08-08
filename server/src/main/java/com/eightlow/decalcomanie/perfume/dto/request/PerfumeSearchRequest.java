@@ -19,5 +19,11 @@ public class PerfumeSearchRequest {
     private List<Integer> gender;
 
     private List<Integer> scent;
+
+    private Integer dataSize;
+
+    private Integer lastPick;
+
+    private Integer lastPerfumeId;
 }
 

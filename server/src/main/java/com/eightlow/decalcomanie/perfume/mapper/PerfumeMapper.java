@@ -25,10 +25,40 @@ public interface PerfumeMapper {
         List<PerfumeDto> perfumeDtoList = new ArrayList<>();
 
         for (Perfume perfume : perfumeList) {
-           perfumeDtoList.add(toDto(perfume));
+           perfumeDtoList.add(toSimpleDto(perfume));
         }
 
         return perfumeDtoList;
+    }
+
+    default PerfumeDto toSimpleDto(Perfume perfume) {
+        List<ScentDto> accords = new ArrayList<>();
+
+        if(perfume.getAccord() != null) {
+            for (Accord a : perfume.getAccord()) {
+                ScentDto sdto = ScentDto.builder()
+                        .weight(a.getWeight())
+                        .rgb(a.getScent().getRgb())
+                        .scentId(a.getScent().getScentId())
+                        .nameOrg(a.getScent().getNameOrg())
+                        .name(a.getScent().getName())
+                        .build();
+
+                accords.add(sdto);
+            }
+        }
+
+        PerfumeDto pdto = PerfumeDto.builder()
+                .perfumeId(perfume.getPerfumeId())
+                .nameOrg(perfume.getNameOrg())
+                .name(perfume.getName())
+                .brandNameOrg(perfume.getBrand().getNameOrg())
+                .brandName(perfume.getBrand().getName())
+                .picture(perfume.getPicture())
+                .accord(accords)
+                .build();
+
+        return pdto;
     }
 
     default PerfumeDto toDto(Perfume perfume) {

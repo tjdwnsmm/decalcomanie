@@ -12,10 +12,6 @@ import java.util.List;
 public interface AccordRepository extends JpaRepository<Accord, Integer> {
     List<Accord> findAll();
 
-    Accord findOneByAccordId(int accordId);
-
     @Query("SELECT a.perfume.perfumeId FROM Accord a WHERE a.scent.scentId = :scentId")
     List<Integer> findPerfumeIdsByScentId(@Param(value="scentId") int scentId);
-
-    List<Accord> findAllByPerfume_PerfumeId(int perfumeId);
 }

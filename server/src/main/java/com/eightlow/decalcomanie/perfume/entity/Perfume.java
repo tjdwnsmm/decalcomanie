@@ -63,4 +63,8 @@ public class Perfume {
     public void updatePick(int pick) {
         this.pick += pick;
     }
+
+    public void updateRate(float rate) {
+        this.rate = rate;
+    }
 }

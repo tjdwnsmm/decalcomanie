@@ -7,8 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@Deprecated
 public interface NoteRepository extends JpaRepository<Note, Integer> {
     List<Note> findAll();
-
-    Note findOneByNoteId(int noteId);
 }
