@@ -84,6 +84,8 @@ export default function PostUpdate() {
       navigate(`/post-detail/${id}`);
     } catch (error) {
       console.error(error);
+      // 임시로 에러 나도 post-detail로 이동하도록/ 본문 수정은 반영 됨
+      navigate(`/post-detail/${id}`);
     }
   };
 

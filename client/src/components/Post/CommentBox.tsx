@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, KeyboardEvent } from 'react';
 import styled from 'styled-components';
 import { commentDto, commmentUsers } from '../../types/PostInfoType';
 import CommentModalBtn from '../Button/CommentModalBtn';
@@ -139,7 +139,7 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setEditedContent(newValue);
-    setIsEditable(newValue !== comment.content && newValue.length > 0);
+    setIsEditable(newValue.trim() !== comment.content && newValue.length > 0);
   };
 
   const handleEditClick = async () => {
@@ -153,15 +153,18 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
         console.log('댓글이 수정되었습니다:', response.data);
         setEditedContent('');
         setEditing(false);
+        window.location.reload();
       } catch (error) {
         console.error('댓글 수정 중 오류:', error);
       }
     }
   };
 
-  const handleConfirmEdit = () => {
-    // TODO: 백엔드 API를 호출하여 editedContent를 수정한 내용으로 업데이트
-    setEditing(false); // 수정 모드 해제
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && isEditable) {
+      event.preventDefault();
+      handleEditClick();
+    }
   };
 
   return (
@@ -179,6 +182,7 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
               isEditing={isEditing}
               value={editedContent}
               onChange={handleContentChange}
+              onKeyPress={handleKeyPress}
             />
             <ModiBtn isEditable={isEditable} onClick={handleEditClick}>수정</ModiBtn>
           </InfoBox>

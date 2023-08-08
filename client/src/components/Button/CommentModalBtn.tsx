@@ -104,6 +104,7 @@ const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProp
       window.location.reload();
     } catch (error) {
       console.error(error);
+      setConfirmationOpen(false);
     }
   };
 

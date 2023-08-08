@@ -70,6 +70,7 @@ function CommentInputForm({ articleId }: { articleId: number }) {
         console.log('댓글이 등록되었습니다:', response.data);
 
         setCommentContent('');
+        window.location.reload();
       } catch (error) {
         console.error('댓글 등록 중 오류:', error);
       }
@@ -78,6 +79,7 @@ function CommentInputForm({ articleId }: { articleId: number }) {
 
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      event.preventDefault();
       handleCommentSubmit();
     }
   };
