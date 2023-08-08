@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { FollowInfo } from '../../types/ProfileInfoType';
 import FollowBtn from '../Button/FollowBtn';
+import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface FollowBoxProps {
   followList: FollowInfo[];
@@ -84,10 +85,12 @@ const FollowBox = ({ followList }: FollowBoxProps) => (
           </FavScentList>
         </InfoBox>
         {/* 팔로잉 조회 시 isFollowing 값 안넘어옴 */}
-        <FollowBtn
-          to={follow.userId}
-          isFollow={follow.isFollowing ? follow.isFollowing : true}
-        />
+        { (getLoggedInUserNickname() !== follow.nickname) && (
+          <FollowBtn
+            to={follow.userId}
+            isFollow={follow.isFollowing ? follow.isFollowing : true}
+          />
+        )}
       </FollowInfoBox>
     ))}
   </FollowListContainer>
