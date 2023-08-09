@@ -57,8 +57,17 @@ public class Perfume {
     @OneToMany(mappedBy = "perfume")
     private List<PerfumePick> perfumePicks;
 
-    @OneToMany(mappedBy = "perfume")
-    private List<SeasonTime> occasion;
+    private float spring;
+
+    private float summer;
+
+    private float fall;
+
+    private float winter;
+
+    private float day;
+
+    private float night;
 
     public void updatePick(int pick) {
         this.pick += pick;

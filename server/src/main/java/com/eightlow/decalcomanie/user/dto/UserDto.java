@@ -7,9 +7,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder(toBuilder = true)
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserDto {
     private String userId;
 

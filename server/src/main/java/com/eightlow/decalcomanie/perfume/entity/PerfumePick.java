@@ -1,6 +1,7 @@
 package com.eightlow.decalcomanie.perfume.entity;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumePickId;
+import com.eightlow.decalcomanie.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,9 @@ import javax.persistence.*;
 @Table(name = "perfumepick")
 public class PerfumePick {
     @Id
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private User user;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)

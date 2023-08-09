@@ -1,13 +1,9 @@
 package com.eightlow.decalcomanie.user.controller;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
-import com.eightlow.decalcomanie.perfume.entity.Perfume;
-import com.eightlow.decalcomanie.user.dto.FollowDto;
-import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
+import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
-import com.eightlow.decalcomanie.user.entity.UserPerfume;
-import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,13 +23,11 @@ import java.util.Map;
 public class UserApiController {
 
     private final IUserService userService;
-    private final UserPerfumeMapper userPerfumeMapper;
 
     // 사용자 향수 등록, 삭제
     @PostMapping("/perfume/manage")
     public ResponseEntity<String> modifyUserPerfume(@RequestBody Map<String, Integer> request, HttpServletRequest req) {
-        UserPerfume userPerfume = new UserPerfume((String)req.getAttribute("userId"), request.get("perfumeId"));
-        String userMessage = userService.modifyUserPerfume(userPerfume);
+        String userMessage = userService.modifyUserPerfume((String)req.getAttribute("userId"), request.get("perfumeId"));
         return new ResponseEntity<>(userMessage, HttpStatus.CREATED);
     }
 
@@ -76,6 +71,20 @@ public class UserApiController {
     @GetMapping("/user/recommend")
     public ResponseEntity<List<PerfumeDto>> recommend(HttpServletRequest req) {
         return new ResponseEntity<>(userService.recommendUserPerfume((String)req.getAttribute("userId")), HttpStatus.OK);
+    }
+
+    // 닉네임 중복검사
+    @GetMapping("/update/check/{nickname}")
+    public ResponseEntity<Map<String, Boolean>> checkDuplicated(@PathVariable String nickname) {
+        Map<String, Boolean> responseMap = new HashMap<>();
+        responseMap.put("available", userService.checkDuplicated(nickname));
+        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateUserInfo(@RequestBody UserInfoUpdateRequest request, HttpServletRequest req) {
+        userService.updateUserInfo(request, (String)req.getAttribute("userId"));
+        return new ResponseEntity<>("사용자 정보 변경 성공!", HttpStatus.OK);
     }
 }
 
