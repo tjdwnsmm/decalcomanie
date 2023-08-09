@@ -55,6 +55,7 @@ public class ArticleController {
         CreateArticleRequest createArticleReq = createArticleRequest.toBuilder().userId(userId).build();
         ArticleDto articleDto = articleDtoMapper.fromCreateArticleRequest(createArticleReq);
         int articleId = articleService.createArticle(articleDto);
+        System.out.println(articleId + " created");
 
         // ArticlePerfume테이블에도 글에서 포함도니 향수정보와 평가 넣어주기
         gradeService.createGradeFromRequest(articleId,
@@ -320,10 +321,15 @@ public class ArticleController {
 //        System.out.println(commentDto);
         CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
         // 댓글 삭제
-        int statusCode = articleService.deleteComment(commentDto);
+        int statusCode = articleService.deleteComment(commentId, userId);
+        System.out.println(statusCode);
+        // 이미 없는 댓글의 경우 댓글수 감소 X
+        // TODO: exception을 던지게 하고 catch 를 통한 처리로 수정 필요
+        if (statusCode != -1) {
+            // 댓글 삭제시 article 테이블의 comment의 갯수를 줄여준다
+            articleService.decreaseCommentCount(commentRequest.getArticleId());
+        }
 
-        // 댓글 삭제시 article 테이블의 comment의 갯수를 줄여준다
-        articleService.decreaseCommentCount(commentRequest.getArticleId());
 
         return resultMessage(statusCode);
     }

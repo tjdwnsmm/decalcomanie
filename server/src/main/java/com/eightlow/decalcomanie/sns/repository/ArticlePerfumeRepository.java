@@ -13,10 +13,10 @@ import java.util.List;
 
 @Repository
 public interface ArticlePerfumeRepository extends JpaRepository <ArticlePerfume, Integer>{
-    List<ArticlePerfume> findByArticleId(int articleId);
-    List<ArticlePerfume> findByPerfumeId(int perfumeId);
+    List<ArticlePerfume> findByArticle_ArticleId(int articleId);
+    List<ArticlePerfume> findByPerfume_PerfumeId(int perfumeId);
 
-    List<ArticlePerfume> findByArticleIdAndPerfumeIdIn(Article article, List<Integer> perfumeId);
+    List<ArticlePerfume> findByArticle_ArticleIdAndPerfume_PerfumeIdIn(Article article, List<Integer> perfumeId);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE ArticlePerfume ap SET ap.rate = :rate WHERE ap.article.articleId = :articleId AND ap.perfume.perfumeId = :perfumeId")
@@ -27,6 +27,6 @@ public interface ArticlePerfumeRepository extends JpaRepository <ArticlePerfume,
 //    void deleteByUserIdAndArticleIdAndPerfumeIdIn(String userId, int articleId, List<Integer> perfumeIdList);
 
     @Modifying(clearAutomatically = true)
-    @Query("DELETE FROM ArticlePerfume WHERE articleId = :articleId")
+    @Query("DELETE FROM ArticlePerfume ap WHERE ap.article.articleId = :articleId")
     void deleteAllByArticleId(@Param(value = "articleId") int articleId);
 }
