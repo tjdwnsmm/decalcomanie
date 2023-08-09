@@ -74,17 +74,15 @@ export default function PostUpdate() {
       const requestData = {
         articleId: id,
         content: newContent,
-        // 글 작성 모두 구현 되면 향수와 평점 변경 사항 반영해서 put 요청
-        // perfumeId,
-        // rate,
+        // 임시데이터) 글 작성 모두 구현 되면 평점 변경 사항 반영해서 put 요청
+        perfumeId: [12],
+        rate: [5],
       };
       const response = await axios.put('/sns/update', requestData);
       console.log(response.data);
       navigate(`/post-detail/${id}`);
     } catch (error) {
       console.error(error);
-      // 임시로 에러 나도 post-detail로 이동하도록/ 본문 수정은 반영 됨
-      navigate(`/post-detail/${id}`);
     }
   };
 
