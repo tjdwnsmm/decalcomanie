@@ -9,6 +9,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PerfumePickId implements Serializable {
-    private String userId;
+    private String user;
     private int perfume;
 }
