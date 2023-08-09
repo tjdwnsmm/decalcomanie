@@ -6,6 +6,7 @@ import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
 import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
+import com.eightlow.decalcomanie.user.dto.PerfumeWeight;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
 import com.eightlow.decalcomanie.user.dto.UserPerfumeId;
@@ -271,7 +272,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         // 사용자 향 단위 벡터를 모든 향수 향 단위 벡터와 유사도 계산
-        // List<PerfumeWeight> result = calculateSimilarity(userPerfumeVector,allPerfumeVector);
+        List<PerfumeWeight> result = calculateSimilarity(userPerfumeVector,allPerfumeVector);
 
         // 탑 10 추출
 //        List<PerfumeDto> perfumeList = new ArrayList<>();
@@ -280,6 +281,11 @@ public class UserServiceImpl implements IUserService {
 //        }
         // result의 상단 10개하여 반환
 //        return perfumeList.subList(0, Math.min(result.size(),10));
+        return null;
+    }
+
+    private List<PerfumeWeight> calculateSimilarity(Map<ScentDto, Double> userPerfumeVector, Map<PerfumeDto, Map<ScentDto, Double>> allPerfumeVector) {
+        // TODO
         return null;
     }
 
