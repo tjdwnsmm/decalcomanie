@@ -4,8 +4,8 @@ import PerfumeInfoBox from '../Perfume/PerfumeInfoBox';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { useEffect, useState } from 'react';
-import FollowBtn from '../Button/FollowBtn';
 import axios from '../../api/apiController';
+import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
@@ -74,7 +74,15 @@ const FeedPage = ({ feed, handleDetail, handleFollow }: FeedComponentProps) => {
                 handleFollowClick(feed.userInfoDto.user.userId);
               }}
             >
-              {followed ? <div className="following">팔로잉</div> : '팔로우'}
+              {feed.userInfoDto.user.nickname !== getLoggedInUserNickname() ? (
+                followed ? (
+                  <div className="following">팔로잉</div>
+                ) : (
+                  '팔로우'
+                )
+              ) : (
+                <></>
+              )}
             </Follow>
           </ProfileBox>
           <IconBox>
