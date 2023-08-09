@@ -6,11 +6,19 @@ import { Main } from '../../style';
 import { ReactComponent as LeftArrow } from '../../assets/icon/left-arrow.svg';
 import FollowTab from '../../components/TabBar/FollowTab';
 import FollowBox from '../../components/Follow/FollowBox';
-import { FollowInfo } from '../../types/ProfileInfoType';
+// import { FollowInfo } from '../../types/ProfileInfoType';
 
 interface FollowListProps {
   initialActiveTab: 'follower' | 'following';
   userId: string;
+}
+
+interface FollowInfo {
+  userId: string;
+  picture: string;
+  nickname: string;
+  favorite: string[];
+  isFollowing: boolean;
 }
 
 const Button = styled.button`

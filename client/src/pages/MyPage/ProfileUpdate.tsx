@@ -4,19 +4,48 @@ import { Main, MarginFrame, ConfirmButton, CenterFrame } from '../../style';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
 import NewNickname from '../../components/Profile/NicknameModi';
 import ScentModi from '../../components/Profile/ScentModi';
-import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
-import { USERID } from '../../api/apiController';
+// import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
+import { userInfoDto } from '../../types/PostInfoType';
 
 // 임시데이터
-const user: ProfileUpdateInfo = {
+const userInfo: userInfoDto = {
   user: {
+    userId: 'b18262f7-f7a6-455a-91ea-c74cd42b09b4',
     nickname: '김수민',
-    userId: USERID,
-    accessToken: 'dummy',
+    deletedAt: null,
+    age: 25,
+    gender: 1,
+    picture: 'src/assets/img/profile-img.png',
   },
-  favorite: ['시트러스', '플로럴'],
-  hate: ['머스크', '스파이시'],
-  img: 'src/assets/img/profile-img.png',
+  favorities: [
+    {
+      scentId: 1,
+      weight: 1,
+      name: '시트러스',
+      rgb: '',
+    },
+    {
+      scentId: 2,
+      weight: 1,
+      name: '플로럴',
+      rgb: '',
+    },
+  ],
+  hates: [
+    {
+      scentId: 3,
+      weight: 1,
+      name: '머스크',
+      rgb: '',
+    },
+    {
+      scentId: 4,
+      weight: 1,
+      name: '우디',
+      rgb: '',
+    },
+  ],
+  following: false,
 };
 
 const PageName = styled.div`
@@ -122,22 +151,22 @@ const ProfileUpdate = () => {
         </CancleBtn>
       </MarginFrame>
       <Profile>
-        <ProfileImg src={user.img} alt="프로필 사진" />
+        <ProfileImg src={userInfo.user.picture} alt="프로필 사진" />
         <ImgModiBox>
           <img src="src/assets/img/pencil-float.png" width="26" height="26" />
         </ImgModiBox>
       </Profile>
       <MarginFrame margin="30px 40px">
         <UserInfoName>닉네임</UserInfoName>
-        <NewNickname nickname={user.user.nickname} />
+        <NewNickname nickname={userInfo.user.nickname} />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>
-        <ScentModi scents={user.favorite} fav="좋아하는" />
+        <ScentModi scents={userInfo.favorities} fav="좋아하는" />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>싫어요 🙁</UserInfoName>
-        <ScentModi scents={user.hate} fav="싫어하는" />
+        <ScentModi scents={userInfo.hates} fav="싫어하는" />
       </MarginFrame>
       <MarginFrame margin="20px 0 76px">
         <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>

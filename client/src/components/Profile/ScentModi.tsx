@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
 import { ReactComponent as CancelSvg } from '../../assets/icon/input-cancel.svg';
+import { scent } from '../../types/PostInfoType';
 
 interface ScentModiProps {
-  scents: string[];
+  scents: scent[];
   fav: string;
 }
 
@@ -102,7 +103,7 @@ function ScentModi({ scents, fav }: ScentModiProps) {
       <ScentList>
         {scentList.map((scent, idx) => (
           <ScentItem key={idx}>
-            {scent}
+            {scent.name}
             <CancelSvgColor onClick={() => handleDeleteScent(idx)} />
             {/* <DeleteButton onClick={() => handleDeleteScent(idx)}>
               x
