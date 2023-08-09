@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.*;
 
 @Service
@@ -39,33 +40,49 @@ public class UserServiceImpl implements IUserService {
     private final UserRepository userRepository;
     private final UserScentRepository userScentRepository;
     private final IPerfumeService perfumeService;
-    private final FollowMapper followMapper;
     private final UserMapper userMapper;
     private final ScentMapper scentMapper;
     private final PerfumeRepository perfumeRepository;
     private final UserPerfumeMapper userPerfumeMapper;
     private final PerfumeMapper perfumeMapper;
+    private final EntityManager em;
 
     @Override
-    public String modifyUserPerfume(UserPerfume userPerfume) {
-        UserPerfume perfume = userPerfumeRepository.findByUserIdAndPerfumeId(userPerfume.getUserId(), userPerfume.getPerfumeId());
+    public String modifyUserPerfume(String userId, int perfumeId) {
+        UserPerfumeDto updto = UserPerfumeDto.builder()
+                .user(userId)
+                .perfume(perfumeId)
+                .build();
 
-        if(perfume == null) {
+        UserPerfume userPerfume = em.find(UserPerfume.class, updto);
+
+//        UserPerfume perfume = userPerfumeRepository.findByUserIdAndPerfumeId(userPerfume.getUserId(), userPerfume.getPerfumeId());
+
+        if(userPerfume == null) {
+            User user = em.find(User.class, userId);
+            Perfume perfume = em.find(Perfume.class, perfumeId);
+
+            userPerfume = UserPerfume.builder()
+                    .user(user)
+                    .perfume(perfume)
+                    .build();
+
             userPerfumeRepository.save(userPerfume);
             return "향수가 등록되었습니다";
         }
 
-        userPerfumeRepository.deleteByUserIdAndPerfumeId(userPerfume.getUserId(), userPerfume.getPerfumeId());
+        userPerfumeRepository.delete(userPerfume);
+//        userPerfumeRepository.deleteByUserIdAndPerfumeId(userPerfume.getUserId(), userPerfume.getPerfumeId());
         return "향수가 제거되었습니다";
     }
 
     @Override
     public List<PerfumeDto> getUserPerfume(String userId) {
-        List<UserPerfume> userPerfumes = userPerfumeRepository.findByUserId(userId);
+        List<UserPerfume> userPerfumes = userPerfumeRepository.findByUser_UserId(userId);
         List<PerfumeDto> result = new ArrayList<>();
 
         for(UserPerfume perfume : userPerfumes) {
-            result.add(perfumeService.getPerfume(perfume.getPerfumeId()));
+            result.add(perfumeMapper.toDto(perfume.getPerfume()));
         }
 
         return result;
@@ -74,15 +91,16 @@ public class UserServiceImpl implements IUserService {
     // following = 팔로우 주체의 userId, followed = 팔로우를 할 사람의 userId
     @Override
     public String followUser(String following, String followed) {
-        System.out.println(following);
-        System.out.println(followed);
-
         if(isFollowing(following, followed)) {
             followRepository.deleteByFollowingAndFollowed(following, followed);
             return "팔로우가 취소되었습니다";
         }
 
-        Follow follow = new Follow(following, followed);
+        Follow follow = Follow.builder()
+                .following(following)
+                .followed(followed)
+                .build();
+
         followRepository.save(follow);
         return "팔로우가 완료되었습니다";
     }
@@ -92,14 +110,12 @@ public class UserServiceImpl implements IUserService {
     public List<FollowingResponse> getFollowingUsers(String userId) {
         // following 컬럼의 userId를 기준으로 조회
         List<Follow> myFollowing = followRepository.findByFollowing(userId);
-        System.out.println("sdfsd" + myFollowing.toString());
         List<FollowingResponse> result = new ArrayList<>();
 
         if(myFollowing.size() > 0) {
             for(Follow follow : myFollowing) {
                 // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
                 UserInfoDto userInfoDto = getUserInfo(follow.getFollowed());
-                System.out.println(userInfoDto);
 
                 // 반환 포맷에 맞는 response 생성
                 FollowingResponse response = new FollowingResponse(userInfoDto.getUser().getUserId(),
@@ -152,26 +168,31 @@ public class UserServiceImpl implements IUserService {
     // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보
     @Override
     public UserInfoDto getUserInfo(String userId) {
-        User user = userRepository.findByUserId(userId);
-        System.out.println(userMapper.toDto(user));
+        User user = em.find(User.class, userId);
+//        User user = userRepository.findByUserId(userId);
 
         List<ScentDto> favorite = new ArrayList<>();
         List<ScentDto> hate = new ArrayList<>();
 
-        // userScent 테이블에서 팔로잉 하고 있는 사람의 좋아하는 향, 싫어하느 향을 조회
-        List<UserScent> userScentList = userScentRepository.findUserScentByUserId(userId);
+        // userScent 테이블에서 팔로잉 하고 있는 사람의 좋아하는 향, 싫어하는 향을 조회
+        List<UserScent> userScentList = userScentRepository.findUserScentByUser_UserId(userId);
 
         if(userScentList != null) {
-            for (UserScent scent : userScentList) {
-                if(scent.getStatus().getValue().equals("FAVORITE")) {
-                    favorite.add(scentMapper.toDto(perfumeService.getScentById(scent.getScentId())));
-                } else if(scent.getStatus().getValue().equals("HATE")) {
-                    hate.add(scentMapper.toDto(perfumeService.getScentById(scent.getScentId())));
+            for (UserScent userScent : userScentList) {
+                if(userScent.getStatus().getValue().equals("FAVORITE")) {
+                    favorite.add(scentMapper.toDto(userScent.getScent()));
+                } else if(userScent.getStatus().getValue().equals("HATE")) {
+                    hate.add(scentMapper.toDto(userScent.getScent()));
                 }
             }
         }
 
-        UserInfoDto userInfoDto = new UserInfoDto(userMapper.toDto(user), favorite, hate);
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .user(userMapper.toDto(user))
+                .favorities(favorite)
+                .hates(hate)
+                .build();
+//        UserInfoDto userInfoDto = new UserInfoDto(userMapper.toDto(user), favorite, hate);
         return userInfoDto;
     }
 
@@ -252,15 +273,17 @@ public class UserServiceImpl implements IUserService {
     // 사용자 향 단뒤 벡터 계산
     public List<Double> userAccordVector(String userId) {
         // 사용자가 보유하고 있는 향수 정보를 가져온다.
-        List<UserPerfume> userPerfumes = userPerfumeRepository.findByUserId(userId);
-        List<UserPerfumeDto> userPerfumesDto = userPerfumeMapper.toDto(userPerfumes);
+        List<UserPerfume> userPerfumes = userPerfumeRepository.findByUser_UserId(userId);
+//        List<UserPerfumeDto> userPerfumesDto = userPerfumeMapper.toDto(userPerfumes);
 
         // 사용자의 향수 x 향 테이블
         List<List<Double>> userPerfumePercentTable = new ArrayList<>();
 
         // 사용자의 향수 x 향 테이블 계산
-        for(UserPerfumeDto perfume : userPerfumesDto) {
-            PerfumeDto userPerfume = perfumeService.getPerfume(perfume.getPerfumeId());
+//        for(UserPerfumeDto perfume : userPerfumesDto) {
+        for(UserPerfume perfume : userPerfumes) {
+            PerfumeDto userPerfume = perfumeMapper.toDto(perfume.getPerfume());
+//            PerfumeDto userPerfume = perfumeService.getPerfume(perfume.getPerfumeId());
             List<Double> accordPercent = sumAccordWeight(userPerfume.getAccord());
             userPerfumePercentTable.add(accordPercent);
         }

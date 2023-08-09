@@ -10,9 +10,9 @@ import java.util.List;
 public interface UserPerfumeRepository extends JpaRepository<UserPerfume, Integer> {
     List<UserPerfume> findAll();
 
-    UserPerfume findByUserIdAndPerfumeId(String userId, int perfumeId);
+    UserPerfume findByUser_UserIdAndPerfume_PerfumeId(String userId, int perfumeId);
 
-    void deleteByUserIdAndPerfumeId(String userId, int perfumeId);
+    void deleteByUser_UserIdAndPerfume_PerfumeId(String userId, int perfumeId);
 
-    List<UserPerfume> findByUserId(String userId);
+    List<UserPerfume> findByUser_UserId(String userId);
 }

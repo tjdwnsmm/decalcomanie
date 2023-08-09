@@ -12,7 +12,7 @@ import com.eightlow.decalcomanie.user.entity.UserPerfume;
 import java.util.List;
 
 public interface IUserService {
-    String modifyUserPerfume(UserPerfume userPerfume);
+    String modifyUserPerfume(String userId, int perfumeId);
 
     List<PerfumeDto> getUserPerfume(String userId);
 

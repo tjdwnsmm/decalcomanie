@@ -1,6 +1,8 @@
 package com.eightlow.decalcomanie.user.entity;
 
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
+import com.eightlow.decalcomanie.user.dto.UserPerfumeId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,10 +19,12 @@ import javax.persistence.*;
 @Table(name = "userperfume")
 public class UserPerfume {
     @Id
-    @Column(name="userId")
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="userId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private User user;
 
     @Id
-    @Column(name="perfumeId")
-    private int perfumeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="perfumeId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Perfume perfume;
 }

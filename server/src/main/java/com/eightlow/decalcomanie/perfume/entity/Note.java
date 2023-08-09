@@ -17,7 +17,6 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Table(name = "note")
 public class Note {
-
     @Id
     @Column(name = "noteId")
     private int noteId;
@@ -27,5 +26,4 @@ public class Note {
 
     @Column(name = "name")
     private String name;
-
 }

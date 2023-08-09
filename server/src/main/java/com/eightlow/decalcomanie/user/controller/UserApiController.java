@@ -31,8 +31,10 @@ public class UserApiController {
     // 사용자 향수 등록, 삭제
     @PostMapping("/perfume/manage")
     public ResponseEntity<String> modifyUserPerfume(@RequestBody Map<String, Integer> request, HttpServletRequest req) {
-        UserPerfume userPerfume = new UserPerfume((String)req.getAttribute("userId"), request.get("perfumeId"));
-        String userMessage = userService.modifyUserPerfume(userPerfume);
+//        UserPerfume userPerfume = new UserPerfume((String)req.getAttribute("userId"), request.get("perfumeId"));
+        System.out.println(request.get("perfumeId"));
+        System.out.println(request.get("perfumeId").getClass());
+        String userMessage = userService.modifyUserPerfume((String)req.getAttribute("userId"), request.get("perfumeId"));
         return new ResponseEntity<>(userMessage, HttpStatus.CREATED);
     }
 

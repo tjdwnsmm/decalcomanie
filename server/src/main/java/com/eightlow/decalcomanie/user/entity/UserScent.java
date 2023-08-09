@@ -1,5 +1,6 @@
 package com.eightlow.decalcomanie.user.entity;
 
+import com.eightlow.decalcomanie.perfume.entity.Scent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,14 +19,16 @@ public class UserScent {
     @Column(name="userScentId")
     private int userScentId;
 
-    @Column(name="userId")
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="userId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(name="status")
     private Status status;
 
-    @Column(name="scentId")
-    private int scentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="scentId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Scent scent;
 }
 
