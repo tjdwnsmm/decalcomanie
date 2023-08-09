@@ -4,6 +4,7 @@ import com.eightlow.decalcomanie.perfume.dto.BrandDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
+import com.eightlow.decalcomanie.perfume.dto.response.OccasionRecommendResponse;
 import com.eightlow.decalcomanie.perfume.dto.response.PerfumeNameResponse;
 import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.perfume.entity.Scent;
@@ -35,4 +36,6 @@ public interface IPerfumeService {
     Scent getScentById(int scentId);
 
     List<PerfumeNameResponse> findAllNames();
+
+    OccasionRecommendResponse recommendByOccasion(String userId);
 }

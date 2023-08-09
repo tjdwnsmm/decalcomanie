@@ -12,6 +12,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated
 @Table(name = "seasontime")
 public class SeasonTime {
     @Id

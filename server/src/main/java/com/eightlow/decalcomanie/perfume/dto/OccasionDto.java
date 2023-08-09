@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated
 public class OccasionDto {
     private String occasion;
 

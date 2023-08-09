@@ -2,11 +2,15 @@ package com.eightlow.decalcomanie.perfume.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.*;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
+import com.eightlow.decalcomanie.perfume.dto.response.OccasionRecommendResponse;
 import com.eightlow.decalcomanie.perfume.dto.response.PerfumeNameResponse;
 import com.eightlow.decalcomanie.perfume.entity.*;
 import com.eightlow.decalcomanie.perfume.mapper.*;
 import com.eightlow.decalcomanie.perfume.repository.*;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
+import com.eightlow.decalcomanie.user.entity.QUser;
+import com.eightlow.decalcomanie.user.entity.User;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +41,9 @@ public class PerfumeServiceImpl implements IPerfumeService {
     private final ScentMapper scentMapper;
     private final JPAQueryFactory queryFactory;
     private final EntityManager em;
+    private final QSeasonTime seasonTime = QSeasonTime.seasonTime;
+    private final QPerfumePick perfumePick = QPerfumePick.perfumePick;
+    private final QUser user = QUser.user;
 
     // id로 개별 향수 조회
     @Override
@@ -83,10 +92,11 @@ public class PerfumeServiceImpl implements IPerfumeService {
     @Transactional
     public boolean pickPerfume(String userId, int perfumeId) {
         Perfume perfume = em.find(Perfume.class, perfumeId);
+        User user = em.find(User.class, userId);
 
         // 이미 같은 데이터가 있는지 확인
         PerfumePickId pd = PerfumePickId.builder()
-                .userId(userId)
+                .user(userId)
                 .perfume(perfumeId)
                 .build();
 
@@ -99,7 +109,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
             return false;
         } else {
             PerfumePick newPick = PerfumePick.builder()
-                    .userId(userId)
+                    .user(user)
                     .perfume(perfume)
                     .build();
 
@@ -114,7 +124,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
     public boolean isPickedPerfume(int perfumeId, String userId) {
         // 이미 같은 데이터가 있는지 확인
         PerfumePickId pd = PerfumePickId.builder()
-                .userId(userId)
+                .user(userId)
                 .perfume(perfumeId)
                 .build();
 
@@ -174,12 +184,99 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return searchResult;
     }
 
+    @Override
+    public OccasionRecommendResponse recommendByOccasion(String userId) {
+        String today = LocalDate.now().toString();
+        String curTime = LocalTime.now().toString();
+
+        User loginUser = em.find(User.class, userId);
+
+        List<Perfume> weather = queryFactory
+                .selectFrom(perfume)
+                .orderBy(perfume.pick.desc())
+                .orderBy(weatherEq(today))
+                .limit(10)
+                .fetch();
+
+        List<Perfume> dayNight = queryFactory
+                .selectFrom(perfume)
+                .orderBy(perfume.pick.desc())
+                .orderBy(timeEq(curTime))
+                .limit(10)
+                .fetch();
+
+        List<Perfume> ageGender = queryFactory
+                .select(perfume)
+                .from(perfumePick)
+                .join(perfumePick.perfume, perfume)
+                .join(perfumePick.user, user)
+                .where(
+                        user.age.eq(loginUser.getAge()),
+                        user.gender.eq(loginUser.getGender())
+                )
+                .groupBy(perfume)
+                .orderBy(perfume.pick.desc())
+                .limit(10)
+                .fetch();
+
+        List<Perfume> overall = queryFactory
+                .select(perfume)
+                .from(perfumePick)
+                .join(perfumePick.perfume, perfume)
+                .join(perfumePick.user, user)
+                .where(
+                        user.age.eq(loginUser.getAge()),
+                        user.gender.eq(loginUser.getGender())
+                )
+                .groupBy(perfume)
+                .orderBy(perfume.pick.desc())
+                .orderBy(weatherEq(today))
+                .orderBy(timeEq(curTime))
+                .limit(10)
+                .fetch();
+
+        return OccasionRecommendResponse.builder()
+                .weather(perfumeMapper.toDto(weather))
+                .dayNight(perfumeMapper.toDto(dayNight))
+                .ageGender(perfumeMapper.toDto(ageGender))
+                .overall(perfumeMapper.toDto(overall))
+                .build();
+    }
+
     // 향수 찜 또는 찜 해제 시에 향수 전체 찜 개수에 반영
     public void updatePickCount(Perfume perfume, int value) {
 //        Perfume perfume = perfumeRepository.findOneByPerfumeId(perfumeId);
         if (perfume != null) {
             perfume.updatePick(value);
         }
+    }
+
+    private OrderSpecifier<Float> timeEq(String curTime) {
+        int time = Integer.parseInt(curTime.split(":")[0]);
+
+        if(time >= 6 && time < 18) {
+            return perfume.day.desc();
+        }
+
+        return perfume.night.desc();
+    }
+
+    private OrderSpecifier<Float> weatherEq(String today) {
+        int month = Integer.parseInt(today.split("-")[1]);
+
+        if(month >= 3 && month < 6) {
+            return perfume.spring.desc();
+        }
+
+        if(month >= 6 && month < 9) {
+            return perfume.summer.desc();
+        }
+
+        if(month >= 9 && month < 12) {
+            return perfume.fall.desc();
+        }
+
+        return perfume.winter.desc();
     }
 
     private BooleanExpression keywordEq(String keyword) {
