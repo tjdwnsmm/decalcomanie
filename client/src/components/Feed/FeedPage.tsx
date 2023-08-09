@@ -1,18 +1,16 @@
 import styled from 'styled-components';
-import {
-  EachFeedInfo,
-  ArticleDetail,
-  FeedDetail,
-} from '../../types/FeedInfoType';
+import { EachFeedInfo } from '../../types/FeedInfoType';
 import PerfumeInfoBox from '../Perfume/PerfumeInfoBox';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { useEffect, useState } from 'react';
 import FollowBtn from '../Button/FollowBtn';
+import axios from '../../api/apiController';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
   handleDetail: (articleId: number) => void;
+  handleFollow: (userId: string, follow: boolean) => void;
 }
 
 /**
@@ -25,13 +23,28 @@ InfoBox : 피드 나머지 부분 내용
   - IconBox : 좋아요 아이콘, 좋아요 수, 스크랩 버튼
 */
 
-const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
+const FeedPage = ({ feed, handleDetail, handleFollow }: FeedComponentProps) => {
   const [picked, setPicked] = useState(feed.hearted);
   const [count, setCount] = useState(feed.articleDtos.heart);
+  const [followed, setFollowed] = useState(feed.followed);
+
   useEffect(() => {
     setPicked(feed.articleDtos.picked);
     setCount(feed.articleDtos.heart);
+    setFollowed(feed.followed);
   }, [feed, count]);
+
+  const handleFollowClick = (userId: string) => {
+    axios.post('/user/follow', { to: userId }).then((res) => {
+      console.log(res.data);
+      handleFollow(feed.userInfoDto.user.userId, !followed);
+      setFollowed(!followed);
+    });
+  };
+
+  const removeHtmlTags = (inputString: string) => {
+    return inputString.replace(/<\/?[^>]+(>|$)/g, '');
+  };
 
   return (
     <>
@@ -39,16 +52,30 @@ const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
         <div onClick={() => handleDetail(feed.articleDtos.articleId)}>
           <PerfumeInfoBox feed={feed.perfumeDtos} />
           <ContentBox>
-            {feed.articleDtos.content.length > 75
-              ? feed.articleDtos.content.slice(0, 75) + '...'
-              : feed.articleDtos.content}
+            {removeHtmlTags(
+              feed.articleDtos.content.length > 100
+                ? feed.articleDtos.content.slice(0, 100) + '...'
+                : feed.articleDtos.content,
+            )}
           </ContentBox>
         </div>
         <InfoBox>
           <ProfileBox>
-            <img src={'src/assets/img/profile-user.png'} />
+            <img
+              src={
+                feed.userInfoDto.user.picture
+                  ? feed.userInfoDto.user.picture
+                  : 'src/assets/img/profile-user.png'
+              }
+            />
             {feed.userInfoDto.user.nickname}
-            <Follow>팔로우</Follow>
+            <Follow
+              onClick={() => {
+                handleFollowClick(feed.userInfoDto.user.userId);
+              }}
+            >
+              {followed ? <div className="following">팔로잉</div> : '팔로우'}
+            </Follow>
           </ProfileBox>
           <IconBox>
             <LikeBtn
@@ -79,7 +106,7 @@ const ProfileBox = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
 `;
 const IconBox = styled.div`
@@ -96,7 +123,7 @@ const FeedBox = styled.div`
 
 const ContentBox = styled.div`
   display: flex;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 400;
   line-height: 18px;
   margin: 15px 10px;
@@ -105,4 +132,8 @@ const ContentBox = styled.div`
 const Follow = styled.div`
   margin-left: 10px;
   color: var(--primary-color);
+
+  .following {
+    color: var(--dark-gray-color);
+  }
 `;

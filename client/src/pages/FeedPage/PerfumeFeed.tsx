@@ -11,22 +11,38 @@ import { ReactComponent as BackSvg } from '../../assets/icon/prevBack.svg';
 
 export const PerfumeFeed = () => {
   const { id } = useParams<{ id: string }>();
-  const [feed, setFeed] = useState<EachFeedInfo[] | null>(null);
+  const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get(`/sns/perfume/${id}`).then((res) => {
-      setFeed(res.data);
+      setFeeds(res.data);
       console.log(res.data);
     });
   }, []);
-
-  const navigate = useNavigate();
 
   const handleBack = () => {
     navigate(`/perfume-detail/${id}`);
   };
 
-  if (!feed) {
+  const handleFollow = (userId: string, followed: boolean) => {
+    // 팔로우 상태를 업데이트하는 로직 구현
+    setFeeds((prevFeeds) => {
+      if (!prevFeeds) return null;
+      return prevFeeds.map((feed) => {
+        if (feed.userInfoDto.user.userId === userId) {
+          // console.log(userId);
+          return {
+            ...feed,
+            followed,
+          };
+        }
+        return feed;
+      });
+    });
+  };
+
+  if (!feeds) {
     return (
       <MarginFrame margin="200px auto">
         <Spinner />
@@ -34,7 +50,7 @@ export const PerfumeFeed = () => {
     );
   }
 
-  if (feed.length === 0) {
+  if (feeds.length === 0) {
     return (
       <>
         <ErrorTxt>검색 결과가 없습니다 😥</ErrorTxt>
@@ -59,12 +75,12 @@ export const PerfumeFeed = () => {
       </MarginFrame>
 
       <PerfumeFeedBox>
-        <PerfumeInfoBox feed={feed[0].perfumeDtos} />
+        <PerfumeInfoBox feed={feeds[0].perfumeDtos} />
       </PerfumeFeedBox>
 
       <FeedBody>
-        {feed.map((eachFeed, idx) => (
-          <FeedPageOnly key={idx} feed={eachFeed} />
+        {feeds.map((eachFeed, idx) => (
+          <FeedPageOnly key={idx} feed={eachFeed} handleFollow={handleFollow} />
         ))}
       </FeedBody>
     </Main>

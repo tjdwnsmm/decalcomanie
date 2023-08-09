@@ -16,6 +16,7 @@
   --black-color: #1c1c1c;
   --white-color: #fdfdfd;
   --gray-color: rgba(169, 169, 169, 0.5);
+  --dark-gray-color: rgba(114, 114, 114, 0.7);
   --success-color: #0bab4b;
   --error-color: #cc0e0e;
 }
