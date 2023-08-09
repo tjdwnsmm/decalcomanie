@@ -208,7 +208,7 @@ public class ArticleServiceImpl implements IArticleService {
     @Override
     @Transactional
     public List<ArticleDto> searchArticleByPerfumeId(int perfumeId) {
-        List<ArticlePerfume> articlePerfumes = articlePerfumeRepository.findByPerfumeId(perfumeId);
+        List<ArticlePerfume> articlePerfumes = articlePerfumeRepository.findByPerfume_PerfumeId(perfumeId);
         List<Integer> articleIds = new ArrayList<>();
         for(ArticlePerfume articlePerfume : articlePerfumes) {
             articleIds.add(articlePerfume.getArticle().getArticleId());
@@ -233,7 +233,7 @@ public class ArticleServiceImpl implements IArticleService {
     @Transactional
     public List<Integer> searchArticlePerfumeId(int articleId) {
         log.info("ArticleServiceImpl::: searchArticlePerfumeId start");
-        List<ArticlePerfume> articlePerfumes = articlePerfumeRepository.findByArticleId(articleId);
+        List<ArticlePerfume> articlePerfumes = articlePerfumeRepository.findByArticle_ArticleId(articleId);
         List<Integer> perfumes = new ArrayList<>();
         for(ArticlePerfume perfume : articlePerfumes) {
             perfumes.add(perfume.getPerfume().getPerfumeId());
@@ -251,8 +251,17 @@ public class ArticleServiceImpl implements IArticleService {
     @Transactional
     public void createComment(CommentDto commentDto) {
         log.info("ArticleServiceImpl::: createComment start");
+        System.out.println(commentDto);
+        // TODO: 이 부분이 select로 데이터를 많이 가져옴 (개선 가능성 있음)
+        Article article = articleRepository.findByArticleId(commentDto.getArticleId()).orElse(null);
 
-        commentRepository.save(commentMapper.toEntity(commentDto));
+        Comment comment = Comment.builder()
+                .article(article)
+                .userId(commentDto.getUserId())
+                .content(commentDto.getContent())
+                .build();
+
+        commentRepository.save(comment);
 
         // TODO: 댓글 갯수 하나 늘려 주는 부분 추가 필요
         // 게시물의 heart갯수 + 1
@@ -313,23 +322,21 @@ public class ArticleServiceImpl implements IArticleService {
     }
 
     @Override
-    public int deleteComment(CommentDto commentDto) {
+    public int deleteComment(int commentId, String userId) {
         log.info("ArticleServiceImpl::: updateComment start");
-        // 수정하려는 댓글의 commentId를 가져옴
-        int commentId = commentDto.getCommentId();
-        int articleId = commentDto.getArticleId();
 
         // 해당 commentId를 가진 댓글 조회
         Comment comment = entityManager.find(Comment.class, commentId);
+        System.out.println(comment);
 
         // 해당 commentId를 가진 댓글이 존재하는지 확인
         if (comment != null) {
             // 댓글이 존재하는 경우, 삭제 작업 진행
             // 댓글의 userId와 수정하려는 userId를 비교하여 일치하는지 확인
-            if (comment.getUserId().equals(commentDto.getUserId())) {
+            if (comment.getUserId().equals(userId)) {
                 // 일치하는 경우, 삭제 작업 진행
                 try {
-                    commentRepository.deleteByCommentId(comment.getArticle().getArticleId());
+                    commentRepository.deleteByCommentId(commentId);
                 } catch (Exception e) {
                     log.info(e.getMessage());
                 }
@@ -345,6 +352,8 @@ public class ArticleServiceImpl implements IArticleService {
 //        }
 //        Comment comment = commentRepository.save(commentMapper.toEntity(commentDto));
 //        log.info("ArticleServiceImpl::: finish ", String.valueOf(comment));
+        } else {
+            return -1;
         }
         return 200;
     }
@@ -370,7 +379,7 @@ public class ArticleServiceImpl implements IArticleService {
     @Transactional
     public List<CommentDto> getComments(int articleId) {
         log.info("ArticleServiceImpl::: getComments start");
-        List<Comment> comments = commentRepository.findByArticleId(articleId);
+        List<Comment> comments = commentRepository.findByArticle_ArticleId(articleId);
         log.info("ArticleServiceImpl::: finish ", String.valueOf(comments));
         return commentMapper.toDTO(comments);
     }
@@ -444,7 +453,7 @@ public class ArticleServiceImpl implements IArticleService {
     @Override
     @Transactional
     public boolean checkHeartArticle(int articleId, String userId) {
-        Optional<Heart> hearts = heartRepository.findByArticleIdAndUserId(articleId, userId);
+        Optional<Heart> hearts = heartRepository.findByArticle_ArticleIdAndUserId(articleId, userId);
 
         if(hearts.isPresent()) {
             return true;
