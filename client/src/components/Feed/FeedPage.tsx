@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 import {
   EachFeedInfo,
   ArticleDetail,
@@ -7,8 +8,8 @@ import {
 import PerfumeInfoBox from '../Perfume/PerfumeInfoBox';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
-import { useEffect, useState } from 'react';
-import FollowBtn from '../Button/FollowBtn';
+import axios from '../../api/apiController';
+import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
@@ -28,10 +29,24 @@ InfoBox : 피드 나머지 부분 내용
 const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
   const [picked, setPicked] = useState(feed.hearted);
   const [count, setCount] = useState(feed.articleDtos.heart);
+  const [followed, setFollowed] = useState(feed.followed);
+  const myFeed = getLoggedInUserNickname() === feed.userInfoDto.user.nickname;
+
   useEffect(() => {
     setPicked(feed.articleDtos.picked);
     setCount(feed.articleDtos.heart);
   }, [feed, count]);
+
+  const handleFollowClick = async () => {
+    try {
+      const requestData = { to: feed.articleDtos.userId };
+      const response = await axios.post('/user/follow', requestData);
+      console.log(response.data);
+      setFollowed(!followed);
+    } catch (error) {
+      console.error('에러: ', error);
+    }
+  };
 
   return (
     <>
@@ -44,7 +59,11 @@ const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
           <ProfileBox>
             <img src={'src/assets/img/profile-user.png'} />
             {feed.userInfoDto.user.nickname}
-            <Follow>팔로우</Follow>
+            {(!myFeed) && (
+              <Follow followed={followed} onClick={handleFollowClick}>
+                {followed ? '팔로잉' : '팔로우'}
+              </Follow>
+            )}
           </ProfileBox>
           <IconBox>
             <LikeBtn
@@ -98,7 +117,8 @@ const ContentBox = styled.div`
   margin: 15px 10px;
 `;
 
-const Follow = styled.div`
+const Follow = styled.div<{ followed : boolean; }>`
   margin-left: 10px;
-  color: var(--primary-color);
-`;
+  color:  ${(props) => (props.followed ? 'var(--gray-color)' : 'var(--primary-color)')};
+  cursor: pointer;
+  `;
