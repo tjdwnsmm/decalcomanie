@@ -318,8 +318,9 @@ public class ArticleController {
 //        commentRequest.builder().userId(userId).build();
 //        CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
 //        System.out.println(commentDto);
+        CommentDto commentDto = commentDtoMapper.fromCommentRequest(commentRequest);
         // 댓글 삭제
-        int statusCode = articleService.deleteComment(commentId, userId);
+        int statusCode = articleService.deleteComment(commentDto);
 
         // 댓글 삭제시 article 테이블의 comment의 갯수를 줄여준다
         articleService.decreaseCommentCount(commentRequest.getArticleId());

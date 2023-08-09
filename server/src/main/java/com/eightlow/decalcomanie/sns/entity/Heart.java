@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -17,10 +14,14 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(HeartPk.class)
-@Table(name="heart")
+@Table(name="heart", indexes ={
+        @Index(name = "idx_heart_articleId", columnList = "articleId")
+})
 public class Heart {
     @Id
-    private int articleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "articleId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Article article;
 
     @Id
     private String userId;

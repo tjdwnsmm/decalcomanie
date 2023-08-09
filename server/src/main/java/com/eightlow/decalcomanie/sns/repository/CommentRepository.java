@@ -21,6 +21,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findByArticleId(int articleId);
 
     @Modifying(clearAutomatically = true)
-    @Query("DELETE FROM Comment WHERE articleId = :articleId")
+    @Query("DELETE FROM Comment c WHERE c.article.articleId = :articleId")
     void deleteAllByArticleId(@Param("articleId") int articleId);
 }

@@ -1,6 +1,7 @@
 package com.eightlow.decalcomanie.sns.service.implement;
 
 import com.eightlow.decalcomanie.sns.dto.ArticlePerfumeDto;
+import com.eightlow.decalcomanie.sns.entity.Article;
 import com.eightlow.decalcomanie.sns.entity.ArticlePerfume;
 import com.eightlow.decalcomanie.sns.mapper.ArticlePerfumeMapper;
 import com.eightlow.decalcomanie.sns.repository.ArticlePerfumeRepository;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,8 @@ public class GradeServiceImpl implements IGradeService {
 
     private final ArticlePerfumeRepository articlePerfumeRepository;
     private final ArticlePerfumeMapper articlePerfumeMapper;
+
+    private final EntityManager entityManager;
 
     @Override
     @Transactional
@@ -47,7 +51,8 @@ public class GradeServiceImpl implements IGradeService {
 
         log.info("GradeServiceImpl::: searchGradesByPerfumeId start");
         List<ArticlePerfume> grades = new ArrayList<>();
-        grades = articlePerfumeRepository.findByArticleIdAndPerfumeIdIn(articleId, perfumeIdList);
+        Article article = entityManager.find(Article.class, articleId);
+        grades = articlePerfumeRepository.findByArticleIdAndPerfumeIdIn(article, perfumeIdList);
 //        for (int i = 0; i < perfumeIdList.size(); i++) {
 //            grades.add(articlePerfumeRepository.findByArticleIdAndPerfumeIdIn(articleId, perfumeIdList.get(i)));
 //        }

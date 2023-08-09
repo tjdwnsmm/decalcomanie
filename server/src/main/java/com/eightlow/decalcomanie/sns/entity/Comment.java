@@ -11,15 +11,20 @@ import javax.persistence.*;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="comment")
+@Table(name="comment", indexes = {
+        @Index(name = "idx_comment_articleId", columnList = "articleId")
+})
 public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "commentId")
     private int commentId;
 
-    private int articleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "articleId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Article article;
 
     private String userId;
+
     private String content;
 }
