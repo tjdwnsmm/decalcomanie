@@ -13,9 +13,12 @@ const user: ProfileUpdateInfo = {
     nickname: '김수민',
     userId: USERID,
     accessToken: 'dummy',
+    age: 20,
+    gender: 1,
+    picture: 'src/assets/img/profile-img.png',
   },
-  favorite: ['시트러스', '플로럴'],
-  hate: ['머스크', '스파이시'],
+  favorities: ['시트러스', '플로럴'],
+  hates: ['머스크', '스파이시'],
   img: 'src/assets/img/profile-img.png',
 };
 
@@ -133,11 +136,11 @@ const ProfileUpdate = () => {
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>
-        <ScentModi scents={user.favorite} fav="좋아하는" />
+        <ScentModi scents={user.favorities} fav="좋아하는" />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>싫어요 🙁</UserInfoName>
-        <ScentModi scents={user.hate} fav="싫어하는" />
+        <ScentModi scents={user.hates} fav="싫어하는" />
       </MarginFrame>
       <MarginFrame margin="20px 0 76px">
         <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>

@@ -39,7 +39,11 @@ export default function AddRating({ perfumes, rates }: AddRatingProps) {
         {perfumes.map((perfume, index) => (
           <StyledDiv key={perfume.perfumeId}>
             <PerfumeRatingBox name={perfume.nameOrg} />
-            <StyledRating name={`rating-${perfume.perfumeId}`} defaultValue={rates[index]} precision={1} />
+            <StyledRating
+              name={`rating-${perfume.perfumeId}`}
+              defaultValue={rates[index]}
+              precision={1}
+            />
           </StyledDiv>
         ))}
       </Stack>
