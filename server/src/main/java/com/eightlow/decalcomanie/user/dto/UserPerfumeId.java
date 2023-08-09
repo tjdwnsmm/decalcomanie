@@ -8,9 +8,8 @@ import java.io.Serializable;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Deprecated
 public class UserPerfumeId implements Serializable {
-    private String userId;
+    private String user;
 
-    private int perfumeId;
+    private int perfume;
 }

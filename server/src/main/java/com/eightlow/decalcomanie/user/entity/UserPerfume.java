@@ -1,7 +1,6 @@
 package com.eightlow.decalcomanie.user.entity;
 
 import com.eightlow.decalcomanie.perfume.entity.Perfume;
-import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
 import com.eightlow.decalcomanie.user.dto.UserPerfumeId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@IdClass(UserPerfumeDto.class)
+@IdClass(UserPerfumeId.class)
 @Getter
 @Builder(toBuilder = true)
 @AllArgsConstructor

@@ -6,10 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Getter

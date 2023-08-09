@@ -9,6 +9,7 @@ import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
 import com.eightlow.decalcomanie.user.dto.PerfumeWeight;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
+import com.eightlow.decalcomanie.user.dto.UserPerfumeId;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.entity.Follow;
@@ -42,12 +43,12 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public String modifyUserPerfume(String userId, int perfumeId) {
-        UserPerfumeDto updto = UserPerfumeDto.builder()
+        UserPerfumeId up = UserPerfumeId.builder()
                 .user(userId)
                 .perfume(perfumeId)
                 .build();
 
-        UserPerfume userPerfume = em.find(UserPerfume.class, updto);
+        UserPerfume userPerfume = em.find(UserPerfume.class, up);
 
         if(userPerfume == null) {
             User user = em.find(User.class, userId);
