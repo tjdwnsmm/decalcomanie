@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FeedTab } from '../../components/TabBar/FeedTab';
 import FeedPage from '../../components/Feed/FeedPage';
-import { Main, MarginFrame } from '../../style';
+import { CenterFrame, Main, MarginFrame } from '../../style';
 import FloatingWriteBtn from '../../components/Button/FloatingWriteBtn';
 import BottomNav from '../../components/common/BottomNav';
 import axios from '../../api/apiController';
@@ -14,7 +14,7 @@ export const MainFeed = () => {
   //default 탭 : following
   //following , popular , latest
   //! following api 가 미완성인 관계로 추후에 useState('following')으로 변경해야함
-  const [nowActive, setNowActive] = useState('popularity');
+  const [nowActive, setNowActive] = useState('following');
   const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
   const navigate = useNavigate();
   const [isLoading, setLoading] = useState(false);
@@ -47,9 +47,19 @@ export const MainFeed = () => {
       <FeedTab setNowActive={handleTabClick} />
       <Feeds>
         {!isLoading && feeds ? (
-          feeds.map((feed, idx) => (
-            <FeedPage key={idx} feed={feed} handleDetail={handleDetail} />
-          ))
+          feeds.length === 0 ? (
+            <>
+              <MarginFrame margin="100px auto">
+                <CenterFrame className="errorTitle">
+                  작성된 글이 없습니다 😥
+                </CenterFrame>
+              </MarginFrame>
+            </>
+          ) : (
+            feeds.map((feed, idx) => (
+              <FeedPage key={idx} feed={feed} handleDetail={handleDetail} />
+            ))
+          )
         ) : (
           <MarginFrame margin="240px 0 0">
             <Spinner />
@@ -68,4 +78,8 @@ const Feeds = styled.div`
   overflow-y: scroll;
   overflow-x: clip;
   padding-bottom: 100px;
+
+  .errorTitle {
+    font-weight: 700;
+  }
 `;
