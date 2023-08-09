@@ -11,6 +11,7 @@ import MainSwiper from '../../components/Carousel/MainSwiper';
 import MoreRateInfo from '../../components/Main/MoreRateInfo';
 import MainScent from '../../components/Main/MainScent';
 import axios from '../../api/apiController';
+import Spinner from '../../components/common/Spinner';
 
 /**
  * !API 로 바꿀것!
@@ -29,8 +30,21 @@ const MainPage = () => {
   const [isDrawer, setDrawer] = useState(true);
   const backFrameRef = useRef<HTMLDivElement>(null);
   const [nickname, setNickname] = useState('');
-  const [recommendPerfume, setRecommendPerfume] = useState<PerfumeDetail[]>([]);
-
+  const [recommendPerfume, setRecommendPerfume] = useState<
+    PerfumeDetail[] | null
+  >(null);
+  const [weatherPerfumes, setWeatherPerfumes] = useState<
+    PerfumeDetail[] | null
+  >(null);
+  const [dayNightPerfumes, setDayNightPerfumes] = useState<
+    PerfumeDetail[] | null
+  >(null);
+  const [ageGenderPerfumes, setAgeGenderPerfumes] = useState<
+    PerfumeDetail[] | null
+  >(null);
+  const [overallPerfumes, setOverallPerfumes] = useState<
+    PerfumeDetail[] | null
+  >(null);
   const handleSearchPerfume = () => {
     navigate('/search-myperfume');
   };
@@ -40,6 +54,14 @@ const MainPage = () => {
       const datas = res.data;
       console.log(datas);
       setRecommendPerfume(datas);
+    });
+
+    axios.get('/perfume/today').then((res) => {
+      console.log(`today data : ${JSON.stringify(res.data)}`);
+      setWeatherPerfumes(res.data.weather);
+      setDayNightPerfumes(res.data.dayNight);
+      setAgeGenderPerfumes(res.data.ageGender);
+      setOverallPerfumes(res.data.overall);
     });
   }, []);
 
@@ -86,25 +108,48 @@ const MainPage = () => {
                     <MainScent accord={favScent} />
                   </>
                 </Info>
-                <MainSwiper perfumes={recommendPerfume} />
+                {recommendPerfume ? (
+                  <MainSwiper perfumes={recommendPerfume} />
+                ) : (
+                  <Spinner />
+                )}
               </>
             )}
-            {isDrawer ? (
-              <MoreRateInfo
-                title={`${season}에 잘어울려요 🌞`}
-                perfumes={perfumes}
-              />
+            {weatherPerfumes &&
+            dayNightPerfumes &&
+            ageGenderPerfumes &&
+            overallPerfumes ? (
+              <>
+                {isDrawer ? (
+                  <MoreRateInfo
+                    title={`${season}에 잘어울려요 🌞`}
+                    perfumes={weatherPerfumes}
+                  />
+                ) : (
+                  <MoreRateInfo
+                    title={`${season}에 잘어울려요 🌞`}
+                    perfumes={weatherPerfumes}
+                    first={true}
+                  />
+                )}
+                <MoreRateInfo
+                  title={`비슷한 유저분들께 인기있어요 🧙‍♀️`}
+                  perfumes={overallPerfumes}
+                />
+                <MoreRateInfo
+                  title={`${'20대 여성'} 들에게 인기가 많아요 🌞`}
+                  perfumes={ageGenderPerfumes}
+                />
+                <MoreRateInfo
+                  title={`${time} 시간대에 인기가 많아요 🌞`}
+                  perfumes={dayNightPerfumes}
+                />
+              </>
             ) : (
-              <MoreRateInfo
-                title={`${season}에 잘어울려요 🌞`}
-                perfumes={perfumes}
-                first={true}
-              />
+              <MarginFrame margin="100px auto">
+                <Spinner />
+              </MarginFrame>
             )}
-            <MoreRateInfo
-              title={`${time} 시간대에 인기가 많아요 🌞`}
-              perfumes={perfumes}
-            />
           </BackFrame>
         </div>
       </Frame>
@@ -158,6 +203,7 @@ const Info = styled.div`
   }
 `;
 
+/*
 const perfumes: PerfumeDetail[] = [
   {
     perfumeId: 1004,
@@ -805,3 +851,4 @@ const perfumes: PerfumeDetail[] = [
     ],
   },
 ];
+*/
