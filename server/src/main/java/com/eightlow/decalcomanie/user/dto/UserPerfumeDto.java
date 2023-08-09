@@ -1,16 +1,17 @@
 package com.eightlow.decalcomanie.user.dto;
 
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import lombok.*;
 
 import java.io.Serializable;
 
 @Getter
-@Builder
-@Data
-@NoArgsConstructor
+@Builder(toBuilder = true)
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class UserPerfumeDto implements Serializable {
-    private String userId;
+    private String user;
 
-    private int perfumeId;
+    private int perfume;
 }
+

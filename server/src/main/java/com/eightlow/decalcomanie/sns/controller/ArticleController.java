@@ -129,19 +129,24 @@ public class ArticleController {
             if(followers != null) {
                 for (FollowingResponse followerInfoResponse : followers) {
                     if(followerInfoResponse.getUserId().equals(commentDto.getUserId())) {
-                        System.out.println("inininininin");
                         userInfoDto = userService.getUserInfo(commentDto.getUserId());
-                        System.out.println(userInfoDto);
                         flag = true;
                         break;
                     }
                 }
             }
 
-            commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
-                    userInfoDto.getHates(), flag));
+            UserInfoDto uidto = UserInfoDto.builder()
+                    .user(userInfoDto.getUser())
+                    .favorities(userInfoDto.getFavorities())
+                    .hates(userInfoDto.getHates())
+                    .isFollowing(flag)
+                    .build();
 
+//            commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
+//                    userInfoDto.getHates(), flag));
 
+            commentUsers.add(uidto);
         }
 
         // 좋아요 되었는지 확인

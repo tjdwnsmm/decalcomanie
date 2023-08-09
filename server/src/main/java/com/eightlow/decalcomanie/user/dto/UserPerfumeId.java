@@ -8,8 +8,9 @@ import java.io.Serializable;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class FollowDto implements Serializable {
-    private String following;
+@Deprecated
+public class UserPerfumeId implements Serializable {
+    private String userId;
 
-    private String followed;
+    private int perfumeId;
 }
