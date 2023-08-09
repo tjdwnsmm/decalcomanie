@@ -132,7 +132,7 @@ const SearchMyPerfume: React.FC = () => {
             <Spinner />
           </MarginFrame>
         ))}
-      <FloatingTopBtn />
+      {/* <FloatingTopBtn /> */}
     </Main>
   );
 };
