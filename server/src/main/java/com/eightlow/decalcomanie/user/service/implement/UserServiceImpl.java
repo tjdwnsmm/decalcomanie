@@ -6,7 +6,6 @@ import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
 import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
-import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import com.eightlow.decalcomanie.user.dto.PerfumeWeight;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
@@ -16,12 +15,9 @@ import com.eightlow.decalcomanie.user.entity.Follow;
 import com.eightlow.decalcomanie.user.entity.User;
 import com.eightlow.decalcomanie.user.entity.UserPerfume;
 import com.eightlow.decalcomanie.user.entity.UserScent;
-import com.eightlow.decalcomanie.user.mapper.FollowMapper;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
-import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.repository.FollowRepository;
 import com.eightlow.decalcomanie.user.repository.UserPerfumeRepository;
-import com.eightlow.decalcomanie.user.repository.UserRepository;
 import com.eightlow.decalcomanie.user.repository.UserScentRepository;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +33,10 @@ import java.util.*;
 public class UserServiceImpl implements IUserService {
     private final UserPerfumeRepository userPerfumeRepository;
     private final FollowRepository followRepository;
-    private final UserRepository userRepository;
     private final UserScentRepository userScentRepository;
-    private final IPerfumeService perfumeService;
     private final UserMapper userMapper;
     private final ScentMapper scentMapper;
     private final PerfumeRepository perfumeRepository;
-    private final UserPerfumeMapper userPerfumeMapper;
     private final PerfumeMapper perfumeMapper;
     private final EntityManager em;
 
@@ -55,8 +48,6 @@ public class UserServiceImpl implements IUserService {
                 .build();
 
         UserPerfume userPerfume = em.find(UserPerfume.class, updto);
-
-//        UserPerfume perfume = userPerfumeRepository.findByUserIdAndPerfumeId(userPerfume.getUserId(), userPerfume.getPerfumeId());
 
         if(userPerfume == null) {
             User user = em.find(User.class, userId);
@@ -72,7 +63,6 @@ public class UserServiceImpl implements IUserService {
         }
 
         userPerfumeRepository.delete(userPerfume);
-//        userPerfumeRepository.deleteByUserIdAndPerfumeId(userPerfume.getUserId(), userPerfume.getPerfumeId());
         return "향수가 제거되었습니다";
     }
 
@@ -169,7 +159,6 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserInfoDto getUserInfo(String userId) {
         User user = em.find(User.class, userId);
-//        User user = userRepository.findByUserId(userId);
 
         List<ScentDto> favorite = new ArrayList<>();
         List<ScentDto> hate = new ArrayList<>();
@@ -187,13 +176,11 @@ public class UserServiceImpl implements IUserService {
             }
         }
 
-        UserInfoDto userInfoDto = UserInfoDto.builder()
+        return UserInfoDto.builder()
                 .user(userMapper.toDto(user))
                 .favorities(favorite)
                 .hates(hate)
                 .build();
-//        UserInfoDto userInfoDto = new UserInfoDto(userMapper.toDto(user), favorite, hate);
-        return userInfoDto;
     }
 
     // 사용자 개인 추천 향수
@@ -274,16 +261,13 @@ public class UserServiceImpl implements IUserService {
     public List<Double> userAccordVector(String userId) {
         // 사용자가 보유하고 있는 향수 정보를 가져온다.
         List<UserPerfume> userPerfumes = userPerfumeRepository.findByUser_UserId(userId);
-//        List<UserPerfumeDto> userPerfumesDto = userPerfumeMapper.toDto(userPerfumes);
 
         // 사용자의 향수 x 향 테이블
         List<List<Double>> userPerfumePercentTable = new ArrayList<>();
 
         // 사용자의 향수 x 향 테이블 계산
-//        for(UserPerfumeDto perfume : userPerfumesDto) {
         for(UserPerfume perfume : userPerfumes) {
             PerfumeDto userPerfume = perfumeMapper.toDto(perfume.getPerfume());
-//            PerfumeDto userPerfume = perfumeService.getPerfume(perfume.getPerfumeId());
             List<Double> accordPercent = sumAccordWeight(userPerfume.getAccord());
             userPerfumePercentTable.add(accordPercent);
         }
