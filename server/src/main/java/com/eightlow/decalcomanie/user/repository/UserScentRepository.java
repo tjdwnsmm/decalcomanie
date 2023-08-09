@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface UserScentRepository extends JpaRepository<UserScent, Integer>  {
-    @Query("SELECT us FROM UserScent us WHERE us.userId = :userId")
-    List<UserScent> findUserScentByUserId(@Param(value = "userId")String userId);
+    @Query("SELECT us FROM UserScent us WHERE us.user.userId = :userId")
+    List<UserScent> findUserScentByUser_UserId(@Param(value = "userId")String userId);
 }

@@ -36,10 +36,20 @@ public class PerfumeDto {
 
     private int pick;
 
+    private float spring;
+
+    private float summer;
+
+    private float fall;
+
+    private float winter;
+
+    private float day;
+
+    private float night;
+
     private List<ScentDto> accord;
 
     private List<NoteListDto> note;
-
-    private List<OccasionDto> occasion;
 
 }

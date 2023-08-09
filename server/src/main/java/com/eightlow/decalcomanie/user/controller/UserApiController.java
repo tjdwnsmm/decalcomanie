@@ -1,13 +1,8 @@
 package com.eightlow.decalcomanie.user.controller;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
-import com.eightlow.decalcomanie.perfume.entity.Perfume;
-import com.eightlow.decalcomanie.user.dto.FollowDto;
-import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
-import com.eightlow.decalcomanie.user.entity.UserPerfume;
-import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,13 +21,11 @@ import java.util.Map;
 public class UserApiController {
 
     private final IUserService userService;
-    private final UserPerfumeMapper userPerfumeMapper;
 
     // 사용자 향수 등록, 삭제
     @PostMapping("/perfume/manage")
     public ResponseEntity<String> modifyUserPerfume(@RequestBody Map<String, Integer> request, HttpServletRequest req) {
-        UserPerfume userPerfume = new UserPerfume((String)req.getAttribute("userId"), request.get("perfumeId"));
-        String userMessage = userService.modifyUserPerfume(userPerfume);
+        String userMessage = userService.modifyUserPerfume((String)req.getAttribute("userId"), request.get("perfumeId"));
         return new ResponseEntity<>(userMessage, HttpStatus.CREATED);
     }
 

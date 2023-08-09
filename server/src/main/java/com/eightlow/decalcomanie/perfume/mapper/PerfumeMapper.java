@@ -1,13 +1,11 @@
 package com.eightlow.decalcomanie.perfume.mapper;
 
 import com.eightlow.decalcomanie.perfume.dto.NoteListDto;
-import com.eightlow.decalcomanie.perfume.dto.OccasionDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.entity.Accord;
 import com.eightlow.decalcomanie.perfume.entity.NoteList;
 import com.eightlow.decalcomanie.perfume.entity.Perfume;
-import com.eightlow.decalcomanie.perfume.entity.SeasonTime;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
@@ -64,7 +62,6 @@ public interface PerfumeMapper {
     default PerfumeDto toDto(Perfume perfume) {
         List<ScentDto> accords = new ArrayList<>();
         List<NoteListDto> noteListDtoList = new ArrayList<>();
-        List<OccasionDto> occasionDtoList = new ArrayList<>();
 
         if(perfume.getAccord() != null) {
             for (Accord a : perfume.getAccord()) {
@@ -94,17 +91,6 @@ public interface PerfumeMapper {
             }
         }
 
-        if(perfume.getOccasion() != null) {
-            for (SeasonTime seasonTime : perfume.getOccasion()) {
-                OccasionDto odto = OccasionDto.builder()
-                        .occasion(seasonTime.getOccasion())
-                        .weight(seasonTime.getWeight())
-                        .build();
-
-                occasionDtoList.add(odto);
-            }
-        }
-
         PerfumeDto pdto = PerfumeDto.builder()
                 .perfumeId(perfume.getPerfumeId())
                 .name(perfume.getName())
@@ -120,7 +106,12 @@ public interface PerfumeMapper {
                 .pick(perfume.getPick())
                 .accord(accords)
                 .note(noteListDtoList)
-                .occasion(occasionDtoList)
+                .spring(perfume.getSpring())
+                .summer(perfume.getSummer())
+                .fall(perfume.getFall())
+                .winter(perfume.getWinter())
+                .day(perfume.getDay())
+                .night(perfume.getNight())
                 .build();
 
         return pdto;

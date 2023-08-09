@@ -10,6 +10,7 @@ import com.eightlow.decalcomanie.sns.dto.request.UpdateArticleRequest;
 import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
 import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
+import com.eightlow.decalcomanie.sns.entity.ArticlePerfume;
 import com.eightlow.decalcomanie.sns.mapper.ArticleDtoMapper;
 import com.eightlow.decalcomanie.sns.mapper.CommentDtoMapper;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
@@ -55,12 +56,12 @@ public class ArticleController {
         ArticleDto articleDto = articleDtoMapper.fromCreateArticleRequest(createArticleReq);
         int articleId = articleService.createArticle(articleDto);
 
-        // grade테이블에도 향수에대한 평가 넣어주기
-        gradeService.createOrModifyGradeFromRequest(userId,
+        // ArticlePerfume테이블에도 글에서 포함도니 향수정보와 평가 넣어주기
+        gradeService.createGradeFromRequest(articleId,
                 createArticleRequest.getPerfumeId(), createArticleRequest.getRate());
 
         // 게시물에 임베디드된 향수들을 테이블에 저장
-        articleService.createArticlePerfume(articleId, createArticleRequest.getPerfumeId());
+        // articleService.createArticlePerfume(articleId, createArticleRequest.getPerfumeId());
 
         //TODO
         // 평점 등록시 perfume테이블의 평점 수정!!!
@@ -94,8 +95,14 @@ public class ArticleController {
         System.out.println(userInfo);
 
         // 향수들의 평점도 가져온다
-        List<GradeDto> rates = gradeService.searchGradesByPerfumeId(articleDto.getUserId(), perfumeIdList);
-        log.info(rates.toString());
+        List<ArticlePerfumeDto> rates = gradeService.searchGradesByPerfumeId(articleId, perfumeIdList);
+
+        List<Integer> rateInfo = new ArrayList<>();
+
+        for(ArticlePerfumeDto articlePerfumeDto: rates) {
+            rateInfo.add(articlePerfumeDto.getRate());
+        }
+        log.info(rateInfo.toString());
 
         // 임베디드된 향수: 이름, 브랜드, 향수 사진 url
         List<PerfumeDto> perfumes = new ArrayList<>();
@@ -122,19 +129,24 @@ public class ArticleController {
             if(followers != null) {
                 for (FollowingResponse followerInfoResponse : followers) {
                     if(followerInfoResponse.getUserId().equals(commentDto.getUserId())) {
-                        System.out.println("inininininin");
                         userInfoDto = userService.getUserInfo(commentDto.getUserId());
-                        System.out.println(userInfoDto);
                         flag = true;
                         break;
                     }
                 }
             }
 
-            commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
-                    userInfoDto.getHates(), flag));
+            UserInfoDto uidto = UserInfoDto.builder()
+                    .user(userInfoDto.getUser())
+                    .favorities(userInfoDto.getFavorities())
+                    .hates(userInfoDto.getHates())
+                    .isFollowing(flag)
+                    .build();
 
+//            commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
+//                    userInfoDto.getHates(), flag));
 
+            commentUsers.add(uidto);
         }
 
         // 좋아요 되었는지 확인
@@ -144,7 +156,7 @@ public class ArticleController {
         boolean isBookmarked = articleService.checkBookmarkArticle(articleDto.getArticleId(), userId);
 
         ArticleResponse articleResponse = new ArticleResponse(articleDto,  userInfo, isFollowed,comments, commentUsers,
-                perfumes, rates, isHearted, isBookmarked);
+                perfumes, rateInfo, isHearted, isBookmarked);
 
         System.out.println(articleResponse);
         return ResponseEntity.status(HttpStatus.OK).body(articleResponse);
@@ -222,12 +234,13 @@ public class ArticleController {
         ArticleDto articleDto = articleDtoMapper.fromUpdateArticleRequest(updateArticleReq);
 
         int status = articleService.updateArticle(articleDto, userId);
+        int articleId = updateArticleReq.getArticleId();
 
         // 글 수정이 성공 한 경우
         if(status == 200) {
             // 향수 평가도 수정
             // TODO: 원래 향수 리스트와 새로 받은 리스트를 확인하거나, 아니면 아얘 peerfumeList를 받지 않거나 둘중 하나 해야함
-            gradeService.createOrModifyGradeFromRequest(updateArticleRequest.getUserId(),
+            gradeService.modifyGradeFromRequest(articleId,
                     updateArticleRequest.getPerfumeId(), updateArticleRequest.getRate());
         }
 
@@ -250,11 +263,11 @@ public class ArticleController {
             //articleId를 통해서 게시물의 임베디드된 향수를 가져온다.
             List<Integer> perfumeIdList = articleService.searchArticlePerfumeId(articleId);
 
-            // 임베디드된 게시물 향수 삭제
+            // 임베디드된 게시물 향수, 평점 삭제
             articleService.deleteArticlePerfumeByArticleId(articleId);
 
             // 글삭제시 향수들 평점 정보 삭제
-            gradeService.deleteGradesByUserIdAndPerfumeId(userId, perfumeIdList);
+            // gradeService.deleteGradesByUserIdAndPerfumeId(userId, articleId, perfumeIdList);
         }
 
         // TODO: 글삭제시 사용자의 post갯수 줄여줘야함
