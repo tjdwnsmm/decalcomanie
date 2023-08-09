@@ -4,6 +4,7 @@ import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.user.dto.FollowDto;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
+import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.entity.Follow;
@@ -32,4 +33,8 @@ public interface IUserService {
     List<FollowerResponse> getOtherFollowingUsers(String userId, String myId);
 
     List<FollowerResponse> getOtherFollowers(String userId, String myId);
+
+    boolean checkDuplicated(String nickname);
+
+    void updateUserInfo(UserInfoUpdateRequest request, String userId);
 }

@@ -3,6 +3,7 @@ package com.eightlow.decalcomanie.user.service.implement;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.entity.Perfume;
+import com.eightlow.decalcomanie.perfume.entity.Scent;
 import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
 import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
@@ -10,16 +11,15 @@ import com.eightlow.decalcomanie.user.dto.PerfumeWeight;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
 import com.eightlow.decalcomanie.user.dto.UserPerfumeId;
+import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
-import com.eightlow.decalcomanie.user.entity.Follow;
-import com.eightlow.decalcomanie.user.entity.User;
-import com.eightlow.decalcomanie.user.entity.UserPerfume;
-import com.eightlow.decalcomanie.user.entity.UserScent;
+import com.eightlow.decalcomanie.user.entity.*;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.repository.FollowRepository;
 import com.eightlow.decalcomanie.user.repository.UserPerfumeRepository;
+import com.eightlow.decalcomanie.user.repository.UserRepository;
 import com.eightlow.decalcomanie.user.repository.UserScentRepository;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +36,7 @@ public class UserServiceImpl implements IUserService {
     private final UserPerfumeRepository userPerfumeRepository;
     private final FollowRepository followRepository;
     private final UserScentRepository userScentRepository;
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ScentMapper scentMapper;
     private final PerfumeRepository perfumeRepository;
@@ -244,6 +245,50 @@ public class UserServiceImpl implements IUserService {
         }
 
         return result;
+    }
+
+    @Override
+    public boolean checkDuplicated(String nickname) {
+        User user = userRepository.findByNickname(nickname);
+        if(user == null) return true;
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public void updateUserInfo(UserInfoUpdateRequest request, String userId) {
+        User user = em.find(User.class, userId);
+
+        user.updateNickname(request.getNickname());
+
+        userScentRepository.deleteAllByUser_UserId(userId);
+
+        List<Integer> favorites = request.getFavorite();
+        List<Integer> hates = request.getHate();
+
+        for(int scentId : favorites) {
+            Scent scent = em.find(Scent.class, scentId);
+
+            userScentRepository.save(
+                    UserScent.builder()
+                            .scent(scent)
+                            .user(user)
+                            .status(Status.FAVORITE)
+                            .build()
+            );
+        }
+
+        for(int scentId : hates) {
+            Scent scent = em.find(Scent.class, scentId);
+
+            userScentRepository.save(
+                    UserScent.builder()
+                            .scent(scent)
+                            .user(user)
+                            .status(Status.HATE)
+                            .build()
+            );
+        }
     }
 
     // 사용자 개인 추천 향수
