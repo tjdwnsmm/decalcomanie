@@ -10,12 +10,10 @@ export interface articleDto {
 
 export interface user {
   userId: string;
-  accessToken: string;
   nickname: string;
   deletedAt: string | null;
   age: number;
   gender: number;
-  refreshToken: string;
   picture: string | null;
 }
 
@@ -54,16 +52,17 @@ export interface perfumeInfos {
   name: string;
   nameOrg: string;
   brandName: string;
+  brandNameOrg: string;
   brandId: number;
   picture: string;
   rate: number;
 }
 
-export interface gradeDto {
-  userId: string;
-  perfumeId: number;
-  rate: number;
-}
+// export interface gradeDto {
+//   userId: string;
+//   perfumeId: number;
+//   rate: number;
+// }
 
 export interface PostDetailData {
   articleDto: articleDto;
@@ -71,7 +70,7 @@ export interface PostDetailData {
   comments: commentDto[];
   commmentUsers: commmentUsers[]
   perfumeInfos: perfumeInfos[];
-  gradeDto: gradeDto[];
+  rates: number[];
   hearted: boolean;
   bookmarked: boolean;
   followed: boolean;

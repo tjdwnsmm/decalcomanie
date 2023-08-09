@@ -60,9 +60,10 @@ const Content = styled.div`
 
 const StyledTextarea = styled.textarea<{ isEditing: boolean }>`
   display: ${({ isEditing }) => (isEditing ? 'block' : 'none')};
-  width: 75%;
+  width: 65%;
   height: 16px;
   border: 1px solid var(--gray-color);
+  outline-color: var(--gray-color);
   background-color: var(--background-color);
   resize: none;
   padding: 8px 10px;
@@ -161,9 +162,14 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && isEditable) {
-      e.preventDefault();
+  const handleCancleClick = () => {
+    setEditedContent(comment.content);
+    setEditing(false);
+  };
+
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && isEditable) {
+      event.preventDefault();
       handleEditClick();
     }
   };
@@ -189,9 +195,8 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
                 handleKeyPress(e)
               }
             />
-            <ModiBtn isEditable={isEditable} onClick={handleEditClick}>
-              수정
-            </ModiBtn>
+            <ModiBtn isEditable={isEditable} onClick={handleEditClick}>수정</ModiBtn>
+            <ModiBtn isEditable={false} onClick={handleCancleClick} style={{ cursor: 'pointer' }}>취소</ModiBtn>
           </InfoBox>
         )}
       </CommentContent>

@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../api/apiController';
-import { PostButton, CancleButton } from '../../components/Button/Button.js';
-import CustomizedSwitches from '../../components/Switch/Switch.js';
-import ContextBox from '../../components/Box/AddContext.js';
-import AddRating from '../../components/Rating/Rating.js';
-import AddCarousel from '../../components/Box/AddCarousel.js';
-import { ConfirmButton, Main, MarginFrame } from '../../style/index.js';
+import CustomizedSwitches from '../../components/Switch/Switch';
+import ContextBox from '../../components/Box/AddContext';
+import AddRating from '../../components/Rating/Rating';
+import AddCarousel from '../../components/Box/AddCarousel';
+import { ConfirmButton, Main, MarginFrame } from '../../style/index';
 import { ReactComponent as CancelSvg } from '../../assets/img/close.svg';
 import { PostDetailData } from '../../types/PostInfoType';
 
@@ -75,17 +74,15 @@ export default function PostUpdate() {
       const requestData = {
         articleId: id,
         content: newContent,
-        // 글 작성 모두 구현 되면 향수와 평점 변경 사항 반영해서 put 요청
-        // perfumeId,
-        // rate,
+        // 임시데이터) 글 작성 모두 구현 되면 평점 변경 사항 반영해서 put 요청
+        perfumeId: [12],
+        rate: [5],
       };
       const response = await axios.put('/sns/update', requestData);
       console.log(response.data);
       navigate(`/post-detail/${id}`);
     } catch (error) {
       console.error(error);
-      // 임시로 에러 나도 post-detail로 이동하도록/ 본문 수정은 반영 됨
-      navigate(`/post-detail/${id}`);
     }
   };
 
@@ -120,7 +117,7 @@ export default function PostUpdate() {
           <MarginFrame margin="15px 0">
             <LeftTitleAlign>평점</LeftTitleAlign>
             <MarginFrame margin="10px 0 40px">
-              <AddRating perfumes={postDetailData.perfumeInfos} grades={postDetailData.gradeDto} />
+              <AddRating perfumes={postDetailData.perfumeInfos} rates={postDetailData.rates} />
             </MarginFrame>
           </MarginFrame>
         )}

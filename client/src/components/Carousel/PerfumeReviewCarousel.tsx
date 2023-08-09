@@ -3,15 +3,15 @@ import Carousel from 'react-items-carousel';
 import PerfumeReviewBox from '../Perfume/PerfumeReviewBox';
 import { NextSvg } from '../Box/AddCarousel';
 import { ReactComponent as PrevSvg } from '../../assets/icon/prevBack.svg';
-import { gradeDto, perfumeInfos } from '../../types/PostInfoType';
+import { perfumeInfos } from '../../types/PostInfoType';
 
 interface PerfumeReviewCarouselProps {
-  grades: gradeDto[];
+  rates: number[];
   perfumes: perfumeInfos[];
 }
 
 const PerfumeReviewCarousel: React.FC<PerfumeReviewCarouselProps> = ({
-  grades,
+  rates,
   perfumes,
 }) => {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
@@ -29,7 +29,7 @@ const PerfumeReviewCarousel: React.FC<PerfumeReviewCarouselProps> = ({
       {perfumes?.map((perfume, index) => (
         <PerfumeReviewBox
           key={perfume.perfumeId}
-          rate={grades[index].rate}
+          rate={rates[index]}
           brand={perfume.brandName}
           name={perfume.nameOrg}
           img={perfume.picture}
