@@ -14,7 +14,13 @@ export interface PerfumeDetail {
   longevity: number; // 지속력 (5점만점)
   sillage: number; // 잔향감 (4점만점)
   picked: boolean; //
-  occasion: OccationInfo[];
+  spring: number;
+  summer: number;
+  fall: number;
+  winter: number;
+  day: number;
+  night: number;
+  // occasion: OccationInfo[];
 }
 
 export interface OccationInfo {

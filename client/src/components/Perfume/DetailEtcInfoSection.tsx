@@ -12,7 +12,7 @@ interface DetailEtcProps {
 }
 
 const gender = ['남성', '여성', '남녀모두'];
-const season = ['겨울', '봄', '여름', '가을'];
+const season = ['봄', '여름', '가을', '겨울'];
 const time = [
   ['낮', '🌞'],
   ['밤', '🌚'],
@@ -41,48 +41,41 @@ const DetailEtcInfoSection = ({ perfume }: DetailEtcProps) => {
 
   useEffect(() => {
     //계절정보 업데이트
-    if (perfume.occasion.length !== 0) {
-      const perfumeOccasionWeights: number[] = [
-        perfume.occasion[0].weight,
-        perfume.occasion[1].weight,
-        perfume.occasion[2].weight,
-        perfume.occasion[3].weight,
-      ];
+    // if (perfume.occasion.length !== 0) {
+    const perfumeOccasionWeights: number[] = [
+      perfume.spring,
+      perfume.summer,
+      perfume.fall,
+      perfume.winter,
+    ];
 
-      const sum = perfumeOccasionWeights.reduce((accumulator, currentValue) => {
-        return accumulator + currentValue;
-      }, 0);
+    const sum = perfumeOccasionWeights.reduce((accumulator, currentValue) => {
+      return accumulator + currentValue;
+    }, 0);
 
-      const transformedData = perfume.occasion.slice(0, 4).map((item, idx) => {
-        const degree = (item.weight / sum) * 100;
-        return { season: season[idx], degree };
-      });
+    const transformedData = perfumeOccasionWeights.map((item, idx) => {
+      const degree = (item / sum) * 100;
+      return { season: season[idx], degree };
+    });
 
-      const maxWeight = Math.max(...perfumeOccasionWeights);
+    const maxWeight = Math.max(...perfumeOccasionWeights);
 
-      const maxWeightIndices: number[] = [];
-      perfumeOccasionWeights.forEach((weight, index) => {
-        if (weight === maxWeight) {
-          maxWeightIndices.push(index);
-        }
-      });
+    const maxWeightIndices: number[] = [];
+    perfumeOccasionWeights.forEach((weight, index) => {
+      if (weight === maxWeight) {
+        maxWeightIndices.push(index);
+      }
+    });
 
-      setWeatherWeights(transformedData);
-      setBetterWeatherIdx(maxWeightIndices);
+    setWeatherWeights(transformedData);
+    setBetterWeatherIdx(maxWeightIndices);
 
-      //시간정보 업데이트
-      perfume.occasion[5].weight > perfume.occasion[4].weight
-        ? setBetterTimeIdx(1)
-        : setBetterTimeIdx(0);
+    //시간정보 업데이트
+    perfume.night > perfume.day ? setBetterTimeIdx(1) : setBetterTimeIdx(0);
 
-      //시간 비율 계산
-      setMaxScoreTime(
-        calculateRatioScore(
-          perfume.occasion[5].weight,
-          perfume.occasion[4].weight,
-        ),
-      );
-    }
+    //시간 비율 계산
+    setMaxScoreTime(calculateRatioScore(perfume.night, perfume.day));
+    // }
   }, []);
 
   return (
@@ -91,50 +84,33 @@ const DetailEtcInfoSection = ({ perfume }: DetailEtcProps) => {
       <EtcTxt>
         이 향수는 <span>{gender[perfume.gender]}</span>에게 인기있어요 !
       </EtcTxt>
-      {perfume.occasion.length > 0 ? (
-        <>
-          <EtcTxt>
-            <span>
-              {betterWeatherIdx.map((index) => season[index]).join(', ')}
-            </span>
-            에 뿌리기 좋은 향수에요 !
-          </EtcTxt>
-          <SeasonSuitabilityChart data={perfumeWeatherWeights} />
-          <EtcTxt>
-            {time[Math.abs(1 - betterTimeIdx)][0]}보다는
-            <span> {time[betterTimeIdx][0]}</span>에 어울려요 !
-          </EtcTxt>
-          <CenterFrame2>
-            <>{time[betterTimeIdx][1]}</>
-            <ProgressBar2>
-              <Progress2 score={maxScore} total={10}>
-                <Bar2></Bar2>
-              </Progress2>
-            </ProgressBar2>{' '}
-            <>{time[Math.abs(1 - betterTimeIdx)][1]}</>
-          </CenterFrame2>
-        </>
-      ) : (
-        <ErrorFrame>❌ occasion 정보가 없어요 ❌</ErrorFrame>
-      )}
+      <>
+        <EtcTxt>
+          <span>
+            {betterWeatherIdx.map((index) => season[index]).join(', ')}
+          </span>
+          에 뿌리기 좋은 향수에요 !
+        </EtcTxt>
+        <SeasonSuitabilityChart data={perfumeWeatherWeights} />
+        <EtcTxt>
+          {time[Math.abs(1 - betterTimeIdx)][0]}보다는
+          <span> {time[betterTimeIdx][0]}</span>에 어울려요 !
+        </EtcTxt>
+        <CenterFrame2>
+          <>{time[betterTimeIdx][1]}</>
+          <ProgressBar2>
+            <Progress2 score={maxScore} total={10}>
+              <Bar2></Bar2>
+            </Progress2>
+          </ProgressBar2>{' '}
+          <>{time[Math.abs(1 - betterTimeIdx)][1]}</>
+        </CenterFrame2>
+      </>
     </EtcFrame>
   );
 };
 
 export default DetailEtcInfoSection;
-
-const ErrorFrame = styled.div`
-  display: flex;
-  font-weight: 600;
-  align-items: center;
-  height: 50px;
-  // background-color: var(--white-color);
-  border-radius: 5px;
-  border: 4px solid var(--white-color);
-  margin-top: 15px;
-  width: 330px;
-  justify-content: center;
-`;
 
 const CenterFrame2 = styled(CenterFrame)`
   display: flex;
