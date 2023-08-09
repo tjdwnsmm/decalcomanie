@@ -249,27 +249,28 @@ public class UserServiceImpl implements IUserService {
     public List<PerfumeDto> recommendUserPerfume(String userId) {
         // 사용자 향 단위 벡터 계산
         Map<ScentDto,Double> userPerfumeVector = userAccordVector(userId);
-
-        System.out.println("사용자 향 단위 벡터");
-        System.out.print("[");
-        for( ScentDto scentDto : userPerfumeVector.keySet()){
-            System.out.print(scentDto.getName()+":"+userPerfumeVector.get(scentDto)+",");
-        }
-        System.out.println("]");
+        // 사용자 향 단위 벡터 검증
+//        System.out.println("사용자 향 단위 벡터");
+//        System.out.print("[");
+//        for( ScentDto scentDto : userPerfumeVector.keySet()){
+//            System.out.print(scentDto.getName()+":"+userPerfumeVector.get(scentDto)+",");
+//        }
+//        System.out.println("]");
 
         // 사용자가 보유하지 않은 모든 향수들에 대한 향수 단위 벡터 계산
         Map<PerfumeDto,Map<ScentDto,Double>> allPerfumeVector = allAccordVector(userId);
 
-        System.out.println("사용자가 보유하지 않은 향수의 향 단위 벡터");
-        for( PerfumeDto perfumeDto : allPerfumeVector.keySet()){
-            System.out.println("["+perfumeDto.getName()+"]");
-            System.out.print("[");
-            Map<ScentDto,Double> scentPercent = allPerfumeVector.get(perfumeDto);
-            for(ScentDto scentDto : scentPercent.keySet()){
-                System.out.print(scentDto.getName()+":"+scentPercent.get(scentDto)+",");
-            }
-            System.out.println("]");
-        }
+        // 사용자가 보유하지 않은 향수 향 단위 벡터 검증
+//        System.out.println("사용자가 보유하지 않은 향수의 향 단위 벡터");
+//        for( PerfumeDto perfumeDto : allPerfumeVector.keySet()){
+//            System.out.println("["+perfumeDto.getName()+"]");
+//            System.out.print("[");
+//            Map<ScentDto,Double> scentPercent = allPerfumeVector.get(perfumeDto);
+//            for(ScentDto scentDto : scentPercent.keySet()){
+//                System.out.print(scentDto.getName()+":"+scentPercent.get(scentDto)+",");
+//            }
+//            System.out.println("]");
+//        }
 
         // 사용자 향 단위 벡터를 모든 향수 향 단위 벡터와 유사도 계산
         List<PerfumeWeight> result = calculateSimilarity(userPerfumeVector,allPerfumeVector);
@@ -291,7 +292,7 @@ public class UserServiceImpl implements IUserService {
             Map<ScentDto, Double> perfumePercent = allPerfumeVector.get(perfumeDto);
             double similarity = 0.0;
             for(ScentDto scentDto :userPerfumeVector.keySet()){
-                similarity += userPerfumeVector.get(scentDto)*perfumePercent.get(scentDto);
+                similarity += userPerfumeVector.get(scentDto)*(perfumePercent.get(scentDto) == null ? 0 : perfumePercent.get(scentDto));
             }
             result.add(new PerfumeWeight(perfumeDto,similarity));
         }
