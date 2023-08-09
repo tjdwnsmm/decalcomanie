@@ -9,8 +9,8 @@ const Spinner: FC = () => {
         <Svg
           className="pl"
           viewBox="0 0 64 64"
-          width="40px"
-          height="40px"
+          width="35px"
+          height="35px"
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
@@ -176,8 +176,8 @@ const SpinnerContainer = styled.div`
 
 const Svg = styled.svg`
   display: block;
-  width: 8em;
-  height: 8em;
+  width: 6em;
+  height: 6em;
 
   .pl__ring,
   .pl__ball1,

@@ -28,11 +28,13 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           fontWeight="500"
           onClick={handleFeed}
         >
-          다른 사용자들의 글을 구경해보세요
+          이 향수에 대한 후기들을 구경해보세요
         </ConfirmButton>
       </CenterFrame>
       <CenterFrame>
-        <BackToList onClick={handleBack}>목록으로 돌아가기</BackToList>
+        <BackToList onClick={handleBack}>
+          더 많은 향수 목록으로 돌아가기
+        </BackToList>
       </CenterFrame>
     </MarginFrame>
   );

@@ -16,7 +16,7 @@ const MainSwiper = ({ perfumes }: MainCarouselProps) => {
   return (
     <>
       <SwiperContainer>
-        <Swiper slidesPerView={3} spaceBetween={20}>
+        <Swiper slidesPerView={'auto'} spaceBetween={-35}>
           {perfumes.map((perfume, index) => (
             <SwiperSlide key={index}>
               <div

@@ -25,5 +25,6 @@ export interface EachFeedInfo {
   articleDtos: ArticleDetail;
   bookmarked: boolean;
   hearted: boolean;
+  followed: boolean;
   userInfoDto: ProfileUpdateInfo;
 }
