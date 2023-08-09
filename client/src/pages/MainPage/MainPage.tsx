@@ -25,6 +25,13 @@ const favScent: ScentDto[] = [
   { scentId: 9, weight: 86, name: '우디', rgb: '#774414' },
 ];
 
+interface BaseInfoProps {
+  curSeason: string;
+  curTime: string;
+  gender: number;
+  age: number;
+}
+
 const MainPage = () => {
   const navigate = useNavigate();
   const [isDrawer, setDrawer] = useState(true);
@@ -45,8 +52,25 @@ const MainPage = () => {
   const [overallPerfumes, setOverallPerfumes] = useState<
     PerfumeDetail[] | null
   >(null);
+
+  const [baseInfo, setBaseInfo] = useState<BaseInfoProps | null>(null);
+
   const handleSearchPerfume = () => {
     navigate('/search-myperfume');
+  };
+
+  const getSeasonTime = (season: string) => {
+    switch (season) {
+      case 'summer':
+        return '여름';
+      case 'spring':
+        return '봄';
+      case 'fall':
+        return '가을';
+      case 'winter':
+        return '겨울';
+    }
+    return '';
   };
 
   useEffect(() => {
@@ -58,10 +82,16 @@ const MainPage = () => {
 
     axios.get('/perfume/today').then((res) => {
       console.log(`today data : ${JSON.stringify(res.data)}`);
-      setWeatherPerfumes(res.data.weather);
+      setWeatherPerfumes(res.data.season);
       setDayNightPerfumes(res.data.dayNight);
       setAgeGenderPerfumes(res.data.ageGender);
       setOverallPerfumes(res.data.overall);
+      setBaseInfo({
+        curSeason: res.data.curSeason,
+        curTime: res.data.curTime,
+        gender: res.data.gender,
+        age: res.data.age,
+      });
     });
   }, []);
 
@@ -118,7 +148,8 @@ const MainPage = () => {
             {weatherPerfumes &&
             dayNightPerfumes &&
             ageGenderPerfumes &&
-            overallPerfumes ? (
+            overallPerfumes &&
+            baseInfo ? (
               <>
                 {isDrawer ? (
                   <MoreRateInfo
@@ -133,15 +164,19 @@ const MainPage = () => {
                   />
                 )}
                 <MoreRateInfo
-                  title={`${'20대 여성'}들에게 인기가 많아요 😌`}
+                  title={`${baseInfo.age}대 ${
+                    baseInfo.gender === 1 ? '여성' : '남성'
+                  }분들에게 인기가 많아요 😌`}
                   perfumes={ageGenderPerfumes}
                 />
                 <MoreRateInfo
-                  title={`${time} 시간대에 인기가 많아요 🌞`}
+                  title={`${
+                    baseInfo.curTime === 'day' ? '낮' : '밤'
+                  } 시간대에 인기가 많아요 🌞`}
                   perfumes={dayNightPerfumes}
                 />
                 <MoreRateInfo
-                  title={`${season}에 잘어울려요 🌞`}
+                  title={`${getSeasonTime(baseInfo.curSeason)}에 잘어울려요 🌞`}
                   perfumes={weatherPerfumes}
                 />
               </>
