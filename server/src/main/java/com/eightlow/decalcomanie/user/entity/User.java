@@ -40,4 +40,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<UserScent> userScent;
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
