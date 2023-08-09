@@ -10,6 +10,7 @@ import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
 import MainSwiper from '../../components/Carousel/MainSwiper';
 import MoreRateInfo from '../../components/Main/MoreRateInfo';
 import MainScent from '../../components/Main/MainScent';
+import axios from '../../api/apiController';
 
 /**
  * !API 로 바꿀것!
@@ -28,10 +29,19 @@ const MainPage = () => {
   const [isDrawer, setDrawer] = useState(true);
   const backFrameRef = useRef<HTMLDivElement>(null);
   const [nickname, setNickname] = useState('');
+  const [recommendPerfume, setRecommendPerfume] = useState<PerfumeDetail[]>([]);
 
   const handleSearchPerfume = () => {
     navigate('/search-myperfume');
   };
+
+  useEffect(() => {
+    axios.get('/user/user/recommend').then((res) => {
+      const datas = res.data;
+      console.log(datas);
+      setRecommendPerfume(datas);
+    });
+  }, []);
 
   useEffect(() => {
     const nickname = localStorage.getItem('nickname');
@@ -76,7 +86,7 @@ const MainPage = () => {
                     <MainScent accord={favScent} />
                   </>
                 </Info>
-                <MainSwiper perfumes={perfumes} />
+                <MainSwiper perfumes={recommendPerfume} />
               </>
             )}
             {isDrawer ? (
@@ -301,6 +311,14 @@ const perfumes: PerfumeDetail[] = [
         noteName: 'Tonka Bean',
       },
     ],
+    occasion: [
+      { occasion: 'winter', weight: 9.09091 },
+      { occasion: 'spring', weight: 65.1349 },
+      { occasion: 'summer', weight: 100 },
+      { occasion: 'fall', weight: 21.7782 },
+      { occasion: 'day', weight: 99.8002 },
+      { occasion: 'night', weight: 16.4835 },
+    ],
   },
   {
     perfumeId: 1004,
@@ -315,6 +333,14 @@ const perfumes: PerfumeDetail[] = [
     sillage: 2.22,
     picked: false,
     pick: 0,
+    occasion: [
+      { occasion: 'winter', weight: 9.09091 },
+      { occasion: 'spring', weight: 65.1349 },
+      { occasion: 'summer', weight: 100 },
+      { occasion: 'fall', weight: 21.7782 },
+      { occasion: 'day', weight: 99.8002 },
+      { occasion: 'night', weight: 16.4835 },
+    ],
     accord: [
       {
         scentId: 1,
@@ -468,6 +494,15 @@ const perfumes: PerfumeDetail[] = [
     sillage: 2.22,
     picked: false,
     pick: 0,
+    occasion: [
+      { occasion: 'winter', weight: 9.09091 },
+      { occasion: 'spring', weight: 65.1349 },
+      { occasion: 'summer', weight: 100 },
+      { occasion: 'fall', weight: 21.7782 },
+      { occasion: 'day', weight: 99.8002 },
+      { occasion: 'night', weight: 16.4835 },
+    ],
+
     accord: [
       {
         scentId: 1,
@@ -621,6 +656,14 @@ const perfumes: PerfumeDetail[] = [
     sillage: 2.22,
     picked: false,
     pick: 0,
+    occasion: [
+      { occasion: 'winter', weight: 9.09091 },
+      { occasion: 'spring', weight: 65.1349 },
+      { occasion: 'summer', weight: 100 },
+      { occasion: 'fall', weight: 21.7782 },
+      { occasion: 'day', weight: 99.8002 },
+      { occasion: 'night', weight: 16.4835 },
+    ],
     accord: [
       {
         scentId: 1,

@@ -44,7 +44,7 @@ export const MyDrawerPage = () => {
 
   if (!perfumeList) {
     return (
-      <MarginFrame margin="120px auto 0">
+      <MarginFrame margin="180px auto">
         <Spinner />
       </MarginFrame>
     );

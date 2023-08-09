@@ -10,7 +10,7 @@ import {
 } from 'recharts';
 import { MarginFrame } from '../../../style';
 
-interface SeasonSuitability {
+export interface SeasonSuitability {
   season: string;
   degree: number;
 }

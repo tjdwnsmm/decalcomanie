@@ -14,6 +14,12 @@ export interface PerfumeDetail {
   longevity: number; // 지속력 (5점만점)
   sillage: number; // 잔향감 (4점만점)
   picked: boolean; //
+  occasion: OccationInfo[];
+}
+
+export interface OccationInfo {
+  occasion: string;
+  weight: number;
 }
 
 export interface ScentDto {
