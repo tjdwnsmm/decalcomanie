@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 import { useState } from 'react';
 import { ReactComponent as PostModalSvg } from '../../assets/icon/more-vert.svg';
-import instance from '../../api/apiController';
+import axios from '../../api/apiController';
 import { commentDto } from '../../types/PostInfoType';
 
 const Button = styled.button`
@@ -97,7 +97,7 @@ const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProp
       const requestData = {
         articleId: comment.articleId,
       };
-      await instance.delete(`/sns/comment/delete/${comment.commentId}`, {
+      await axios.delete(`/sns/comment/delete/${comment.commentId}`, {
         data: requestData,
       });
       setConfirmationOpen(false);
