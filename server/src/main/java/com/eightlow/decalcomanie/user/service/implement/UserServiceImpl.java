@@ -112,6 +112,7 @@ public class UserServiceImpl implements IUserService {
 
                 // 반환 포맷에 맞는 response 생성
                 FollowingResponse response = FollowingResponse.builder()
+                        .userId(userInfoDto.getUser().getUserId())
                         .nickname(userInfoDto.getUser().getNickname())
                         .favorite(userInfoDto.getFavorities())
                         .hates(userInfoDto.getHates())
@@ -140,6 +141,7 @@ public class UserServiceImpl implements IUserService {
 
                 // 반환 포맷에 맞는 response 생성
                 FollowerResponse response = FollowerResponse.builder()
+                        .userId(userInfoDto.getUser().getUserId())
                         .nickname(userInfoDto.getUser().getNickname())
                         .favorite(userInfoDto.getFavorities())
                         .hates(userInfoDto.getHates())
