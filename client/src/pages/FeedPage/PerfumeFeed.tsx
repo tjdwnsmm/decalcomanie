@@ -27,7 +27,11 @@ export const PerfumeFeed = () => {
   };
 
   if (!feed) {
-    return <Spinner />;
+    return (
+      <MarginFrame margin="200px auto">
+        <Spinner />
+      </MarginFrame>
+    );
   }
 
   if (feed.length === 0) {
@@ -78,9 +82,8 @@ const FeedBody = styled.div`
 `;
 
 const ErrorTxt = styled.div`
-  color: var(--primary-color);
   font-weight: 700;
-  font-size: 22px;
+  font-size: 20px;
   text-align: center;
   margin-top: 270px;
 `;

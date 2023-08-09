@@ -122,27 +122,27 @@ const MainPage = () => {
               <>
                 {isDrawer ? (
                   <MoreRateInfo
-                    title={`${season}에 잘어울려요 🌞`}
-                    perfumes={weatherPerfumes}
+                    title={`비슷한 유저분들께 인기있어요 🧙‍♀️`}
+                    perfumes={overallPerfumes}
                   />
                 ) : (
                   <MoreRateInfo
-                    title={`${season}에 잘어울려요 🌞`}
-                    perfumes={weatherPerfumes}
+                    title={`비슷한 유저분들께 인기있어요 🧙‍♀️`}
+                    perfumes={overallPerfumes}
                     first={true}
                   />
                 )}
                 <MoreRateInfo
-                  title={`비슷한 유저분들께 인기있어요 🧙‍♀️`}
-                  perfumes={overallPerfumes}
-                />
-                <MoreRateInfo
-                  title={`${'20대 여성'} 들에게 인기가 많아요 🌞`}
+                  title={`${'20대 여성'}들에게 인기가 많아요 😌`}
                   perfumes={ageGenderPerfumes}
                 />
                 <MoreRateInfo
                   title={`${time} 시간대에 인기가 많아요 🌞`}
                   perfumes={dayNightPerfumes}
+                />
+                <MoreRateInfo
+                  title={`${season}에 잘어울려요 🌞`}
+                  perfumes={weatherPerfumes}
                 />
               </>
             ) : (

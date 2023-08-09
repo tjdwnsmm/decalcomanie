@@ -38,7 +38,11 @@ const FeedPage = ({ feed, handleDetail }: FeedComponentProps) => {
       <FeedBox>
         <div onClick={() => handleDetail(feed.articleDtos.articleId)}>
           <PerfumeInfoBox feed={feed.perfumeDtos} />
-          <ContentBox>{feed.articleDtos.content}</ContentBox>
+          <ContentBox>
+            {feed.articleDtos.content.length > 75
+              ? feed.articleDtos.content.slice(0, 75) + '...'
+              : feed.articleDtos.content}
+          </ContentBox>
         </div>
         <InfoBox>
           <ProfileBox>

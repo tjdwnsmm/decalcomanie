@@ -19,8 +19,9 @@ ContentBox : 피드 게시물 내용
 IconBox : 좋아요 아이콘, 좋아요 수, 댓글 수, 댓글 아이콘
 */
 
-const favScent = ['우디', '플로럴', '시트러스'];
-const nofavScent = ['스파이시', '머스크'];
+// const favScent = ['우디', '플로럴', '시트러스'];
+// const nofavScent = ['스파이시', '머스크'];
+
 const FeedPageOnly = ({ feed }: FeedComponentProps) => {
   const navigate = useNavigate();
   const handleDetail = (articleId: number) => {
@@ -33,14 +34,31 @@ const FeedPageOnly = ({ feed }: FeedComponentProps) => {
         <InfoBox>
           <ProfileBox>
             <LeftProfile>
-              <img src="../../src/assets/img/profile-img.png" />
+              <img
+                src={
+                  feed.userInfoDto.user.picture
+                    ? feed.userInfoDto.user.picture
+                    : '../../src/assets/img/profile-img.png'
+                }
+              />
               <ProfileInfoBox>
-                {'닉네임'}
+                {feed.userInfoDto.user.nickname}
                 <Scent>
-                  <FavScent>{favScent?.map((fav) => `#${fav}  `)}</FavScent>
-                  <NoFavScent>
-                    {nofavScent?.map((fav) => `#${fav}  `)}
-                  </NoFavScent>
+                  {feed.userInfoDto.favorities.length === 0 &&
+                  feed.userInfoDto.hates.length === 0 ? (
+                    <NoFavScent>
+                      선호/비선호 향을 등록하지 않은 사용자입니다.
+                    </NoFavScent>
+                  ) : (
+                    <>
+                      <FavScent>
+                        {feed.userInfoDto.favorities?.map((fav) => `#${fav}  `)}
+                      </FavScent>
+                      <NoFavScent>
+                        {feed.userInfoDto.hates?.map((fav) => `#${fav}  `)}
+                      </NoFavScent>
+                    </>
+                  )}
                 </Scent>
               </ProfileInfoBox>
             </LeftProfile>
@@ -52,7 +70,9 @@ const FeedPageOnly = ({ feed }: FeedComponentProps) => {
         </InfoBox>
 
         <ContentBox onClick={() => handleDetail(feed.articleDtos.articleId)}>
-          {feed.articleDtos.content}
+          {feed.articleDtos.content.length > 75
+            ? feed.articleDtos.content.slice(0, 75) + '...'
+            : feed.articleDtos.content}
         </ContentBox>
         <IconBox>
           <LikeBtn
@@ -122,7 +142,7 @@ const IconBox = styled.div`
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  margin-top: 4px;
+  margin-top: 8px;
 `;
 
 const FeedBox = styled.div`
