@@ -2,7 +2,7 @@ package com.eightlow.decalcomanie.perfume.service.implement;
 
 import com.eightlow.decalcomanie.perfume.dto.*;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
-import com.eightlow.decalcomanie.perfume.dto.response.OccasionRecommendResponse;
+import com.eightlow.decalcomanie.perfume.dto.response.DailyRecommendResponse;
 import com.eightlow.decalcomanie.perfume.dto.response.PerfumeNameResponse;
 import com.eightlow.decalcomanie.perfume.entity.*;
 import com.eightlow.decalcomanie.perfume.mapper.*;
@@ -41,7 +41,6 @@ public class PerfumeServiceImpl implements IPerfumeService {
     private final ScentMapper scentMapper;
     private final JPAQueryFactory queryFactory;
     private final EntityManager em;
-    private final QSeasonTime seasonTime = QSeasonTime.seasonTime;
     private final QPerfumePick perfumePick = QPerfumePick.perfumePick;
     private final QUser user = QUser.user;
 
@@ -185,16 +184,16 @@ public class PerfumeServiceImpl implements IPerfumeService {
     }
 
     @Override
-    public OccasionRecommendResponse recommendByOccasion(String userId) {
+    public DailyRecommendResponse recommendByOccasion(String userId) {
         String today = LocalDate.now().toString();
         String curTime = LocalTime.now().toString();
 
         User loginUser = em.find(User.class, userId);
 
-        List<Perfume> weather = queryFactory
+        List<Perfume> season = queryFactory
                 .selectFrom(perfume)
                 .orderBy(perfume.pick.desc())
-                .orderBy(weatherEq(today))
+                .orderBy(seasonEq(today))
                 .limit(10)
                 .fetch();
 
@@ -230,22 +229,53 @@ public class PerfumeServiceImpl implements IPerfumeService {
                 )
                 .groupBy(perfume)
                 .orderBy(perfume.pick.desc())
-                .orderBy(weatherEq(today))
+                .orderBy(seasonEq(today))
                 .orderBy(timeEq(curTime))
                 .limit(10)
                 .fetch();
 
-        return OccasionRecommendResponse.builder()
-                .weather(perfumeMapper.toDto(weather))
+        return DailyRecommendResponse.builder()
+                .season(perfumeMapper.toDto(season))
                 .dayNight(perfumeMapper.toDto(dayNight))
                 .ageGender(perfumeMapper.toDto(ageGender))
                 .overall(perfumeMapper.toDto(overall))
+                .age(loginUser.getAge())
+                .gender(loginUser.getGender())
+                .curSeason(getSeason(today))
+                .curTime(getTime(curTime))
                 .build();
+    }
+
+    private String getTime(String curTime) {
+        int time = Integer.parseInt(curTime.split(":")[0]);
+
+        if(time >= 6 && time < 18) {
+            return "day";
+        }
+
+        return "night";
+    }
+
+    private String getSeason(String today) {
+        int month = Integer.parseInt(today.split("-")[1]);
+
+        if(month >= 3 && month < 6) {
+            return "spring";
+        }
+
+        if(month >= 6 && month < 9) {
+            return "summer";
+        }
+
+        if(month >= 9 && month < 12) {
+            return "fall";
+        }
+
+        return "winter";
     }
 
     // 향수 찜 또는 찜 해제 시에 향수 전체 찜 개수에 반영
     public void updatePickCount(Perfume perfume, int value) {
-//        Perfume perfume = perfumeRepository.findOneByPerfumeId(perfumeId);
         if (perfume != null) {
             perfume.updatePick(value);
         }
@@ -261,7 +291,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return perfume.night.desc();
     }
 
-    private OrderSpecifier<Float> weatherEq(String today) {
+    private OrderSpecifier<Float> seasonEq(String today) {
         int month = Integer.parseInt(today.split("-")[1]);
 
         if(month >= 3 && month < 6) {

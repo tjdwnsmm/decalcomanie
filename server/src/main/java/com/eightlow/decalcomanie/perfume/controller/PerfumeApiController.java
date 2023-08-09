@@ -4,7 +4,7 @@ import com.eightlow.decalcomanie.perfume.dto.BrandDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
-import com.eightlow.decalcomanie.perfume.dto.response.OccasionRecommendResponse;
+import com.eightlow.decalcomanie.perfume.dto.response.DailyRecommendResponse;
 import com.eightlow.decalcomanie.perfume.dto.response.PerfumeNameResponse;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import lombok.RequiredArgsConstructor;
@@ -101,7 +101,7 @@ public class PerfumeApiController {
     }
 
     @GetMapping("/today")
-    public ResponseEntity<OccasionRecommendResponse> getTodaysPerfume(HttpServletRequest req) {
+    public ResponseEntity<DailyRecommendResponse> getTodaysPerfume(HttpServletRequest req) {
         String userId = (String)req.getAttribute("userId");
         return new ResponseEntity<>(perfumeService.recommendByOccasion(userId), HttpStatus.OK);
     }
