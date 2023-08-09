@@ -1,10 +1,7 @@
 package com.eightlow.decalcomanie.user.service.implement;
 
-import com.eightlow.decalcomanie.perfume.dto.AccordDto;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
-import com.eightlow.decalcomanie.perfume.dto.ScentIdPercent;
-import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
 import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
@@ -177,27 +174,6 @@ public class UserServiceImpl implements IUserService {
         return userInfoDto;
     }
 
-    // 사용자 개인 추천 향수
-    @Override
-    public List<PerfumeDto> recommendUserPerfume(String userId) {
-        // 사용자 향 단위 벡터 계산
-        List<Double> userPerfumeVector = userAccordVector(userId);
-
-        System.out.println(userPerfumeVector.toString());
-
-        // 사용자 향과 모든 향수 유사도 계산
-        List<PerfumeWeight> result = caclulate(userPerfumeVector);
-
-        // 탑 10 추출
-        List<PerfumeDto> perfumeList = new ArrayList<>();
-        for (PerfumeWeight pair : result) {
-            perfumeList.add(pair.getFirst());
-            System.out.print(pair.getFirst().getPerfumeId()+", ");
-        }
-        // result의 상단 10개하여 반환
-        return perfumeList.subList(0, Math.min(result.size(),10));
-    }
-
     @Override
     public List<FollowerResponse> getOtherFollowingUsers(String userId, String myId) {
         // following 컬럼의 userId를 기준으로 조회
@@ -251,91 +227,80 @@ public class UserServiceImpl implements IUserService {
         return result;
     }
 
+    // 사용자 개인 추천 향수
+    @Override
+    public List<PerfumeDto> recommendUserPerfume(String userId) {
+        // 사용자 향 단위 벡터 계산
+        Map<ScentDto,Double> userPerfumeVector = userAccordVector(userId);
+
+
+        for( ScentDto scentDto : userPerfumeVector.keySet()){
+            System.out.print(userPerfumeVector.get(scentDto)+",");
+        }
+        System.out.println();
+
+        // 모든 향수들에 대한 향수 단위 벡터 계산
+        // 사용자가 보유하고 있으면 allPerfumeVector에서 제외
+        Map<PerfumeDto,Map<ScentDto,Double>> allPerfumeVector = new HashMap<>();
+
+
+        // 사용자 향 단위 벡터를 모든 향수 단위 벡터와 유사도 계산
+        // List<PerfumeWeight> result = caclulateSimilarity(userPerfumeVector,allPerfumeVector);
+
+        // 탑 10 추출
+//        List<PerfumeDto> perfumeList = new ArrayList<>();
+//        for (PerfumeWeight pair : result) {
+//            perfumeList.add(pair.getFirst());
+//        }
+        // result의 상단 10개하여 반환
+//        return perfumeList.subList(0, Math.min(result.size(),10));
+        return null;
+    }
+
     // 사용자 향 단뒤 벡터 계산
-    public List<Double> userAccordVector(String userId) {
+    public Map<ScentDto,Double> userAccordVector(String userId) {
+        // 사용자가 보유하고 있는 향수의 향들에대한 퍼센트 Map 생성
+        Map<ScentDto,Double> userScentPercent = new HashMap<>();
+
         // 사용자가 보유하고 있는 향수 정보를 가져온다.
         List<UserPerfume> userPerfumes = userPerfumeRepository.findByUserId(userId);
+        int userPerfumeNum = userPerfumes.size(); // 사용자가 보유한 향수 개수
         List<UserPerfumeDto> userPerfumesDto = userPerfumeMapper.toDto(userPerfumes);
 
-        // 사용자의 향수 x 향 테이블
-        List<List<Double>> userPerfumePercentTable = new ArrayList<>();
 
         // 사용자의 향수 x 향 테이블 계산
-        for(UserPerfumeDto perfume : userPerfumesDto) {
-            PerfumeDto userPerfume = perfumeService.getPerfume(perfume.getPerfumeId());
-            List<ScentDto> scentDtoList = userPerfume.getAccord();
-            // TODO 여기서부터 다시 알고리즘 작성 시작
-
-        }
-
-        List<Double> userAccordPercent = new ArrayList<>();
-        // 사용자의 향 벡터 계산
-        // 향 별 계산
-        for(int i=0; i< userPerfumePercentTable.get(0).size(); i++){
-            System.out.println(userPerfumePercentTable.get(i).toString());
-            Double accordSum = 0.0;
-            // 사용자별 계산
-            for(List<Double> userPerfumePercent : userPerfumePercentTable){
-                accordSum += userPerfumePercent.get(i);
+        // 사용자가 보유하고 있는 향수
+        for(UserPerfumeDto userPerfumeDto : userPerfumesDto) {
+            PerfumeDto userPerfume = perfumeService.getPerfume(userPerfumeDto.getPerfumeId()); // 사용자 향수 ID를 통한 상세 정보 추출 추후 리펙토링 필요
+            List<ScentDto> accordList = userPerfume.getAccord();
+            int sumScent = sumScentWeight(accordList);
+            for(ScentDto scentDto : accordList){
+                Double scentPercent = (double) scentDto.getWeight() / (double) sumScent;
+                if(userScentPercent.containsKey(scentDto)){
+                    double percent = userScentPercent.get(scentDto) + scentPercent;
+                    userScentPercent.put(scentDto,percent);
+                }else{
+                    userScentPercent.put(scentDto,scentPercent);
+                }
             }
-            userAccordPercent.add(accordSum);
         }
-        List<Double> result = new ArrayList<>();
-        result = staticListToPercentList(userAccordPercent);
 
-        return result;
+        // userScentPercent를 단위벡터로 변경
+        for( ScentDto scentDto : userScentPercent.keySet()){
+            double percent = userScentPercent.get(scentDto)/ (double) userPerfumeNum;
+            userScentPercent.put(scentDto,percent);
+        }
+
+        return userScentPercent;
     }
 
-    // 향리스트를 향퍼센트 리스트로 변환해주는 함수
-    public Map<Integer,Double> sumAccordWeight(List<ScentDto> accordlist){
-        Map<Integer,Double> result = new HashMap<>();
+    // 향수 향의 가중치의 합을 반환해주는 메소드
+    private int sumScentWeight(List<ScentDto> accordList) {
         int sum = 0;
-        for(ScentDto scentDto : accordlist){
+        for(ScentDto scentDto : accordList){
             sum += scentDto.getWeight();
         }
-        for(ScentDto scentDto : accordlist){
-            Double accordPercent = (double) scentDto.getWeight() / (double) sum;
-            scentDto.getScentId();
-            result.add(accordPercent);
-        }
-        return result;
-    }
-
-
-    // 고정 값 리스트들을 퍼센트 리스트로 변환 해주는 함수
-    public List<Double> staticListToPercentList(List<Double> staticList){
-        List<Double> result = new ArrayList<>();
-        Double sum = 0.0;
-        for(double a : staticList){
-            sum += a;
-        }
-        for(double b : staticList){
-            Double percent = b / sum;
-            result.add(percent);
-        }
-        return result;
-    }
-
-    // 모든 향수들과 유사도를 계산하는 함수
-    public List<PerfumeWeight> caclulate(List<Double> userPerfumeVector){
-        List<PerfumeWeight> result = new ArrayList<>();
-        // 1. 모든 향수를 불러오기
-        List<Perfume> allPerfume = perfumeRepository.findAll();
-        List<PerfumeDto> allPerfumeDto = perfumeMapper.toDto(allPerfume);
-        // 2. 각 향수와 유저 벡터와 곱하여 계산하고 결과 데이터에 추가
-        for(PerfumeDto perfume : allPerfumeDto) {
-            double sum = 0.0;
-            // 향수를 리스트로 변환
-            List<Double> accordPercent = sumAccordWeight(perfume.getAccord());
-            for(int i=0; i<=userPerfumeVector.size(); i++){
-                sum += accordPercent.get(i)*userPerfumeVector.get(i);
-            }
-            result.add(new PerfumeWeight(perfume,sum));
-        }
-        // 3. 결과데이터를 유사도를 기준으로 정렬
-        Collections.sort(result);
-
-        return result;
+        return sum;
     }
 
 }
