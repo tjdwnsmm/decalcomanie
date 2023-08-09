@@ -273,20 +273,29 @@ public class UserServiceImpl implements IUserService {
 
         // 사용자 향 단위 벡터를 모든 향수 향 단위 벡터와 유사도 계산
         List<PerfumeWeight> result = calculateSimilarity(userPerfumeVector,allPerfumeVector);
-
+        // Percentage로 정렬
+        Collections.sort(result);
         // 탑 10 추출
-//        List<PerfumeDto> perfumeList = new ArrayList<>();
-//        for (PerfumeWeight pair : result) {
-//            perfumeList.add(pair.getFirst());
-//        }
+        List<PerfumeDto> perfumeList = new ArrayList<>();
+        for (PerfumeWeight pair : result) {
+            perfumeList.add(pair.getFirst());
+        }
         // result의 상단 10개하여 반환
-//        return perfumeList.subList(0, Math.min(result.size(),10));
-        return null;
+        return perfumeList.subList(0, Math.min(result.size(),10));
     }
 
+    // 사용자 향 단위 벡터와 모든 향수 향 단위 벡터와 유사도 계산
     private List<PerfumeWeight> calculateSimilarity(Map<ScentDto, Double> userPerfumeVector, Map<PerfumeDto, Map<ScentDto, Double>> allPerfumeVector) {
-        // TODO
-        return null;
+        List<PerfumeWeight> result = new ArrayList<>();
+        for(PerfumeDto perfumeDto: allPerfumeVector.keySet()){
+            Map<ScentDto, Double> perfumePercent = allPerfumeVector.get(perfumeDto);
+            double similarity = 0.0;
+            for(ScentDto scentDto :userPerfumeVector.keySet()){
+                similarity += userPerfumeVector.get(scentDto)*perfumePercent.get(scentDto);
+            }
+            result.add(new PerfumeWeight(perfumeDto,similarity));
+        }
+        return result;
     }
 
     // 유저가 보유한 향수들을 제외하고 향 단위 벡터를 계산하는 로직
