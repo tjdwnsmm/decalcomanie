@@ -108,11 +108,12 @@ public class UserServiceImpl implements IUserService {
                 UserInfoDto userInfoDto = getUserInfo(follow.getFollowed());
 
                 // 반환 포맷에 맞는 response 생성
-                FollowingResponse response = new FollowingResponse(userInfoDto.getUser().getUserId(),
-                        userInfoDto.getUser().getNickname(),
-                        userInfoDto.getFavorities(),
-                        userInfoDto.getHates(),
-                        userInfoDto.getUser().getPicture());
+                FollowingResponse response = FollowingResponse.builder()
+                        .nickname(userInfoDto.getUser().getNickname())
+                        .favorite(userInfoDto.getFavorities())
+                        .hates(userInfoDto.getHates())
+                        .picture(userInfoDto.getUser().getPicture())
+                        .build();
 
                 result.add(response);
             }
@@ -124,20 +125,24 @@ public class UserServiceImpl implements IUserService {
     // 팔로워 목록 조회
     @Override
     public List<FollowerResponse> getFollowers(String userId) {
+        System.out.println("getFollowers called");
         List<Follow> myFollower = followRepository.findByFollowed(userId);
         List<FollowerResponse> result = new ArrayList<>();
 
         if(myFollower.size() > 0) {
             for(Follow follow : myFollower) {
+                System.out.println("getUserInfo called");
                 // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
                 UserInfoDto userInfoDto = getUserInfo(follow.getFollowing());
 
-                FollowerResponse response = new FollowerResponse(userInfoDto.getUser().getUserId(),
-                        userInfoDto.getUser().getNickname(),
-                        userInfoDto.getFavorities(),
-                        userInfoDto.getHates(),
-                        userInfoDto.getUser().getPicture(),
-                        isFollowing(userId, userInfoDto.getUser().getUserId()));
+                // 반환 포맷에 맞는 response 생성
+                FollowerResponse response = FollowerResponse.builder()
+                        .nickname(userInfoDto.getUser().getNickname())
+                        .favorite(userInfoDto.getFavorities())
+                        .hates(userInfoDto.getHates())
+                        .picture(userInfoDto.getUser().getPicture())
+                        .isFollowing(isFollowing(userId, userInfoDto.getUser().getUserId()))
+                        .build();
 
                 result.add(response);
             }
