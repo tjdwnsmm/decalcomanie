@@ -25,7 +25,7 @@ const ProfileImgModi = ({ closeModal, handleImg }: ProfileProps) => {
     <ModalBackground onClick={closeModal}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <CloseSvg onClick={closeModal} />
-
+        <Info>원하는 프로필을 선택해주세요</Info>
         {/* profile list 보여주는 코드 */}
         <ImgList>
           {images.map((imageName, index) => (
@@ -49,6 +49,12 @@ export default ProfileImgModi;
 const ImgList = styled.div`
   display: flex;
   flex-wrap: wrap;
+`;
+
+const Info = styled.div`
+  text-align: center;
+  font-weight: 700;
+  margin: 15px auto;
 `;
 
 const ProfileEach = styled.div`
