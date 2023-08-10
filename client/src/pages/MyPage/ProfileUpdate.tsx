@@ -147,14 +147,6 @@ const ProfileUpdate = () => {
     setModalOpen(false);
   };
 
-  const handleAddFavoriteScent = (scent) => {
-    setFavoriteScent([...favoriteScent, scent]);
-  };
-
-  const handleAddHateScent = (scent) => {
-    setHateScent([...hateScent, scent]);
-  };
-
   if (!userData) {
     return 0;
   }
@@ -179,11 +171,11 @@ const ProfileUpdate = () => {
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>
-        <ScentModi scents={favoriteScent} fav="좋아하는" onAddScent={handleAddFavoriteScent}/>
+        <ScentModi scentList={favoriteScent} setScentList={setFavoriteScent} fav="좋아하는"/>
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>싫어요 🙁</UserInfoName>
-        <ScentModi scents={hateScent} fav="싫어하는" onAddScent={handleAddHateScent}/>
+        <ScentModi scentList={hateScent} setScentList={setHateScent} fav="싫어하는" />
       </MarginFrame>
       <MarginFrame margin="20px 0 76px">
         <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>

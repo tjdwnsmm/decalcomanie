@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
 import { ReactComponent as CancelSvg } from '../../assets/icon/input-cancel.svg';
+import { ReactComponent as ErrorSvg } from '../../assets/icon/error.svg';
 import { scent } from '../../types/PostInfoType';
 import axios from '../../api/apiController';
 
 interface ScentModiProps {
-  scents: scent[];
+  scentList: scent[];
+  setScentList: (scent: scent) => void;
   fav: string;
-  onAddScent: (scent: scent) => void;
 }
 
 const ScentList = styled.div`
@@ -52,13 +53,17 @@ const ScentInput = styled.input`
 `;
 
 const MaxScentMessage = styled.div`
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
   color: var(--error-color);
-  margin-top: 4px;
+  font-size: 13px;
+  margin: 6px;
+  gap: 5px;
 `;
 
-function ScentModi({ scents, fav, onAddScent }: ScentModiProps) {
-  const [scentList, setScentList] = useState(scents);
+function ScentModi({ scentList, setScentList, fav }: ScentModiProps) {
+  // const [scentList, setScentList] = useState(scents);
   const [newScent, setNewScent] = useState('');
   const [showMaxScentMessage, setShowMaxScentMessage] = useState(false);
   const [searchResults, setSearchResults] = useState<scent[]>([]);
@@ -70,37 +75,45 @@ function ScentModi({ scents, fav, onAddScent }: ScentModiProps) {
   };
 
   const handleAddScent = (selectedScent: scent) => {
-    if (scentList.length >= 3) {
-      setShowMaxScentMessage(true);
-      return;
-    }
-
-    setShowMaxScentMessage(false);
-
     if (selectedScent.name.trim() !== '') {
       setSearchKeyword('');
       setSearchResults([]);
-      setScentList([...scentList, selectedScent.name]);
+      setScentList([...scentList, selectedScent]);
       setNewScent('');
     }
   };
+
+  function isEnglish(str: string) {
+    const englishRegex = /^[a-zA-Z]*$/;
+    return englishRegex.test(str);
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value;
     setSearchKeyword(keyword);
 
     if (keyword.trim() !== '') {
-      axios.get('/perfume/search/scent')
-        .then((res) => {
-          const dataArray = res.data.map((data: scent) => data);
-          const matchingScents = dataArray.filter((scent: scent) =>
-            scent.name.includes(keyword));
-          setSearchResults(matchingScents);
-        })
-        .catch((error) => {
-          console.error('Error fetching search results:', error);
-          setSearchResults([]);
-        });
+      if (scentList.length < 3) {
+        setShowMaxScentMessage(false);
+        axios.get('/perfume/search/scent')
+          .then((res) => {
+            const dataArray = res.data.map((data: scent) => data);
+            const matchingScents = dataArray.filter((scent: scent) => {
+              if (isEnglish(keyword)) {
+                return scent.nameOrg.includes(keyword);
+              } else {
+                return scent.name.includes(keyword);
+              }
+            });
+            setSearchResults(matchingScents);
+          })
+          .catch((error) => {
+            console.error(error);
+            setSearchResults([]);
+          });
+      } else {
+        setShowMaxScentMessage(true);
+      }
     } else {
       setSearchResults([]);
     }
@@ -129,17 +142,18 @@ function ScentModi({ scents, fav, onAddScent }: ScentModiProps) {
         />
         { searchKeyword && <CancelSvg style={{ paddingRight: '4px' }} onClick={handleClearSearch}/>}
       </AddScent>
-      { searchKeyword && (
+      { (searchResults.length > 0) && (
         <SearchResultList>
           {searchResults.map((result, idx) => (
             <SearchResultItem key={idx} onClick={() => handleAddScent(result)}>
-              {result.name}
+              {isEnglish(searchKeyword) ? `${result.nameOrg} (${result.name})` : result.name}
             </SearchResultItem>
           ))}
         </SearchResultList>
       )}
-      {showMaxScentMessage && (
+      {showMaxScentMessage && searchKeyword && (
         <MaxScentMessage>
+          <ErrorSvg/>
           향 계열은 최대 3개까지만 추가할 수 있습니다.
         </MaxScentMessage>
       )}
@@ -159,7 +173,7 @@ const SearchResultList = styled.div`
   position: absolute;
   z-index: 1;
   width: 280px;
-  height: 150px;
+  max-height: 120px;
   overflow: auto;
   border: 1px solid var(--gray-color);
   border-top: none;
