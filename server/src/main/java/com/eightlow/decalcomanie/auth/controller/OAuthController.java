@@ -30,7 +30,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/oauth")
+@RequestMapping("/api/oauth")
 public class OAuthController {
     private final IOAuthService oAuthService;
     private final UserRepository userRepository;
