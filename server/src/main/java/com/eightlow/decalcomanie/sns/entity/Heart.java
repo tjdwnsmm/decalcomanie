@@ -1,7 +1,9 @@
 package com.eightlow.decalcomanie.sns.entity;
 
 import com.eightlow.decalcomanie.sns.entity.pk.HeartPk;
+import com.eightlow.decalcomanie.user.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -10,7 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@SuperBuilder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(HeartPk.class)
@@ -24,5 +26,7 @@ public class Heart {
     private Article article;
 
     @Id
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private User user;
 }

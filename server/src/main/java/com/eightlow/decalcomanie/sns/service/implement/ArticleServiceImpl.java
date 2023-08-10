@@ -7,6 +7,7 @@ import com.eightlow.decalcomanie.sns.mapper.*;
 import com.eightlow.decalcomanie.sns.repository.*;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
+import com.eightlow.decalcomanie.user.entity.User;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -253,11 +254,13 @@ public class ArticleServiceImpl implements IArticleService {
         log.info("ArticleServiceImpl::: createComment start");
         System.out.println(commentDto);
         // TODO: 이 부분이 select로 데이터를 많이 가져옴 (개선 가능성 있음)
-        Article article = articleRepository.findByArticleId(commentDto.getArticleId()).orElse(null);
+        Article article = entityManager.find(Article.class, commentDto.getArticleId());
+        User user = entityManager.find(User.class, commentDto.getUserId());
+//        Article article = articleRepository.findByArticleId(commentDto.getArticleId()).orElse(null);
 
         Comment comment = Comment.builder()
                 .article(article)
-                .userId(commentDto.getUserId())
+                .user(user)
                 .content(commentDto.getContent())
                 .build();
 
@@ -288,7 +291,7 @@ public class ArticleServiceImpl implements IArticleService {
             // Comment existingComment = optionalComment.get();
 
             // 댓글의 userId와 수정하려는 userId를 비교하여 일치하는지 확인
-            if (comment.getUserId().equals(commentDto.getUserId())) {
+            if (comment.getUser().getUserId().equals(commentDto.getUserId())) {
                 // 일치하는 경우, 수정 작업 진행
                 // 수정할 내용을 업데이트
                 // existingComment.toBuilder().content(commentDto.getContent()).build();
@@ -333,7 +336,7 @@ public class ArticleServiceImpl implements IArticleService {
         if (comment != null) {
             // 댓글이 존재하는 경우, 삭제 작업 진행
             // 댓글의 userId와 수정하려는 userId를 비교하여 일치하는지 확인
-            if (comment.getUserId().equals(userId)) {
+            if (comment.getUser().getUserId().equals(userId)) {
                 // 일치하는 경우, 삭제 작업 진행
                 try {
                     commentRepository.deleteByCommentId(commentId);
@@ -407,8 +410,23 @@ public class ArticleServiceImpl implements IArticleService {
     @Transactional
     public int likeArticle(HeartDto heartDto) {
         log.info("ArticleServiceImpl::: likeArticle start");
+
+        Article article = entityManager.find(Article.class, heartDto.getArticleId());
+        User user = entityManager.find(User.class, heartDto.getUserId());
+        System.out.println(user.getUserId());
+
+        Heart heart = Heart.builder()
+                .article(article)
+                .user(user)
+                .build();
+
+        System.out.println(heart.getArticle().getArticleId());
+        System.out.println(heart.getUser().getUserId());
+
         // Heart 테이블에 좋아요 저장
-        heartRepository.save(heartMapper.toEntity(heartDto));
+        heartRepository.save(heart);
+
+        entityManager.flush();
 
         // 게시물의 heart갯수 + 1
         articleRepository.increaseHeartCountByArticleId(heartDto.getArticleId());
@@ -416,6 +434,11 @@ public class ArticleServiceImpl implements IArticleService {
         log.info("ArticleServiceImpl::: likeArticle finish");
         return 200;
     }
+
+//    @Transactional
+//    public void increaseHeartCount(int articleId) {
+//        articleRepository.increaseHeartCountByArticleId(articleId);
+//    }
 
     @Override
     @Transactional
@@ -435,6 +458,15 @@ public class ArticleServiceImpl implements IArticleService {
     @Transactional
     public int bookmarkArticle(BookMarkDto bookmarkDto) {
         log.info("ArticleServiceImpl::: bookmarkArticle start");
+
+        Article article = entityManager.find(Article.class, bookmarkDto.getArticleId());
+        User user = entityManager.find(User.class, bookmarkDto.getUserId());
+
+        BookMark bookmark = BookMark.builder()
+                .article(article)
+                .user(user)
+                .build();
+
         bookmarkRepository.save(bookmarkMapper.toEntity(bookmarkDto));
         log.info("ArticleServiceImpl::: bookmarkArticle finish");
         return 200;
@@ -453,7 +485,7 @@ public class ArticleServiceImpl implements IArticleService {
     @Override
     @Transactional
     public boolean checkHeartArticle(int articleId, String userId) {
-        Optional<Heart> hearts = heartRepository.findByArticle_ArticleIdAndUserId(articleId, userId);
+        Optional<Heart> hearts = heartRepository.findByArticle_ArticleIdAndUser_UserId(articleId, userId);
 
         if(hearts.isPresent()) {
             return true;
@@ -464,7 +496,7 @@ public class ArticleServiceImpl implements IArticleService {
     // 사용자가 북마크를 누른 게시물인지 확인
     @Override
     public boolean checkBookmarkArticle(int articleId, String userId) {
-        Optional<BookMark> bookmarks = bookmarkRepository.findByArticleIdAndUserId(articleId, userId);
+        Optional<BookMark> bookmarks = bookmarkRepository.findByArticle_ArticleIdAndUser_UserId(articleId, userId);
 
         if(bookmarks.isPresent()) {
             return true;

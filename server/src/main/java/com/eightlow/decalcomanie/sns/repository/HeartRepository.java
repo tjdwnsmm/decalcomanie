@@ -15,9 +15,9 @@ import java.util.Optional;
 public interface HeartRepository extends JpaRepository<Heart, HeartPk> {
     @Modifying(clearAutomatically = true)
     @Transactional
-    @Query("DELETE FROM Heart h WHERE h.article.articleId = :articleId AND h.userId LIKE :userId")
+    @Query("DELETE FROM Heart h WHERE h.article.articleId = :articleId AND h.user.userId LIKE :userId")
     void deleteByArticleIdAndUserId(@Param("articleId") int articleId, @Param("userId") String userId);
 
 
-    Optional<Heart> findByArticle_ArticleIdAndUserId(int articleId, String userId);
+    Optional<Heart> findByArticle_ArticleIdAndUser_UserId(int articleId, String userId);
 }

@@ -1,6 +1,7 @@
 package com.eightlow.decalcomanie.sns.entity;
 
 import com.eightlow.decalcomanie.sns.entity.pk.BookMarkPk;
+import com.eightlow.decalcomanie.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,10 +22,12 @@ import javax.persistence.*;
 public class BookMark {
 
     @Id
-    @Column(name = "articleId")
-    private int articleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "articleId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Article article;
 
     @Id
-    @Column(name = "userId")
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private User user;
 }

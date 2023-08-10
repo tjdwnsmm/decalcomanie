@@ -1,6 +1,7 @@
 package com.eightlow.decalcomanie.sns.entity;
 
 import com.eightlow.decalcomanie.common.entity.BaseEntity;
+import com.eightlow.decalcomanie.user.entity.User;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -24,7 +25,9 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "articleId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Article article;
 
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private User user;
 
     private String content;
 }

@@ -40,8 +40,10 @@ public class GradeServiceImpl implements IGradeService {
 //            ArticlePerfumeDto articlePerfumeDto = new ArticlePerfumeDto(articleId, perfumes.get(i), rates.get(i));
 //            ArticlePerfume articlePerfume = articlePerfumeMapper.toEntity(articlePerfumeDto);
             // TODO: 이 부분이 select로 데이터를 많이 가져옴 (개선 가능성 있음)
-            Article article = articleRepository.findByArticleId(articleId).orElse(null);
-            Perfume perfume = perfumeRepository.findByPerfumeId(perfumes.get(i)).orElse(null);
+            Article article = entityManager.find(Article.class, articleId);
+            Perfume perfume = entityManager.find(Perfume.class, perfumes.get(i));
+//            Article article = articleRepository.findByArticleId(articleId).orElse(null);
+//            Perfume perfume = perfumeRepository.findByPerfumeId(perfumes.get(i)).orElse(null);
 
             ArticlePerfume articlePerfume = ArticlePerfume.builder()
                     .article(article)

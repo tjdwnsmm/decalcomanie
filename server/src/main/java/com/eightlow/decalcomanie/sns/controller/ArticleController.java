@@ -340,7 +340,11 @@ public class ArticleController {
     @PostMapping("/like")
     public ResponseEntity<Response> likeArticle(@RequestBody HeartDto heartDto, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
-        HeartDto heart = heartDto.toBuilder().userId(userId).build();
+
+        HeartDto heart = heartDto.toBuilder()
+                .userId(userId)
+                .build();
+
         int status = articleService.likeArticle(heart);
         return resultMessage(status);
     }
