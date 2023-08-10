@@ -5,7 +5,7 @@ import axios from '../../api/apiController';
 import CustomizedSwitches from '../../components/Switch/Switch';
 import ContextBox from '../../components/Box/AddContext';
 import AddRating from '../../components/Rating/Rating';
-import AddCarousel from '../../components/Box/AddCarousel';
+import { AddCarousel } from '../../components/Box/AddCarousel';
 import { ConfirmButton, Main, MarginFrame } from '../../style/index';
 import { ReactComponent as CancelSvg } from '../../assets/img/close.svg';
 import { PostDetailData } from '../../types/PostInfoType';
