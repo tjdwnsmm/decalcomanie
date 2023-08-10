@@ -10,7 +10,7 @@ const LoginPage = () => {
 
   return (
     <MainInLogin>
-      <MarginFrame margin="260px 0 0">
+      <MarginFrame margin="250px 0 0">
         <Logo />
         <LogoTitle>
           <div>Decalcomanie</div>
@@ -49,7 +49,9 @@ const Info = styled.div`
 `;
 
 const MainInLogin = styled(Main)`
-  background-image: url('assets/img/main_bg.jpg');
+  background-image: url('assets/img/main_bg_2.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
 `;
 
 const KakaoBox = styled.div`
@@ -89,15 +91,15 @@ const LogoTitle = styled.div`
 
   * {
     letter-spacing: -0.75px;
-    font: bolder 3.2rem/3.2rem 'EB Garamond' !important;
+    font: 500 3.2rem/3.2rem 'Pacifico' !important;
     color: transparent;
     background: linear-gradient(
       180deg,
       #1c1c1c 0%,
       rgba(51, 41, 77, 1) 33.33%,
       rgba(51, 41, 77, 1) 38.02%,
-      rgba(51, 41, 77, 0.94) 43.65%,
-      #6d51b4 100%
+      rgba(51, 41, 77, 0.84) 43.65%,
+      var(--primary-color) 100%
     );
     -webkit-background-clip: text;
     overflow: hidden;
@@ -126,6 +128,6 @@ const LogoSubTitle = styled.div`
   margin-top: -68px;
   color: var(--secondary-color);
   text-align: center;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 14px;
 `;
