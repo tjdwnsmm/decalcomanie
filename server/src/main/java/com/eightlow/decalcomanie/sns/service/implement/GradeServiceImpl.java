@@ -71,7 +71,7 @@ public class GradeServiceImpl implements IGradeService {
         log.info("GradeServiceImpl::: searchGradesByPerfumeId start");
         List<ArticlePerfume> grades = new ArrayList<>();
         Article article = entityManager.find(Article.class, articleId);
-        grades = articlePerfumeRepository.findByArticle_ArticleIdAndPerfume_PerfumeIdIn(article.getArticleId(), perfumeIdList);
+        grades = articlePerfumeRepository.findByArticle_ArticleIdAndPerfume_PerfumeIdIn(article, perfumeIdList);
 //        for (int i = 0; i < perfumeIdList.size(); i++) {
 //            grades.add(articlePerfumeRepository.findByArticleIdAndPerfumeIdIn(articleId, perfumeIdList.get(i)));
 //        }
