@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { styled as MUstyled } from '@mui/material/styles';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -66,15 +65,15 @@ const Section = styled.div`
 
 interface SwitchProps {
   isChecked: boolean;
-  // setIsChecked: (key: boolean) => void;
+  setIsChecked: (key: boolean) => void;
 }
 
 export default function CustomizedSwitches({
   isChecked,
-}: // setIsChecked,
-SwitchProps) {
-  const handleToggle = (prev: boolean) => {
-    // setIsChecked((prev) => !prev);
+  setIsChecked,
+}: SwitchProps) {
+  const handleToggle = () => {
+    setIsChecked(!isChecked);
   };
 
   return (
@@ -83,11 +82,11 @@ SwitchProps) {
         공병<Tooltip></Tooltip>
       </div>
       <FormGroup>
-        {/* <FormControlLabel
+        <FormControlLabel
           onChange={handleToggle}
           control={<Android12Switch checked={isChecked} />}
           label=""
-        /> */}
+        />
       </FormGroup>
     </Section>
   );

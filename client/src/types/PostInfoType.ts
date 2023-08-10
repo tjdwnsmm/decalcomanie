@@ -47,7 +47,7 @@ export interface commmentUsers {
   following: boolean;
 }
 
-export interface perfumeInfos {
+export interface PerfumeInfos {
   perfumeId: number;
   name: string;
   nameOrg: string;
@@ -68,8 +68,8 @@ export interface PostDetailData {
   articleDto: articleDto;
   userInfoDto: userInfoDto;
   comments: commentDto[];
-  commmentUsers: commmentUsers[]
-  perfumeInfos: perfumeInfos[];
+  commmentUsers: commmentUsers[];
+  perfumeInfos: PerfumeInfos[];
   rates: number[];
   hearted: boolean;
   bookmarked: boolean;

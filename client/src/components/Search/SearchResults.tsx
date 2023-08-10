@@ -39,11 +39,25 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   const handleAddPerfume = (perfumeId: number) => {
     if (location.state && location.state.nowLocation === 'post') {
-      localStorage.setItem('getPerfumeId', `${perfumeId}`);
+      const existingData = localStorage.getItem('postPerfume');
+      if (existingData) {
+        try {
+          const parsedData = JSON.parse(existingData);
+          if (Array.isArray(parsedData)) {
+            parsedData.push({ perfumeId: perfumeId, rate: 0 });
+            localStorage.setItem('postPerfume', JSON.stringify(parsedData));
+          }
+        } catch (error) {
+          console.error('Error parsing existing data:', error);
+        }
+      } else {
+        const newData = [{ perfumeId: perfumeId, rate: 0 }];
+        localStorage.setItem('postPerfume', JSON.stringify(newData));
+      }
       navigate(`/post`, { state: { perfumeId: perfumeId } });
     } else {
       axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
-        console.log('data 추가!', res.data);
+        console.log('Data added!', res.data);
         navigate(`/my-drawer`);
       });
     }

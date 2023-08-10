@@ -6,7 +6,7 @@ import { ReactComponent as AddButtonSvg } from '../../assets/img/add-button.svg'
 import { ReactComponent as PrevSvg } from '../../assets/icon/prevBack.svg';
 import { CenterFrame } from '../../style';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
-import { perfumeInfos } from '../../types/PostInfoType';
+import { PerfumeInfos } from '../../types/PostInfoType';
 
 interface ReviewBoxProps {
   brand: string;
@@ -30,7 +30,7 @@ function PerfumeReviewBox({ brand, name, img }: ReviewBoxProps) {
   );
 }
 interface Props {
-  perfumeList: perfumeInfos;
+  perfumeList: PerfumeInfos[];
 }
 
 export function AddCarousel({ perfumeList }: Props) {
@@ -39,7 +39,8 @@ export function AddCarousel({ perfumeList }: Props) {
 
   return (
     <CarouselBox>
-      {!perfumeList ? (
+      {perfumeList.length === 0 ? (
+        //아직 임베디드된 향수가 없는 경우
         <CenterFrame>
           <EmptyBox>
             <TextArea>
@@ -55,6 +56,7 @@ export function AddCarousel({ perfumeList }: Props) {
           </EmptyBox>
         </CenterFrame>
       ) : (
+        //아닌 경우 향수들 정보 불러오고 마지막 장에 추가페이지
         <Carousel
           // 캐러셀 설정
           requestToChangeActive={setActiveItemIndex}
@@ -66,11 +68,14 @@ export function AddCarousel({ perfumeList }: Props) {
           showSlither={false}
           outsideChevron={false}
         >
-          <PerfumeReviewBox
-            brand={perfumeList.brandName}
-            name={perfumeList.name}
-            img={perfumeList.picture}
-          />
+          {perfumeList.map((perfume) => (
+            <PerfumeReviewBox
+              brand={perfume.brandName}
+              name={perfume.name}
+              img={perfume.picture}
+            />
+          ))}
+
           <CenterFrame>
             <EmptyBox>
               <TextArea>
