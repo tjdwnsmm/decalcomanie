@@ -125,6 +125,7 @@ public class ArticleController {
         boolean flag = false;
         // 댓글 작성자정보들
         for (CommentDto commentDto : comments) {
+            System.out.println(commentDto.getUserId());
             UserInfoDto userInfoDto = userService.getUserInfo(commentDto.getUserId());
             // 사용자의 follower 목록을 보고 follow 여부를 넣어준다.
             if(followers != null) {
@@ -287,6 +288,7 @@ public class ArticleController {
                 .build();
 
         CommentDto commentDto = commentDtoMapper.fromCommentRequest(creq);
+        System.out.println(commentDto +" created");
 
         articleService.createComment(commentDto);
 
