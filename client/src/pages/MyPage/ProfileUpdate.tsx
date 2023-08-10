@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { Main, MarginFrame, ConfirmButton, CenterFrame } from '../../style';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
@@ -6,9 +6,11 @@ import NewNickname from '../../components/Profile/NicknameModi';
 import ScentModi from '../../components/Profile/ScentModi';
 // import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
 import { userInfoDto } from '../../types/PostInfoType';
+import axios from '../../api/apiController';
+import { userInfo } from '../../types/ProfileInfoType';
 
 // 임시데이터
-const userInfo: userInfoDto = {
+const userdata: userInfoDto = {
   user: {
     userId: 'b18262f7-f7a6-455a-91ea-c74cd42b09b4',
     nickname: '김수민',
@@ -20,29 +22,21 @@ const userInfo: userInfoDto = {
   favorities: [
     {
       scentId: 1,
-      weight: 1,
       name: '시트러스',
-      rgb: '',
     },
     {
       scentId: 2,
-      weight: 1,
       name: '플로럴',
-      rgb: '',
     },
   ],
   hates: [
     {
       scentId: 3,
-      weight: 1,
       name: '머스크',
-      rgb: '',
     },
     {
       scentId: 4,
-      weight: 1,
       name: '우디',
-      rgb: '',
     },
   ],
   following: false,
@@ -133,6 +127,22 @@ const CenterBackground = styled(CenterFrame)`
 `;
 
 const ProfileUpdate = () => {
+  const [userData, setUserData] = useState<userInfo>();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get('/user/preferences');
+        setUserData(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const handleCancel = () => {
     window.location.href = '/mypage';
   };
@@ -151,22 +161,22 @@ const ProfileUpdate = () => {
         </CancleBtn>
       </MarginFrame>
       <Profile>
-        <ProfileImg src={userInfo.user.picture} alt="프로필 사진" />
+        <ProfileImg src={userdata.user.picture} alt="프로필 사진" />
         <ImgModiBox>
           <img src="src/assets/img/pencil-float.png" width="26" height="26" />
         </ImgModiBox>
       </Profile>
       <MarginFrame margin="30px 40px">
         <UserInfoName>닉네임</UserInfoName>
-        <NewNickname nickname={userInfo.user.nickname} />
+        <NewNickname nickname={userdata.user.nickname} />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>
-        <ScentModi scents={userInfo.favorities} fav="좋아하는" />
+        <ScentModi scents={userdata.favorities} fav="좋아하는" />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>싫어요 🙁</UserInfoName>
-        <ScentModi scents={userInfo.hates} fav="싫어하는" />
+        <ScentModi scents={userdata.hates} fav="싫어하는" />
       </MarginFrame>
       <MarginFrame margin="20px 0 76px">
         <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>

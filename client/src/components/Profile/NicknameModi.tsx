@@ -47,22 +47,28 @@ interface NewNicknameProps {
 
 function NewNickname({ nickname }: NewNicknameProps) {
   const [inputValue, setInputValue] = useState('');
+  // 새로운 닉네임이 사용할 수 있는 닉네임인지(중복인지 아닌지)
   const [isAvailable, setIsAvailable] = useState(false);
+  // 중복검사 후 메세지 띄우기 위해
   const [isCheck, setIsCheck] = useState(false);
+  const [newNickname, setNewNickname] = useState(nickname);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
-    console.log(inputValue);
     setIsAvailable(false);
     setIsCheck(false);
+    setNewNickname(nickname);
   };
 
   const handleCheckDuplicate = async () => {
     // 서버와 통신하여 닉네임 중복 검사를 진행하는 로직 구현
     try {
       const response = await axios.get(`/user/update/check/${inputValue}`);
-      setIsAvailable(response.data);
+      setIsAvailable(response.data.available);
       setIsCheck(true);
+      if (isAvailable) {
+        setNewNickname(inputValue);
+      }
     } catch (error) {
       console.error('오류:', error);
     }
