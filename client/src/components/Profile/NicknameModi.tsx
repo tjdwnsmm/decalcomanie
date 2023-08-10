@@ -52,27 +52,35 @@ function NewNickname({ nickname }: NewNicknameProps) {
   // 중복검사 후 메세지 띄우기 위해
   const [isCheck, setIsCheck] = useState(false);
   const [newNickname, setNewNickname] = useState(nickname);
+  const [showMaxLenMsg, setShowMaxLenMsg] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
     setIsAvailable(false);
     setIsCheck(false);
     setNewNickname(nickname);
+    if (inputValue.length > 8) {
+      setShowMaxLenMsg(true);
+    } else {
+      setShowMaxLenMsg(false);
+    }
   };
 
   const handleCheckDuplicate = async () => {
     // 서버와 통신하여 닉네임 중복 검사를 진행하는 로직 구현
-    try {
-      const response = await axios.get(`/user/update/check/${inputValue}`);
-      setIsAvailable(response.data.available);
-      setIsCheck(true);
-      if (isAvailable) {
-        setNewNickname(inputValue);
+    if (inputValue.length <= 8) {
+      try {
+        const response = await axios.get(`/user/update/check/${inputValue}`);
+        setIsAvailable(response.data.available);
+        setIsCheck(true);
+        if (isAvailable) {
+          setNewNickname(inputValue);
+        }
+      } catch (error) {
+        console.error('오류:', error);
       }
-    } catch (error) {
-      console.error('오류:', error);
-    }
-  };
+    };
+  }
 
   return (
     <>
@@ -86,8 +94,12 @@ function NewNickname({ nickname }: NewNicknameProps) {
             }
           }}
           placeholder={nickname}
+          maxLength={8}
         />
-        <CheckeBtn disabled={!inputValue.trim()} onClick={handleCheckDuplicate}>
+        <CheckeBtn
+          disabled={!inputValue.trim()}
+          onClick={handleCheckDuplicate}
+        >
           중복 검사
         </CheckeBtn>
       </NicknameInputContainer>
@@ -96,6 +108,11 @@ function NewNickname({ nickname }: NewNicknameProps) {
           {isAvailable ? <SuccessSvg /> : <ErrorSvg />}
           {isAvailable ? '사용 가능한 닉네임입니다.' : '이미 사용중인 닉네임입니다.'}
         </Message>)}
+      {showMaxLenMsg && (
+        <Message available={false}>
+          <ErrorSvg /> 닉네임은 8글자까지 가능합니다.
+        </Message>
+      )}
     </>
   );
 }

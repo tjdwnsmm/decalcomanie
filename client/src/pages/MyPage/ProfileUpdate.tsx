@@ -126,7 +126,7 @@ const CenterBackground = styled(CenterFrame)`
 `;
 
 const ProfileUpdate = () => {
-  const [userData, setUserData] = useState<userInfo>();
+  const [userData, setUserData] = useState<userInfoDto>();
   const [modalOpen, setModalOpen] = useState(false);
   const [profileImg, setProfileImg] = useState('');
 
@@ -145,7 +145,7 @@ const ProfileUpdate = () => {
   }, []);
 
   useEffect(() => {
-    setProfileImg(user.img);
+    setProfileImg(userdata.user.picture);
   }, []);
 
   const handleCancel = () => {
