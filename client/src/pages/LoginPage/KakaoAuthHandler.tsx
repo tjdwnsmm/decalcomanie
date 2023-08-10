@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 // import axios from '../../api/apiController';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../api/apiController';
 
 const KakaoAuthHandler = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const KakaoAuthHandler = () => {
     const fetchTokens = async () => {
       try {
         // 서버로 코드를 보내고 응답 받기
-        const response = await axios.get(`http://localhost:8080/oauth/signin`, {
+        const response = await axios.get(`${BASE_URL}/oauth/signin`, {
           headers: {
             code: code,
           },

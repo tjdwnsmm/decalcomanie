@@ -31,8 +31,12 @@ RUN rm /etc/nginx/conf.d/default.conf
 # custom 설정파일을 컨테이너 내부로 복사한다.
 COPY nginx/nginx.conf /etc/nginx/conf.d
 
+# COPY /front_prod/fullchain1.pem /etc/letsencrypt
+
+# COPY /front_prod/privkey1.pem /etc/letsencrypt
+
 # 컨테이너의 80번 포트를 열어준다.
-EXPOSE 80
+EXPOSE 80 443
 
 # nginx 서버를 실행하고 백그라운드로 동작하도록 한다.
 CMD ["nginx", "-g", "daemon off;"]

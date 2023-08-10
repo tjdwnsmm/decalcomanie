@@ -30,7 +30,7 @@ const MainRecommend = ({ nickname }: Props) => {
         </RightSection>
       </Frame>
       <GoToDrawer onClick={handleDrawer}>
-        내 서랍 보기 <ArrowSvg />
+        내가 가진 향수 등록하기 <ArrowSvg />
       </GoToDrawer>
     </MarginFrame>
   );

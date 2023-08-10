@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { Main, MarginFrame, ConfirmButton, CenterFrame } from '../../style';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
@@ -6,6 +6,7 @@ import NewNickname from '../../components/Profile/NicknameModi';
 import ScentModi from '../../components/Profile/ScentModi';
 import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
 import { USERID } from '../../api/apiController';
+import ProfileImgModi from '../../components/Profile/ProfileImgModi';
 
 // 임시데이터
 const user: ProfileUpdateInfo = {
@@ -13,9 +14,12 @@ const user: ProfileUpdateInfo = {
     nickname: '김수민',
     userId: USERID,
     accessToken: 'dummy',
+    age: 20,
+    gender: 1,
+    picture: 'src/assets/img/profile-img.png',
   },
-  favorite: ['시트러스', '플로럴'],
-  hate: ['머스크', '스파이시'],
+  favorities: ['시트러스', '플로럴'],
+  hates: ['머스크', '스파이시'],
   img: 'src/assets/img/profile-img.png',
 };
 
@@ -29,7 +33,7 @@ const PageName = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1;
+  z-index: -1;
 `;
 
 const CancleBtn = styled.div`
@@ -100,10 +104,17 @@ const CenterBackground = styled(CenterFrame)`
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 1;
+  z-index: -1;
 `;
 
 const ProfileUpdate = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [profileImg, setProfileImg] = useState('');
+
+  useEffect(() => {
+    setProfileImg(user.img);
+  }, []);
+
   const handleCancel = () => {
     window.location.href = '/mypage';
   };
@@ -111,6 +122,14 @@ const ProfileUpdate = () => {
   const handleWithdraw = () => {
     // 회원 탈퇴 로직 구현
     console.log('회원 탈퇴');
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   return (
@@ -122,8 +141,8 @@ const ProfileUpdate = () => {
         </CancleBtn>
       </MarginFrame>
       <Profile>
-        <ProfileImg src={user.img} alt="프로필 사진" />
-        <ImgModiBox>
+        <ProfileImg src={profileImg} alt="프로필 사진" />
+        <ImgModiBox onClick={handleOpenModal}>
           <img src="src/assets/img/pencil-float.png" width="26" height="26" />
         </ImgModiBox>
       </Profile>
@@ -133,11 +152,11 @@ const ProfileUpdate = () => {
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>
-        <ScentModi scents={user.favorite} fav="좋아하는" />
+        <ScentModi scents={user.favorities} fav="좋아하는" />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>싫어요 🙁</UserInfoName>
-        <ScentModi scents={user.hate} fav="싫어하는" />
+        <ScentModi scents={user.hates} fav="싫어하는" />
       </MarginFrame>
       <MarginFrame margin="20px 0 76px">
         <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>
@@ -147,6 +166,13 @@ const ProfileUpdate = () => {
           수정하기
         </FixedPostButton>
       </CenterBackground>
+
+      {modalOpen && (
+        <ProfileImgModi
+          handleImg={setProfileImg}
+          closeModal={handleCloseModal}
+        />
+      )}
     </Main>
   );
 };

@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import SearchBar from '../../components/Search/SearchBar';
-import FilteringBtn from '../../components/Button/FilteringBtn';
 import { styled } from 'styled-components';
-import FilterBox from '../../components/Search/FilterBox';
-import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
+import { Main, MarginFrame } from '../../style';
 import SearchResults from '../../components/Search/SearchResults-more';
 import SortToggle, { SortOption } from '../../components/Search/SortToggle';
 import BottomNav from '../../components/common/BottomNav';
 import axios from '../../api/apiController';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import Spinner from '../../components/common/Spinner';
+import useIntersect from '../../hooks/useIntersect';
+import { useFetchDatas } from '../../components/Search/useFetchData';
+import { AutoSearch } from '../../types/SearchType';
+import FilterSection from '../../components/Search/FilterSection';
 
 export interface Filter {
   brandName?: string[];
@@ -33,77 +35,67 @@ const SearchTabPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<PerfumeDetail[] | null>(
     null,
   );
+
+  //자동완성용 useState
   const [originSearchResults, setOriginSearchResults] = useState<
-    PerfumeDetail[] | null
+    AutoSearch[] | null
   >(null);
 
-  const [scrollPosition, setScrollPosition] = useState(0);
+  //정렬 useState
   const [sortOption, setSortOption] = useState<SortOption>(
     SortOption.Popularity,
   );
+
+  //필터나 검색어를 이용한 검색
+  const [newSearch, setNewSearch] = useState(false);
+
+  const [lastPick, setLastPick] = useState(-1);
+  const [lastPerfumeId, setLastPerfumeId] = useState(-1);
+
+  const { data, hasNextPage, isFetching, fetchNextPage, isLoading } =
+    useFetchDatas({
+      filter,
+      searchKeyword,
+      newSearch,
+      lastPick,
+      lastPerfumeId,
+    });
+
+  const datas = useMemo(() => (data ? data : []), [data]);
+
+  const ref = useIntersect(async (entry, observer) => {
+    observer.unobserve(entry.target);
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
+      console.log('✅ 이전까지 받아온 데이터!', datas);
+
+      setLastPerfumeId(datas[datas.length - 1].perfumeId);
+      setLastPick(datas[datas.length - 1].pick);
+    }
+  });
 
   const handleSortChange = (newSortOption: SortOption) => {
     setSortOption(newSortOption);
   };
 
-  const handleScroll = () => {
-    setScrollPosition(window.scrollY);
-    console.log(`스크롤 위치 : ${scrollPosition}`);
-    // localStorage.setItem('scrollPosition', scrollPosition.toString());
-  };
-
   useEffect(() => {
-    const storedScrollPosition = localStorage.getItem('scrollPosition');
-    if (storedScrollPosition) {
-      const scrollY = parseInt(storedScrollPosition);
-      scrollToStoredPosition(scrollY);
-    }
-
-    // console.log(`스크롤 위치 : ${scrollPosition}`);
-    // localStorage.setItem('scrollPosition', scrollPosition.toString());
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      const scrollY = window.scrollY;
-      localStorage.setItem('scrollPosition', scrollY.toString());
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [scrollPosition]);
-
-  const scrollToStoredPosition = (scrollY: number) => {
-    window.scrollTo(0, scrollY);
-  };
-
-  useEffect(() => {
-    const storedData = localStorage.getItem('searchResults');
-
-    if (storedData) {
-      setSearchResults(JSON.parse(storedData));
-      setOriginSearchResults(JSON.parse(storedData));
-    } else {
-      axios
-        .post('/perfume/search', {
-          keyword: '',
-          brand: [],
-          gender: [],
-          scent: [],
-        })
-        .then((res) => {
-          console.log(`초기응답 ${res.data}`);
-          setSearchResults(res.data);
-          setOriginSearchResults(res.data);
-          localStorage.setItem('searchResults', JSON.stringify(res.data));
-        });
-    }
+    axios.get('/perfume/search/names').then((res) => {
+      const fullNames = res.data;
+      setOriginSearchResults(fullNames);
+    });
   }, []);
 
   useEffect(() => {
-    if (searchResults && searchResults.length > 0) {
+    if (newSearch && searchResults && searchResults.length > 0) {
       const sortedResults = sortResults(searchResults);
       setSearchResults(sortedResults);
       console.log('정렬완료');
+    } else if (!newSearch && datas?.length > 0) {
+      const sortedResults = sortResults(datas);
+      setSearchResults(sortedResults);
+      console.log('정렬완료');
     }
-  }, [searchResults, sortOption]);
+  }, [searchResults || datas, sortOption]);
 
   const sortResults = (results: PerfumeDetail[]) => {
     switch (sortOption) {
@@ -131,9 +123,10 @@ const SearchTabPage: React.FC = () => {
       setSearchKeyword('');
       setSearchResults([]);
       try {
-        console.log(`진짜 데이터 검색 : ${searchResults}`);
         const data = await searchPerfume(keyword);
         setSearchResults(data);
+        console.log(data);
+        setNewSearch(true);
       } catch (error) {
         console.error(error);
         setSearchResults([]);
@@ -148,6 +141,7 @@ const SearchTabPage: React.FC = () => {
         brand: [],
         gender: [],
         scent: [],
+        dataSize: 200,
       });
       console.log(response);
       return response.data;
@@ -155,13 +149,6 @@ const SearchTabPage: React.FC = () => {
       console.error(error);
       return [];
     }
-  };
-
-  /**
-   * @summary 필터링 모달을 끄고 키고
-   */
-  const handleModal = () => {
-    setModalOpen(!modalOpen);
   };
 
   const filterSearch = async (filter: Filter) => {
@@ -172,6 +159,7 @@ const SearchTabPage: React.FC = () => {
         brand: filter.brandId ? filter.brandId : [],
         gender: filter.gender ? filter.gender : [],
         scent: filter.scentId ? filter.scentId : [],
+        dataSize: 200,
       });
       console.log(response);
       return response.data;
@@ -194,8 +182,14 @@ const SearchTabPage: React.FC = () => {
       }`,
     );
     setSearchResults(null);
+    if (calcFilteringNum(filter) === 0) {
+      setNewSearch(false);
+    } else {
+      setNewSearch(true);
+    }
     const filterDatas = await filterSearch(filter);
     setSearchResults(filterDatas); // 검색 결과
+    localStorage.setItem('searchResults', JSON.stringify(filterDatas));
   };
 
   /**
@@ -214,13 +208,13 @@ const SearchTabPage: React.FC = () => {
 
   return (
     <Main>
-      <TopButton>
-        {/* 필터링 버튼 */}
-        <FilteringBtn
-          onToggleModal={handleModal}
-          filteringNum={calcFilteringNum(filter)}
-        />
-      </TopButton>
+      <FilterSection
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        filter={filter}
+        handleApplyFilters={handleApplyFilters}
+        calcFilteringNum={calcFilteringNum}
+      />
 
       {!modalOpen && (
         <>
@@ -238,38 +232,46 @@ const SearchTabPage: React.FC = () => {
               </SortArea>
 
               {/* 검색 결과 */}
-
-              {searchResults ? (
-                <SearchResults
-                  results={searchResults}
-                  isButton={false}
-                  addUrl=""
-                />
+              {newSearch ? (
+                <>
+                  {searchResults && searchResults.length > 0 ? (
+                    <>
+                      <SearchResults
+                        results={searchResults}
+                        isButton={false}
+                        addUrl=""
+                      />
+                      <MarginFrame margin="100px auto" />
+                    </>
+                  ) : (
+                    <MarginFrame margin="120px auto">
+                      <Spinner />
+                    </MarginFrame>
+                  )}
+                </>
               ) : (
-                <MarginFrame margin="120px auto">
-                  <Spinner />
-                </MarginFrame>
+                <>
+                  {datas.length > 0 ? (
+                    <>
+                      <SearchResults
+                        results={datas}
+                        isButton={false}
+                        addUrl=""
+                      />
+                      {!isFetching && isLoading && <Spinner />}
+                      <MarginFrame margin="100px auto" />
+                      <Target ref={ref} />
+                    </>
+                  ) : (
+                    <MarginFrame margin="120px auto">
+                      <Spinner />
+                    </MarginFrame>
+                  )}
+                </>
               )}
             </>
           )}
           <BottomNav />
-        </>
-      )}
-
-      {/* 필터링 모달 */}
-      {modalOpen && (
-        <>
-          <FilterBox onApplyFilters={handleApplyFilters} filterNow={filter} />
-          {/* 모달 닫기 버튼 */}
-          <CenterFrame>
-            <ConfirmButton
-              onClick={handleModal}
-              color={'secondary'}
-              background={'secondary'}
-            >
-              취소
-            </ConfirmButton>
-          </CenterFrame>
         </>
       )}
     </Main>
@@ -278,11 +280,8 @@ const SearchTabPage: React.FC = () => {
 
 export default SearchTabPage;
 
-const TopButton = styled.div`
-  display: flex;
-  flex-direction: row-reverse;
-  margin-right: 20px;
-  margin-top: 25px;
+const Target = styled.div`
+  height: 3px;
 `;
 
 const SortArea = styled.div`

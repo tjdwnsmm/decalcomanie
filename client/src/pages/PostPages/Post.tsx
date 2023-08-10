@@ -68,6 +68,10 @@ export default function Post() {
     }
   };
 
+  const handleChange = (value: string) => {
+    setNewContent(value);
+  };
+
   return (
     <Main>
       <PostTitle>

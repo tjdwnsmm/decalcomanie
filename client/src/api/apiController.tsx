@@ -1,9 +1,7 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router';
 
 export const USERID = '07161c43-bc03-44f6-95c1-a56d440a23bf';
-// axios.defaults.withCredentials = true;
-export const BASE_URL = 'http://localhost:8080';
+export const BASE_URL = import.meta.env.VITE_REACT_APP_SERVER;
 
 const instance = axios.create({
   baseURL: BASE_URL,
@@ -54,14 +52,11 @@ instance.interceptors.response.use(
       console.log('access-token 만료됐어');
       try {
         console.log('refresh-token 보낼게!');
-        const response = await axios.get(
-          `http://localhost:8080/oauth/reissue`,
-          {
-            headers: {
-              refreshToken: getRefreshToken(),
-            },
+        const response = await axios.get(`${BASE_URL}/oauth/reissue`, {
+          headers: {
+            refreshToken: getRefreshToken(),
           },
-        );
+        });
 
         // 응답 헤더에서 Access Token과 Refresh Token 추출
         const accessToken = response.headers['accesstoken'];

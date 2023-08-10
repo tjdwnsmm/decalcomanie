@@ -1,7 +1,9 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import { styled } from 'styled-components';
-import SeasonSuitabilityChart from './Detail/SeasonSuitabilityChart';
+import SeasonSuitabilityChart, {
+  SeasonSuitability,
+} from './Detail/SeasonSuitabilityChart';
 import { Progress, ProgressBar, Bar } from './Detail/MoreInfo';
 import { CenterFrame } from '../../style';
 
@@ -11,39 +13,99 @@ interface DetailEtcProps {
 
 const gender = ['남성', '여성', '남녀모두'];
 const season = ['봄', '여름', '가을', '겨울'];
-const time = ['낮', '밤'];
-
-const seasonSuitabilityData = [
-  { season: season[0], degree: 80 },
-  { season: season[1], degree: 90 },
-  { season: season[2], degree: 70 },
-  { season: season[3], degree: 60 },
+const time = [
+  ['낮', '🌞'],
+  ['밤', '🌚'],
 ];
 
+function calculateRatioScore(dayWeight: number, nightWeight: number): number {
+  const totalScore = 10;
+  const minWeight = Math.min(dayWeight, nightWeight);
+  const maxWeight = Math.max(dayWeight, nightWeight);
+
+  if (maxWeight === 0) {
+    return 0;
+  }
+
+  const ratio = (maxWeight / (maxWeight + minWeight)) * 100;
+  return ratio / totalScore;
+}
+
 const DetailEtcInfoSection = ({ perfume }: DetailEtcProps) => {
+  const [maxScore, setMaxScoreTime] = useState(0);
+  const [betterTimeIdx, setBetterTimeIdx] = useState(0);
+  const [betterWeatherIdx, setBetterWeatherIdx] = useState<number[]>([]);
+  const [perfumeWeatherWeights, setWeatherWeights] = useState<
+    SeasonSuitability[]
+  >([]);
+
+  useEffect(() => {
+    //계절정보 업데이트
+    // if (perfume.occasion.length !== 0) {
+    const perfumeOccasionWeights: number[] = [
+      perfume.spring,
+      perfume.summer,
+      perfume.fall,
+      perfume.winter,
+    ];
+
+    const sum = perfumeOccasionWeights.reduce((accumulator, currentValue) => {
+      return accumulator + currentValue;
+    }, 0);
+
+    const transformedData = perfumeOccasionWeights.map((item, idx) => {
+      const degree = (item / sum) * 100;
+      return { season: season[idx], degree };
+    });
+
+    const maxWeight = Math.max(...perfumeOccasionWeights);
+
+    const maxWeightIndices: number[] = [];
+    perfumeOccasionWeights.forEach((weight, index) => {
+      if (weight === maxWeight) {
+        maxWeightIndices.push(index);
+      }
+    });
+
+    setWeatherWeights(transformedData);
+    setBetterWeatherIdx(maxWeightIndices);
+
+    //시간정보 업데이트
+    perfume.night > perfume.day ? setBetterTimeIdx(1) : setBetterTimeIdx(0);
+
+    //시간 비율 계산
+    setMaxScoreTime(calculateRatioScore(perfume.night, perfume.day));
+    // }
+  }, []);
+
   return (
     <EtcFrame>
       <EtcTitle>추천해요 👍</EtcTitle>
       <EtcTxt>
         이 향수는 <span>{gender[perfume.gender]}</span>에게 인기있어요 !
       </EtcTxt>
-      <EtcTxt>
-        <span>{season[0]}</span>에 뿌리기 좋은 향수에요 !
-      </EtcTxt>
-      <SeasonSuitabilityChart data={seasonSuitabilityData} />
-      <EtcTxt>
-        {time[1]}보다는
-        <span> {time[0]}</span>에 어울려요 !
-      </EtcTxt>
-      <CenterFrame2>
-        <>🌞</>
-        <ProgressBar2>
-          <Progress2 score={7} total={10}>
-            <Bar2></Bar2>
-          </Progress2>
-        </ProgressBar2>{' '}
-        <>🌚</>
-      </CenterFrame2>
+      <>
+        <EtcTxt>
+          <span>
+            {betterWeatherIdx.map((index) => season[index]).join(', ')}
+          </span>
+          에 뿌리기 좋은 향수에요 !
+        </EtcTxt>
+        <SeasonSuitabilityChart data={perfumeWeatherWeights} />
+        <EtcTxt>
+          {time[Math.abs(1 - betterTimeIdx)][0]}보다는
+          <span> {time[betterTimeIdx][0]}</span>에 어울려요 !
+        </EtcTxt>
+        <CenterFrame2>
+          <>{time[betterTimeIdx][1]}</>
+          <ProgressBar2>
+            <Progress2 score={maxScore} total={10}>
+              <Bar2></Bar2>
+            </Progress2>
+          </ProgressBar2>{' '}
+          <>{time[Math.abs(1 - betterTimeIdx)][1]}</>
+        </CenterFrame2>
+      </>
     </EtcFrame>
   );
 };

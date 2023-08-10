@@ -35,11 +35,11 @@ const AccordBox = styled.div<AccordProps>`
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  font-size: 14.5px;
+  font-size: 12.5px;
   font-weight: 800;
   background: var(--white-color);
   color: var(--primary-color);
-  padding: 3px 10px;
+  padding: 2px 8px;
   height: 24px;
   letter-spacing: 1.4px;
   margin: 0px 8px 0 0;
