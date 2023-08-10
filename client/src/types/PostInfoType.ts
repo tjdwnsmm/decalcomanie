@@ -19,9 +19,10 @@ export interface user {
 
 export interface scent {
   scentId: number;
-  // weight: number;
+  weight: number;
+  nameOrg: string;
   name: string;
-  // rgb: string;
+  rgb: string;
 }
 
 export interface userInfoDto {

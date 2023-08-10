@@ -59,7 +59,7 @@ function NewNickname({ nickname }: NewNicknameProps) {
     setIsAvailable(false);
     setIsCheck(false);
     setNewNickname(nickname);
-    if (inputValue.length > 8) {
+    if (inputValue.length > 10) {
       setShowMaxLenMsg(true);
     } else {
       setShowMaxLenMsg(false);
@@ -68,7 +68,7 @@ function NewNickname({ nickname }: NewNicknameProps) {
 
   const handleCheckDuplicate = async () => {
     // 서버와 통신하여 닉네임 중복 검사를 진행하는 로직 구현
-    if (inputValue.length <= 8) {
+    if (inputValue.length <= 10) {
       try {
         const response = await axios.get(`/user/update/check/${inputValue}`);
         setIsAvailable(response.data.available);
@@ -101,7 +101,7 @@ function NewNickname({ nickname }: NewNicknameProps) {
             }
           }}
           placeholder={nickname}
-          maxLength={8}
+          maxLength={10}
         />
         <CheckeBtn
           disabled={!inputValue.trim()}
@@ -117,7 +117,7 @@ function NewNickname({ nickname }: NewNicknameProps) {
         </Message>)}
       {showMaxLenMsg && (
         <Message available={false}>
-          <ErrorSvg /> 닉네임은 8글자까지 가능합니다.
+          <ErrorSvg /> 닉네임은 10글자까지 가능합니다.
         </Message>
       )}
     </>

@@ -4,42 +4,10 @@ import { Main, MarginFrame, ConfirmButton, CenterFrame } from '../../style';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
 import NewNickname from '../../components/Profile/NicknameModi';
 import ScentModi from '../../components/Profile/ScentModi';
-import { userInfoDto } from '../../types/PostInfoType';
+import { scent, userInfoDto } from '../../types/PostInfoType';
 import axios from '../../api/apiController';
 import ProfileImgModi from '../../components/Profile/ProfileImgModi';
-
-// 임시데이터
-const userdata: userInfoDto = {
-  user: {
-    userId: 'b18262f7-f7a6-455a-91ea-c74cd42b09b4',
-    nickname: '김수민',
-    deletedAt: null,
-    age: 25,
-    gender: 1,
-    picture: 'src/assets/img/profile-img.png',
-  },
-  favorities: [
-    {
-      scentId: 1,
-      name: '시트러스',
-    },
-    {
-      scentId: 2,
-      name: '플로럴',
-    },
-  ],
-  hates: [
-    {
-      scentId: 3,
-      name: '머스크',
-    },
-    {
-      scentId: 4,
-      name: '우디',
-    },
-  ],
-  following: false,
-};
+import SearchBar from '../../components/Search/SearchBar';
 
 const PageName = styled.div`
   background-color: var(--background-color);
@@ -129,11 +97,13 @@ const ProfileUpdate = () => {
   const [userData, setUserData] = useState<userInfoDto>();
   const [modalOpen, setModalOpen] = useState(false);
   const [profileImg, setProfileImg] = useState('');
+  const [favoriteScent, setFavoriteScent] = useState<scent[]>([]);
+  const [hateScent, setHateScent] = useState<scent[]>([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('/user/preferences');
+        const response = await axios.get('/user/info');
         setUserData(response.data);
         console.log(response.data);
       } catch (error) {
@@ -145,8 +115,20 @@ const ProfileUpdate = () => {
   }, []);
 
   useEffect(() => {
-    setProfileImg(userdata.user.picture);
-  }, []);
+    if (userData?.user.picture) {
+      setProfileImg(userData.user.picture);
+    } else {
+      setProfileImg('assets/avatar/peeps-avatar-alpha-1.png');
+    }
+
+    if (userData?.favorities) {
+      setFavoriteScent(userData.favorities);
+    }
+
+    if (userData?.hates) {
+      setHateScent(userData.hates);
+    }
+  }, [userData]);
 
   const handleCancel = () => {
     window.location.href = '/mypage';
@@ -165,6 +147,18 @@ const ProfileUpdate = () => {
     setModalOpen(false);
   };
 
+  const handleAddFavoriteScent = (scent) => {
+    setFavoriteScent([...favoriteScent, scent]);
+  };
+
+  const handleAddHateScent = (scent) => {
+    setHateScent([...hateScent, scent]);
+  };
+
+  if (!userData) {
+    return 0;
+  }
+
   return (
     <Main>
       <MarginFrame margin="64px">
@@ -181,15 +175,15 @@ const ProfileUpdate = () => {
       </Profile>
       <MarginFrame margin="30px 40px">
         <UserInfoName>닉네임</UserInfoName>
-        <NewNickname nickname={userdata.user.nickname} />
+        <NewNickname nickname={userData.user.nickname} />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>
-        <ScentModi scents={userdata.favorities} fav="좋아하는" />
+        <ScentModi scents={favoriteScent} fav="좋아하는" onAddScent={handleAddFavoriteScent}/>
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>싫어요 🙁</UserInfoName>
-        <ScentModi scents={userdata.hates} fav="싫어하는" />
+        <ScentModi scents={hateScent} fav="싫어하는" onAddScent={handleAddHateScent}/>
       </MarginFrame>
       <MarginFrame margin="20px 0 76px">
         <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>
