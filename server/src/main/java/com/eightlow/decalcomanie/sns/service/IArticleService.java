@@ -5,7 +5,6 @@ import com.eightlow.decalcomanie.sns.dto.BookMarkDto;
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.HeartDto;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
-import com.eightlow.decalcomanie.sns.entity.Comment;
 import org.springframework.http.ResponseEntity;
 
 
