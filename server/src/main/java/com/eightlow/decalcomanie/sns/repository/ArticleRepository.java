@@ -14,15 +14,13 @@ import java.util.Optional;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
-    //    boolean existsById(int articleId);
     Optional<Article> findByArticleId(int articleId);
+    List<Article> findByArticleIdIn(List<Integer> userIds);
 
     @Query("SELECT a  FROM Article a WHERE a.userId = :userId ORDER BY a.createdAt DESC")
     List<Article> findByUserId(@Param(value = "userId") String userId);
 
-    @Modifying(clearAutomatically = true)
-    @Query("DELETE FROM Article a WHERE a.articleId = :articleId")
-    void deleteByArticleId(@Param(value = "articleId") int articleId);
+    List<Article> findByUserIdIn(List<String> userIds);
 
     @Query("SELECT a  FROM Article a ORDER BY a.heart DESC")
     @Transactional
@@ -42,12 +40,12 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query("UPDATE Article a SET a.comment = a.comment - 1 WHERE a.articleId = :articleId")
     void decreaseCommentCount(@Param("articleId") int articleId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE Article a SET a.heart = a.heart + 1 WHERE a.articleId = :articleId")
     void increaseHeartCountByArticleId(@Param("articleId") int articleId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE Article a SET a.heart = a.heart - 1 WHERE a.articleId = :articleId")
     void decreaseHeartCountByArticleId(@Param("articleId") int articleId);
