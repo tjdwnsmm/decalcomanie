@@ -135,7 +135,7 @@ const MainPage = () => {
                 {recommendPerfume ? (
                   <MainSwiper perfumes={recommendPerfume} />
                 ) : (
-                  <Spinner />
+                  <Spinner info="맞춤 추천 중입니다. 잠시만 기다려주세요😄" />
                 )}
               </>
             )}
