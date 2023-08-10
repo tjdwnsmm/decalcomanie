@@ -64,9 +64,17 @@ const Section = styled.div`
   }
 `;
 
-export default function CustomizedSwitches({ isChecked, setIsChecked }) {
-  const handleToggle = () => {
-    setIsChecked((prev) => !prev);
+interface SwitchProps {
+  isChecked: boolean;
+  // setIsChecked: (key: boolean) => void;
+}
+
+export default function CustomizedSwitches({
+  isChecked,
+}: // setIsChecked,
+SwitchProps) {
+  const handleToggle = (prev: boolean) => {
+    // setIsChecked((prev) => !prev);
   };
 
   return (
@@ -75,11 +83,11 @@ export default function CustomizedSwitches({ isChecked, setIsChecked }) {
         공병<Tooltip></Tooltip>
       </div>
       <FormGroup>
-        <FormControlLabel
+        {/* <FormControlLabel
           onChange={handleToggle}
           control={<Android12Switch checked={isChecked} />}
           label=""
-        />
+        /> */}
       </FormGroup>
     </Section>
   );

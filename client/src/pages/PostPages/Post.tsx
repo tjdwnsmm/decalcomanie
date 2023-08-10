@@ -8,17 +8,18 @@ import AddRating from '../../components/Rating/Rating';
 import { AddCarousel, NonAddCarousel } from '../../components/Box/AddCarousel';
 import { ConfirmButton, Main, MarginFrame } from '../../style/index';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import { perfumeInfos } from '../../types/PostInfoType';
 
 interface DataType {
-  perfumeId: [number];
+  perfumeId: number[];
   content: string;
-  rate: [number];
+  rate: number[];
 }
 
 export default function Post() {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState<boolean>(true);
-  const [perfumeList, setPerfumeList] = useState<PerfumeDetail[]>([]);
+  const [perfumeList, setPerfumeList] = useState<perfumeInfos[]>([]);
   const [content, setContent] = useState<string>('');
 
   useEffect(() => {
@@ -47,8 +48,12 @@ export default function Post() {
     ? parseFloat(ratingFromLocalStorage)
     : 0;
 
-  const requestData: DataType = {
-    perfumeId: [perfumeList.perfumeId],
+  //!타입선언해두기!
+  const requestData = {
+    perfumeId: perfumeList.filter((perfume) => {
+      return perfume.perfumeId;
+    }),
+
     content,
     rate: [rateValue],
   };
@@ -75,7 +80,7 @@ export default function Post() {
       </PostTitle>
       <div>
         {isChecked ? (
-          <AddCarousel perfumeList={perfumeList} />
+          <AddCarousel perfumeList={perfumeList[0]} />
         ) : (
           <NonAddCarousel />
         )}
@@ -85,21 +90,22 @@ export default function Post() {
             // setIsChecked={setIsChecked}
           />
         ) : (
-          <CustomizedSwitches
-            isChecked={!isChecked}
-            setIsChecked={setIsChecked}
-          />
+          <></>
+          // <CustomizedSwitches
+          //   isChecked={!isChecked}
+          //   setIsChecked={setIsChecked}
+          // />
         )}
       </div>
 
       <PostBody>
         <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
-        <ContextBox newContent={content} handleChange={handleChange}/>
+        <ContextBox newContent={content} handleChange={handleChange} />
         {isChecked && perfumeList.length !== 0 && (
           <MarginFrame margin="15px 0">
             <LeftTitleAlign>평점</LeftTitleAlign>
             <MarginFrame margin="10px 0 40px">
-              <AddRating perfumeList={perfumeList} />
+              <AddRating perfumes={perfumeList} />
             </MarginFrame>
           </MarginFrame>
         )}

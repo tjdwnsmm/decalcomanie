@@ -6,6 +6,7 @@ import { ReactComponent as AddButtonSvg } from '../../assets/img/add-button.svg'
 import { ReactComponent as PrevSvg } from '../../assets/icon/prevBack.svg';
 import { CenterFrame } from '../../style';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import { perfumeInfos } from '../../types/PostInfoType';
 
 interface ReviewBoxProps {
   brand: string;
@@ -28,14 +29,17 @@ function PerfumeReviewBox({ brand, name, img }: ReviewBoxProps) {
     </CenterFrame>
   );
 }
+interface Props {
+  perfumeList: perfumeInfos;
+}
 
-export function AddCarousel({ perfumeList }: { perfumeList: PerfumeDetail }) {
+export function AddCarousel({ perfumeList }: Props) {
   const navigate = useNavigate();
   const [activeItemIndex, setActiveItemIndex] = useState(0);
 
   return (
     <CarouselBox>
-      {perfumeList.length === 0 ? (
+      {!perfumeList ? (
         <CenterFrame>
           <EmptyBox>
             <TextArea>

@@ -43,7 +43,9 @@ const LeftTitleAlign = styled(TitleAlign)`
 export default function PostUpdate() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const [postDetailData, setPostDetailData] = useState<PostDetailData | null>(null);
+  const [postDetailData, setPostDetailData] = useState<PostDetailData | null>(
+    null,
+  );
   const [newContent, setNewContent] = useState<string>('');
 
   useEffect(() => {
@@ -103,21 +105,21 @@ export default function PostUpdate() {
         <CancelSvg onClick={() => cancleAlert()} />
       </PostTitle>
       <div>
-        <AddCarousel perfumes={postDetailData.perfumeInfos} />
-        <CustomizedSwitches></CustomizedSwitches>
+        <AddCarousel perfumeList={postDetailData.perfumeInfos[0]} />
+        {/* <CustomizedSwitches></CustomizedSwitches> */}
       </div>
 
       <PostBody>
         <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
-        <ContextBox
-          newContent={newContent}
-          handleChange={handleChange}
-        />
+        <ContextBox newContent={newContent} handleChange={handleChange} />
         {postDetailData.perfumeInfos.length !== 0 && (
           <MarginFrame margin="15px 0">
             <LeftTitleAlign>평점</LeftTitleAlign>
             <MarginFrame margin="10px 0 40px">
-              <AddRating perfumes={postDetailData.perfumeInfos} rates={postDetailData.rates} />
+              <AddRating
+                perfumes={postDetailData.perfumeInfos}
+                rates={postDetailData.rates}
+              />
             </MarginFrame>
           </MarginFrame>
         )}
