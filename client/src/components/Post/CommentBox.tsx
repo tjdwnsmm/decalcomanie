@@ -167,7 +167,7 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
     setEditing(false);
   };
 
-  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && isEditable) {
       event.preventDefault();
       handleEditClick();
@@ -195,8 +195,16 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
                 handleKeyPress(e)
               }
             />
-            <ModiBtn isEditable={isEditable} onClick={handleEditClick}>수정</ModiBtn>
-            <ModiBtn isEditable={false} onClick={handleCancleClick} style={{ cursor: 'pointer' }}>취소</ModiBtn>
+            <ModiBtn isEditable={isEditable} onClick={handleEditClick}>
+              수정
+            </ModiBtn>
+            <ModiBtn
+              isEditable={false}
+              onClick={handleCancleClick}
+              style={{ cursor: 'pointer' }}
+            >
+              취소
+            </ModiBtn>
           </InfoBox>
         )}
       </CommentContent>

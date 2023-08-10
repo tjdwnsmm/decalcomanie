@@ -1,12 +1,16 @@
 import styled from 'styled-components';
+import { useState, useEffect } from 'react';
+import axios from '../../api/apiController';
 import { EachFeedInfo } from '../../types/FeedInfoType';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { CommentBtn } from '../Button/CommentBtn';
 import { useNavigate } from 'react-router-dom';
+import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
+  handleFollow: (userId: string, follow: boolean) => void;
 }
 
 /**
@@ -19,12 +23,28 @@ ContentBox : 피드 게시물 내용
 IconBox : 좋아요 아이콘, 좋아요 수, 댓글 수, 댓글 아이콘
 */
 
-const favScent = ['우디', '플로럴', '시트러스'];
-const nofavScent = ['스파이시', '머스크'];
-const FeedPageOnly = ({ feed }: FeedComponentProps) => {
+const FeedPageOnly = ({ feed, handleFollow }: FeedComponentProps) => {
   const navigate = useNavigate();
+  const [followed, setFollowed] = useState(feed.followed);
+
+  useEffect(() => {
+    setFollowed(feed.followed);
+  }, [feed]);
+
   const handleDetail = (articleId: number) => {
     navigate(`/post-detail/${articleId}`);
+  };
+
+  const removeHtmlTags = (inputString: string) => {
+    return inputString.replace(/<\/?[^>]+(>|$)/g, '');
+  };
+
+  const handleFollowClick = (userId: string) => {
+    axios.post('/user/follow', { to: userId }).then((res) => {
+      console.log(res.data);
+      handleFollow(feed.userInfoDto.user.userId, !followed);
+      setFollowed(!followed);
+    });
   };
 
   return (
@@ -33,14 +53,49 @@ const FeedPageOnly = ({ feed }: FeedComponentProps) => {
         <InfoBox>
           <ProfileBox>
             <LeftProfile>
-              <img src="../../src/assets/img/profile-img.png" />
+              <img
+                src={
+                  feed.userInfoDto.user.picture
+                    ? feed.userInfoDto.user.picture
+                    : '../../src/assets/img/profile-img.png'
+                }
+              />
               <ProfileInfoBox>
-                {'닉네임'}
+                <ProfileNickname>
+                  {feed.userInfoDto.user.nickname}
+                  <Follow
+                    onClick={() => {
+                      handleFollowClick(feed.userInfoDto.user.userId);
+                    }}
+                  >
+                    {feed.userInfoDto.user.nickname !==
+                    getLoggedInUserNickname() ? (
+                      followed ? (
+                        <div className="following">팔로잉</div>
+                      ) : (
+                        '팔로우'
+                      )
+                    ) : (
+                      <></>
+                    )}
+                  </Follow>
+                </ProfileNickname>
                 <Scent>
-                  <FavScent>{favScent?.map((fav) => `#${fav}  `)}</FavScent>
-                  <NoFavScent>
-                    {nofavScent?.map((fav) => `#${fav}  `)}
-                  </NoFavScent>
+                  {feed.userInfoDto.favorities.length === 0 &&
+                  feed.userInfoDto.hates.length === 0 ? (
+                    <NoFavScent>
+                      선호/비선호 향을 등록하지 않은 사용자입니다.
+                    </NoFavScent>
+                  ) : (
+                    <>
+                      <FavScent>
+                        {feed.userInfoDto.favorities?.map((fav) => `#${fav}  `)}
+                      </FavScent>
+                      <NoFavScent>
+                        {feed.userInfoDto.hates?.map((fav) => `#${fav}  `)}
+                      </NoFavScent>
+                    </>
+                  )}
                 </Scent>
               </ProfileInfoBox>
             </LeftProfile>
@@ -52,7 +107,11 @@ const FeedPageOnly = ({ feed }: FeedComponentProps) => {
         </InfoBox>
 
         <ContentBox onClick={() => handleDetail(feed.articleDtos.articleId)}>
-          {feed.articleDtos.content}
+          {removeHtmlTags(
+            feed.articleDtos.content.length > 100
+              ? feed.articleDtos.content.slice(0, 100) + '...'
+              : feed.articleDtos.content,
+          )}
         </ContentBox>
         <IconBox>
           <LikeBtn
@@ -78,6 +137,20 @@ const LeftProfile = styled.div`
   width: 300px;
 `;
 
+const Follow = styled.div`
+  margin-left: 10px;
+  color: var(--primary-color);
+
+  .following {
+    color: var(--dark-gray-color);
+  }
+`;
+
+const ProfileNickname = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
 const InfoBox = styled.div`
   display: flex;
   justify-content: space-between;
@@ -86,7 +159,7 @@ const InfoBox = styled.div`
 
 const ProfileBox = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   font-size: 13px;
   font-weight: 600;
@@ -122,7 +195,7 @@ const IconBox = styled.div`
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  margin-top: 4px;
+  margin-top: 10px;
 `;
 
 const FeedBox = styled.div`
@@ -137,8 +210,8 @@ const FeedBox = styled.div`
 
 const ContentBox = styled.div`
   display: flex;
-  font-size: 12px;
-  font-weight: 300;
+  font-size: 13px;
+  font-weight: 400;
   line-height: 18px;
   margin: 20px 10px 0px;
 `;

@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
 import MainSwiper from '../Carousel/MainSwiper';
 
-const nowDate = () => {
+export const nowDate = () => {
   const today = new Date();
   const year = today.getFullYear();
   const month = ('0' + (today.getMonth() + 1)).slice(-2);

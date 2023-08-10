@@ -84,7 +84,7 @@ const SearchMyPerfume: React.FC = () => {
         brand: [],
         gender: [],
         scent: [],
-        dataSize: 50,
+        dataSize: 200,
         lastPick: null,
         lastPerfumeId: null,
       });
@@ -132,7 +132,7 @@ const SearchMyPerfume: React.FC = () => {
             <Spinner />
           </MarginFrame>
         ))}
-      <FloatingTopBtn />
+      {/* <FloatingTopBtn /> */}
     </Main>
   );
 };

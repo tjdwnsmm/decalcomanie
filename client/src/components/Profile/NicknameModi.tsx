@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import { ReactComponent as SuccessSvg } from '../../assets/icon/success.svg';
 import { ReactComponent as ErrorSvg } from '../../assets/icon/error.svg';
+import axios from '../../api/apiController';
 
 const NicknameInputContainer = styled.div`
   margin: 8px 6px;
@@ -31,13 +32,13 @@ const CheckeBtn = styled.button<{ disabled?: boolean }>`
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 `;
 
-const Message = styled.div<{ isDuplicate?: boolean }>`
+const Message = styled.div<{ available?: boolean }>`
   display: flex;
   align-items: center;
   font-size: 13px;
   margin: 6px;
   gap: 5px;
-  color: ${(props) => (props.isDuplicate ? 'var(--error-color)' : 'var(--success-color)')};
+  color: ${(props) => (props.available ? 'var(--success-color)' : 'var(--error-color)')};
 `;
 
 interface NewNicknameProps {
@@ -46,20 +47,25 @@ interface NewNicknameProps {
 
 function NewNickname({ nickname }: NewNicknameProps) {
   const [inputValue, setInputValue] = useState('');
-  const [isDuplicate, setIsDuplicate] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(false);
   const [isCheck, setIsCheck] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
-    setIsDuplicate(false);
+    console.log(inputValue);
+    setIsAvailable(false);
     setIsCheck(false);
   };
 
-  const handleCheckDuplicate = () => {
+  const handleCheckDuplicate = async () => {
     // 서버와 통신하여 닉네임 중복 검사를 진행하는 로직 구현
-    // 임시) 새로운 닉네임이 윤지현인 경우에만 중복으로 간주
-    setIsDuplicate(inputValue === '윤지현');
-    setIsCheck(true);
+    try {
+      const response = await axios.get(`/user/update/check/${inputValue}`);
+      setIsAvailable(response.data);
+      setIsCheck(true);
+    } catch (error) {
+      console.error('오류:', error);
+    }
   };
 
   return (
@@ -80,9 +86,9 @@ function NewNickname({ nickname }: NewNicknameProps) {
         </CheckeBtn>
       </NicknameInputContainer>
       {isCheck && (
-        <Message isDuplicate={isDuplicate}>
-          {isDuplicate ? <ErrorSvg /> : <SuccessSvg />}
-          {isDuplicate ? '이미 사용중인 닉네임입니다.' : '사용 가능한 닉네임입니다.'}
+        <Message available={isAvailable}>
+          {isAvailable ? <SuccessSvg /> : <ErrorSvg />}
+          {isAvailable ? '사용 가능한 닉네임입니다.' : '이미 사용중인 닉네임입니다.'}
         </Message>)}
     </>
   );
