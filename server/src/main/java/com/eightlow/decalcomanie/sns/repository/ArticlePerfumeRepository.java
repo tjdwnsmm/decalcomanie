@@ -16,7 +16,7 @@ public interface ArticlePerfumeRepository extends JpaRepository <ArticlePerfume,
     List<ArticlePerfume> findByArticle_ArticleId(int articleId);
     List<ArticlePerfume> findByPerfume_PerfumeId(int perfumeId);
 
-    List<ArticlePerfume> findByArticle_ArticleIdAndPerfume_PerfumeIdIn(int articleId, List<Integer> perfumeId);
+    List<ArticlePerfume> findByArticle_ArticleIdAndPerfume_PerfumeIdIn(Article article, List<Integer> perfumeId);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE ArticlePerfume ap SET ap.rate = :rate WHERE ap.article.articleId = :articleId AND ap.perfume.perfumeId = :perfumeId")

@@ -384,7 +384,7 @@ public class ArticleServiceImpl implements IArticleService {
         log.info("ArticleServiceImpl::: getComments start");
         List<Comment> comments = commentRepository.findByArticle_ArticleId(articleId);
         log.info("ArticleServiceImpl::: finish ", String.valueOf(comments));
-        return commentMapper.toDTOs(comments);
+        return commentMapper.toDTO(comments);
     }
 
     @Override
@@ -467,7 +467,7 @@ public class ArticleServiceImpl implements IArticleService {
                 .user(user)
                 .build();
 
-        bookmarkRepository.save(bookmark);
+        bookmarkRepository.save(bookmarkMapper.toEntity(bookmarkDto));
         log.info("ArticleServiceImpl::: bookmarkArticle finish");
         return 200;
     }
