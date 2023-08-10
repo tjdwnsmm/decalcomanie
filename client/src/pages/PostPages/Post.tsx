@@ -1,26 +1,127 @@
-import { styled } from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PostButton, CancleButton } from '../../components/Button/Button.js';
-import CustomizedSwitches from '../../components/Switch/Switch.js';
-import ContextBox from '../../components/Box/AddContext.js';
-import AddRating from '../../components/Rating/Rating.js';
-import AddCarousel from '../../components/Box/AddCarousel.js';
-import { ConfirmButton, Main, MarginFrame } from '../../style/index.js';
-import { ReactComponent as CancelSvg } from '../../assets/img/close.svg';
+import { styled } from 'styled-components';
+import axios from '../../api/apiController';
+import CustomizedSwitches from '../../components/Switch/Switch';
+import ContextBox from '../../components/Box/AddContext';
+import AddRating from '../../components/Rating/Rating';
+import { AddCarousel, NonAddCarousel } from '../../components/Box/AddCarousel';
+import { ConfirmButton, Main, MarginFrame } from '../../style/index';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 
-const perfumes = [
-  //   {
-  //     brand: '아쿠아 디 파르마',
-  //     name: '미르토 디 파나레아',
-  //     img: 'src/assets/img/perfume_aqua.png',
-  //   },
-  //   {
-  //     brand: '딥디크',
-  //     name: '오 드 퍼퓸 도손',
-  //     img: 'src/assets/img/perfume_doson.png',
-  //   },
-];
+interface DataType {
+  perfumeId: [number];
+  content: string;
+  rate: [number];
+}
+
+export default function Post() {
+  const navigate = useNavigate();
+  const [isChecked, setIsChecked] = useState<boolean>(true);
+  const [perfumeList, setPerfumeList] = useState<PerfumeDetail[]>([]);
+  const [content, setContent] = useState<string>('');
+
+  useEffect(() => {
+    const perfumeId = localStorage.getItem('getPerfumeId');
+    if (perfumeId !== null) {
+      axios
+        .get(`/perfume/detail/${perfumeId}`)
+        .then((res) => {
+          setPerfumeList(res.data);
+        })
+        .catch((error) => {
+          console.error('API 호출 에러 : ', error);
+        });
+    }
+    localStorage.removeItem('getPerfumeId');
+    localStorage.removeItem('rating');
+  }, []);
+
+  // 글 내용 변경 콜백 함수
+  const handleChange = (value: string) => {
+    setContent(value);
+  };
+
+  const ratingFromLocalStorage = localStorage.getItem('rating');
+  const rateValue = ratingFromLocalStorage
+    ? parseFloat(ratingFromLocalStorage)
+    : 0;
+
+  const requestData: DataType = {
+    perfumeId: [perfumeList.perfumeId],
+    content,
+    rate: [rateValue],
+  };
+
+  // 글 등록하기 버튼을 클릭했을 때 호출되는 함수
+  const handlePostClick = async () => {
+    console.log('Request Data : ', requestData);
+    try {
+      const response = await axios.post('/sns/create/', requestData);
+
+      console.log('API 응답:', response.data);
+
+      // 작성 글 상세 페이지로 이동
+      navigate(`/post-detail/${response.data.articleId}`);
+    } catch (error) {
+      console.error('API 요청 전송 에러:', error);
+    }
+  };
+
+  const handleChange = (value: string) => {
+    setNewContent(value);
+  };
+
+  return (
+    <Main>
+      <PostTitle>
+        <TitleAlign>글 작성하기</TitleAlign>
+      </PostTitle>
+      <div>
+        {isChecked ? (
+          <AddCarousel perfumeList={perfumeList} />
+        ) : (
+          <NonAddCarousel />
+        )}
+        {perfumeList.length !== 0 ? (
+          <CustomizedSwitches
+            isChecked={!isChecked}
+            // setIsChecked={setIsChecked}
+          />
+        ) : (
+          <CustomizedSwitches
+            isChecked={!isChecked}
+            setIsChecked={setIsChecked}
+          />
+        )}
+      </div>
+
+      <PostBody>
+        <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
+        <ContextBox newContent={content} handleChange={handleChange}/>
+        {isChecked && perfumeList.length !== 0 && (
+          <MarginFrame margin="15px 0">
+            <LeftTitleAlign>평점</LeftTitleAlign>
+            <MarginFrame margin="10px 0 40px">
+              <AddRating perfumeList={perfumeList} />
+            </MarginFrame>
+          </MarginFrame>
+        )}
+      </PostBody>
+
+      <Buttons>
+        <ConfirmButton
+          color="primary"
+          background="primary"
+          onClick={handlePostClick}
+        >
+          글 등록하기
+        </ConfirmButton>
+        <ConfirmButton>취소</ConfirmButton>
+      </Buttons>
+    </Main>
+  );
+}
 
 const PostTitle = styled.div`
   display: flex;
@@ -52,62 +153,11 @@ const LeftTitleAlign = styled(TitleAlign)`
   padding-left: 0;
 `;
 
-export default function Post() {
-  const navigate = useNavigate();
-  const [newContent, setNewContent] = useState<string>('');
-
-  // test alert
-  const postAlert = () => {
-    alert('글을 등록하시겠습니까?');
-  };
-
-  const cancleAlert = () => {
-    alert('취소하시겠습니까?');
-    navigate('/main-feed');
-  };
-
-  const handleChange = (value: string) => {
-    setNewContent(value);
-  };
-
-  return (
-    <Main>
-      <PostTitle>
-        <TitleAlign>글 작성하기</TitleAlign>
-        <CancelSvg onClick={() => cancleAlert()} />
-      </PostTitle>
-      <div>
-        <AddCarousel perfumes={[]} />
-        <CustomizedSwitches></CustomizedSwitches>
-      </div>
-
-      <PostBody>
-        <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
-        <ContextBox newContent={newContent} handleChange={handleChange} />
-        {perfumes.length !== 0 && (
-          <MarginFrame margin="15px 0">
-            <LeftTitleAlign>평점</LeftTitleAlign>
-            <MarginFrame margin="10px 0 40px">
-              <AddRating perfumes={[]} rates={[]} />
-            </MarginFrame>
-          </MarginFrame>
-        )}
-      </PostBody>
-      <Buttons>
-        <ConfirmButton color="primary" background="primary" onClick={postAlert}>
-          글 등록하기
-        </ConfirmButton>
-        <ConfirmButton onClick={cancleAlert}>취소</ConfirmButton>
-      </Buttons>
-    </Main>
-  );
-}
-
 const Buttons = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-contents: center;
+  justify-content: center;
   gap: 10px;
   padding-bottom: 10px;
 `;

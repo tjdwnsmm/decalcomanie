@@ -1,13 +1,9 @@
+import React, { useState } from 'react';
 import Rating from '@mui/material/Rating';
 import Stack from '@mui/material/Stack';
 import { styled as MUstyled } from '@mui/material/styles';
 import { styled } from 'styled-components';
-import { perfumeInfos } from '../../types/PostInfoType';
-
-interface AddRatingProps {
-  perfumes: perfumeInfos[];
-  rates: number[];
-}
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 
 interface PerfumeRatingBoxProps {
   name: string;
@@ -32,21 +28,32 @@ function PerfumeRatingBox({ name }: PerfumeRatingBoxProps) {
   return <>{name}</>;
 }
 
-export default function AddRating({ perfumes, rates }: AddRatingProps) {
+export default function AddRating({ perfumeList }: { perfumeList: PerfumeDetail;}) {
+  const [value, setValue] = useState<number | null>(null); // 별점 값 저장을 위한 상태
+
+  const handleRatingChange = (
+    event: React.ChangeEvent<{}>,
+    newValue: number | null,
+  ) => {
+    setValue(newValue); // 변경된 별점 값을 상태에 저장
+    localStorage.setItem('rating', JSON.stringify(newValue));
+    const storedValue: string | null = localStorage.getItem('rating');
+    // number 형태로 type 변환
+    const nowValue: number = parseFloat(storedValue);
+    console.log(nowValue);
+  };
+
   return (
-    <>
       <Stack spacing={0}>
-        {perfumes.map((perfume, index) => (
-          <StyledDiv key={perfume.perfumeId}>
-            <PerfumeRatingBox name={perfume.nameOrg} />
-            <StyledRating
-              name={`rating-${perfume.perfumeId}`}
-              defaultValue={rates[index]}
-              precision={1}
-            />
-          </StyledDiv>
-        ))}
+        <StyledDiv>
+          <PerfumeRatingBox name={perfumeList.name} />
+          <StyledRating
+            name="half-rating"
+            value={value}
+            precision={0.5}
+            onChange={handleRatingChange} // 별점 변경 이벤트 핸들러
+          />
+        </StyledDiv>
       </Stack>
-    </>
   );
 }
