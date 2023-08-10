@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { Main, MarginFrame, ConfirmButton, CenterFrame } from '../../style';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
@@ -6,6 +6,7 @@ import NewNickname from '../../components/Profile/NicknameModi';
 import ScentModi from '../../components/Profile/ScentModi';
 import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
 import { USERID } from '../../api/apiController';
+import ProfileImgModi from '../../components/Profile/ProfileImgModi';
 
 // 임시데이터
 const user: ProfileUpdateInfo = {
@@ -32,7 +33,7 @@ const PageName = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1;
+  z-index: -1;
 `;
 
 const CancleBtn = styled.div`
@@ -103,10 +104,17 @@ const CenterBackground = styled(CenterFrame)`
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 1;
+  z-index: -1;
 `;
 
 const ProfileUpdate = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [profileImg, setProfileImg] = useState('');
+
+  useEffect(() => {
+    setProfileImg(user.img);
+  }, []);
+
   const handleCancel = () => {
     window.location.href = '/mypage';
   };
@@ -114,6 +122,14 @@ const ProfileUpdate = () => {
   const handleWithdraw = () => {
     // 회원 탈퇴 로직 구현
     console.log('회원 탈퇴');
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   return (
@@ -125,8 +141,8 @@ const ProfileUpdate = () => {
         </CancleBtn>
       </MarginFrame>
       <Profile>
-        <ProfileImg src={user.img} alt="프로필 사진" />
-        <ImgModiBox>
+        <ProfileImg src={profileImg} alt="프로필 사진" />
+        <ImgModiBox onClick={handleOpenModal}>
           <img src="src/assets/img/pencil-float.png" width="26" height="26" />
         </ImgModiBox>
       </Profile>
@@ -150,6 +166,13 @@ const ProfileUpdate = () => {
           수정하기
         </FixedPostButton>
       </CenterBackground>
+
+      {modalOpen && (
+        <ProfileImgModi
+          handleImg={setProfileImg}
+          closeModal={handleCloseModal}
+        />
+      )}
     </Main>
   );
 };
