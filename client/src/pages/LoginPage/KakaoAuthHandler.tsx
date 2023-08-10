@@ -18,7 +18,7 @@ const KakaoAuthHandler = () => {
             code: code,
           },
         });
-        // console.log(response.headers);
+        console.log(response.headers);
         const data = response.data;
 
         // 응답 헤더에서 Access Token과 Refresh Token 추출
@@ -30,11 +30,11 @@ const KakaoAuthHandler = () => {
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('nickname', data.nickname);
         navigate('/');
-        /**
-         *  콘솔에 출력
+        
+         //콘솔에 출력
         console.log('Access Token:', accessToken);
         console.log('Refresh Token:', refreshToken);
-         * */
+         
 
         //
       } catch (error) {
