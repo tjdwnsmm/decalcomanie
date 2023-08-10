@@ -97,6 +97,7 @@ const ProfileUpdate = () => {
   const [userData, setUserData] = useState<userInfoDto>();
   const [modalOpen, setModalOpen] = useState(false);
   const [profileImg, setProfileImg] = useState('');
+  const [nickName, setNickName] = useState('');
   const [favoriteScent, setFavoriteScent] = useState<scent[]>([]);
   const [hateScent, setHateScent] = useState<scent[]>([]);
 
@@ -115,17 +116,14 @@ const ProfileUpdate = () => {
   }, []);
 
   useEffect(() => {
-    if (userData?.user.picture) {
-      setProfileImg(userData.user.picture);
-    } else {
-      setProfileImg('assets/avatar/peeps-avatar-alpha-1.png');
-    }
-
-    if (userData?.favorities) {
+    if (userData) {
+      if (userData.user.picture) {
+        setProfileImg(userData.user.picture);
+      } else {
+        setProfileImg('assets/avatar/peeps-avatar-alpha-1.png');
+      }
+      setNickName(userData.user.nickname);
       setFavoriteScent(userData.favorities);
-    }
-
-    if (userData?.hates) {
       setHateScent(userData.hates);
     }
   }, [userData]);
@@ -147,10 +145,6 @@ const ProfileUpdate = () => {
     setModalOpen(false);
   };
 
-  if (!userData) {
-    return 0;
-  }
-
   return (
     <Main>
       <MarginFrame margin="64px">
@@ -167,7 +161,7 @@ const ProfileUpdate = () => {
       </Profile>
       <MarginFrame margin="30px 40px">
         <UserInfoName>닉네임</UserInfoName>
-        <NewNickname nickname={userData.user.nickname} />
+        <NewNickname nickname={userData?.user.nickname} onNicknameChange={setNickName}/>
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>
