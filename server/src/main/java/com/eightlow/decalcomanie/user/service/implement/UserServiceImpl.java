@@ -1,11 +1,13 @@
 package com.eightlow.decalcomanie.user.service.implement;
 
+import com.eightlow.decalcomanie.auth.respository.OAuthRepository;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.perfume.entity.Scent;
 import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
+import com.eightlow.decalcomanie.perfume.repository.PerfumePickRepository;
 import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
 import com.eightlow.decalcomanie.sns.repository.ArticleRepository;
 import com.eightlow.decalcomanie.sns.repository.BookMarkRepository;
@@ -43,6 +45,8 @@ public class UserServiceImpl implements IUserService {
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
     private final BookMarkRepository bookMarkRepository;
+    private final OAuthRepository oAuthRepository;
+    private final PerfumePickRepository perfumePickRepository;
     private final UserMapper userMapper;
     private final ScentMapper scentMapper;
     private final PerfumeRepository perfumeRepository;
@@ -302,8 +306,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional
     public void withdrawUser(String userId) {
-        // 해당 회원이 찜한 향수 모두 삭제
+        // 해당 회원의 서랍에 있는 향수 모두 삭제
         userPerfumeRepository.deleteAllByUser_UserId(userId);
+
+        // 해당 회원이 찜한 향수 모두 삭제
+        perfumePickRepository.deleteAllByUser_UserId(userId);
 
         // 해당 회원의 선호 향 정보 모두 삭제
         userScentRepository.deleteAllByUser_UserId(userId);
@@ -317,9 +324,13 @@ public class UserServiceImpl implements IUserService {
         // 해당 회원이 쓴 댓글의 userId 모두 유령프로필의 userId로 변경
         commentRepository.setUserIdToGhostAccount(userId);
 
-        // TODO: 팔로우 테이블에서 해당 회원이 포함된 모든 항목을 제거
+        // 팔로우 테이블에서 해당 회원이 포함된 모든 항목을 제거
         followRepository.deleteAllByFollowed(userId);
         followRepository.deleteAllByFollowing(userId);
+
+        // 해당 회원의 userCredential 및 user 정보 삭제
+        userRepository.deleteById(userId);
+        oAuthRepository.deleteById(userId);
     }
 
     // 사용자 개인 추천 향수
