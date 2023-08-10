@@ -80,10 +80,7 @@ const DetailEtcInfoSection = ({ perfume }: DetailEtcProps) => {
 
   return (
     <EtcFrame>
-      <EtcTitle>추천해요 👍</EtcTitle>
-      <EtcTxt>
-        이 향수는 <span>{gender[perfume.gender]}</span>에게 인기있어요 !
-      </EtcTxt>
+      <EtcTitle>이런 날 추천해요 👍</EtcTitle>
       <>
         <EtcTxt>
           <span>

@@ -147,12 +147,12 @@ const MainPage = () => {
               <>
                 {isDrawer ? (
                   <MoreRateInfo
-                    title={`비슷한 유저분들께 인기있어요 🧙‍♀️`}
+                    title={`오늘은 이런 향수 어떠신가요 ? 🧙‍♀️`}
                     perfumes={overallPerfumes}
                   />
                 ) : (
                   <MoreRateInfo
-                    title={`비슷한 유저분들께 인기있어요 🧙‍♀️`}
+                    title={`오늘은 이런 향수 어떠신가요 ? 🧙‍♀️`}
                     perfumes={overallPerfumes}
                     first={true}
                   />

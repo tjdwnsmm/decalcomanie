@@ -1,9 +1,11 @@
-import { Main } from '../../style';
-import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import { useEffect, useState } from 'react';
-import { ScentNotes } from '../../components/Perfume/Detail/ScentNotes';
-import axios from '../../api/apiController';
 import { useNavigate, useParams } from 'react-router-dom';
+import { styled } from 'styled-components';
+import axios from '../../api/apiController';
+import { Main } from '../../style';
+import { ReactComponent as NextArrowSvg } from '../../assets/icon/nextArrow.svg';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import { ScentNotes } from '../../components/Perfume/Detail/ScentNotes';
 import PerfumeInfoSection from '../../components/Perfume/PerfumeInfoSection';
 import PerfumeImageSection from '../../components/Perfume/PerfumeImageSection';
 import ActionButtons from '../../components/Perfume/DetailActionButtons';
@@ -39,6 +41,14 @@ const PerfumeDetailPage: React.FC = () => {
     navigate('/search');
   };
 
+  const handleSearch = (perfumeName: string) => {
+    const searchName = perfumeName.replace(/\s+/g, '+');
+    const newWindow = window.open('about:blank');
+    if (newWindow) {
+      newWindow.location.href = `https://www.google.com/search?q=${searchName}&tbm=shop`;
+    }
+  };
+
   if (!perfume) {
     return null;
   }
@@ -47,6 +57,14 @@ const PerfumeDetailPage: React.FC = () => {
     <Main>
       {/* Use the imported components */}
       <PerfumeInfoSection perfume={perfume} />
+      <SearchPerfume
+        onClick={() => {
+          handleSearch(perfume.nameOrg);
+        }}
+      >
+        향수 가격 정보 보러가기
+        <NextArrowSvg />
+      </SearchPerfume>
       <PerfumeImageSection perfume={perfume} />
       <DetailEtcInfoSection perfume={perfume} />
       <ActionButtons
@@ -54,6 +72,7 @@ const PerfumeDetailPage: React.FC = () => {
         handleFeed={handleFeed}
         handleBack={handleBack}
       />
+
       {modalOpen && (
         <ScentNotes noteLists={perfume.note} closeModal={handleCloseModal} />
       )}
@@ -62,3 +81,24 @@ const PerfumeDetailPage: React.FC = () => {
 };
 
 export default PerfumeDetailPage;
+
+const SearchPerfume = styled.div`
+  display: flex;
+  align-items: center;
+  text-align: right;
+  margin: 25px 20px -20px 20px;
+  width: fit-content;
+  height: fit-content;
+  color: var(--primary-color);
+  font-size: 14px;
+  font-weight: 700;
+  gap: 5px;
+  cursor: pointer;
+  svg {
+    margin-top: 1px;
+  }
+  svg g path {
+    stroke: var(--primary-color);
+    stroke-width: 2;
+  }
+`;
