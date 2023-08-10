@@ -36,5 +36,7 @@ public interface IUserService {
 
     boolean checkDuplicated(String nickname);
 
-    void updateUserInfo(UserInfoUpdateRequest request, String userId);
+    String updateUserInfo(UserInfoUpdateRequest request, String userId);
+
+    void withdrawUser(String userId);
 }

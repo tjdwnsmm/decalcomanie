@@ -1,12 +1,18 @@
 package com.eightlow.decalcomanie.user.controller;
 
+import com.eightlow.decalcomanie.auth.jwt.JwtUtils;
+import com.eightlow.decalcomanie.auth.service.JwtService;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
+import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.service.IUserService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +30,7 @@ import java.util.Map;
 public class UserApiController {
 
     private final IUserService userService;
+    private final JwtService jwtService;
 
     // 사용자 향수 등록, 삭제
     @PostMapping("/perfume/manage")
@@ -83,14 +90,30 @@ public class UserApiController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> updateUserInfo(@RequestBody UserInfoUpdateRequest request, HttpServletRequest req) {
-        userService.updateUserInfo(request, (String)req.getAttribute("userId"));
-        return new ResponseEntity<>("사용자 정보 변경 성공!", HttpStatus.OK);
+    public ResponseEntity<Map<String, String>> updateUserInfo(@RequestBody UserInfoUpdateRequest request, HttpServletRequest req) {
+        Map<String, String> responseMap = new HashMap<>();
+        String userId = (String)req.getAttribute("userId");
+        String updatedNickname = userService.updateUserInfo(request, userId);
+        responseMap.put("nickname", updatedNickname);
+
+        HttpHeaders responseHeader = new HttpHeaders();
+
+        String accessToken = jwtService.generateAccessToken(updatedNickname, userId);
+
+        responseHeader.set("accessToken", accessToken);
+
+        return new ResponseEntity<>(responseMap, responseHeader, HttpStatus.OK);
     }
 
-    @GetMapping("/preferences")
+    @GetMapping("/info")
     public ResponseEntity<UserInfoDto> getUserInfo(HttpServletRequest req) {
         return new ResponseEntity<>(userService.getUserInfo((String)req.getAttribute("userId")), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/withdrawal")
+    public ResponseEntity<String> withdrawUser(HttpServletRequest req) {
+        userService.withdrawUser((String)req.getAttribute("userId"));
+        return new ResponseEntity<>("회원 탈퇴 완료!", HttpStatus.OK);
     }
 }
 
