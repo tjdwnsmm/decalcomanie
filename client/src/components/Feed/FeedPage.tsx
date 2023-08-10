@@ -65,7 +65,7 @@ const FeedPage = ({ feed, handleDetail, handleFollow }: FeedComponentProps) => {
               src={
                 feed.userInfoDto.user.picture
                   ? feed.userInfoDto.user.picture
-                  : 'src/assets/img/profile-user.png'
+                  : 'assets/avatar/peeps-avatar-alpha-1.png'
               }
             />
             {feed.userInfoDto.user.nickname}
@@ -116,6 +116,13 @@ const ProfileBox = styled.div`
   gap: 5px;
   font-size: 13px;
   font-weight: 500;
+
+  img {
+    margin-top: -5px;
+    width: 30px;
+    border-radius: 50%;
+}
+  }
 `;
 const IconBox = styled.div`
   display: flex;
