@@ -1,5 +1,7 @@
 package com.eightlow.decalcomanie.perfume.service.implement;
 
+import com.eightlow.decalcomanie.common.exception.CustomErrorCode;
+import com.eightlow.decalcomanie.common.exception.CustomException;
 import com.eightlow.decalcomanie.perfume.dto.*;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
 import com.eightlow.decalcomanie.perfume.dto.response.DailyRecommendResponse;
@@ -47,7 +49,13 @@ public class PerfumeServiceImpl implements IPerfumeService {
     // id로 개별 향수 조회
     @Override
     public PerfumeDto getPerfume(int perfumeId) {
-        return perfumeMapper.toDto(em.find(Perfume.class, perfumeId));
+        Perfume perfume = em.find(Perfume.class, perfumeId);
+
+        if(perfume == null) {
+            throw new CustomException(CustomErrorCode.PERFUME_NOT_FOUND);
+        }
+
+        return perfumeMapper.toDto(perfume);
     }
 
     @Override
@@ -93,6 +101,14 @@ public class PerfumeServiceImpl implements IPerfumeService {
         Perfume perfume = em.find(Perfume.class, perfumeId);
         User user = em.find(User.class, userId);
 
+        if(user == null) {
+            throw new CustomException(CustomErrorCode.USER_NOT_FOUND);
+        }
+
+        if(perfume == null) {
+            throw new CustomException(CustomErrorCode.PERFUME_NOT_FOUND);
+        }
+
         // 이미 같은 데이터가 있는지 확인
         PerfumePickId pd = PerfumePickId.builder()
                 .user(userId)
@@ -133,16 +149,6 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return true;
     }
 
-    // DB에 존재하는 향수인지 체크
-    @Override
-    public boolean isExistingPerfume(int perfumeId) {
-        Perfume existingPerfume = em.find(Perfume.class, perfumeId);
-
-        if (existingPerfume == null) return false;
-
-        return true;
-    }
-
     // 사용자가 찜한 향수 모두 조회
     @Override
     public List<PerfumeDto> findAllPickedPerfume(String userId) {
@@ -163,13 +169,24 @@ public class PerfumeServiceImpl implements IPerfumeService {
     @Override
     public void updatePerfumeRate(int perfumeId, float rate) {
         Perfume perfume = em.find(Perfume.class, perfumeId);
+
+        if(perfume == null) {
+            throw new CustomException(CustomErrorCode.PERFUME_NOT_FOUND);
+        }
+
         perfume.updateRate(rate);
     }
 
     // 향 정보를 가져오기
     @Override
-    public Scent getScentById(int scentId) {
-        return em.find(Scent.class, scentId);
+    public ScentDto getScentById(int scentId) {
+        Scent scent = em.find(Scent.class, scentId);
+
+        if(scent == null) {
+            throw new CustomException(CustomErrorCode.SCENT_NOT_FOUND);
+        }
+
+        return scentMapper.toDto(scent);
     }
 
     // 검색창 자동완성을 위해 향수 이름만 가져오기
@@ -189,6 +206,10 @@ public class PerfumeServiceImpl implements IPerfumeService {
         String curTime = LocalTime.now().toString();
 
         User loginUser = em.find(User.class, userId);
+
+        if(loginUser == null) {
+            throw new CustomException(CustomErrorCode.USER_NOT_FOUND);
+        }
 
         List<Perfume> season = queryFactory
                 .selectFrom(perfume)

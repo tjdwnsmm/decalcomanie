@@ -36,10 +36,6 @@ public class PerfumeApiController {
     // 향수 상세보기
     @GetMapping("/detail/{perfumeId}")
     public ResponseEntity<PerfumeDto> perfumeDetail(@PathVariable("perfumeId") int perfumeId, HttpServletRequest req) {
-        if(!perfumeService.isExistingPerfume(perfumeId)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         PerfumeDto perfumeDto = perfumeService.getPerfume(perfumeId);
 
         if(perfumeDto != null) {
@@ -79,10 +75,6 @@ public class PerfumeApiController {
     // 향수 찜, 찜 해제
     @PostMapping("/pick")
     public ResponseEntity<Map<String, Boolean>> pick(@RequestBody Map<String, Integer> request, HttpServletRequest req) {
-        if(!perfumeService.isExistingPerfume(request.get("perfumeId"))) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         Map<String, Boolean> responseMap = new HashMap<>();
         responseMap.put("isPicked", perfumeService.pickPerfume((String)req.getAttribute("userId"), request.get("perfumeId")));
 
