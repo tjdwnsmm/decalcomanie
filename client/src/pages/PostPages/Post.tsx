@@ -9,48 +9,38 @@ import { AddCarousel, NonAddCarousel } from '../../components/Box/AddCarousel';
 import { ConfirmButton, Main, MarginFrame } from '../../style/index';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 
+interface DataType {
+  perfumeId: [number];
+  content: string;
+  rate: [number];
+}
+
 export default function Post() {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState<boolean>(true);
-  // const [perfumeId, setPerfumeId] = useState<number | null>(null);
-  const [perfumeList, setPerfumeList] = useState<PerfumeDetail>([]);
+  const [perfumeList, setPerfumeList] = useState<PerfumeDetail[]>([]);
   const [content, setContent] = useState<string>('');
 
   useEffect(() => {
     const perfumeId = localStorage.getItem('getPerfumeId');
-    // setPerfumeId(localStorage.getItem('getPerfumeId'));
     if (perfumeId !== null) {
       axios
         .get(`/perfume/detail/${perfumeId}`)
         .then((res) => {
-          // localStorage.setItem('getPerfumeData', JSON.stringify(res.data));
           setPerfumeList(res.data);
         })
         .catch((error) => {
           console.error('API 호출 에러 : ', error);
         });
     }
-    // const localStorageData = JSON.parse(
-    //   localStorage.getItem('getPerfumeData') || '[]',
-    // );
-    // console.log('localStorageData : ', localStorageData);
-    // setPerfumeList(localStorageData);
-    console.log('perfumeList : ', perfumeList);
     localStorage.removeItem('getPerfumeId');
-    localStorage.removeItem('getPerfumeData');
     localStorage.removeItem('rating');
   }, []);
 
   // 글 내용 변경 콜백 함수
-  const handleContentChange = (value: string) => {
+  const handleChange = (value: string) => {
     setContent(value);
   };
-
-  interface DataType {
-    perfumeId: [number];
-    content: string;
-    rate: [number];
-  }
 
   const ratingFromLocalStorage = localStorage.getItem('rating');
   const rateValue = ratingFromLocalStorage
@@ -72,9 +62,7 @@ export default function Post() {
       console.log('API 응답:', response.data);
 
       // 작성 글 상세 페이지로 이동
-      // navigate(`/post-detail/${response.data.articleId}`);
-
-      navigate('/main-feed/');
+      navigate(`/post-detail/${response.data.articleId}`);
     } catch (error) {
       console.error('API 요청 전송 에러:', error);
     }
@@ -106,7 +94,7 @@ export default function Post() {
 
       <PostBody>
         <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
-        <ContextBox onContentChange={handleContentChange} />
+        <ContextBox newContent={content} handleChange={handleChange}/>
         {isChecked && perfumeList.length !== 0 && (
           <MarginFrame margin="15px 0">
             <LeftTitleAlign>평점</LeftTitleAlign>

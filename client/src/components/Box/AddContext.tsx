@@ -1,9 +1,5 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
-
-interface ContextBoxProps {
-  onContentChange: (content: string) => void;
-}
 
 const TextBox = styled.textarea`
   margin: 10px 0px 10px 0px;
@@ -19,17 +15,24 @@ const TextBox = styled.textarea`
   resize: none;
 `;
 
-export default function ContextBox({ onContentChange }: ContextBoxProps) {
-  const [content, setContent] = useState('');
+interface ContextBoxProps {
+  newContent: string;
+  handleChange: (value: string) => void;
+}
 
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(event.target.value);
-    onContentChange(event.target.value);
-  };
+export default function ContextBox({
+  newContent,
+  handleChange,
+}: ContextBoxProps) {
+  // const [newContent, setContent] = useState(content);
+
+  // const handleChange = (value: string) => {
+  //   setContent(value);
+  // };
 
   return (
     <>
-      <TextBox value={content} onChange={handleChange} />
+      <TextBox value={newContent} onChange={(event) => handleChange(event.target.value)} />
     </>
   );
 }
