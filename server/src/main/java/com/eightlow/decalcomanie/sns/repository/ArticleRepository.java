@@ -49,4 +49,8 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Transactional
     @Query("UPDATE Article a SET a.heart = a.heart - 1 WHERE a.articleId = :articleId")
     void decreaseHeartCountByArticleId(@Param("articleId") int articleId);
+
+    @Modifying
+    @Query("UPDATE Article a SET a.userId = '00000000-0000-0000-0000-000000000000' WHERE a.userId = :userId")
+    void setUserIdToGhostAccount(@Param("userId") String userId);
 }
