@@ -20,4 +20,6 @@ public interface BookMarkRepository extends JpaRepository<BookMark, BookMarkPk> 
     void deleteByArticleIdAndUserId(@Param("articleId") int articleId, @Param("userId") String userId);
 
     Optional<BookMark> findByArticle_ArticleIdAndUser_UserId(int articleId, String userId);
+
+    void deleteAllByUser_UserId(String userId);
 }

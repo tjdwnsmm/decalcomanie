@@ -56,11 +56,4 @@ public class OAuthServiceImpl implements IOAuthService {
 
         oAuthRepository.save(signOutUser);
     }
-
-    @Override
-    @Transactional
-    public void deleteUser(String userId) {
-        userRepository.deleteById(userId);
-        oAuthRepository.deleteById(userId);
-    }
 }

@@ -23,4 +23,8 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @Modifying(clearAutomatically = true)
     @Query("DELETE FROM Comment c WHERE c.article.articleId = :articleId")
     void deleteAllByArticleId(@Param("articleId") int articleId);
+
+    @Modifying
+    @Query("UPDATE Comment c SET c.user.userId = '00000000-0000-0000-0000-000000000000' WHERE c.user.userId = :userId")
+    void setUserIdToGhostAccount(@Param("userId") String userId);
 }

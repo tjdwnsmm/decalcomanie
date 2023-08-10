@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Deprecated
 public interface PerfumePickRepository extends JpaRepository<PerfumePick, Integer> {
-
+    void deleteAllByUser_UserId(String userId);
 }
