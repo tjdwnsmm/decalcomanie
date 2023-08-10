@@ -2,7 +2,10 @@ import { FC } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { CenterFrame } from '../../style';
 
-const Spinner: FC = () => {
+interface Props {
+  info?: string;
+}
+const Spinner = ({ info }: Props) => {
   return (
     <>
       <SpinnerContainer>
@@ -85,7 +88,7 @@ const Spinner: FC = () => {
           </g>
         </Svg>
       </SpinnerContainer>
-      <CenterFrameLoading>Loading ...</CenterFrameLoading>
+      <CenterFrameLoading>{info ? info : 'Loading ...'}</CenterFrameLoading>
     </>
   );
 };
