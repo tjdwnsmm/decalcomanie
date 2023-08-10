@@ -79,8 +79,14 @@ function NewNickname({ nickname }: NewNicknameProps) {
       } catch (error) {
         console.error('오류:', error);
       }
-    };
-  }
+    }
+  };
+
+  const handleSpaceKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === ' ') {
+      e.preventDefault();
+    }
+  };
 
   return (
     <>
@@ -88,6 +94,7 @@ function NewNickname({ nickname }: NewNicknameProps) {
         <NicknameInput
           value={inputValue}
           onChange={handleInputChange}
+          onKeyDown={handleSpaceKey}
           onKeyPress={(e) => {
             if (e.key === 'Enter') {
               handleCheckDuplicate();
