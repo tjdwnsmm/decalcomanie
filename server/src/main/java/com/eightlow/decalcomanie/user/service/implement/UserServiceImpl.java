@@ -1,6 +1,8 @@
 package com.eightlow.decalcomanie.user.service.implement;
 
 import com.eightlow.decalcomanie.auth.respository.OAuthRepository;
+import com.eightlow.decalcomanie.common.exception.CustomErrorCode;
+import com.eightlow.decalcomanie.common.exception.CustomException;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.entity.Perfume;
@@ -66,6 +68,14 @@ public class UserServiceImpl implements IUserService {
         if(userPerfume == null) {
             User user = em.find(User.class, userId);
             Perfume perfume = em.find(Perfume.class, perfumeId);
+
+            if(user == null) {
+                throw new CustomException(CustomErrorCode.USER_NOT_FOUND);
+            }
+
+            if(perfume == null) {
+                throw new CustomException(CustomErrorCode.PERFUME_NOT_FOUND);
+            }
 
             userPerfume = UserPerfume.builder()
                     .user(user)
@@ -140,13 +150,11 @@ public class UserServiceImpl implements IUserService {
     // 팔로워 목록 조회
     @Override
     public List<FollowerResponse> getFollowers(String userId) {
-        System.out.println("getFollowers called");
         List<Follow> myFollower = followRepository.findByFollowed(userId);
         List<FollowerResponse> result = new ArrayList<>();
 
         if(myFollower.size() > 0) {
             for(Follow follow : myFollower) {
-                System.out.println("getUserInfo called");
                 // 사용자 정보와 좋아하는 향, 싫어하는 향의 정보들을 가져온다.
                 UserInfoDto userInfoDto = getUserInfo(follow.getFollowing());
 
@@ -180,6 +188,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserInfoDto getUserInfo(String userId) {
         User user = em.find(User.class, userId);
+
+        if(user == null) {
+            throw new CustomException(CustomErrorCode.USER_NOT_FOUND);
+        }
 
         List<ScentDto> favorite = new ArrayList<>();
         List<ScentDto> hate = new ArrayList<>();
@@ -269,6 +281,10 @@ public class UserServiceImpl implements IUserService {
     public String updateUserInfo(UserInfoUpdateRequest request, String userId) {
         User user = em.find(User.class, userId);
 
+        if(user == null) {
+            throw new CustomException(CustomErrorCode.USER_NOT_FOUND);
+        }
+
         user.updateNickname(request.getNickname());
 
         userScentRepository.deleteAllByUser_UserId(userId);
@@ -278,6 +294,10 @@ public class UserServiceImpl implements IUserService {
 
         for(int scentId : favorites) {
             Scent scent = em.find(Scent.class, scentId);
+
+            if(scent == null) {
+                throw new CustomException(CustomErrorCode.SCENT_NOT_FOUND);
+            }
 
             userScentRepository.save(
                     UserScent.builder()
@@ -290,6 +310,10 @@ public class UserServiceImpl implements IUserService {
 
         for(int scentId : hates) {
             Scent scent = em.find(Scent.class, scentId);
+
+            if(scent == null) {
+                throw new CustomException(CustomErrorCode.SCENT_NOT_FOUND);
+            }
 
             userScentRepository.save(
                     UserScent.builder()

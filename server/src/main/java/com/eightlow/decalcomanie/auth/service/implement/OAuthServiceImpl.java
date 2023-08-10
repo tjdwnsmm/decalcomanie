@@ -3,6 +3,8 @@ package com.eightlow.decalcomanie.auth.service.implement;
 import com.eightlow.decalcomanie.auth.entity.UserCredential;
 import com.eightlow.decalcomanie.auth.respository.OAuthRepository;
 import com.eightlow.decalcomanie.auth.service.IOAuthService;
+import com.eightlow.decalcomanie.common.exception.CustomErrorCode;
+import com.eightlow.decalcomanie.common.exception.CustomException;
 import com.eightlow.decalcomanie.user.entity.User;
 import com.eightlow.decalcomanie.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,10 @@ public class OAuthServiceImpl implements IOAuthService {
     public void updateRefreshToken(String refreshToken, String userId) {
         UserCredential userCredential = oAuthRepository.findByUserId(userId);
 
+        if(userCredential == null) {
+            throw new CustomException(CustomErrorCode.USER_NOT_FOUND);
+        }
+
         UserCredential reissueUser = userCredential.toBuilder()
                 .refreshToken(refreshToken)
                 .build();
@@ -50,6 +56,11 @@ public class OAuthServiceImpl implements IOAuthService {
     @Transactional
     public void signOut(String userId) {
         UserCredential userCredential = oAuthRepository.findByUserId(userId);
+
+        if(userCredential == null) {
+            throw new CustomException(CustomErrorCode.USER_NOT_FOUND);
+        }
+
         UserCredential signOutUser = userCredential.toBuilder()
                 .refreshToken("")
                 .build();
