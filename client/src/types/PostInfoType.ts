@@ -1,34 +1,77 @@
-export interface Perfume {
-  rate: number;
-  name: string;
-  brand: string;
-  img: string;
-}
-
-export interface PostInfo {
+export interface articleDto {
+  createdAt: string;
+  updatedAt: string;
   articleId: number;
-  profileImg: string;
-  writer: string;
-  createdAt: string;
-  favScent: string[];
-  nofavScent: string[];
-  isFollow: boolean;
-  likeCount: number;
-  isLike: boolean;
-  isScrap: boolean;
+  userId: string;
   content: string;
-  commentCount: number;
+  heart: number;
+  comment: number;
 }
 
-export interface Comment {
-  profileImg: string;
-  writer: string;
+export interface user {
+  userId: string;
+  accessToken: string;
+  nickname: string;
+  deletedAt: string | null;
+  age: number;
+  gender: number;
+  refreshToken: string;
+  picture: string | null;
+}
+
+export interface scent {
+  scentId: number;
+  weight: number;
+  name: string;
+  rgb: string;
+}
+
+export interface userInfoDto {
+  user: user;
+  favorities: scent[];
+  hates: scent[];
+  following: boolean;
+}
+export interface commentDto {
   createdAt: string;
+  updatedAt: string;
+  commentId: number;
+  articleId: number;
+  userId: string;
   content: string;
 }
 
-export interface Post {
-  perfumes: Perfume[];
-  postInfo: PostInfo;
-  comments: Comment[];
+export interface commmentUsers {
+  user: user;
+  favorities: scent[];
+  hates: scent[];
+  following: boolean;
+}
+
+export interface perfumeInfos {
+  perfumeId: number;
+  name: string;
+  nameOrg: string;
+  brandName: string;
+  brandId: number;
+  picture: string;
+  rate: number;
+}
+
+export interface gradeDto {
+  userId: string;
+  perfumeId: number;
+  rate: number;
+}
+
+export interface PostDetailData {
+  articleDto: articleDto;
+  userInfoDto: userInfoDto;
+  comments: commentDto[];
+  commmentUsers: commmentUsers[]
+  perfumeInfos: perfumeInfos[];
+  gradeDto: gradeDto[];
+  hearted: boolean;
+  bookmarked: boolean;
+  followed: boolean;
 }
