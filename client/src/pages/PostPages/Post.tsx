@@ -12,32 +12,34 @@ import { PerfumeDetail } from '../../types/PerfumeInfoType';
 export default function Post() {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState<boolean>(true);
-  const [perfumeId, setPerfumeId] = useState<number | null>(null);
+  // const [perfumeId, setPerfumeId] = useState<number | null>(null);
   const [perfumeList, setPerfumeList] = useState<PerfumeDetail>([]);
   const [content, setContent] = useState<string>('');
 
   useEffect(() => {
-    setPerfumeId(localStorage.getItem('getPerfumeId'));
+    const perfumeId = localStorage.getItem('getPerfumeId');
+    // setPerfumeId(localStorage.getItem('getPerfumeId'));
     if (perfumeId !== null) {
       axios
         .get(`/perfume/detail/${perfumeId}`)
         .then((res) => {
-          localStorage.setItem('getPerfumeData', JSON.stringify(res.data));
+          // localStorage.setItem('getPerfumeData', JSON.stringify(res.data));
+          setPerfumeList(res.data);
         })
         .catch((error) => {
           console.error('API 호출 에러 : ', error);
         });
     }
-    const localStorageData = JSON.parse(
-      localStorage.getItem('getPerfumeData') || '[]',
-    );
-    console.log('localStorageData : ', localStorageData);
-    setPerfumeList(localStorageData);
+    // const localStorageData = JSON.parse(
+    //   localStorage.getItem('getPerfumeData') || '[]',
+    // );
+    // console.log('localStorageData : ', localStorageData);
+    // setPerfumeList(localStorageData);
     console.log('perfumeList : ', perfumeList);
     localStorage.removeItem('getPerfumeId');
     localStorage.removeItem('getPerfumeData');
     localStorage.removeItem('rating');
-  }, [perfumeId]);
+  }, []);
 
   // 글 내용 변경 콜백 함수
   const handleContentChange = (value: string) => {
