@@ -18,29 +18,38 @@ const LoginPage = () => {
         </LogoTitle>
         <LogoSubTitle>나에게 딱 맞는 향수를 만나보세요</LogoSubTitle>
       </MarginFrame>
-      <MarginFrame margin="230px 0 0">
+      <MarginFrame margin="300px 0 0">
         <KakaoBox onClick={kakaoLogin}>
           <KakaoSvg />
           {/* <img id="icon-img" src="src/assets/img/kakao_logo.png" /> */}
           카카오톡으로 시작하기
         </KakaoBox>
       </MarginFrame>
+      <Info>
+        <a href="https://www.freepik.com/free-vector/realistic-podium-lilac-pastel-background_29719937.htm#page=18&query=3d%20illustration%20perfume&position=41&from_view=search&track=ais">
+          @ Image by pikisuperstar
+        </a>{' '}
+        on Freepik
+      </Info>
     </MainInLogin>
   );
 };
 
 export default LoginPage;
 
+const Info = styled.div`
+  margin-top: 30px;
+  text-align: center;
+  font-size: 10px;
+  color: var(--white-color);
+  a {
+    color: var(--white-color);
+    text-decoration-line: none;
+  }
+`;
+
 const MainInLogin = styled(Main)`
-  // background-color: var(--secondary-color);
-  background: linear-gradient(
-    180deg,
-    #1c1c1c 0%,
-    rgba(51, 41, 77, 1) 33.33%,
-    rgba(51, 41, 77, 1) 38.02%,
-    rgba(51, 41, 77, 0.94) 53.65%,
-    #6d51b4 100%
-  );
+  background-image: url('assets/img/main_bg.jpg');
 `;
 
 const KakaoBox = styled.div`
@@ -69,50 +78,54 @@ const KakaoBox = styled.div`
 
 const LogoTitle = styled.div`
   width: max-content;
+  position: relative;
+  top: -25px;
   margin: auto;
   margin-top: -10px;
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
   pointer-events: none;
-  padding: -80px 10px;
 
   * {
+    letter-spacing: -0.75px;
     font: bolder 3.2rem/3.2rem 'EB Garamond' !important;
-    background-image: url('https://cdn.pixabay.com/photo/2022/06/21/21/16/pink-7276513_1280.jpg');
-    -webkit-background-clip: text;
     color: transparent;
-    // color: var(--primary-color);
+    background: linear-gradient(
+      180deg,
+      #1c1c1c 0%,
+      rgba(51, 41, 77, 1) 33.33%,
+      rgba(51, 41, 77, 1) 38.02%,
+      rgba(51, 41, 77, 0.94) 43.65%,
+      #6d51b4 100%
+    );
+    -webkit-background-clip: text;
     overflow: hidden;
   }
 
   :last-child {
     transform: rotatex(180deg) translatey(15px);
-    mask-image: linear-gradient(transparent 50%, white 90%);
-    -webkit-mask-image: linear-gradient(transparent 48%, white 100%);
-
-    // transform: rotatex(180deg) translatey(15px);
-    // mask-image: repeating-linear-gradient(
-    //     transparent,
-    //     transparent 3px,
-    //     white 3px,
-    //     white 4px
-    //   ),
-    //   linear-gradient(transparent 50%, white 90%);
-    // -webkit-mask-image: repeating-linear-gradient(
-    //     transparent,
-    //     transparent 3px,
-    //     white 3px,
-    //     white 4px
-    //   ),
-    //   linear-gradient(transparent 50%, white 90%);
+    mask-image: repeating-linear-gradient(
+        transparent,
+        transparent 3px,
+        white 3px,
+        white 4px
+      ),
+      linear-gradient(transparent 50%, white 90%);
+    -webkit-mask-image: repeating-linear-gradient(
+        transparent,
+        transparent 10px,
+        white 1px,
+        white 4px
+      ),
+      linear-gradient(transparent 60%, white 90%);
   }
 `;
 
 const LogoSubTitle = styled.div`
-  margin-top: -35px;
-  color: rgba(249, 202, 245, 0.66);
+  margin-top: -68px;
+  color: var(--secondary-color);
   text-align: center;
-  font-weight: 500;
-  font-size: 13px;
+  font-weight: 700;
+  font-size: 14px;
 `;
