@@ -12,15 +12,52 @@ interface ReviewBoxProps {
   brand: string;
   name: string;
   img: string;
+  id: number;
+  setPerfumeList: React.Dispatch<React.SetStateAction<PerfumeInfos[]>>;
 }
 
-function PerfumeReviewBox({ brand, name, img }: ReviewBoxProps) {
+interface localProps {
+  perfumeId: number;
+  rate: number;
+}
+
+const handleDeletePerfume = (id: number) => {
+  const postPerfumeList = JSON.parse(
+    localStorage.getItem('postPerfume') || '[]',
+  );
+
+  const updatedList = postPerfumeList.filter(
+    (perfume: localProps) => perfume.perfumeId !== id,
+  );
+
+  if (updatedList.length === 0) {
+    localStorage.removeItem('postPerfume');
+  } else {
+    localStorage.setItem('postPerfume', JSON.stringify(updatedList));
+  }
+  return updatedList;
+};
+
+function PerfumeReviewBox({
+  brand,
+  name,
+  img,
+  id,
+  setPerfumeList,
+}: ReviewBoxProps) {
   return (
     <CenterFrame>
       <PerfumeReviewBoxContainer>
         <TextInfoContainer>
           <PerfumeBrand>{brand}</PerfumeBrand>
           <PerfumeName>{name}</PerfumeName>
+          <DeleteBtn
+            onClick={() => {
+              setPerfumeList(handleDeletePerfume(id));
+            }}
+          >
+            삭제하기 🗑
+          </DeleteBtn>
         </TextInfoContainer>
         <ImgBox>
           <img src={img} />
@@ -31,9 +68,10 @@ function PerfumeReviewBox({ brand, name, img }: ReviewBoxProps) {
 }
 interface Props {
   perfumeList: PerfumeInfos[];
+  setPerfumeList: React.Dispatch<React.SetStateAction<PerfumeInfos[]>>;
 }
 
-export function AddCarousel({ perfumeList }: Props) {
+export function AddCarousel({ perfumeList, setPerfumeList }: Props) {
   const navigate = useNavigate();
   const [activeItemIndex, setActiveItemIndex] = useState(0);
 
@@ -64,7 +102,7 @@ export function AddCarousel({ perfumeList }: Props) {
           numberOfCards={1}
           leftChevron={<PrevSvg />}
           rightChevron={<NextSvg />}
-          chevronWidth={80}
+          chevronWidth={40}
           showSlither={false}
           outsideChevron={false}
         >
@@ -73,6 +111,8 @@ export function AddCarousel({ perfumeList }: Props) {
               brand={perfume.brandName}
               name={perfume.name}
               img={perfume.picture}
+              id={perfume.perfumeId}
+              setPerfumeList={setPerfumeList}
             />
           ))}
 
@@ -104,7 +144,7 @@ export function NonAddCarousel() {
         numberOfCards={1}
         leftChevron={<PrevSvg />}
         rightChevron={<NextSvg />}
-        chevronWidth={80}
+        chevronWidth={40}
         showSlither={false}
         outsideChevron={false}
       >
@@ -120,6 +160,13 @@ export function NonAddCarousel() {
     </CarouselBox>
   );
 }
+
+const DeleteBtn = styled.div`
+  color: var(--error-color);
+  margin-top: 30px;
+  font-weight: 700;
+  font-size: 13px;
+`;
 
 export const NextSvg = styled(PrevSvg)`
   transform: rotate(180deg);
@@ -141,6 +188,7 @@ const EmptyBox = styled.div`
   justify-content: center;
   align-items: center;
   width: 340px;
+  padding: 0 20px;
   height: 140px;
   background-color: var(--white-color);
   border-radius: 10px;
@@ -176,10 +224,9 @@ const TextArea = styled.span`
 const PerfumeReviewBoxContainer = styled.div`
   display: flex;
   background: var(--white-color);
-  justify-content: center;
-  gap: 70px;
+  justify-content: space-between;
   align-items: center;
-  padding: 0px 0px;
+  padding: 0px 55px;
   width: 340px;
   height: 140px;
   border-radius: 10px;
@@ -208,4 +255,5 @@ const ImgBox = styled.div`
   width: 100px;
   height: 100px;
   display: flex;
+  justify-content: center;
 `;

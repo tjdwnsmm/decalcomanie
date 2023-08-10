@@ -91,7 +91,10 @@ export default function Post() {
       <div>
         {!isChecked ? (
           //checked 안되어있으면 임베디드 불가능하게
-          <AddCarousel perfumeList={perfumeList} />
+          <AddCarousel
+            perfumeList={perfumeList}
+            setPerfumeList={setPerfumeList}
+          />
         ) : (
           //checked 되어있으면 공병
           <NonAddCarousel />
