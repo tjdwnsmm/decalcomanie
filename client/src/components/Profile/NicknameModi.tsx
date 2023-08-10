@@ -43,10 +43,10 @@ const Message = styled.div<{ available?: boolean }>`
 
 interface NewNicknameProps {
   nickname: string;
-  onNicknameChange: (newNickname: string) => void;
+  setNicknameChange: (newNickname: string) => void;
 }
 
-function NewNickname({ nickname, onNicknameChange }: NewNicknameProps) {
+function NewNickname({ nickname, setNicknameChange }: NewNicknameProps) {
   const [inputValue, setInputValue] = useState('');
   // 새로운 닉네임이 사용할 수 있는 닉네임인지(중복인지 아닌지)
   const [isAvailable, setIsAvailable] = useState(false);
@@ -55,10 +55,11 @@ function NewNickname({ nickname, onNicknameChange }: NewNicknameProps) {
   const [showMaxLenMsg, setShowMaxLenMsg] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newInputValue = e.target.value;
     setInputValue(e.target.value);
     setIsAvailable(false);
     setIsCheck(false);
-    onNicknameChange(nickname);
+    setNicknameChange(newInputValue);
 
     if (inputValue.length > 10) {
       setShowMaxLenMsg(true);
@@ -75,7 +76,7 @@ function NewNickname({ nickname, onNicknameChange }: NewNicknameProps) {
         setIsAvailable(response.data.available);
         setIsCheck(true);
         if (isAvailable) {
-          onNicknameChange(inputValue);
+          setNicknameChange(inputValue);
         }
       } catch (error) {
         console.error('오류:', error);

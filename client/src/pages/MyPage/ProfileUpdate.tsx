@@ -7,7 +7,6 @@ import ScentModi from '../../components/Profile/ScentModi';
 import { scent, userInfoDto } from '../../types/PostInfoType';
 import axios from '../../api/apiController';
 import ProfileImgModi from '../../components/Profile/ProfileImgModi';
-import SearchBar from '../../components/Search/SearchBar';
 
 const PageName = styled.div`
   background-color: var(--background-color);
@@ -70,6 +69,7 @@ const FixedPostButton = styled(ConfirmButton)`
   align-items: center;
   position: absolute;
   bottom: 12px;
+  cursor: pointer;
 `;
 
 const WithdrawButton = styled.div`
@@ -90,7 +90,6 @@ const CenterBackground = styled(CenterFrame)`
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: -1;
 `;
 
 const ProfileUpdate = () => {
@@ -137,6 +136,22 @@ const ProfileUpdate = () => {
     console.log('회원 탈퇴');
   };
 
+  const handleUpdateProfile = async () => {
+    const favorite = favoriteScent.map((scent) => scent.scentId);
+    const hate = hateScent.map((scent) => scent.scentId);
+    const updatedProfileData = {
+      nickname: nickName,
+      favorite,
+      hate,
+    };
+    try {
+      const response = await axios.put('/user/update', updatedProfileData)
+      console.log('프로필 업데이트 성공:', response.data);
+    } catch (error){
+      console.error('프로필 업데이트 실패:', error);
+    };
+  };
+
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -161,7 +176,7 @@ const ProfileUpdate = () => {
       </Profile>
       <MarginFrame margin="30px 40px">
         <UserInfoName>닉네임</UserInfoName>
-        <NewNickname nickname={userData?.user.nickname} onNicknameChange={setNickName}/>
+        <NewNickname nickname={userData?.user.nickname} setNicknameChange={setNickName}/>
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>
@@ -175,7 +190,12 @@ const ProfileUpdate = () => {
         <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>
       </MarginFrame>
       <CenterBackground>
-        <FixedPostButton background="primary" color="primary" fontWeight="700">
+        <FixedPostButton
+          background="primary"
+          color="primary"
+          fontWeight="700"
+          onClick={handleUpdateProfile}
+        >
           수정하기
         </FixedPostButton>
       </CenterBackground>

@@ -62,6 +62,42 @@ const MaxScentMessage = styled.div`
   gap: 5px;
 `;
 
+const CancelSvgColor = styled(CancelSvg)`
+  g path {
+    fill: var(--white-color);
+  }
+`;
+
+const SearchResultList = styled.div`
+  position: absolute;
+  z-index: 1;
+  width: 280px;
+  max-height: 120px;
+  overflow: auto;
+  border: 1px solid var(--gray-color);
+  border-top: none;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding: 4px 8px;
+  background-color: var(--background-color);
+`;
+
+const SearchResultItem = styled.div`
+  background-color: var(--background-color);
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  transition: background-color 0.3s;
+  font-size: 15px;
+  font-weight: 400;
+
+  &:hover {
+    background-color: var(--secondary-color);
+    font-weight: 600;
+  }
+`;
+
 function ScentModi({ scentList, setScentList, fav }: ScentModiProps) {
   // const [scentList, setScentList] = useState(scents);
   const [newScent, setNewScent] = useState('');
@@ -162,39 +198,3 @@ function ScentModi({ scentList, setScentList, fav }: ScentModiProps) {
 }
 
 export default ScentModi;
-
-const CancelSvgColor = styled(CancelSvg)`
-  g path {
-    fill: var(--white-color);
-  }
-`;
-
-const SearchResultList = styled.div`
-  position: absolute;
-  z-index: 1;
-  width: 280px;
-  max-height: 120px;
-  overflow: auto;
-  border: 1px solid var(--gray-color);
-  border-top: none;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  padding: 4px 8px;
-  background-color: var(--background-color);
-`;
-
-const SearchResultItem = styled.div`
-  background-color: var(--background-color);
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 5px;
-  transition: background-color 0.3s;
-  font-size: 15px;
-  font-weight: 400;
-
-  &:hover {
-    background-color: var(--secondary-color);
-    font-weight: 600;
-  }
-`;
