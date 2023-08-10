@@ -18,4 +18,6 @@ public class UpdateArticleRequest {
     private String content;
     private List<Integer> perfumeId;
     private List<Integer> rate;
+    private int heart;
+    private int comment;
 }
