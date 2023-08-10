@@ -35,6 +35,9 @@ spring:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: 150
+      max-lifetime: 60000
 
   jpa:
     show-sql: true

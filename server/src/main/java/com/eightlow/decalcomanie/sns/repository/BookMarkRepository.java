@@ -16,8 +16,8 @@ public interface BookMarkRepository extends JpaRepository<BookMark, BookMarkPk> 
 
     @Modifying(clearAutomatically = true)
     @Transactional
-    @Query("DELETE FROM BookMark b WHERE b.articleId = :articleId AND b.userId LIKE :userId")
+    @Query("DELETE FROM BookMark b WHERE b.article.articleId = :articleId AND b.user.userId LIKE :userId")
     void deleteByArticleIdAndUserId(@Param("articleId") int articleId, @Param("userId") String userId);
 
-    Optional<BookMark> findByArticleIdAndUserId(int articleId, String userId);
+    Optional<BookMark> findByArticle_ArticleIdAndUser_UserId(int articleId, String userId);
 }

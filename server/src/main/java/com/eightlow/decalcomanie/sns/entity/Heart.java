@@ -1,27 +1,32 @@
 package com.eightlow.decalcomanie.sns.entity;
 
 import com.eightlow.decalcomanie.sns.entity.pk.HeartPk;
+import com.eightlow.decalcomanie.user.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Getter
-@SuperBuilder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(HeartPk.class)
-@Table(name="heart")
+@Table(name="heart", indexes ={
+        @Index(name = "idx_heart_articleId", columnList = "articleId")
+})
 public class Heart {
     @Id
-    private int articleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "articleId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Article article;
 
     @Id
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private User user;
 }

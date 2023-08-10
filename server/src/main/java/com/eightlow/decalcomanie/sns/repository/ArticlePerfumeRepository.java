@@ -1,5 +1,6 @@
 package com.eightlow.decalcomanie.sns.repository;
 
+import com.eightlow.decalcomanie.sns.entity.Article;
 import com.eightlow.decalcomanie.sns.entity.ArticlePerfume;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,13 +13,13 @@ import java.util.List;
 
 @Repository
 public interface ArticlePerfumeRepository extends JpaRepository <ArticlePerfume, Integer>{
-    List<ArticlePerfume> findByArticleId(int articleId);
-    List<ArticlePerfume> findByPerfumeId(int perfumeId);
+    List<ArticlePerfume> findByArticle_ArticleId(int articleId);
+    List<ArticlePerfume> findByPerfume_PerfumeId(int perfumeId);
 
-    List<ArticlePerfume> findByArticleIdAndPerfumeIdIn(int articleId, List<Integer> perfumeId);
+    List<ArticlePerfume> findByArticle_ArticleIdAndPerfume_PerfumeIdIn(Article article, List<Integer> perfumeId);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE ArticlePerfume ap SET ap.rate = :rate WHERE ap.articleId = :articleId AND ap.perfumeId = :perfumeId")
+    @Query("UPDATE ArticlePerfume ap SET ap.rate = :rate WHERE ap.article.articleId = :articleId AND ap.perfume.perfumeId = :perfumeId")
     void updateRateByArticleIdAndPerfumeId(@Param(value = "articleId") int articleId,
                                            @Param(value = "perfumeId") int perfumeId,
                                            @Param(value = "rate") int rate);
@@ -26,6 +27,6 @@ public interface ArticlePerfumeRepository extends JpaRepository <ArticlePerfume,
 //    void deleteByUserIdAndArticleIdAndPerfumeIdIn(String userId, int articleId, List<Integer> perfumeIdList);
 
     @Modifying(clearAutomatically = true)
-    @Query("DELETE FROM ArticlePerfume WHERE articleId = :articleId")
+    @Query("DELETE FROM ArticlePerfume ap WHERE ap.article.articleId = :articleId")
     void deleteAllByArticleId(@Param(value = "articleId") int articleId);
 }
