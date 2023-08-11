@@ -66,14 +66,19 @@ const Section = styled.div`
 interface SwitchProps {
   isChecked: boolean;
   setIsChecked: (key: boolean) => void;
+  handleEmpty: () => void;
 }
 
 export default function CustomizedSwitches({
   isChecked,
   setIsChecked,
+  handleEmpty,
 }: SwitchProps) {
   const handleToggle = () => {
     setIsChecked(!isChecked);
+    if (!isChecked) {
+      handleEmpty();
+    }
   };
 
   return (

@@ -19,12 +19,19 @@ interface localProps {
   perfumeId: number;
   rate: number;
 }
+
 export default function Post() {
   const navigate = useNavigate();
   //공병 체크 여부
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [perfumeList, setPerfumeList] = useState<PerfumeInfos[]>([]);
   const [content, setContent] = useState<string>('');
+
+  const handleEmptyChecked = () => {
+    setPerfumeList([]);
+    localStorage.removeItem('postPerfume');
+    console.log('empty!!');
+  };
 
   useEffect(() => {
     const perfumeList = localStorage.getItem('postPerfume');
@@ -104,7 +111,11 @@ export default function Post() {
           //checked 되어있으면 공병
           <NonAddCarousel />
         )}
-        <CustomizedSwitches isChecked={isChecked} setIsChecked={setIsChecked} />
+        <CustomizedSwitches
+          isChecked={isChecked}
+          setIsChecked={setIsChecked}
+          handleEmpty={handleEmptyChecked}
+        />
       </div>
 
       {/* 내용 입력 부분*/}
