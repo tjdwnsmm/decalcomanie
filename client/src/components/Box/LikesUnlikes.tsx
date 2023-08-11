@@ -38,13 +38,15 @@ const LikeBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 70px;
-  height: 25px;
+  width: 65px;
+  height: 30px;
   border-radius: 4px;
   background-color: var(--primary-color);
   color: var(--white-color);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
+  text-align: center;
+  word-break: keep-all;
 `;
 
 const UnlikeBox = styled(LikeBox)`
