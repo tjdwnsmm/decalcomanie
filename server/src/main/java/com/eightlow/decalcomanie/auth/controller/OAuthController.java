@@ -40,6 +40,9 @@ public class OAuthController {
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
 
+    @Value("${spring.security.oauth2.clinet.registration.kakao.redirect-uri}")
+    private String kakaoRedirectURL;
+
     @Value("${jwt.secret}")
     private String secretKey;
 
@@ -56,7 +59,7 @@ public class OAuthController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
-        params.add("redirect_uri", "http://localhost:5173/oauth/kakao/callback");
+        params.add("redirect_uri", kakaoRedirectURL);
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
