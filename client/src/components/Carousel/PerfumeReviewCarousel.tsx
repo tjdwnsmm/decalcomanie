@@ -3,11 +3,11 @@ import Carousel from 'react-items-carousel';
 import PerfumeReviewBox from '../Perfume/PerfumeReviewBox';
 import { NextSvg } from '../Box/AddCarousel';
 import { ReactComponent as PrevSvg } from '../../assets/icon/prevBack.svg';
-import { perfumeInfos } from '../../types/PostInfoType';
+import { PerfumeInfos } from '../../types/PostInfoType';
 
 interface PerfumeReviewCarouselProps {
   rates: number[];
-  perfumes: perfumeInfos[];
+  perfumes: PerfumeInfos[];
 }
 
 const PerfumeReviewCarousel: React.FC<PerfumeReviewCarouselProps> = ({
