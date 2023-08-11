@@ -133,9 +133,14 @@ const ProfileUpdate = () => {
     navigate('/mypage');
   };
 
-  const handleWithdraw = () => {
-    // 회원 탈퇴 로직 구현
-    console.log('회원 탈퇴');
+  const handleWithdraw = async () => {
+    try {
+      const response = await axios.delete('/user/withdrawal');
+      navigate('/login');
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleUpdateProfile = async () => {
