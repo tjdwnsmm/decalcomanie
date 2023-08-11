@@ -21,6 +21,7 @@ const NicknameInput = styled.input`
   border: none;
   outline: none;
   border-bottom: 2px solid var(--gray-color);
+  padding: 1px;
 
   &::placeholder {
     letter-spacing: 1px;
@@ -59,11 +60,10 @@ function NewNickname({ nickname, setNicknameChange }: NewNicknameProps) {
   const [showMaxLenMsg, setShowMaxLenMsg] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newInputValue = e.target.value;
     setInputValue(e.target.value);
     setIsAvailable(false);
     setIsCheck(false);
-    setNicknameChange(newInputValue);
+    setNicknameChange(nickname);
 
     if (inputValue.length > 10) {
       setShowMaxLenMsg(true);
