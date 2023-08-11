@@ -43,9 +43,21 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       if (existingData) {
         try {
           const parsedData = JSON.parse(existingData);
-          if (Array.isArray(parsedData)) {
+
+          // Check if the perfumeId already exists in the list
+          const existingPerfume = parsedData.find(
+            (item: any) => item.perfumeId === perfumeId,
+          );
+
+          if (existingPerfume) {
+            alert('이미 추가된 향수입니다.');
+          } else if (parsedData.length >= 5) {
+            alert('더 이상 향수를 추가할 수 없습니다 (최대 5개)');
+            navigate('/post');
+          } else {
             parsedData.push({ perfumeId: perfumeId, rate: 0 });
             localStorage.setItem('postPerfume', JSON.stringify(parsedData));
+            navigate(`/post`, { state: { perfumeId: perfumeId } });
           }
         } catch (error) {
           console.error('Error parsing existing data:', error);
@@ -53,8 +65,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       } else {
         const newData = [{ perfumeId: perfumeId, rate: 0 }];
         localStorage.setItem('postPerfume', JSON.stringify(newData));
+        navigate(`/post`, { state: { perfumeId: perfumeId } });
       }
-      navigate(`/post`, { state: { perfumeId: perfumeId } });
     } else {
       axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
         console.log('Data added!', res.data);
