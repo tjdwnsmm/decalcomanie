@@ -92,7 +92,7 @@ const LogoTitle = styled.div`
   * {
     letter-spacing: -0.75px;
     font: 500 3.2rem/3.2rem 'Pacifico' !important;
-    color: transparent;
+    color: var(--white-color);
     background: linear-gradient(
       180deg,
       #1c1c1c 0%,
