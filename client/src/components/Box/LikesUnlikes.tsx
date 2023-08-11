@@ -1,20 +1,30 @@
-import { Favorite } from '@mui/icons-material';
 import React from 'react';
 import { styled } from 'styled-components';
+import { ScentDto } from '../../types/PerfumeInfoType';
 
-interface Res {
-  res: {
-    favorite: string[];
-    hate: string[];
-  };
+interface Props {
+  likes: ScentDto[];
+  unlikes: ScentDto[];
 }
 
-const testRes: Res = {
-  res: {
-    favorite: ['우디', '플로럴', '시트러스'],
-    hate: ['머스크', '코코넛', '스파이시'],
-  },
-};
+export default function LikesUnlikes({ likes, unlikes }: Props) {
+  return (
+    <>
+      <BoxDiv>
+        {/* 좋아하는 향료 3개 이름 출력 */}
+        {likes.map((like) => (
+          <LikeBox>{like.name}</LikeBox>
+        ))}
+      </BoxDiv>
+      <BoxDiv>
+        {/* 싫어하는 향료 3개 이름 출력 */}
+        {unlikes.map((unlike) => (
+          <UnlikeBox>{unlike.name}</UnlikeBox>
+        ))}
+      </BoxDiv>
+    </>
+  );
+}
 
 const BoxDiv = styled.div`
   display: flex;
@@ -28,7 +38,7 @@ const LikeBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 60px;
+  width: 70px;
   height: 25px;
   border-radius: 4px;
   background-color: var(--primary-color);
@@ -40,20 +50,3 @@ const LikeBox = styled.div`
 const UnlikeBox = styled(LikeBox)`
   background-color: var(--gray-color);
 `;
-
-export default function LikesUnlikes() {
-  return (
-    <>
-      <BoxDiv>
-        <LikeBox>{testRes.res.favorite[0]}</LikeBox>
-        <LikeBox>{testRes.res.favorite[1]}</LikeBox>
-        <LikeBox>{testRes.res.favorite[2]}</LikeBox>
-      </BoxDiv>
-      <BoxDiv>
-        <UnlikeBox>{testRes.res.favorite[0]}</UnlikeBox>
-        <UnlikeBox>{testRes.res.favorite[1]}</UnlikeBox>
-        <UnlikeBox>{testRes.res.favorite[2]}</UnlikeBox>
-      </BoxDiv>
-    </>
-  );
-}
