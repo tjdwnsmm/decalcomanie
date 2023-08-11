@@ -28,10 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/sns")
@@ -58,9 +55,17 @@ public class ArticleController {
         int articleId = articleService.createArticle(articleDto);
         System.out.println(articleId + " created");
 
-        // ArticlePerfume테이블에도 글에서 포함도니 향수정보와 평가 넣어주기
-        gradeService.createGradeFromRequest(articleId,
-                createArticleRequest.getPerfumeId(), createArticleRequest.getRate());
+        if(!createArticleReq.getPerfumeId().isEmpty()) {
+            // ArticlePerfume테이블에도 글에서 포함되니 향수정보와 평가 넣어주기
+            gradeService.createGradeFromRequest(articleId,
+                    createArticleRequest.getPerfumeId(), createArticleRequest.getRate());
+        } else {
+            System.out.println("ininin");
+            // 공병 태그가 붙어서 perfumelist가 비어있다면 0번향수(공병), 평점 정보 0를 넣어주자
+            gradeService.createGradeFromRequest(articleId,
+                    Arrays.asList(0), Arrays.asList(0));
+        }
+
 
         // 게시물에 임베디드된 향수들을 테이블에 저장
         // articleService.createArticlePerfume(articleId, createArticleRequest.getPerfumeId());
@@ -237,10 +242,14 @@ public class ArticleController {
 
         // 글 수정이 성공 한 경우
         if(status == 200) {
-            // 향수 평가도 수정
-            // TODO: 원래 향수 리스트와 새로 받은 리스트를 확인하거나, 아니면 아얘 peerfumeList를 받지 않거나 둘중 하나 해야함
-            gradeService.modifyGradeFromRequest(articleId,
-                    updateArticleRequest.getPerfumeId(), updateArticleRequest.getRate());
+            // 공병 태그의 경우 향수 정보가 담겨오지 않아서 [] 로 오게됨
+            // size가 0이 아니라면 향수정보 변경 반영
+            if (updateArticleReq.getPerfumeId().size() != 0) {
+                // 향수 평가 수정
+                gradeService.modifyGradeFromRequest(articleId,
+                        updateArticleRequest.getPerfumeId(), updateArticleRequest.getRate());
+            }
+
         }
 
         // 수정 된걸 보여주는건 프런트 단에서 다시 get을 보내주는것이 맞는것 같다!!

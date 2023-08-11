@@ -463,33 +463,35 @@ public class ArticleServiceImpl implements IArticleService {
     @Override
     public ArticleResponse getDetail(int articleId, String userId) {
         Article article = searchArticleByArticleId(articleId);
-//        System.out.println(articleDto.getUserId());
-//
-//        System.out.println(userId);
+
         // 사용자가 글 작성자를 팔로우 했는지
         System.out.println(article.getUser().getUserId());
         boolean isFollowed = userService.isFollowing(userId, article.getUser().getUserId());
 
         //articleId를 통해서 게시물의 임베디드된 향수정보를 가져온다.
         List<ArticlePerfume> perfumeList = searchArticlePerfumeId(articleId);
-        log.info(perfumeList.toString());
 
         // 작성자: 프로필, 닉네임, 선호 비선호향
         UserInfoDto userInfo = userService.getUserInfo(article.getUser().getUserId());
-        System.out.println(userInfo);
 
         // 향수 평점 정보
         List<Integer> rateInfo = new ArrayList<>();
         // 임베디드된 향수: 이름, 브랜드, 향수 사진 url
         List<PerfumeDto> perfumes = new ArrayList<>();
 
-        // 임베디드된 향수 정보와 평점 정보 저장
-        for(ArticlePerfume articlePerfume: perfumeList) {
-            rateInfo.add(articlePerfume.getRate());
-            perfumes.add(perfumeMapper.toDto(articlePerfume.getPerfume()));
-        }
-        log.info(rateInfo.toString());
+        // 공병태그가 없는 일반 향수 평점 정보가 달린 게시글 처리
+        if (!(perfumeList.size() == 1 && perfumeList.get(0).getPerfume().getPerfumeId() == 0)) {
+            System.out.println("공병이 달린 게시물이 아닙니다.");
 
+            // 임베디드된 향수 정보와 평점 정보 저장
+            for(ArticlePerfume articlePerfume: perfumeList) {
+                rateInfo.add(articlePerfume.getRate());
+                perfumes.add(perfumeMapper.toDto(articlePerfume.getPerfume()));
+            }
+            log.info(rateInfo.toString());
+        }
+
+        // 공병 태그가 달린 게시글은 아무것도 정보를 담지 않음
 
         // 댓글 리스트를 포함한다.
         List<CommentDto> comments = getComments(article.getArticleId());
@@ -677,7 +679,6 @@ public class ArticleServiceImpl implements IArticleService {
             // TODO: perfumeId가 하나만 필요함으로 추후 쿼리 최적화가 필요!!(완료)
             int perfumeId = article.getArticlePerfume().get(0).getPerfume().getPerfumeId();
             log.info(String.valueOf(perfumeId));
-            // TODO: 공병 태그 (아마 perfumeId 0번 ), 즉 향수가 아무것도 임베디드 안된 상황을 구현 헤야함!!
 
             // 글을 쓴 사용자 entity
             User user = article.getUser();
@@ -705,7 +706,13 @@ public class ArticleServiceImpl implements IArticleService {
                     .hates(hate)
                     .build();
 
-            Perfume perfume = article.getArticlePerfume().get(0).getPerfume();
+            PerfumeDto perfumeDto = null;
+            // TODO: 공병 태그 (아마 perfumeId 0번 ), 즉 향수가 아무것도 임베디드 안된 상황을 구현 헤야함!!
+            if(perfumeId != 0) {
+                Perfume perfume = article.getArticlePerfume().get(0).getPerfume();
+                // 향수정보 가져옴
+                perfumeDto = perfumeMapper.toDto(perfume);
+            }
 
             // 팔로잉여부
             boolean isFollowed = false;
@@ -723,14 +730,23 @@ public class ArticleServiceImpl implements IArticleService {
                 isFollowingButtonActivate = false;
             }
 
-            // 향수정보 가져옴
-            PerfumeDto perfumeDto = perfumeMapper.toDto(perfume);
+
             log.info(String.valueOf(perfumeDto));
 
             boolean isHearted = checkHeartArticle(article.getArticleId(), userId);
             boolean isBookmarked = checkBookmarkArticle(article.getArticleId(), userId);
 
-            feedResponses.add(new FeedResponse(userInfoDto, isFollowed, isFollowingButtonActivate,articleMapper.toDto(article), perfumeDto, isHearted, isBookmarked));
+            ArticleDto articleDto = ArticleDto.builder()
+                    .articleId(article.getArticleId())
+                    .userId(article.getUser().getUserId())
+                    .content(article.getContent())
+                    .heart(article.getHeart())
+                    .comment(article.getComment())
+                    .createdAt(article.getCreatedAt())
+                    .updatedAt(article.getUpdatedAt())
+                    .build();
+
+            feedResponses.add(new FeedResponse(userInfoDto, isFollowed, isFollowingButtonActivate, articleDto, perfumeDto, isHearted, isBookmarked));
             cnt++;
         }
         return feedResponses;
