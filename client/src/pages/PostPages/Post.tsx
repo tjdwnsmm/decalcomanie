@@ -37,8 +37,9 @@ export default function Post() {
     const perfumeList = localStorage.getItem('postPerfume');
     if (perfumeList) {
       const parsedList: localProps[] = JSON.parse(perfumeList);
-      const fetchData = async () => {
-        const fetchPromises = parsedList.map((perfume) =>
+
+      const fetchData = async (fetchList: localProps[]) => {
+        const fetchPromises = fetchList.map((perfume) =>
           axios.get(`/perfume/detail/${perfume.perfumeId}`),
         );
 
@@ -46,7 +47,7 @@ export default function Post() {
           const responses = await Promise.all(fetchPromises);
           const updatedList = responses.map((res, index) => {
             const data = res.data;
-            data.rate = parsedList[index].rate;
+            data.rate = fetchList[index].rate;
             return data;
           });
           setPerfumeList(updatedList);
@@ -55,7 +56,12 @@ export default function Post() {
         }
       };
 
-      fetchData();
+      if (parsedList.length > 5) {
+        alert('향수는 최대 5개까지만 등록이 가능합니다!');
+        fetchData(parsedList.slice(0, 5));
+      } else {
+        fetchData(parsedList);
+      }
     }
   }, []);
 
