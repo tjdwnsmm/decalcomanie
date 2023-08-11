@@ -44,7 +44,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         try {
           const parsedData = JSON.parse(existingData);
 
-          // Check if the perfumeId already exists in the list
           const existingPerfume = parsedData.find(
             (item: any) => item.perfumeId === perfumeId,
           );
@@ -68,9 +67,28 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         navigate(`/post`, { state: { perfumeId: perfumeId } });
       }
     } else {
-      axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
-        console.log('Data added!', res.data);
-        navigate(`/my-drawer`);
+      axios.get('/user/perfume').then((res) => {
+        const data = res.data;
+        if (data && data.length > 0) {
+          const existingPerfume = data.find(
+            (item: any) => item.perfumeId === perfumeId,
+          );
+
+          if (existingPerfume) {
+            alert('이미 추가된 향수입니다');
+            navigate('/my-drawer');
+          } else {
+            axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
+              console.log('Data added!', res.data);
+              navigate(`/my-drawer`);
+            });
+          }
+        } else {
+          axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
+            console.log('Data added!', res.data);
+            navigate(`/my-drawer`);
+          });
+        }
       });
     }
   };
@@ -217,5 +235,3 @@ const Button = styled.button`
     color: var(--white-color);
   }
 `;
-
-const Scent = styled.span``;
