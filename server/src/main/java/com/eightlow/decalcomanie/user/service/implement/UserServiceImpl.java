@@ -286,6 +286,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         user.updateNickname(request.getNickname());
+        user.updatePicture(request.getPicture());
 
         userScentRepository.deleteAllByUser_UserId(userId);
 
