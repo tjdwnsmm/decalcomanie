@@ -145,24 +145,28 @@ const MainPage = () => {
             overallPerfumes &&
             baseInfo ? (
               <>
-                {isDrawer ? (
+                {isDrawer && overallPerfumes.length > 0 ? (
                   <MoreRateInfo
                     title={`오늘은 이런 향수 어떠신가요 ? 🧙‍♀️`}
                     perfumes={overallPerfumes}
                   />
                 ) : (
+                  overallPerfumes.length > 0 && (
+                    <MoreRateInfo
+                      title={`오늘은 이런 향수 어떠신가요 ? 🧙‍♀️`}
+                      perfumes={overallPerfumes}
+                      first={true}
+                    />
+                  )
+                )}
+                {ageGenderPerfumes.length > 0 && (
                   <MoreRateInfo
-                    title={`오늘은 이런 향수 어떠신가요 ? 🧙‍♀️`}
-                    perfumes={overallPerfumes}
-                    first={true}
+                    title={`${baseInfo.age}대 ${
+                      baseInfo.gender === 1 ? '여성' : '남성'
+                    }분들에게 인기가 많아요 😌`}
+                    perfumes={ageGenderPerfumes}
                   />
                 )}
-                <MoreRateInfo
-                  title={`${baseInfo.age}대 ${
-                    baseInfo.gender === 1 ? '여성' : '남성'
-                  }분들에게 인기가 많아요 😌`}
-                  perfumes={ageGenderPerfumes}
-                />
                 <MoreRateInfo
                   title={`${
                     baseInfo.curTime === 'day' ? '낮' : '밤'
