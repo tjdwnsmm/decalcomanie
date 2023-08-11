@@ -54,9 +54,6 @@ public class OAuthController {
 
         String code = header.getFirst("code");
 
-        System.out.println("clientId: " + clientId);
-        System.out.println("kakaoRedirectURL: " + kakaoRedirectURL);
-
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
 
