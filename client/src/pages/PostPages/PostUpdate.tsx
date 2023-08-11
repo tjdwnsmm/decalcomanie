@@ -95,6 +95,7 @@ export default function PostUpdate() {
       // console.log(requestData);
       const response = await axios.put('/sns/update', requestData);
       console.log(response.data);
+      localStorage.removeItem('postPerfume');
       navigate(`/post-detail/${id}`);
     } catch (error) {
       console.error(error);
@@ -103,6 +104,7 @@ export default function PostUpdate() {
 
   const cancleAlert = () => {
     alert('취소하시겠습니까?');
+    localStorage.removeItem('postPerfume');
     navigate(`/post-detail/${id}`);
   };
 
