@@ -4,7 +4,11 @@ import com.eightlow.decalcomanie.sns.dto.ArticleDto;
 import com.eightlow.decalcomanie.sns.dto.BookMarkDto;
 import com.eightlow.decalcomanie.sns.dto.CommentDto;
 import com.eightlow.decalcomanie.sns.dto.HeartDto;
+import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
+import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
+import com.eightlow.decalcomanie.sns.entity.Article;
+import com.eightlow.decalcomanie.sns.entity.ArticlePerfume;
 import com.eightlow.decalcomanie.sns.entity.Comment;
 import org.springframework.http.ResponseEntity;
 
@@ -26,14 +30,21 @@ public interface IArticleService {
     int deleteArticle(String userId, int articleId);
     void deleteArticlePerfumeByArticleId(int articleId);
 
-    ArticleDto searchArticleByArticleId(int articleId);
-    List<ArticleDto> searchArticlesOfFollowingUser(String userId);
-    List<ArticleDto> searchPopularArticles();
-    List<ArticleDto> searchLatestArticles();
-    List<ArticleDto> searchArticleByUserId(String userId);
-    List<ArticleDto> searchArticleByPerfumeId(int perfumeId);
+    ArticleResponse getDetail(int articleId, String userId);
 
-    List<Integer> searchArticlePerfumeId(int articleId);
+    Article searchArticleByArticleId(int articleId);
+    List<Article> searchArticlesOfFollowingUser(String userId);
+    List<FeedResponse> getArticlesOfFollowingUser(String userId);
+    List<Article> searchPopularArticles();
+    List<FeedResponse> getPopularArticles(String userId);
+    List<Article> searchLatestArticles();
+    List<FeedResponse> getLatestArticles(String userId);
+    List<Article> searchArticleByUserId(String userId);
+    List<FeedResponse> getArticleByUserId(String userId);
+    List<Article> searchArticleByPerfumeId(int perfumeId);
+    List<FeedResponse> getArticleByPerfumeId(String userId, int perfumeId);
+
+    List<ArticlePerfume> searchArticlePerfumeId(int articleId);
 
     /*
             댓글 파트

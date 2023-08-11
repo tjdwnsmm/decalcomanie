@@ -1,13 +1,24 @@
 package com.eightlow.decalcomanie.sns.service.implement;
 
+import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
+import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.perfume.entity.Perfume;
+import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
+import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
+import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import com.eightlow.decalcomanie.sns.dto.*;
+import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
+import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.sns.entity.*;
 import com.eightlow.decalcomanie.sns.mapper.*;
 import com.eightlow.decalcomanie.sns.repository.*;
 import com.eightlow.decalcomanie.sns.service.IArticleService;
+import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.entity.User;
+import com.eightlow.decalcomanie.user.entity.UserScent;
+import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +42,7 @@ import java.util.stream.Collectors;
 public class ArticleServiceImpl implements IArticleService {
 
     private final IUserService userService;
+    private final IPerfumeService perfumeService;
 
     private final ArticleRepository articleRepository;
     private final ArticleMapper articleMapper;
@@ -47,6 +59,10 @@ public class ArticleServiceImpl implements IArticleService {
     private final BookMarkRepository bookmarkRepository;
     private final BookMarkMapper bookmarkMapper;
 
+    private final ScentMapper scentMapper;
+    private final UserMapper userMapper;
+    private final PerfumeMapper perfumeMapper;
+
     private final EntityManager entityManager;
 
 
@@ -59,8 +75,13 @@ public class ArticleServiceImpl implements IArticleService {
     @Transactional
     public int createArticle(ArticleDto articleDto) {
         log.info("ArticleServiceImpl::: createArticle start");
-        Article article = articleRepository.save(articleMapper.toEntity(articleDto));
-        System.out.println(article.getArticleId());
+        User user = entityManager.find(User.class, articleDto.getUserId());
+        Article article = Article.builder()
+                .user(user)
+                .content(articleDto.getContent())
+                .build();
+        Article a = articleRepository.save(article);
+        System.out.println(a.getArticleId());
         log.info("ArticleServiceImpl::: finish ", String.valueOf(article.getArticleId()));
         return article.getArticleId();
     }
@@ -81,17 +102,21 @@ public class ArticleServiceImpl implements IArticleService {
         if (article != null) {
             // 글이 존재하는 경우, 수정 작업 진행
             // 글의 userId와 수정하려는 userId를 비교하여 일치하는지 확인
-            if (article.getUserId().equals(userId)) {
+            if (article.getUser().getUserId().equals(userId)) {
                 // 일치하는 경우, 수정 작업 진행
                 // 수정할 내용을 업데이트
-                ArticleDto updatedArticleDto = articleDto.toBuilder()
+
+                Article modifiedArticle = Article.builder()
+                        .articleId(articleId)
+                        .user(article.getUser())
+                        .content(articleDto.getContent())
+                        .heart(article.getHeart())
+                        .comment(article.getComment())
                         .updatedAt(LocalDateTime.now())
                         .build();
-                System.out.println(LocalDateTime.now());
-                // existingArticle.setContent(commentDto.getContent());
 
-                // 수정된 글 저장
-                articleRepository.save(articleMapper.toEntity(articleDto));
+                // 수정사항 저장
+                articleRepository.save(modifiedArticle);
 
                 log.info("ArticleServiceImpl::: finish ");
             } else {
@@ -113,14 +138,13 @@ public class ArticleServiceImpl implements IArticleService {
         log.info("ArticleServiceImpl::: deleteArticle start");
         // 해당 articleId를 가진 글 조회
         Article article = entityManager.find(Article.class, articleId);
-        // Optional<Article> optionalArticle = articleRepository.findByArticleId(articleId);
 
         // 해당 articleId를 가진 글이 존재하는지 확인
         if (article != null) {
             // 글이 존재하는 경우, 삭제 작업 진행
 
             // 댓글의 userId와 수정하려는 userId를 비교하여 일치하는지 확인
-            if (article.getUserId().equals(userId)) {
+            if (article.getUser().getUserId().equals(userId)) {
                 articleRepository.deleteById(articleId);
             } else {
                 // userId가 일치하지 않는 경우, 권한이 없음을 알리는 예외 또는 메시지를 반환
@@ -150,9 +174,9 @@ public class ArticleServiceImpl implements IArticleService {
 
     @Override
     @Transactional
-    public ArticleDto searchArticleByArticleId(int articleId) {
+    public Article searchArticleByArticleId(int articleId) {
         log.info("ArticleServiceImpl::: searchArticleByArticleId start");
-        ArticleDto article = articleMapper.toDto(entityManager.find(Article.class, articleId));
+        Article article = entityManager.find(Article.class, articleId);
         log.info("ArticleServiceImpl::: finish ", String.valueOf(article.getArticleId()));
         return article;
     }
@@ -164,13 +188,18 @@ public class ArticleServiceImpl implements IArticleService {
      */
     @Override
     @Transactional
-    public List<ArticleDto> searchArticleByUserId(String userId) {
-        return articleMapper.toDto(articleRepository.findByUserId(userId));
+    public List<Article> searchArticleByUserId(String userId) {
+        return articleRepository.findByUserId(userId);
+    }
+
+    @Override
+    public List<FeedResponse> getArticleByUserId(String userId) {
+        return null;
     }
 
     @Override
     @Transactional
-    public List<ArticleDto> searchArticlesOfFollowingUser(String userId) {
+    public List<Article> searchArticlesOfFollowingUser(String userId) {
 
         List<FollowingResponse> followingResponses = userService.getFollowingUsers(userId);
         System.out.println(followingResponses.toString());
@@ -180,35 +209,58 @@ public class ArticleServiceImpl implements IArticleService {
                 .collect(Collectors.toList());
         log.info(String.valueOf(userIds));
 
-        List<ArticleDto> articles = new ArrayList<>();
+        List<Article> articles = new ArrayList<>();
 
         // 팔로워들의 글을 다 가져옴 (select 한번에)
-        articles= articleMapper.toDto(articleRepository.findByUserIdIn(userIds));
+        articles= articleRepository.findByUser_UserIdIn(userIds);
 //        for(String id : userIds) {
 //            articles.addAll(searchArticleByUserId(id));
 //        }
 
 
-        Collections.sort(articles, Comparator.comparing(ArticleDto::getCreatedAt).reversed());
+        Collections.sort(articles, Comparator.comparing(Article::getCreatedAt).reversed());
         log.info(articles.toString());
         return articles;
     }
 
     @Override
-    @Transactional
-    public List<ArticleDto> searchPopularArticles() {
-        return articleMapper.toDto(articleRepository.findArticlesOrderByHeart());
+    public List<FeedResponse> getArticlesOfFollowingUser(String userId) {
+        List<Article> articles = searchArticlesOfFollowingUser(userId);
+        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles);
+        return feedResponse;
     }
 
     @Override
     @Transactional
-    public List<ArticleDto> searchLatestArticles() {
-        return articleMapper.toDto(articleRepository.findArticlesOrderByCreateTime());
+    public List<Article> searchPopularArticles() {
+        return articleRepository.findArticlesOrderByHeart();
+    }
+
+    @Override
+    public List<FeedResponse> getPopularArticles(String userId) {
+        List<Article> articles = searchPopularArticles();
+        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles);
+        return feedResponse;
     }
 
     @Override
     @Transactional
-    public List<ArticleDto> searchArticleByPerfumeId(int perfumeId) {
+    public List<Article> searchLatestArticles() {
+        return articleRepository.findArticlesOrderByCreateTime();
+    }
+
+    @Override
+    @Transactional
+    public List<FeedResponse> getLatestArticles(String userId) {
+        List<Article> articles= searchLatestArticles();
+        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
+        return responses;
+    }
+
+
+    @Override
+    @Transactional
+    public List<Article> searchArticleByPerfumeId(int perfumeId) {
         List<ArticlePerfume> articlePerfumes = articlePerfumeRepository.findByPerfume_PerfumeId(perfumeId);
         List<Integer> articleIds = new ArrayList<>();
         for(ArticlePerfume articlePerfume : articlePerfumes) {
@@ -218,29 +270,31 @@ public class ArticleServiceImpl implements IArticleService {
         // articleId를 통해 정보 조회 (select한번)
         List<Article> articles = new ArrayList<>();
         articles = articleRepository.findByArticleIdIn(articleIds);
-//        for(int articleId : articleIds) {
-//            articles.add(articleRepository.findByArticleId(articleId).get());
-//        }
         System.out.println(articles);
-        return articleMapper.toDto(articles);
+        return articles;
     }
 
-
+    @Override
+    public List<FeedResponse> getArticleByPerfumeId(String userId, int perfumeId) {
+        List<Article> articles = searchArticleByPerfumeId(perfumeId);
+        List<FeedResponse> feedResponses = getFeedInfoForArticles(userId, articles);
+        return feedResponses;
+    }
 
 
     // 피드 조회 끝
 
     @Override
     @Transactional
-    public List<Integer> searchArticlePerfumeId(int articleId) {
+    public List<ArticlePerfume> searchArticlePerfumeId(int articleId) {
         log.info("ArticleServiceImpl::: searchArticlePerfumeId start");
         List<ArticlePerfume> articlePerfumes = articlePerfumeRepository.findByArticle_ArticleId(articleId);
-        List<Integer> perfumes = new ArrayList<>();
-        for(ArticlePerfume perfume : articlePerfumes) {
-            perfumes.add(perfume.getPerfume().getPerfumeId());
-        }
-        log.info("ArticleServiceImpl::: finish ", String.valueOf(perfumes));
-        return perfumes;
+//        List<Integer> perfumes = new ArrayList<>();
+//        for(ArticlePerfume perfume : articlePerfumes) {
+//            perfumes.add(perfume.getPerfume().getPerfumeId());
+//        }
+        log.info("ArticleServiceImpl::: finish ");
+        return articlePerfumes;
     }
 
 
@@ -407,6 +461,98 @@ public class ArticleServiceImpl implements IArticleService {
     }
 
     @Override
+    public ArticleResponse getDetail(int articleId, String userId) {
+        Article article = searchArticleByArticleId(articleId);
+//        System.out.println(articleDto.getUserId());
+//
+//        System.out.println(userId);
+        // 사용자가 글 작성자를 팔로우 했는지
+        System.out.println(article.getUser().getUserId());
+        boolean isFollowed = userService.isFollowing(userId, article.getUser().getUserId());
+
+        //articleId를 통해서 게시물의 임베디드된 향수정보를 가져온다.
+        List<ArticlePerfume> perfumeList = searchArticlePerfumeId(articleId);
+        log.info(perfumeList.toString());
+
+        // 작성자: 프로필, 닉네임, 선호 비선호향
+        UserInfoDto userInfo = userService.getUserInfo(article.getUser().getUserId());
+        System.out.println(userInfo);
+
+        // 향수 평점 정보
+        List<Integer> rateInfo = new ArrayList<>();
+        // 임베디드된 향수: 이름, 브랜드, 향수 사진 url
+        List<PerfumeDto> perfumes = new ArrayList<>();
+
+        // 임베디드된 향수 정보와 평점 정보 저장
+        for(ArticlePerfume articlePerfume: perfumeList) {
+            rateInfo.add(articlePerfume.getRate());
+            perfumes.add(perfumeMapper.toDto(articlePerfume.getPerfume()));
+        }
+        log.info(rateInfo.toString());
+
+
+        // 댓글 리스트를 포함한다.
+        List<CommentDto> comments = getComments(article.getArticleId());
+        System.out.println(comments);
+
+        //사용자의 팔로우 목록을 받아온다.
+        List<FollowingResponse> followers = userService.getFollowingUsers(userId);
+
+        System.out.println("tjoejtoijfilsjlfjs;dlj");
+
+
+        List<UserInfoDto> commentUsers = new ArrayList<>();
+        boolean flag = false;
+        // 댓글 작성자정보들
+        for (CommentDto commentDto : comments) {
+            // System.out.println(commentDto.getUserId());
+            UserInfoDto userInfoDto = userService.getUserInfo(commentDto.getUserId());
+            // 사용자의 follower 목록을 보고 follow 여부를 넣어준다.
+            if(followers != null) {
+                for (FollowingResponse followerInfoResponse : followers) {
+                    if(followerInfoResponse.getUserId().equals(commentDto.getUserId())) {
+                        userInfoDto = userService.getUserInfo(commentDto.getUserId());
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+
+            UserInfoDto uidto = UserInfoDto.builder()
+                    .user(userInfoDto.getUser())
+                    .favorities(userInfoDto.getFavorities())
+                    .hates(userInfoDto.getHates())
+                    .isFollowing(flag)
+                    .build();
+
+//            commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
+//                    userInfoDto.getHates(), flag));
+
+            commentUsers.add(uidto);
+        }
+
+        // 좋아요 되었는지 확인
+        boolean isHearted = checkHeartArticle(article.getArticleId(), userId);
+
+        // 북마크 되었는지 확인
+        boolean isBookmarked = checkBookmarkArticle(article.getArticleId(), userId);
+
+        ArticleDto articleDto = ArticleDto.builder()
+                .articleId(article.getArticleId())
+                .userId(article.getUser().getUserId())
+                .content(article.getContent())
+                .heart(article.getHeart())
+                .comment(article.getComment())
+                .createdAt(article.getCreatedAt())
+                .updatedAt(article.getUpdatedAt())
+                .build();
+
+        ArticleResponse articleResponse = new ArticleResponse(articleDto,  userInfo, isFollowed,comments, commentUsers,
+                perfumes, rateInfo, isHearted, isBookmarked);
+        return  articleResponse;
+    }
+
+    @Override
     @Transactional
     public int likeArticle(HeartDto heartDto) {
         log.info("ArticleServiceImpl::: likeArticle start");
@@ -511,5 +657,82 @@ public class ArticleServiceImpl implements IArticleService {
     public String getUserIdFromRequest(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
         return userId;
+    }
+
+    // 피드 정보 조회 (사용자 정보, 글 정보, 포함된 향수 정보를 포함)
+    private List<FeedResponse> getFeedInfoForArticles(String userId, List<Article> articles){
+
+        final String GHOST = "00000000-0000-0000-0000-000000000000";
+        // 각 article에 담긴 사용자 정보와 향수 정보를 담아둔 Dto의 리스트
+        List<FeedResponse> feedResponses = new ArrayList<>();
+
+        //사용자의 팔로우 목록을 받아온다.
+        List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
+        int cnt = 0;
+        // articleId를 보고 사용자 정보와 향수 정보를 담음
+        for(Article article: articles){
+            if (cnt == 10) {
+                break;
+            }
+            // TODO: perfumeId가 하나만 필요함으로 추후 쿼리 최적화가 필요!!(완료)
+            int perfumeId = article.getArticlePerfume().get(0).getPerfume().getPerfumeId();
+            log.info(String.valueOf(perfumeId));
+            // TODO: 공병 태그 (아마 perfumeId 0번 ), 즉 향수가 아무것도 임베디드 안된 상황을 구현 헤야함!!
+
+            // 글을 쓴 사용자 entity
+            User user = article.getUser();
+
+            List<ScentDto> favorite = new ArrayList<>();
+            List<ScentDto> hate = new ArrayList<>();
+
+            // userScent 테이블에서 팔로잉 하고 있는 사람의 좋아하는 향, 싫어하는 향을 조회
+            List<UserScent> userScentList = user.getUserScent();
+
+            if(userScentList != null) {
+                for (UserScent userScent : userScentList) {
+                    if(userScent.getStatus().getValue().equals("FAVORITE")) {
+                        favorite.add(scentMapper.toDto(userScent.getScent()));
+                    } else if(userScent.getStatus().getValue().equals("HATE")) {
+                        hate.add(scentMapper.toDto(userScent.getScent()));
+                    }
+                }
+            }
+
+
+            UserInfoDto userInfoDto = UserInfoDto.builder()
+                    .user(userMapper.toDto(user))
+                    .favorities(favorite)
+                    .hates(hate)
+                    .build();
+
+            Perfume perfume = article.getArticlePerfume().get(0).getPerfume();
+
+            // 팔로잉여부
+            boolean isFollowed = false;
+            for (FollowingResponse followerInfoResponse : followerInfoResponses) {
+                if (followerInfoResponse.getUserId().equals(userInfoDto.getUser().getUserId())) {
+//                if (followerInfoResponse.getUserId().equals(userId)) {
+                    isFollowed = true;
+                    break;
+                }
+            }
+
+            // 팔로잉 / 팔로우 버튼생성해야하는지 여부?
+            boolean isFollowingButtonActivate = true;
+            if (userId.equals(userInfoDto.getUser().getUserId()) || userInfoDto.getUser().getUserId().equals(GHOST)) {
+                isFollowingButtonActivate = false;
+            }
+
+            // 향수정보 가져옴
+            PerfumeDto perfumeDto = perfumeMapper.toDto(perfume);
+            log.info(String.valueOf(perfumeDto));
+
+            boolean isHearted = checkHeartArticle(article.getArticleId(), userId);
+            boolean isBookmarked = checkBookmarkArticle(article.getArticleId(), userId);
+
+            feedResponses.add(new FeedResponse(userInfoDto, isFollowed, isFollowingButtonActivate,articleMapper.toDto(article), perfumeDto, isHearted, isBookmarked));
+            cnt++;
+        }
+        return feedResponses;
     }
 }

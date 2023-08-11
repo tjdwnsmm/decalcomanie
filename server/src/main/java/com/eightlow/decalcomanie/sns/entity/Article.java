@@ -1,6 +1,7 @@
 package com.eightlow.decalcomanie.sns.entity;
 
 import com.eightlow.decalcomanie.common.entity.BaseEntity;
+import com.eightlow.decalcomanie.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,8 +24,9 @@ public class Article extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int articleId;
 
-    @Column(unique = true, nullable = false)
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private User user;
 
     private String content;
 
