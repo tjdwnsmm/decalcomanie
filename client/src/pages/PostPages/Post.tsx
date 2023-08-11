@@ -34,9 +34,9 @@ export default function Post() {
   };
 
   useEffect(() => {
-    const perfumeList = localStorage.getItem('postPerfume');
-    if (perfumeList) {
-      const parsedList: localProps[] = JSON.parse(perfumeList);
+    const localPerfume = localStorage.getItem('postPerfume');
+    if (localPerfume) {
+      const parsedList: localProps[] = JSON.parse(localPerfume);
 
       const fetchData = async (fetchList: localProps[]) => {
         const fetchPromises = fetchList.map((perfume) =>
@@ -77,11 +77,22 @@ export default function Post() {
   };
 
   // 글 등록하기 버튼을 클릭했을 때 호출되는 함수
+  // 글 등록하기 버튼을 클릭했을 때 호출되는 함수
   const handlePostClick = async () => {
-    console.log('Request Data : ', requestData);
     try {
-      const response = await axios.post('/sns/create/', requestData);
+      const localPerfume = localStorage.getItem('postPerfume');
+      const parsedList: localProps[] = localPerfume
+        ? JSON.parse(localPerfume)
+        : [];
 
+      const requestData: RequestData = {
+        perfumeId: parsedList.map((perfume) => perfume.perfumeId),
+        content,
+        rate: parsedList.map((perfume) => perfume.rate),
+      };
+
+      const response = await axios.post('/sns/create/', requestData);
+      console.log('Request Data : ', requestData);
       console.log('API 응답:', response.data);
 
       // 작성 글 상세 페이지로 이동

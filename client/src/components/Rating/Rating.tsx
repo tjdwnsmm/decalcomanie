@@ -3,7 +3,6 @@ import Rating from '@mui/material/Rating';
 import Stack from '@mui/material/Stack';
 import { styled as MUstyled } from '@mui/material/styles';
 import { styled } from 'styled-components';
-import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import { PerfumeInfos } from '../../types/PostInfoType';
 
 interface PerfumeRatingBoxProps {
