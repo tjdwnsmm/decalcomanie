@@ -10,12 +10,50 @@ import PerfumePostBox from '../Post/PerfumePostBox';
 
 interface Props {
   perfumeList: PerfumeInfos[];
-  setPerfumeList: React.Dispatch<React.SetStateAction<PerfumeInfos[]>>;
+  setPerfumeList?: React.Dispatch<React.SetStateAction<PerfumeInfos[]>>;
+  forUpdate?: boolean;
 }
 
-export function AddCarousel({ perfumeList, setPerfumeList }: Props) {
+export function AddCarousel({ perfumeList, setPerfumeList, forUpdate }: Props) {
   const navigate = useNavigate();
   const [activeItemIndex, setActiveItemIndex] = useState(0);
+
+  if (forUpdate) {
+    return (
+      <CarouselBox>
+        {perfumeList.length === 0 ? (
+          //아직 임베디드된 향수가 없는 경우
+          <CenterFrame>
+            <EmptyBox>
+              <TextArea>향수 정보가 없습니다</TextArea>
+            </EmptyBox>
+          </CenterFrame>
+        ) : (
+          //아닌 경우 향수들 정보 불러오고 마지막 장에 추가페이지
+          <Carousel
+            // 캐러셀 설정
+            requestToChangeActive={setActiveItemIndex}
+            activeItemIndex={activeItemIndex}
+            numberOfCards={1}
+            leftChevron={<PrevSvg />}
+            rightChevron={<NextSvg />}
+            chevronWidth={40}
+            showSlither={false}
+            outsideChevron={false}
+          >
+            {perfumeList.map((perfume) => (
+              <PerfumePostBox
+                key={perfume.perfumeId}
+                perfume={perfume}
+                id={perfume.perfumeId}
+                setPerfumeList={setPerfumeList}
+              />
+            ))}
+          </Carousel>
+        )}
+      </CarouselBox>
+    );
+  }
 
   return (
     <CarouselBox>

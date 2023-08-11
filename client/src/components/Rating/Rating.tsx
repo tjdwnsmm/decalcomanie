@@ -44,44 +44,69 @@ function PerfumeRatingBox({ name, rate, onChange }: PerfumeRatingBoxProps) {
   );
 }
 
-interface Props {
-  perfumes: PerfumeInfos[];
+export interface RateInfo {
+  perfumeId: number;
+  rate: number;
 }
 
-export default function AddRating({ perfumes }: Props) {
-  const [rateData, setRateData] = useState<
-    { perfumeId: number; rate: number }[]
-  >(JSON.parse(localStorage.getItem('postPerfume') || '[]'));
+interface Props {
+  perfumes: PerfumeInfos[];
+  rates?: RateInfo[];
+}
+
+export default function AddRating({ perfumes, rates }: Props) {
+  const [rateData, setRateData] = useState<RateInfo[]>(
+    JSON.parse(localStorage.getItem('postPerfume') || '[]'),
+  );
 
   useEffect(() => {
+    if (rates && rates.length > 0 && rateData.length === 0) {
+      setRateData(rates);
+    }
     localStorage.setItem('postPerfume', JSON.stringify(rateData));
   }, [rateData]);
 
   const handleRatingChange = (perfumeId: number, newRate: number) => {
+    // console.log('prev : ', rateData);
     const updatedRateData = rateData.map((item) =>
       item.perfumeId === perfumeId ? { ...item, rate: newRate } : item,
     );
     setRateData(updatedRateData);
+    // console.log('after : ', updatedRateData);
   };
 
   return (
     <Stack spacing={1.1}>
-      {perfumes.map((perfume: PerfumeInfos, index: number) => {
-        const rateInfo = rateData.find(
-          (item) => item.perfumeId === perfume.perfumeId,
-        );
-        return (
-          <StyledDiv key={index}>
-            <PerfumeRatingBox
-              name={perfume.name}
-              rate={rateInfo ? rateInfo.rate : 0}
-              onChange={(newRate) =>
-                handleRatingChange(perfume.perfumeId, newRate)
-              }
-            />
-          </StyledDiv>
-        );
-      })}
+      {rates && rates.length > 0
+        ? perfumes.map((perfume: PerfumeInfos, index: number) => {
+            return (
+              <StyledDiv key={index}>
+                <PerfumeRatingBox
+                  name={perfume.name}
+                  rate={rateData[index] ? rateData[index].rate : 0}
+                  onChange={(newRate) =>
+                    handleRatingChange(perfume.perfumeId, newRate)
+                  }
+                />
+              </StyledDiv>
+            );
+          })
+        : perfumes.map((perfume: PerfumeInfos, index: number) => {
+            const rateInfo = rateData.find(
+              (item) => item.perfumeId === perfume.perfumeId,
+            );
+            return (
+              <StyledDiv key={index}>
+                <PerfumeRatingBox
+                  name={perfume.name}
+                  rate={rateInfo ? rateInfo.rate : 0}
+                  onChange={(newRate) =>
+                    handleRatingChange(perfume.perfumeId, newRate)
+                  }
+                />
+              </StyledDiv>
+            );
+          })}
     </Stack>
   );
 }

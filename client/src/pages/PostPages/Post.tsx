@@ -70,13 +70,6 @@ export default function Post() {
     setContent(value);
   };
 
-  const requestData: RequestData = {
-    perfumeId: perfumeList.map((perfume) => perfume.perfumeId),
-    content,
-    rate: perfumeList.map((perfume) => perfume.rate),
-  };
-
-  // 글 등록하기 버튼을 클릭했을 때 호출되는 함수
   // 글 등록하기 버튼을 클릭했을 때 호출되는 함수
   const handlePostClick = async () => {
     try {

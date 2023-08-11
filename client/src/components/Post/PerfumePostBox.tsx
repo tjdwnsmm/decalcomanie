@@ -7,7 +7,7 @@ import { PerfumeInfos } from '../../types/PostInfoType';
 interface ReviewBoxProps {
   perfume: PerfumeInfos;
   id: number;
-  setPerfumeList: React.Dispatch<React.SetStateAction<PerfumeInfos[]>>;
+  setPerfumeList?: React.Dispatch<React.SetStateAction<PerfumeInfos[]>>;
 }
 
 interface localProps {
@@ -68,14 +68,18 @@ function PerfumePostBox({ perfume, id, setPerfumeList }: ReviewBoxProps) {
         <TextInfoContainer>
           <PerfumeBrand>{perfume.brandName}</PerfumeBrand>
           <PerfumeName>{perfume.name}</PerfumeName>
-          <DeleteBtn
-            onClick={() => {
-              const updatedList = handleDeletePerfume(id, setPerfumeList);
-              setPerfumeList(updatedList);
-            }}
-          >
-            삭제하기 🗑
-          </DeleteBtn>
+          {setPerfumeList ? (
+            <DeleteBtn
+              onClick={() => {
+                const updatedList = handleDeletePerfume(id, setPerfumeList);
+                setPerfumeList(updatedList);
+              }}
+            >
+              삭제하기 🗑
+            </DeleteBtn>
+          ) : (
+            <></>
+          )}
         </TextInfoContainer>
         <ImgBox>
           <img src={perfume.picture} />
