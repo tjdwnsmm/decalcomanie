@@ -15,6 +15,7 @@ import com.eightlow.decalcomanie.user.entity.User;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
@@ -213,15 +216,14 @@ public class PerfumeServiceImpl implements IPerfumeService {
 
         List<Perfume> season = queryFactory
                 .selectFrom(perfume)
-                .orderBy(perfume.pick.desc())
                 .orderBy(seasonEq(today))
                 .limit(10)
                 .fetch();
 
         List<Perfume> dayNight = queryFactory
                 .selectFrom(perfume)
-                .orderBy(perfume.pick.desc())
-                .orderBy(timeEq(curTime))
+                .orderBy(Expressions.numberTemplate(Double.class,
+                        "({0} / ({0} + {1}))", perfume.day, perfume.night).desc())
                 .limit(10)
                 .fetch();
 
@@ -235,7 +237,6 @@ public class PerfumeServiceImpl implements IPerfumeService {
                         user.gender.eq(loginUser.getGender())
                 )
                 .groupBy(perfume)
-                .orderBy(perfume.pick.desc())
                 .limit(10)
                 .fetch();
 
@@ -249,11 +250,16 @@ public class PerfumeServiceImpl implements IPerfumeService {
                         user.gender.eq(loginUser.getGender())
                 )
                 .groupBy(perfume)
-                .orderBy(perfume.pick.desc())
                 .orderBy(seasonEq(today))
-                .orderBy(timeEq(curTime))
+                .orderBy(Expressions.numberTemplate(Double.class,
+                        "({0} / ({0} + {1}))", perfume.day, perfume.night).desc())
                 .limit(10)
                 .fetch();
+
+        Collections.sort(season, Comparator.comparing(Perfume :: getPick).reversed());
+        Collections.sort(dayNight, Comparator.comparing(Perfume :: getPick).reversed());
+        Collections.sort(ageGender, Comparator.comparing(Perfume :: getPick).reversed());
+        Collections.sort(overall, Comparator.comparing(Perfume :: getPick).reversed());
 
         return DailyRecommendResponse.builder()
                 .season(perfumeMapper.toDto(season))
