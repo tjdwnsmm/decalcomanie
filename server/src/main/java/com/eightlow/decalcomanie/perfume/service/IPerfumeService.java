@@ -25,13 +25,11 @@ public interface IPerfumeService {
 
     boolean isPickedPerfume(int perfumeId, String userId);
 
-    boolean isExistingPerfume(int perfumeId);
-
     List<PerfumeDto> findAllPickedPerfume(String userId);
 
     void updatePerfumeRate(int perfumeId, float rate);
 
-    Scent getScentById(int scentId);
+    ScentDto getScentById(int scentId);
 
     List<PerfumeNameResponse> findAllNames();
 
