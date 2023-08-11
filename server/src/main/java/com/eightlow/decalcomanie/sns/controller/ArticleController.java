@@ -10,6 +10,7 @@ import com.eightlow.decalcomanie.sns.dto.request.UpdateArticleRequest;
 import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
 import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
+import com.eightlow.decalcomanie.sns.entity.Article;
 import com.eightlow.decalcomanie.sns.entity.ArticlePerfume;
 import com.eightlow.decalcomanie.sns.mapper.ArticleDtoMapper;
 import com.eightlow.decalcomanie.sns.mapper.CommentDtoMapper;
@@ -80,85 +81,85 @@ public class ArticleController {
     // 글 상세 조회
     @GetMapping("/search/{articleId}")
     public ResponseEntity<ArticleResponse> getDetailById(@PathVariable int articleId, HttpServletRequest req) {
-        ArticleDto articleDto = articleService.searchArticleByArticleId(articleId);
-        System.out.println(articleDto.getUserId());
         String userId = articleService.getUserIdFromRequest(req);
         System.out.println(userId);
-        // 사용자가 글 작성자를 팔로우 했는지
-        boolean isFollowed = userService.isFollowing(userId, articleDto.getUserId());
-
-        //articleId를 통해서 게시물의 임베디드된 향수를 가져온다.
-        List<Integer> perfumeIdList = articleService.searchArticlePerfumeId(articleId);
-        log.info(perfumeIdList.toString());
-
-        // 작성자: 프로필, 닉네임, 선호 비선호향
-        UserInfoDto userInfo = userService.getUserInfo(articleDto.getUserId());
-        System.out.println(userInfo);
-
-        // 향수들의 평점도 가져온다
-        List<ArticlePerfumeDto> rates = gradeService.searchGradesByPerfumeId(articleId, perfumeIdList);
-
-        List<Integer> rateInfo = new ArrayList<>();
-
-        for(ArticlePerfumeDto articlePerfumeDto: rates) {
-            rateInfo.add(articlePerfumeDto.getRate());
-        }
-        log.info(rateInfo.toString());
-
-        // 임베디드된 향수: 이름, 브랜드, 향수 사진 url
-        List<PerfumeDto> perfumes = new ArrayList<>();
-        for(int i: perfumeIdList) {
-            perfumes.add(perfumeService.getPerfume(i));
-        }
-
-        // 댓글 리스트를 포함한다.
-        List<CommentDto> comments = articleService.getComments(articleDto.getArticleId());
-        System.out.println(comments);
-
-        //사용자의 팔로우 목록을 받아온다.
-        List<FollowingResponse> followers = userService.getFollowingUsers(userId);
-
-        System.out.println("tjoejtoijfilsjlfjs;dlj");
-
-
-        List<UserInfoDto> commentUsers = new ArrayList<>();
-        boolean flag = false;
-        // 댓글 작성자정보들
-        for (CommentDto commentDto : comments) {
-            System.out.println(commentDto.getUserId());
-            UserInfoDto userInfoDto = userService.getUserInfo(commentDto.getUserId());
-            // 사용자의 follower 목록을 보고 follow 여부를 넣어준다.
-            if(followers != null) {
-                for (FollowingResponse followerInfoResponse : followers) {
-                    if(followerInfoResponse.getUserId().equals(commentDto.getUserId())) {
-                        userInfoDto = userService.getUserInfo(commentDto.getUserId());
-                        flag = true;
-                        break;
-                    }
-                }
-            }
-
-            UserInfoDto uidto = UserInfoDto.builder()
-                    .user(userInfoDto.getUser())
-                    .favorities(userInfoDto.getFavorities())
-                    .hates(userInfoDto.getHates())
-                    .isFollowing(flag)
-                    .build();
-
-//            commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
-//                    userInfoDto.getHates(), flag));
-
-            commentUsers.add(uidto);
-        }
-
-        // 좋아요 되었는지 확인
-        boolean isHearted = articleService.checkHeartArticle(articleDto.getArticleId(), userId);
-
-        // 북마크 되었는지 확인
-        boolean isBookmarked = articleService.checkBookmarkArticle(articleDto.getArticleId(), userId);
-
-        ArticleResponse articleResponse = new ArticleResponse(articleDto,  userInfo, isFollowed,comments, commentUsers,
-                perfumes, rateInfo, isHearted, isBookmarked);
+        ArticleResponse articleResponse = articleService.getDetail(articleId, userId);
+//        ArticleDto articleDto = articleService.searchArticleByArticleId(articleId);
+////        System.out.println(articleDto.getUserId());
+////
+////        System.out.println(userId);
+//        // 사용자가 글 작성자를 팔로우 했는지
+//        boolean isFollowed = userService.isFollowing(userId, articleDto.getUserId());
+//
+//        //articleId를 통해서 게시물의 임베디드된 향수정보를 가져온다.
+//        List<ArticlePerfume> perfumeList = articleService.searchArticlePerfumeId(articleId);
+//        log.info(perfumeList.toString());
+//
+//        // 작성자: 프로필, 닉네임, 선호 비선호향
+//        UserInfoDto userInfo = userService.getUserInfo(articleDto.getUserId());
+//        System.out.println(userInfo);
+//
+//        // 향수 평점 정보
+//        List<Integer> rateInfo = new ArrayList<>();
+//        // 임베디드된 향수: 이름, 브랜드, 향수 사진 url
+//        List<PerfumeDto> perfumes = new ArrayList<>();
+//
+//        // 임베디드된 향수 정보와 평점 정보 저장
+//        for(ArticlePerfume articlePerfume: perfumeList) {
+//            rateInfo.add(articlePerfume.getRate());
+//            perfumes.add(perfumeMapper.toDto(articlePerfume.getPerfume()));
+//        }
+//        log.info(rateInfo.toString());
+//
+//
+//        // 댓글 리스트를 포함한다.
+//        List<CommentDto> comments = articleService.getComments(articleDto.getArticleId());
+//        System.out.println(comments);
+//
+//        //사용자의 팔로우 목록을 받아온다.
+//        List<FollowingResponse> followers = userService.getFollowingUsers(userId);
+//
+//        System.out.println("tjoejtoijfilsjlfjs;dlj");
+//
+//
+//        List<UserInfoDto> commentUsers = new ArrayList<>();
+//        boolean flag = false;
+//        // 댓글 작성자정보들
+//        for (CommentDto commentDto : comments) {
+//            // System.out.println(commentDto.getUserId());
+//            UserInfoDto userInfoDto = userService.getUserInfo(commentDto.getUserId());
+//            // 사용자의 follower 목록을 보고 follow 여부를 넣어준다.
+//            if(followers != null) {
+//                for (FollowingResponse followerInfoResponse : followers) {
+//                    if(followerInfoResponse.getUserId().equals(commentDto.getUserId())) {
+//                        userInfoDto = userService.getUserInfo(commentDto.getUserId());
+//                        flag = true;
+//                        break;
+//                    }
+//                }
+//            }
+//
+//            UserInfoDto uidto = UserInfoDto.builder()
+//                    .user(userInfoDto.getUser())
+//                    .favorities(userInfoDto.getFavorities())
+//                    .hates(userInfoDto.getHates())
+//                    .isFollowing(flag)
+//                    .build();
+//
+////            commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
+////                    userInfoDto.getHates(), flag));
+//
+//            commentUsers.add(uidto);
+//        }
+//
+//        // 좋아요 되었는지 확인
+//        boolean isHearted = articleService.checkHeartArticle(articleDto.getArticleId(), userId);
+//
+//        // 북마크 되었는지 확인
+//        boolean isBookmarked = articleService.checkBookmarkArticle(articleDto.getArticleId(), userId);
+//
+//        ArticleResponse articleResponse = new ArticleResponse(articleDto,  userInfo, isFollowed,comments, commentUsers,
+//                perfumes, rateInfo, isHearted, isBookmarked);
 
         System.out.println(articleResponse);
         return ResponseEntity.status(HttpStatus.OK).body(articleResponse);
@@ -173,10 +174,10 @@ public class ArticleController {
     public ResponseEntity<List<FeedResponse>> getArticleByUserId(HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
         System.out.println(userId);
-        List<ArticleDto> articles = articleService.searchArticleByUserId(userId);
+        List<Article> articles = articleService.searchArticleByUserId(userId);
         System.out.println(articles);
 
-        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
+        List<FeedResponse> responses  = articleService.getArticleByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
@@ -186,19 +187,17 @@ public class ArticleController {
     public ResponseEntity<List<FeedResponse>> getFollowingArticles(HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
         // TODO: 사용자의 follower list를 받아와서 그 사용자들의 피드를 조회해야함 (정렬은 최신순으로)
-        List<ArticleDto> articles = articleService.searchArticlesOfFollowingUser(userId);
-        log.info(articles.toString());
-        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
+        List<FeedResponse> responses  = articleService.getArticlesOfFollowingUser(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
+    // 피드 인기순 조회
     @GetMapping("/feed/popularity")
     public ResponseEntity<List<FeedResponse>> getPopularArticles(HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
-        List<ArticleDto> articles= articleService.searchPopularArticles();
 
-        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
+        List<FeedResponse> responses  = articleService.getPopularArticles(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
@@ -206,10 +205,8 @@ public class ArticleController {
     @GetMapping("/feed/latest")
     public ResponseEntity<List<FeedResponse>> getLatestArticles(HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
-        List<ArticleDto> articles= articleService.searchLatestArticles();
-//        log.info(articles.toString());
 
-        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
+        List<FeedResponse> responses  = articleService.getLatestArticles(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
@@ -218,9 +215,9 @@ public class ArticleController {
     @GetMapping("/perfume/{perfumeId}")
     public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@PathVariable int perfumeId, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
-        List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);
-        log.info(articles.toString());
-        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
+//        List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);
+//        log.info(articles.toString());
+        List<FeedResponse> responses  = articleService.getArticleByPerfumeId(userId, perfumeId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
@@ -263,13 +260,10 @@ public class ArticleController {
             articleService.deleteCommentByArticleId(articleId);
 
             //articleId를 통해서 게시물의 임베디드된 향수를 가져온다.
-            List<Integer> perfumeIdList = articleService.searchArticlePerfumeId(articleId);
+            // List<ArticlePerfume> perfumeIdList = articleService.searchArticlePerfumeId(articleId);
 
             // 임베디드된 게시물 향수, 평점 삭제
             articleService.deleteArticlePerfumeByArticleId(articleId);
-
-            // 글삭제시 향수들 평점 정보 삭제
-            // gradeService.deleteGradesByUserIdAndPerfumeId(userId, articleId, perfumeIdList);
         }
 
         // TODO: 글삭제시 사용자의 post갯수 줄여줘야함
@@ -395,46 +389,48 @@ public class ArticleController {
         }
     }
 
-    // 피드 정보 조회 (사용자 정보, 글 정보, 포함된 향수 정보를 포함)
-    private List<FeedResponse> getFeedInfoForArticles(String userId, List<ArticleDto> articles){
-        // 각 article에 담긴 사용자 정보와 향수 정보를 담아둔 Dto의 리스트
-        List<FeedResponse> feedResponses = new ArrayList<>();
-
-        //사용자의 팔로우 목록을 받아온다.
-        List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
-        int cnt = 0;
-        // articleId를 보고 사용자 정보와 향수 정보를 담음
-        for(ArticleDto article: articles){
-            if (cnt == 100) {
-                break;
-            }
-            // TODO: perfumeId가 하나만 필요함으로 추후 쿼리 최적화가 필요!!
-            List<Integer> perfumeIdList = articleService.searchArticlePerfumeId(article.getArticleId());
-            System.out.println(perfumeIdList);
-            log.info(perfumeIdList.toString());
-            // TODO: 공병 태그 (아마 perfumeId 0번 ), 즉 향수가 아무것도 임베디드 안된 상황을 구현 헤야함!!
-
-            UserInfoDto userInfoDto = userService.getUserInfo(article.getUserId());
-
-
-            boolean isFollowed = false;
-            for (FollowingResponse followerInfoResponse : followerInfoResponses) {
-                if (followerInfoResponse.getUserId().equals(userInfoDto.getUser().getUserId())) {
-                    isFollowed = true;
-                    break;
-                }
-            }
-
-            // 하나만 필요함으로 get(0)을 수행함
-            PerfumeDto perfumeDto = perfumeService.getPerfume(perfumeIdList.get(0));
-            log.info(String.valueOf(perfumeDto));
-
-            boolean isHearted = articleService.checkHeartArticle(article.getArticleId(), userId);
-            boolean isBookmarked = articleService.checkBookmarkArticle(article.getArticleId(), userId);
-
-            feedResponses.add(new FeedResponse(userInfoDto, isFollowed, article, perfumeDto, isHearted, isBookmarked));
-            cnt++;
-        }
-        return feedResponses;
-    }
+//    // 피드 정보 조회 (사용자 정보, 글 정보, 포함된 향수 정보를 포함)
+//    private List<FeedResponse> getFeedInfoForArticles(String userId, List<Article> articles){
+//        // 각 article에 담긴 사용자 정보와 향수 정보를 담아둔 Dto의 리스트
+//        List<FeedResponse> feedResponses = new ArrayList<>();
+//
+//        //사용자의 팔로우 목록을 받아온다.
+//        List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
+//        int cnt = 0;
+//        // articleId를 보고 사용자 정보와 향수 정보를 담음
+//        for(ArticleDto article: articles){
+//            if (cnt == 10) {
+//                break;
+//            }
+//            // TODO: perfumeId가 하나만 필요함으로 추후 쿼리 최적화가 필요!!(완료)
+//            int perfumeId = articleService.searchArticlePerfumeId(article.getArticleId());
+//            log.info(String.valueOf(perfumeId));
+//            // TODO: 공병 태그 (아마 perfumeId 0번 ), 즉 향수가 아무것도 임베디드 안된 상황을 구현 헤야함!!
+//
+//            UserInfoDto userInfoDto = userService.getUserInfo(article.getUserId());
+//
+//            for(ArticlePerfume ap : article.getArticlePerfume()) {
+//                Perfume perfume = ap.getPerfume()
+//            }
+//
+//            boolean isFollowed = false;
+//            for (FollowingResponse followerInfoResponse : followerInfoResponses) {
+//                if (followerInfoResponse.getUserId().equals(userInfoDto.getUser().getUserId())) {
+//                    isFollowed = true;
+//                    break;
+//                }
+//            }
+//
+//            // 향수정보 가져옴
+//            PerfumeDto perfumeDto = perfumeService.getPerfume(perfumeId);
+//            log.info(String.valueOf(perfumeDto));
+//
+//            boolean isHearted = articleService.checkHeartArticle(article.getArticleId(), userId);
+//            boolean isBookmarked = articleService.checkBookmarkArticle(article.getArticleId(), userId);
+//
+//            feedResponses.add(new FeedResponse(userInfoDto, isFollowed, article, perfumeDto, isHearted, isBookmarked));
+//            cnt++;
+//        }
+//        return feedResponses;
+//    }
 }

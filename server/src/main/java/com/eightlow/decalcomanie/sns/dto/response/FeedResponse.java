@@ -12,14 +12,17 @@ import java.util.List;
 public class FeedResponse extends LikeAndBookmarkResponse {
     private UserInfoDto userInfoDto;
     private boolean isFollowed;
+    private boolean isFollowingButtonActivate;
     private ArticleDto articleDtos;
     private PerfumeDto perfumeDtos;
 
 
-    public FeedResponse(UserInfoDto userInfoDto, boolean isFollowed, ArticleDto article, PerfumeDto perfumeDto, boolean isHearted, boolean isBookmarked) {
+    public FeedResponse(UserInfoDto userInfoDto, boolean isFollowed, boolean isFollowingButtonActivate,
+                        ArticleDto article, PerfumeDto perfumeDto, boolean isHearted, boolean isBookmarked) {
         super(isHearted, isBookmarked);
         this.userInfoDto = userInfoDto;
         this.isFollowed = isFollowed;
+        this.isFollowingButtonActivate = isFollowingButtonActivate;
         this.articleDtos = article;
         this.perfumeDtos = perfumeDto;
     }

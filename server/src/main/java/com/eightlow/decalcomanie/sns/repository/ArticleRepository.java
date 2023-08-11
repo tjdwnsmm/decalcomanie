@@ -17,10 +17,10 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     Optional<Article> findByArticleId(int articleId);
     List<Article> findByArticleIdIn(List<Integer> userIds);
 
-    @Query("SELECT a  FROM Article a WHERE a.userId = :userId ORDER BY a.createdAt DESC")
+    @Query("SELECT a  FROM Article a WHERE a.user.userId = :userId ORDER BY a.createdAt DESC")
     List<Article> findByUserId(@Param(value = "userId") String userId);
 
-    List<Article> findByUserIdIn(List<String> userIds);
+    List<Article> findByUser_UserIdIn(List<String> userIds);
 
     @Query("SELECT a  FROM Article a ORDER BY a.heart DESC")
     @Transactional
@@ -51,6 +51,6 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     void decreaseHeartCountByArticleId(@Param("articleId") int articleId);
 
     @Modifying
-    @Query("UPDATE Article a SET a.userId = '00000000-0000-0000-0000-000000000000' WHERE a.userId = :userId")
+    @Query("UPDATE Article a SET a.user.userId = '00000000-0000-0000-0000-000000000000' WHERE a.user.userId = :userId")
     void setUserIdToGhostAccount(@Param("userId") String userId);
 }
