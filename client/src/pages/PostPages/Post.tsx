@@ -29,23 +29,27 @@ export default function Post() {
   useEffect(() => {
     const perfumeList = localStorage.getItem('postPerfume');
     if (perfumeList) {
-      console.log(JSON.parse(perfumeList));
-      setPerfumeList([]);
-      JSON.parse(perfumeList).forEach((perfume: localProps) => {
-        axios
-          .get(`/perfume/detail/${perfume.perfumeId}`)
-          .then((res) => {
-            const data = res.data;
-            data.rate = perfume.rate;
-            setPerfumeList((prevPerfumeList) => [...prevPerfumeList, data]);
-          })
-          .catch((error) => {
-            console.error('API 호출 에러 : ', error);
-          });
-      });
-    }
+      const parsedList: localProps[] = JSON.parse(perfumeList);
+      const fetchData = async () => {
+        const fetchPromises = parsedList.map((perfume) =>
+          axios.get(`/perfume/detail/${perfume.perfumeId}`),
+        );
 
-    // localStorage.removeItem('getPerfumeId');
+        try {
+          const responses = await Promise.all(fetchPromises);
+          const updatedList = responses.map((res, index) => {
+            const data = res.data;
+            data.rate = parsedList[index].rate;
+            return data;
+          });
+          setPerfumeList(updatedList);
+        } catch (error) {
+          console.error('API 호출 에러 : ', error);
+        }
+      };
+
+      fetchData();
+    }
   }, []);
 
   // 글 내용 변경 콜백 함수
@@ -78,6 +82,7 @@ export default function Post() {
   const handleOutPost = () => {
     if (window.confirm('정말 취소하시겠습니까?')) {
       localStorage.removeItem('postPerfume');
+      navigate('/main-feed');
     }
   };
 

@@ -1,71 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { styled } from 'styled-components';
 import Carousel from 'react-items-carousel';
 import { ReactComponent as AddButtonSvg } from '../../assets/img/add-button.svg';
 import { ReactComponent as PrevSvg } from '../../assets/icon/prevBack.svg';
 import { CenterFrame } from '../../style';
-import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import { PerfumeInfos } from '../../types/PostInfoType';
+import PerfumePostBox from '../Post/PerfumePostBox';
 
-interface ReviewBoxProps {
-  brand: string;
-  name: string;
-  img: string;
-  id: number;
-  setPerfumeList: React.Dispatch<React.SetStateAction<PerfumeInfos[]>>;
-}
-
-interface localProps {
-  perfumeId: number;
-  rate: number;
-}
-
-const handleDeletePerfume = (id: number) => {
-  const postPerfumeList = JSON.parse(
-    localStorage.getItem('postPerfume') || '[]',
-  );
-
-  const updatedList = postPerfumeList.filter(
-    (perfume: localProps) => perfume.perfumeId !== id,
-  );
-
-  if (updatedList.length === 0) {
-    localStorage.removeItem('postPerfume');
-  } else {
-    localStorage.setItem('postPerfume', JSON.stringify(updatedList));
-  }
-  return updatedList;
-};
-
-function PerfumeReviewBox({
-  brand,
-  name,
-  img,
-  id,
-  setPerfumeList,
-}: ReviewBoxProps) {
-  return (
-    <CenterFrame>
-      <PerfumeReviewBoxContainer>
-        <TextInfoContainer>
-          <PerfumeBrand>{brand}</PerfumeBrand>
-          <PerfumeName>{name}</PerfumeName>
-          <DeleteBtn
-            onClick={() => {
-              setPerfumeList(handleDeletePerfume(id));
-            }}
-          >
-            삭제하기 🗑
-          </DeleteBtn>
-        </TextInfoContainer>
-        <ImgBox>
-          <img src={img} />
-        </ImgBox>
-      </PerfumeReviewBoxContainer>
-    </CenterFrame>
-  );
-}
 interface Props {
   perfumeList: PerfumeInfos[];
   setPerfumeList: React.Dispatch<React.SetStateAction<PerfumeInfos[]>>;
@@ -107,10 +49,9 @@ export function AddCarousel({ perfumeList, setPerfumeList }: Props) {
           outsideChevron={false}
         >
           {perfumeList.map((perfume) => (
-            <PerfumeReviewBox
-              brand={perfume.brandName}
-              name={perfume.name}
-              img={perfume.picture}
+            <PerfumePostBox
+              key={perfume.perfumeId}
+              perfume={perfume}
               id={perfume.perfumeId}
               setPerfumeList={setPerfumeList}
             />
@@ -160,13 +101,6 @@ export function NonAddCarousel() {
     </CarouselBox>
   );
 }
-
-const DeleteBtn = styled.div`
-  color: var(--error-color);
-  margin-top: 30px;
-  font-weight: 700;
-  font-size: 13px;
-`;
 
 export const NextSvg = styled(PrevSvg)`
   transform: rotate(180deg);
@@ -221,39 +155,3 @@ const TextArea = styled.span`
 `;
 
 // ---------------------------------------------
-const PerfumeReviewBoxContainer = styled.div`
-  display: flex;
-  background: var(--white-color);
-  justify-content: space-between;
-  align-items: center;
-  padding: 0px 55px;
-  width: 340px;
-  height: 140px;
-  border-radius: 10px;
-`;
-
-const TextInfoContainer = styled.div`
-  padding: 0px 10px;
-  width: 60px;
-`;
-
-const PerfumeBrand = styled.div`
-  color: var(--black-color);
-  font-size: 11px;
-  width: 120px;
-  margin-bottom: 5px;
-`;
-
-const PerfumeName = styled.div`
-  color: var(--black-color);
-  font-size: 18px;
-  font-weight: bold;
-  width: max-content;
-`;
-
-const ImgBox = styled.div`
-  width: 100px;
-  height: 100px;
-  display: flex;
-  justify-content: center;
-`;
