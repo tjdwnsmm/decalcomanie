@@ -661,6 +661,8 @@ public class ArticleServiceImpl implements IArticleService {
 
     // 피드 정보 조회 (사용자 정보, 글 정보, 포함된 향수 정보를 포함)
     private List<FeedResponse> getFeedInfoForArticles(String userId, List<Article> articles){
+
+        final String GHOST = "00000000-0000-0000-0000-000000000000";
         // 각 article에 담긴 사용자 정보와 향수 정보를 담아둔 Dto의 리스트
         List<FeedResponse> feedResponses = new ArrayList<>();
 
@@ -677,6 +679,7 @@ public class ArticleServiceImpl implements IArticleService {
             log.info(String.valueOf(perfumeId));
             // TODO: 공병 태그 (아마 perfumeId 0번 ), 즉 향수가 아무것도 임베디드 안된 상황을 구현 헤야함!!
 
+            // 글을 쓴 사용자 entity
             User user = article.getUser();
 
             List<ScentDto> favorite = new ArrayList<>();
@@ -704,13 +707,20 @@ public class ArticleServiceImpl implements IArticleService {
 
             Perfume perfume = article.getArticlePerfume().get(0).getPerfume();
 
-
+            // 팔로잉여부
             boolean isFollowed = false;
             for (FollowingResponse followerInfoResponse : followerInfoResponses) {
                 if (followerInfoResponse.getUserId().equals(userInfoDto.getUser().getUserId())) {
+//                if (followerInfoResponse.getUserId().equals(userId)) {
                     isFollowed = true;
                     break;
                 }
+            }
+
+            // 팔로잉 / 팔로우 버튼생성해야하는지 여부?
+            boolean isFollowingButtonActivate = true;
+            if (userId.equals(userInfoDto.getUser().getUserId()) || userInfoDto.getUser().getUserId().equals(GHOST)) {
+                isFollowingButtonActivate = false;
             }
 
             // 향수정보 가져옴
@@ -720,7 +730,7 @@ public class ArticleServiceImpl implements IArticleService {
             boolean isHearted = checkHeartArticle(article.getArticleId(), userId);
             boolean isBookmarked = checkBookmarkArticle(article.getArticleId(), userId);
 
-            feedResponses.add(new FeedResponse(userInfoDto, isFollowed, articleMapper.toDto(article), perfumeDto, isHearted, isBookmarked));
+            feedResponses.add(new FeedResponse(userInfoDto, isFollowed, isFollowingButtonActivate,articleMapper.toDto(article), perfumeDto, isHearted, isBookmarked));
             cnt++;
         }
         return feedResponses;
