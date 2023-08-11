@@ -39,12 +39,56 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   const handleAddPerfume = (perfumeId: number) => {
     if (location.state && location.state.nowLocation === 'post') {
-      localStorage.setItem('getPerfumeId', `${perfumeId}`);
-      navigate(`/post`, { state: { perfumeId: perfumeId } });
+      const existingData = localStorage.getItem('postPerfume');
+      if (existingData) {
+        try {
+          const parsedData = JSON.parse(existingData);
+
+          const existingPerfume = parsedData.find(
+            (item: any) => item.perfumeId === perfumeId,
+          );
+
+          if (existingPerfume) {
+            alert('이미 추가된 향수입니다.');
+          } else if (parsedData.length >= 5) {
+            alert('더 이상 향수를 추가할 수 없습니다 (최대 5개)');
+            navigate('/post');
+          } else {
+            parsedData.push({ perfumeId: perfumeId, rate: 0 });
+            localStorage.setItem('postPerfume', JSON.stringify(parsedData));
+            navigate(`/post`, { state: { perfumeId: perfumeId } });
+          }
+        } catch (error) {
+          console.error('Error parsing existing data:', error);
+        }
+      } else {
+        const newData = [{ perfumeId: perfumeId, rate: 0 }];
+        localStorage.setItem('postPerfume', JSON.stringify(newData));
+        navigate(`/post`, { state: { perfumeId: perfumeId } });
+      }
     } else {
-      axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
-        console.log('data 추가!', res.data);
-        navigate(`/my-drawer`);
+      axios.get('/user/perfume').then((res) => {
+        const data = res.data;
+        if (data && data.length > 0) {
+          const existingPerfume = data.find(
+            (item: any) => item.perfumeId === perfumeId,
+          );
+
+          if (existingPerfume) {
+            alert('이미 추가된 향수입니다');
+            navigate('/my-drawer');
+          } else {
+            axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
+              console.log('Data added!', res.data);
+              navigate(`/my-drawer`);
+            });
+          }
+        } else {
+          axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
+            console.log('Data added!', res.data);
+            navigate(`/my-drawer`);
+          });
+        }
       });
     }
   };
@@ -191,5 +235,3 @@ const Button = styled.button`
     color: var(--white-color);
   }
 `;
-
-const Scent = styled.span``;

@@ -10,7 +10,7 @@ const FloatingWriteBtn = () => {
   return (
     <>
       <FloatingButton onClick={handleClick}>
-        <img src="src/assets/img/pencil-float.png" />
+        <img src="assets/img/pencil-float.png" />
       </FloatingButton>
     </>
   );

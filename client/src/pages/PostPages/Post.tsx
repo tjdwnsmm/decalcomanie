@@ -7,35 +7,62 @@ import ContextBox from '../../components/Box/AddContext';
 import AddRating from '../../components/Rating/Rating';
 import { AddCarousel, NonAddCarousel } from '../../components/Box/AddCarousel';
 import { ConfirmButton, Main, MarginFrame } from '../../style/index';
-import { PerfumeDetail } from '../../types/PerfumeInfoType';
-import { perfumeInfos } from '../../types/PostInfoType';
+import { PerfumeInfos } from '../../types/PostInfoType';
 
-interface DataType {
+interface RequestData {
   perfumeId: number[];
   content: string;
   rate: number[];
 }
 
+interface localProps {
+  perfumeId: number;
+  rate: number;
+}
+
 export default function Post() {
   const navigate = useNavigate();
-  const [isChecked, setIsChecked] = useState<boolean>(true);
-  const [perfumeList, setPerfumeList] = useState<perfumeInfos[]>([]);
+  //공병 체크 여부
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [perfumeList, setPerfumeList] = useState<PerfumeInfos[]>([]);
   const [content, setContent] = useState<string>('');
 
+  const handleEmptyChecked = () => {
+    setPerfumeList([]);
+    localStorage.removeItem('postPerfume');
+    console.log('empty!!');
+  };
+
   useEffect(() => {
-    const perfumeId = localStorage.getItem('getPerfumeId');
-    if (perfumeId !== null) {
-      axios
-        .get(`/perfume/detail/${perfumeId}`)
-        .then((res) => {
-          setPerfumeList(res.data);
-        })
-        .catch((error) => {
+    const localPerfume = localStorage.getItem('postPerfume');
+    if (localPerfume) {
+      const parsedList: localProps[] = JSON.parse(localPerfume);
+
+      const fetchData = async (fetchList: localProps[]) => {
+        const fetchPromises = fetchList.map((perfume) =>
+          axios.get(`/perfume/detail/${perfume.perfumeId}`),
+        );
+
+        try {
+          const responses = await Promise.all(fetchPromises);
+          const updatedList = responses.map((res, index) => {
+            const data = res.data;
+            data.rate = fetchList[index].rate;
+            return data;
+          });
+          setPerfumeList(updatedList);
+        } catch (error) {
           console.error('API 호출 에러 : ', error);
-        });
+        }
+      };
+
+      if (parsedList.length > 5) {
+        alert('향수는 최대 5개까지만 등록이 가능합니다!');
+        fetchData(parsedList.slice(0, 5));
+      } else {
+        fetchData(parsedList);
+      }
     }
-    localStorage.removeItem('getPerfumeId');
-    localStorage.removeItem('rating');
   }, []);
 
   // 글 내용 변경 콜백 함수
@@ -43,33 +70,36 @@ export default function Post() {
     setContent(value);
   };
 
-  const ratingFromLocalStorage = localStorage.getItem('rating');
-  const rateValue = ratingFromLocalStorage
-    ? parseFloat(ratingFromLocalStorage)
-    : 0;
-
-  //!타입선언해두기!
-  const requestData = {
-    perfumeId: perfumeList.filter((perfume) => {
-      return perfume.perfumeId;
-    }),
-
-    content,
-    rate: [rateValue],
-  };
-
   // 글 등록하기 버튼을 클릭했을 때 호출되는 함수
   const handlePostClick = async () => {
-    console.log('Request Data : ', requestData);
     try {
-      const response = await axios.post('/sns/create/', requestData);
+      const localPerfume = localStorage.getItem('postPerfume');
+      const parsedList: localProps[] = localPerfume
+        ? JSON.parse(localPerfume)
+        : [];
 
+      const requestData: RequestData = {
+        perfumeId: parsedList.map((perfume) => perfume.perfumeId),
+        content,
+        rate: parsedList.map((perfume) => perfume.rate),
+      };
+
+      const response = await axios.post('/sns/create/', requestData);
+      console.log('Request Data : ', requestData);
       console.log('API 응답:', response.data);
 
       // 작성 글 상세 페이지로 이동
       navigate(`/post-detail/${response.data.articleId}`);
     } catch (error) {
       console.error('API 요청 전송 에러:', error);
+    }
+    localStorage.removeItem('postPerfume');
+  };
+
+  const handleOutPost = () => {
+    if (window.confirm('정말 취소하시겠습니까?')) {
+      localStorage.removeItem('postPerfume');
+      navigate('/main-feed');
     }
   };
 
@@ -78,33 +108,35 @@ export default function Post() {
       <PostTitle>
         <TitleAlign>글 작성하기</TitleAlign>
       </PostTitle>
+
+      {/* 향수 임베디드 부분 */}
       <div>
-        {isChecked ? (
-          <AddCarousel perfumeList={perfumeList[0]} />
-        ) : (
-          <NonAddCarousel />
-        )}
-        {perfumeList.length !== 0 ? (
-          <CustomizedSwitches
-            isChecked={!isChecked}
-            // setIsChecked={setIsChecked}
+        {!isChecked ? (
+          //checked 안되어있으면 임베디드 불가능하게
+          <AddCarousel
+            perfumeList={perfumeList}
+            setPerfumeList={setPerfumeList}
           />
         ) : (
-          <></>
-          // <CustomizedSwitches
-          //   isChecked={!isChecked}
-          //   setIsChecked={setIsChecked}
-          // />
+          //checked 되어있으면 공병
+          <NonAddCarousel />
         )}
+        <CustomizedSwitches
+          isChecked={isChecked}
+          setIsChecked={setIsChecked}
+          handleEmpty={handleEmptyChecked}
+        />
       </div>
 
+      {/* 내용 입력 부분*/}
       <PostBody>
         <LeftTitleAlign>내용을 입력해주세요.</LeftTitleAlign>
         <ContextBox newContent={content} handleChange={handleChange} />
-        {isChecked && perfumeList.length !== 0 && (
+        {/* 공병 체크가 안되어있고 리스트에 하나 이상 있을때 평점에 추가 */}
+        {!isChecked && perfumeList.length !== 0 && (
           <MarginFrame margin="15px 0">
             <LeftTitleAlign>평점</LeftTitleAlign>
-            <MarginFrame margin="10px 0 40px">
+            <MarginFrame margin="15px 0 40px 5px">
               <AddRating perfumes={perfumeList} />
             </MarginFrame>
           </MarginFrame>
@@ -119,7 +151,7 @@ export default function Post() {
         >
           글 등록하기
         </ConfirmButton>
-        <ConfirmButton>취소</ConfirmButton>
+        <ConfirmButton onClick={handleOutPost}>취소</ConfirmButton>
       </Buttons>
     </Main>
   );

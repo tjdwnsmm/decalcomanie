@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../api/apiController';
-import CustomizedSwitches from '../../components/Switch/Switch';
 import ContextBox from '../../components/Box/AddContext';
-import AddRating from '../../components/Rating/Rating';
+import AddRating, { RateInfo } from '../../components/Rating/Rating';
 import { AddCarousel } from '../../components/Box/AddCarousel';
 import { ConfirmButton, Main, MarginFrame } from '../../style/index';
 import { ReactComponent as CancelSvg } from '../../assets/img/close.svg';
 import { PostDetailData } from '../../types/PostInfoType';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 
 const PostTitle = styled.div`
   display: flex;
@@ -47,12 +47,22 @@ export default function PostUpdate() {
     null,
   );
   const [newContent, setNewContent] = useState<string>('');
+  const [rateInfo, setRateInfo] = useState<RateInfo[]>();
 
   useEffect(() => {
     const fetchPostDetailData = async () => {
       try {
         const response = await axios.get(`/sns/search/${id}`);
         setPostDetailData(response.data);
+        console.log('update 용 데이터 확인 : ', response.data);
+
+        const combinedArray: RateInfo[] = response.data.perfumeInfos.map(
+          (perfume: PerfumeDetail, index: number) => ({
+            perfumeId: perfume.perfumeId,
+            rate: response.data.rates[index],
+          }),
+        );
+        setRateInfo(combinedArray);
       } catch (error) {
         console.error(error);
       }
@@ -72,16 +82,20 @@ export default function PostUpdate() {
   };
 
   const postAlert = async () => {
+    const localPerfume = localStorage.getItem('postPerfume');
+    const parsedList: RateInfo[] = localPerfume ? JSON.parse(localPerfume) : [];
+
     try {
       const requestData = {
         articleId: id,
         content: newContent,
-        // 임시데이터) 글 작성 모두 구현 되면 평점 변경 사항 반영해서 put 요청
-        perfumeId: [12],
-        rate: [5],
+        perfumeId: parsedList.map((perfume) => perfume.perfumeId),
+        rate: parsedList.map((perfume) => perfume.rate),
       };
+      // console.log(requestData);
       const response = await axios.put('/sns/update', requestData);
       console.log(response.data);
+      localStorage.removeItem('postPerfume');
       navigate(`/post-detail/${id}`);
     } catch (error) {
       console.error(error);
@@ -90,6 +104,7 @@ export default function PostUpdate() {
 
   const cancleAlert = () => {
     alert('취소하시겠습니까?');
+    localStorage.removeItem('postPerfume');
     navigate(`/post-detail/${id}`);
   };
 
@@ -105,8 +120,10 @@ export default function PostUpdate() {
         <CancelSvg onClick={() => cancleAlert()} />
       </PostTitle>
       <div>
-        <AddCarousel perfumeList={postDetailData.perfumeInfos[0]} />
-        {/* <CustomizedSwitches></CustomizedSwitches> */}
+        <AddCarousel
+          perfumeList={postDetailData.perfumeInfos}
+          forUpdate={true}
+        />
       </div>
 
       <PostBody>
@@ -118,7 +135,7 @@ export default function PostUpdate() {
             <MarginFrame margin="10px 0 40px">
               <AddRating
                 perfumes={postDetailData.perfumeInfos}
-                rates={postDetailData.rates}
+                rates={rateInfo}
               />
             </MarginFrame>
           </MarginFrame>

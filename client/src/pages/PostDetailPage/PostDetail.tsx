@@ -23,11 +23,13 @@ const Button = styled.button`
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [postDetailData, setPostDetailData] = useState<PostDetailData | null>(null);
+  const [postDetailData, setPostDetailData] = useState<PostDetailData | null>(
+    null,
+  );
   const navigate = useNavigate();
 
   const handleLeftArrowClick = () => {
-    navigate(-1);
+    navigate('/main-feed');
   };
 
   useEffect(() => {
@@ -61,10 +63,14 @@ const PostDetail = () => {
       <PostInfoBox postInfo={postDetailData} />
       <CommentListBox>
         {postDetailData.comments.map((comment, idx) => (
-          <CommentBox key={idx} comment={comment} commentUser={postDetailData.commmentUsers[idx]} />
+          <CommentBox
+            key={idx}
+            comment={comment}
+            commentUser={postDetailData.commmentUsers[idx]}
+          />
         ))}
       </CommentListBox>
-      <CommentInputForm articleId={postDetailData.articleDto.articleId}/>
+      <CommentInputForm articleId={postDetailData.articleDto.articleId} />
     </Main>
   );
 };

@@ -1,45 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { styled } from 'styled-components';
 import Carousel from 'react-items-carousel';
 import { ReactComponent as AddButtonSvg } from '../../assets/img/add-button.svg';
 import { ReactComponent as PrevSvg } from '../../assets/icon/prevBack.svg';
 import { CenterFrame } from '../../style';
-import { PerfumeDetail } from '../../types/PerfumeInfoType';
-import { perfumeInfos } from '../../types/PostInfoType';
+import { PerfumeInfos } from '../../types/PostInfoType';
+import PerfumePostBox from '../Post/PerfumePostBox';
 
-interface ReviewBoxProps {
-  brand: string;
-  name: string;
-  img: string;
-}
-
-function PerfumeReviewBox({ brand, name, img }: ReviewBoxProps) {
-  return (
-    <CenterFrame>
-      <PerfumeReviewBoxContainer>
-        <TextInfoContainer>
-          <PerfumeBrand>{brand}</PerfumeBrand>
-          <PerfumeName>{name}</PerfumeName>
-        </TextInfoContainer>
-        <ImgBox>
-          <img src={img} />
-        </ImgBox>
-      </PerfumeReviewBoxContainer>
-    </CenterFrame>
-  );
-}
 interface Props {
-  perfumeList: perfumeInfos;
+  perfumeList: PerfumeInfos[];
+  setPerfumeList?: React.Dispatch<React.SetStateAction<PerfumeInfos[]>>;
+  forUpdate?: boolean;
 }
 
-export function AddCarousel({ perfumeList }: Props) {
+export function AddCarousel({ perfumeList, setPerfumeList, forUpdate }: Props) {
   const navigate = useNavigate();
   const [activeItemIndex, setActiveItemIndex] = useState(0);
 
+  if (forUpdate) {
+    return (
+      <CarouselBox>
+        {perfumeList.length === 0 ? (
+          //아직 임베디드된 향수가 없는 경우
+          <CenterFrame>
+            <EmptyBox>
+              <TextArea>향수 정보가 없습니다</TextArea>
+            </EmptyBox>
+          </CenterFrame>
+        ) : (
+          //아닌 경우 향수들 정보 불러오고 마지막 장에 추가페이지
+          <Carousel
+            // 캐러셀 설정
+            requestToChangeActive={setActiveItemIndex}
+            activeItemIndex={activeItemIndex}
+            numberOfCards={1}
+            leftChevron={<PrevSvg />}
+            rightChevron={<NextSvg />}
+            chevronWidth={40}
+            showSlither={false}
+            outsideChevron={false}
+          >
+            {perfumeList.map((perfume) => (
+              <PerfumePostBox
+                key={perfume.perfumeId}
+                perfume={perfume}
+                id={perfume.perfumeId}
+                setPerfumeList={setPerfumeList}
+              />
+            ))}
+          </Carousel>
+        )}
+      </CarouselBox>
+    );
+  }
+
   return (
     <CarouselBox>
-      {!perfumeList ? (
+      {perfumeList.length === 0 ? (
+        //아직 임베디드된 향수가 없는 경우
         <CenterFrame>
           <EmptyBox>
             <TextArea>
@@ -55,6 +74,7 @@ export function AddCarousel({ perfumeList }: Props) {
           </EmptyBox>
         </CenterFrame>
       ) : (
+        //아닌 경우 향수들 정보 불러오고 마지막 장에 추가페이지
         <Carousel
           // 캐러셀 설정
           requestToChangeActive={setActiveItemIndex}
@@ -62,15 +82,19 @@ export function AddCarousel({ perfumeList }: Props) {
           numberOfCards={1}
           leftChevron={<PrevSvg />}
           rightChevron={<NextSvg />}
-          chevronWidth={80}
+          chevronWidth={40}
           showSlither={false}
           outsideChevron={false}
         >
-          <PerfumeReviewBox
-            brand={perfumeList.brandName}
-            name={perfumeList.name}
-            img={perfumeList.picture}
-          />
+          {perfumeList.map((perfume) => (
+            <PerfumePostBox
+              key={perfume.perfumeId}
+              perfume={perfume}
+              id={perfume.perfumeId}
+              setPerfumeList={setPerfumeList}
+            />
+          ))}
+
           <CenterFrame>
             <EmptyBox>
               <TextArea>
@@ -99,7 +123,7 @@ export function NonAddCarousel() {
         numberOfCards={1}
         leftChevron={<PrevSvg />}
         rightChevron={<NextSvg />}
-        chevronWidth={80}
+        chevronWidth={40}
         showSlither={false}
         outsideChevron={false}
       >
@@ -136,6 +160,7 @@ const EmptyBox = styled.div`
   justify-content: center;
   align-items: center;
   width: 340px;
+  padding: 0 20px;
   height: 140px;
   background-color: var(--white-color);
   border-radius: 10px;
@@ -168,39 +193,3 @@ const TextArea = styled.span`
 `;
 
 // ---------------------------------------------
-const PerfumeReviewBoxContainer = styled.div`
-  display: flex;
-  background: var(--white-color);
-  justify-content: center;
-  gap: 70px;
-  align-items: center;
-  padding: 0px 0px;
-  width: 340px;
-  height: 140px;
-  border-radius: 10px;
-`;
-
-const TextInfoContainer = styled.div`
-  padding: 0px 10px;
-  width: 60px;
-`;
-
-const PerfumeBrand = styled.div`
-  color: var(--black-color);
-  font-size: 11px;
-  width: 120px;
-  margin-bottom: 5px;
-`;
-
-const PerfumeName = styled.div`
-  color: var(--black-color);
-  font-size: 18px;
-  font-weight: bold;
-  width: max-content;
-`;
-
-const ImgBox = styled.div`
-  width: 100px;
-  height: 100px;
-  display: flex;
-`;

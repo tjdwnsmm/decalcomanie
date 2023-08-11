@@ -54,7 +54,7 @@ const DetailEtcInfoSection = ({ perfume }: DetailEtcProps) => {
     }, 0);
 
     const transformedData = perfumeOccasionWeights.map((item, idx) => {
-      const degree = (item / sum) * 100;
+      const degree = item; //(item / sum) * 100;
       return { season: season[idx], degree };
     });
 
