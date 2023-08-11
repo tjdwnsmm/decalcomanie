@@ -1,24 +1,25 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { Main, MarginFrame, ConfirmButton, CenterFrame } from '../../style';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
 import NewNickname from '../../components/Profile/NicknameModi';
 import ScentModi from '../../components/Profile/ScentModi';
-import { scent, userInfoDto } from '../../types/PostInfoType';
+import { scentDto, userInfoDto } from '../../types/PostInfoType';
 import axios from '../../api/apiController';
 import ProfileImgModi from '../../components/Profile/ProfileImgModi';
 
 const PageName = styled.div`
   background-color: var(--background-color);
   text-align: center;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   padding: 20px 0 10px 0;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: -1;
+  z-index: 2;
 `;
 
 const CancleBtn = styled.div`
@@ -93,12 +94,13 @@ const CenterBackground = styled(CenterFrame)`
 `;
 
 const ProfileUpdate = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState<userInfoDto>();
   const [modalOpen, setModalOpen] = useState(false);
   const [profileImg, setProfileImg] = useState('');
   const [nickName, setNickName] = useState('');
-  const [favoriteScent, setFavoriteScent] = useState<scent[]>([]);
-  const [hateScent, setHateScent] = useState<scent[]>([]);
+  const [favoriteScent, setFavoriteScent] = useState<scentDto[]>([]);
+  const [hateScent, setHateScent] = useState<scentDto[]>([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -128,7 +130,7 @@ const ProfileUpdate = () => {
   }, [userData]);
 
   const handleCancel = () => {
-    window.location.href = '/mypage';
+    navigate('/mypage');
   };
 
   const handleWithdraw = () => {
@@ -137,19 +139,23 @@ const ProfileUpdate = () => {
   };
 
   const handleUpdateProfile = async () => {
-    const favorite = favoriteScent.map((scent) => scent.scentId);
-    const hate = hateScent.map((scent) => scent.scentId);
-    const updatedProfileData = {
-      nickname: nickName,
-      favorite,
-      hate,
-    };
-    try {
-      const response = await axios.put('/user/update', updatedProfileData)
-      console.log('프로필 업데이트 성공:', response.data);
-    } catch (error){
-      console.error('프로필 업데이트 실패:', error);
-    };
+    if (window.confirm('프로필을 변경하시겠습니까?')) {
+      const favorite = favoriteScent.map((scent) => scent.scentId);
+      const hate = hateScent.map((scent) => scent.scentId);
+      const updatedProfileData = {
+        nickname: nickName,
+        favorite,
+        hate,
+        picture: profileImg,
+      };
+      try {
+        const response = await axios.put('/user/update', updatedProfileData);
+        navigate('/mypage');
+        console.log('프로필 업데이트 성공:', response.data);
+      } catch (error) {
+        console.error('프로필 업데이트 실패:', error);
+      }
+    }
   };
 
   const handleOpenModal = () => {
@@ -162,7 +168,7 @@ const ProfileUpdate = () => {
 
   return (
     <Main>
-      <MarginFrame margin="64px">
+      <MarginFrame margin="58px">
         <PageName>회원 정보 수정</PageName>
         <CancleBtn onClick={handleCancel}>
           <CloseSvg />

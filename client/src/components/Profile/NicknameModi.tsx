@@ -21,6 +21,10 @@ const NicknameInput = styled.input`
   border: none;
   outline: none;
   border-bottom: 2px solid var(--gray-color);
+
+  &::placeholder {
+    letter-spacing: 1px;
+  }
 `;
 
 const CheckeBtn = styled.button<{ disabled?: boolean }>`

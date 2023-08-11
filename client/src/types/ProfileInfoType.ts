@@ -1,10 +1,10 @@
-// export interface FollowInfo {
-//   userId: string;
-//   picture: string;
-//   nickname: string;
-//   favorite: string[];
-//   isFollowing: boolean;
-// }
+export interface FollowInfo {
+  userId: string;
+  picture: string;
+  nickname: string;
+  favorite: string[];
+  isFollowing: boolean;
+}
 
 export interface userInfo {
   userId: string;

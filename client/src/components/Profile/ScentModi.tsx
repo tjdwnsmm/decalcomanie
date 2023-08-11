@@ -3,12 +3,12 @@ import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
 import { ReactComponent as CancelSvg } from '../../assets/icon/input-cancel.svg';
 import { ReactComponent as ErrorSvg } from '../../assets/icon/error.svg';
-import { scent } from '../../types/PostInfoType';
+import { scentDto } from '../../types/PostInfoType';
 import axios from '../../api/apiController';
 
 interface ScentModiProps {
-  scentList: scent[];
-  setScentList: (scent: scent) => void;
+  scentList: scentDto[];
+  setScentList: (scents: scentDto[]) => void;
   fav: string;
 }
 
@@ -16,6 +16,7 @@ const ScentList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  padding: 0px 2px;
 `;
 
 const ScentItem = styled.div`
@@ -99,10 +100,8 @@ const SearchResultItem = styled.div`
 `;
 
 function ScentModi({ scentList, setScentList, fav }: ScentModiProps) {
-  // const [scentList, setScentList] = useState(scents);
-  const [newScent, setNewScent] = useState('');
   const [showMaxScentMessage, setShowMaxScentMessage] = useState(false);
-  const [searchResults, setSearchResults] = useState<scent[]>([]);
+  const [searchResults, setSearchResults] = useState<scentDto[]>([]);
   const [searchKeyword, setSearchKeyword] = useState('');
 
   const handleDeleteScent = (index: number) => {
@@ -110,12 +109,11 @@ function ScentModi({ scentList, setScentList, fav }: ScentModiProps) {
     setScentList(updatedScents);
   };
 
-  const handleAddScent = (selectedScent: scent) => {
+  const handleAddScent = (selectedScent: scentDto) => {
     if (selectedScent.name.trim() !== '') {
       setSearchKeyword('');
       setSearchResults([]);
       setScentList([...scentList, selectedScent]);
-      setNewScent('');
     }
   };
 
@@ -133,14 +131,18 @@ function ScentModi({ scentList, setScentList, fav }: ScentModiProps) {
         setShowMaxScentMessage(false);
         axios.get('/perfume/search/scent')
           .then((res) => {
-            const dataArray = res.data.map((data: scent) => data);
-            const matchingScents = dataArray.filter((scent: scent) => {
-              if (isEnglish(keyword)) {
-                return scent.nameOrg.includes(keyword);
-              } else {
-                return scent.name.includes(keyword);
-              }
-            });
+            const dataArray = res.data.map((data: scentDto) => data);
+            let matchingScents: scentDto[];
+
+            if (isEnglish(keyword)) {
+              matchingScents = dataArray.filter((scent: scentDto) => (
+                scent.nameOrg.includes(keyword)
+              ));
+            } else {
+              matchingScents = dataArray.filter((scent: scentDto) => (
+                scent.name.includes(keyword)
+              ));
+            }
             setSearchResults(matchingScents);
           })
           .catch((error) => {

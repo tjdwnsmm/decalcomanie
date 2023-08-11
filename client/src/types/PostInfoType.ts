@@ -17,7 +17,7 @@ export interface user {
   picture: string | null;
 }
 
-export interface scent {
+export interface scentDto {
   scentId: number;
   weight: number;
   nameOrg: string;
