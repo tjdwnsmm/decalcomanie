@@ -46,7 +46,7 @@ const ScentInput = styled.input`
   color: var(--black-color);
   border: none;
   outline: none;
-  padding: 4px 8px;
+  padding: 4px;
 
   &::placeholder {
     color: var(--primary-color);
