@@ -40,7 +40,7 @@ public class OAuthController {
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
 
-    @Value("${spring.security.oauth2.clinet.registration.kakao.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String kakaoRedirectURL;
 
     @Value("${jwt.secret}")
