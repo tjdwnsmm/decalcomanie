@@ -141,6 +141,7 @@ public class OAuthController {
         UUID userId = UUID.randomUUID();
 
         String accessToken = jwtService.generateAccessToken(kakaoProfile.getId().toString(), userId.toString());
+        System.out.println("accessToken: "+ accessToken);
         String refreshToken = jwtService.generateRefreshToken(kakaoProfile.getId().toString(), userId.toString());
 
         userCredential = UserCredential.builder()
