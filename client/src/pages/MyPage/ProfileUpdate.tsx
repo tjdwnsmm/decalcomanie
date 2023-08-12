@@ -97,8 +97,8 @@ const ProfileUpdate = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [profileImg, setProfileImg] = useState('');
   const [nickName, setNickName] = useState('');
-  const [isCheck, setIsCheck] = useState(false);
-  const [isAvailable, setIsAvailable] = useState(false);
+  const [isCheck, setIsCheck] = useState(true);
+  const [isAvailable, setIsAvailable] = useState(true);
   const [favoriteScent, setFavoriteScent] = useState<scentDto[]>([]);
   const [hateScent, setHateScent] = useState<scentDto[]>([]);
 
@@ -149,7 +149,7 @@ const ProfileUpdate = () => {
       return;
     }
     if (!isAvailable) {
-      window.confirm('사용할 수 없는 닉네임입니다.');
+      window.alert('사용할 수 없는 닉네임입니다.');
       return;
     }
     if (window.confirm('프로필을 변경하시겠습니까?')) {

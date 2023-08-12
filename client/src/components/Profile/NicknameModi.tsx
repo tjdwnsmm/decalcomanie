@@ -64,14 +64,15 @@ function NewNickname({ nickname, setNicknameChange, onCheckStatusChange }: NewNi
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nowInput = e.target.value;
     setInputValue(nowInput);
-    if (nowInput.length === 0 || nowInput === nickname) {
+    if ((nowInput === '') || (nowInput === nickname)) {
       setIsCheck(true);
-      onCheckStatusChange(true, false); // ProfileUpdate로 넘겨주기 위해
+      setIsAvailable(true);
+      onCheckStatusChange(true, true);
     } else {
       setIsCheck(false);
+      setIsAvailable(false);
       onCheckStatusChange(false, false);
     }
-    setIsAvailable(false);
     setNicknameChange(nickname);
 
     if (inputValue.length > 10) {
@@ -127,7 +128,7 @@ function NewNickname({ nickname, setNicknameChange, onCheckStatusChange }: NewNi
         </CheckeBtn>
       </NicknameInputContainer>
       {inputValue === nickname ? (
-        <Message available={false}>
+        <Message available={true}>
            현재 닉네임과 같은 닉네임입니다.
         </Message>
       ) : (
