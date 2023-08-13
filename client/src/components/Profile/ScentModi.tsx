@@ -7,9 +7,10 @@ import { scentDto } from '../../types/PostInfoType';
 import axios from '../../api/apiController';
 
 interface ScentModiProps {
-  scentList: scentDto[];
-  setScentList: (scents: scentDto[]) => void;
+  targetList: scentDto[];
+  setTargetList: (scents: scentDto[]) => void;
   fav: string;
+  anotherList: number[];
 }
 
 const ScentList = styled.div`
@@ -99,56 +100,47 @@ const SearchResultItem = styled.div`
   }
 `;
 
-function ScentModi({ scentList, setScentList, fav }: ScentModiProps) {
+function ScentModi({ targetList, setTargetList, fav, anotherList }: ScentModiProps) {
   const [showMaxScentMessage, setShowMaxScentMessage] = useState(false);
   const [searchResults, setSearchResults] = useState<scentDto[]>([]);
   const [searchKeyword, setSearchKeyword] = useState('');
 
   const handleDeleteScent = (index: number) => {
-    const updatedScents = scentList.filter((_, idx) => idx !== index);
-    setScentList(updatedScents);
+    setTargetList(targetList.filter((_, idx) => idx !== index));
   };
 
   const handleAddScent = (selectedScent: scentDto) => {
     if (selectedScent.name.trim() !== '') {
       setSearchKeyword('');
       setSearchResults([]);
-      setScentList([...scentList, selectedScent]);
+      setTargetList([...targetList, selectedScent]);
     }
   };
 
-  function isEnglish(str: string) {
-    const englishRegex = /^[a-zA-Z]*$/;
-    return englishRegex.test(str);
-  }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log(entireList.map((ent) => ent.name));
     const keyword = e.target.value;
     setSearchKeyword(keyword);
 
     if (keyword.trim() !== '') {
-      if (scentList.length < 3) {
+      if (targetList.length < 3) {
         setShowMaxScentMessage(false);
-        axios.get('/perfume/search/scent')
-          .then((res) => {
-            const dataArray = res.data.map((data: scentDto) => data);
-            let matchingScents: scentDto[];
+        try {
+          const response = await axios.get('/perfume/search/scent');
+          const dataArray = response.data.map((data: scentDto) => data);
+          const matchingScents: scentDto[] = dataArray.filter((scent: scentDto) => {
+            const isMatchingName = scent.nameOrg.includes(keyword) || scent.name.includes(keyword);
+            const isNotInTarget = !targetList.some((target) => target.scentId === scent.scentId);
+            const isNotInAnother = !anotherList.includes(scent.scentId);
 
-            if (isEnglish(keyword)) {
-              matchingScents = dataArray.filter((scent: scentDto) => (
-                scent.nameOrg.includes(keyword)
-              ));
-            } else {
-              matchingScents = dataArray.filter((scent: scentDto) => (
-                scent.name.includes(keyword)
-              ));
-            }
-            setSearchResults(matchingScents);
-          })
-          .catch((error) => {
-            console.error(error);
-            setSearchResults([]);
+            return isMatchingName && isNotInTarget && isNotInAnother;
           });
+
+          setSearchResults(matchingScents);
+        } catch (error) {
+          console.error(error);
+          setSearchResults([]);
+        }
       } else {
         setShowMaxScentMessage(true);
       }
@@ -164,8 +156,8 @@ function ScentModi({ scentList, setScentList, fav }: ScentModiProps) {
 
   return (
     <MarginFrame margin="8px 6px">
-      { (scentList.length > 0) && <ScentList>
-        {scentList.map((scent, idx) => (
+      {(targetList.length > 0) && <ScentList>
+        {targetList.map((scent, idx) => (
           <ScentItem key={idx}>
             {scent.name}
             <CancelSvgColor onClick={() => handleDeleteScent(idx)} />
@@ -178,13 +170,13 @@ function ScentModi({ scentList, setScentList, fav }: ScentModiProps) {
           value={searchKeyword}
           onChange={handleInputChange}
         />
-        { searchKeyword && <CancelSvg style={{ paddingRight: '4px' }} onClick={handleClearSearch}/>}
+        {searchKeyword && <CancelSvg style={{ paddingRight: '4px' }} onClick={handleClearSearch}/>}
       </AddScent>
-      { (searchResults.length > 0) && (
+      {(searchResults.length > 0) && (
         <SearchResultList>
           {searchResults.map((result, idx) => (
             <SearchResultItem key={idx} onClick={() => handleAddScent(result)}>
-              {isEnglish(searchKeyword) ? `${result.nameOrg} (${result.name})` : result.name}
+              {result.name} ({result.nameOrg})
             </SearchResultItem>
           ))}
         </SearchResultList>

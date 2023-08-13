@@ -8,6 +8,7 @@ import ScentModi from '../../components/Profile/ScentModi';
 import { scentDto, userInfoDto } from '../../types/PostInfoType';
 import axios from '../../api/apiController';
 import ProfileImgModi from '../../components/Profile/ProfileImgModi';
+import { UserName } from '../../components/Main/MainRecommend';
 
 const PageName = styled.div`
   background-color: var(--background-color);
@@ -206,11 +207,21 @@ const ProfileUpdate = () => {
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>
-        <ScentModi scentList={favoriteScent} setScentList={setFavoriteScent} fav="좋아하는"/>
+        <ScentModi
+          targetList={favoriteScent}
+          setTargetList={setFavoriteScent}
+          fav="좋아하는"
+          anotherList={hateScent.map((scent) => scent.scentId)}
+        />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>싫어요 🙁</UserInfoName>
-        <ScentModi scentList={hateScent} setScentList={setHateScent} fav="싫어하는" />
+        <ScentModi
+          targetList={hateScent}
+          setTargetList={setHateScent}
+          fav="싫어하는"
+          anotherList={favoriteScent.map((scent) => scent.scentId)}
+        />
       </MarginFrame>
       <MarginFrame margin="20px 0 76px" style={{ display: 'flex', justifyContent: 'center' }}>
         <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>
