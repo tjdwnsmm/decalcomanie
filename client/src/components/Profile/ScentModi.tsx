@@ -10,7 +10,7 @@ interface ScentModiProps {
   targetList: scentDto[];
   setTargetList: (scents: scentDto[]) => void;
   fav: string;
-  anotherList: number[];
+  anotherList: scentDto[];
 }
 
 const ScentList = styled.div`
@@ -104,6 +104,7 @@ function ScentModi({ targetList, setTargetList, fav, anotherList }: ScentModiPro
   const [showMaxScentMessage, setShowMaxScentMessage] = useState(false);
   const [searchResults, setSearchResults] = useState<scentDto[]>([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [duplicateMsg, setDuplicateMsg] = useState('');
 
   const handleDeleteScent = (index: number) => {
     setTargetList(targetList.filter((_, idx) => idx !== index));
@@ -118,9 +119,27 @@ function ScentModi({ targetList, setTargetList, fav, anotherList }: ScentModiPro
   };
 
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log(entireList.map((ent) => ent.name));
     const keyword = e.target.value;
     setSearchKeyword(keyword);
+
+    const isInTarget = targetList.some((target) => (
+      target.name === keyword || target.nameOrg === keyword
+    ));
+    const isInAnother = anotherList.some((target) => (
+      target.name === keyword || target.nameOrg === keyword
+    ));
+
+    if (isInTarget) {
+      setDuplicateMsg(`${keyword}는 ${fav} 향에 이미 등록되어 있습니다.`);
+      setSearchResults([]);
+      return;
+    } else if (isInAnother) {
+      setDuplicateMsg(`${keyword}는 ${fav === '좋아하는' ? '싫어하는' : '좋아하는'} 향에 이미 등록되어 있습니다.`);
+      setSearchResults([]);
+      return;
+    } else {
+      setDuplicateMsg('');
+    }
 
     if (keyword.trim() !== '') {
       if (targetList.length < 3) {
@@ -130,8 +149,8 @@ function ScentModi({ targetList, setTargetList, fav, anotherList }: ScentModiPro
           const dataArray = response.data.map((data: scentDto) => data);
           const matchingScents: scentDto[] = dataArray.filter((scent: scentDto) => {
             const isMatchingName = scent.nameOrg.includes(keyword) || scent.name.includes(keyword);
-            const isNotInTarget = !targetList.some((target) => target.scentId === scent.scentId);
-            const isNotInAnother = !anotherList.includes(scent.scentId);
+            const isNotInTarget = !targetList.some((item) => item.scentId === scent.scentId);
+            const isNotInAnother = !anotherList.some((item) => item.scentId === scent.scentId);
 
             return isMatchingName && isNotInTarget && isNotInAnother;
           });
@@ -185,6 +204,11 @@ function ScentModi({ targetList, setTargetList, fav, anotherList }: ScentModiPro
         <MaxScentMessage>
           <ErrorSvg/>
           향 계열은 최대 3개까지만 추가할 수 있습니다.
+        </MaxScentMessage>
+      )}
+      {duplicateMsg && (
+        <MaxScentMessage>
+          <ErrorSvg/> {duplicateMsg}
         </MaxScentMessage>
       )}
     </MarginFrame>

@@ -211,7 +211,7 @@ const ProfileUpdate = () => {
           targetList={favoriteScent}
           setTargetList={setFavoriteScent}
           fav="좋아하는"
-          anotherList={hateScent.map((scent) => scent.scentId)}
+          anotherList={hateScent}
         />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
@@ -220,7 +220,7 @@ const ProfileUpdate = () => {
           targetList={hateScent}
           setTargetList={setHateScent}
           fav="싫어하는"
-          anotherList={favoriteScent.map((scent) => scent.scentId)}
+          anotherList={favoriteScent}
         />
       </MarginFrame>
       <MarginFrame margin="20px 0 76px" style={{ display: 'flex', justifyContent: 'center' }}>
