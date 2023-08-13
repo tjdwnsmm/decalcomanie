@@ -8,7 +8,7 @@ import ScentModi from '../../components/Profile/ScentModi';
 import { scentDto, userInfoDto } from '../../types/PostInfoType';
 import axios from '../../api/apiController';
 import ProfileImgModi from '../../components/Profile/ProfileImgModi';
-import { UserName } from '../../components/Main/MainRecommend';
+import WithdrawModal from '../../components/Profile/WithdrawModal';
 
 const PageName = styled.div`
   background-color: var(--background-color);
@@ -20,14 +20,14 @@ const PageName = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  z-index: 2;
+  z-index: 1;
 `;
 
 const CancleBtn = styled.div`
   position: fixed;
   top: 20px;
   right: 20px;
-  z-index: 5;
+  z-index: 1;
   cursor: pointer;
 `;
 
@@ -96,6 +96,7 @@ const ProfileUpdate = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState<userInfoDto>();
   const [modalOpen, setModalOpen] = useState(false);
+  const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
   const [profileImg, setProfileImg] = useState('');
   const [nickName, setNickName] = useState('');
   const [isCheck, setIsCheck] = useState(true);
@@ -131,17 +132,15 @@ const ProfileUpdate = () => {
   }, [userData]);
 
   const handleCancel = () => {
-    navigate('/mypage');
+    navigate(-1);
   };
 
-  const handleWithdraw = async () => {
-    try {
-      const response = await axios.delete('/user/withdrawal');
-      navigate('/login');
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
+  const handleOpenWithdrawModal = () => {
+    setWithdrawModalOpen(true);
+  };
+
+  const handleCloseWithdrawModal = () => {
+    setWithdrawModalOpen(false);
   };
 
   const handleUpdateProfile = async () => {
@@ -224,7 +223,7 @@ const ProfileUpdate = () => {
         />
       </MarginFrame>
       <MarginFrame margin="20px 0 76px" style={{ display: 'flex', justifyContent: 'center' }}>
-        <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>
+        <WithdrawButton onClick={handleOpenWithdrawModal}>회원 탈퇴하기</WithdrawButton>
       </MarginFrame>
       <CenterBackground>
         <FixedPostButton
@@ -241,6 +240,13 @@ const ProfileUpdate = () => {
         <ProfileImgModi
           handleImg={setProfileImg}
           closeModal={handleCloseModal}
+        />
+      )}
+
+      {withdrawModalOpen && (
+        <WithdrawModal
+          // handleImg={setProfileImg}
+          closeModal={handleCloseWithdrawModal}
         />
       )}
     </Main>
