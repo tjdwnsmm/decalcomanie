@@ -76,7 +76,7 @@ const SearchResultList = styled.div`
   width: 280px;
   max-height: 120px;
   overflow: auto;
-  border: 1px solid var(--gray-color);
+  border: 1.4px solid var(--gray-color);
   border-top: none;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -129,16 +129,12 @@ function ScentModi({ targetList, setTargetList, fav, anotherList }: ScentModiPro
       target.name === keyword || target.nameOrg === keyword
     ));
 
-    if (isInTarget) {
-      setDuplicateMsg(`${keyword}는 ${fav} 향에 이미 등록되어 있습니다.`);
-      setSearchResults([]);
-      return;
-    } else if (isInAnother) {
-      setDuplicateMsg(`${keyword}는 ${fav === '좋아하는' ? '싫어하는' : '좋아하는'} 향에 이미 등록되어 있습니다.`);
-      setSearchResults([]);
-      return;
-    } else {
+    if (!isInTarget && !isInAnother) {
       setDuplicateMsg('');
+    } else {
+      setSearchResults([]);
+      setDuplicateMsg(`${keyword}은(는) 이미 등록된 향입니다.`);
+      return;
     }
 
     if (keyword.trim() !== '') {
@@ -183,23 +179,25 @@ function ScentModi({ targetList, setTargetList, fav, anotherList }: ScentModiPro
           </ScentItem>
         ))}
       </ScentList>}
-      <AddScent>
-        <ScentInput
-          placeholder={`${fav} 향 계열을 입력해주세요.`}
-          value={searchKeyword}
-          onChange={handleInputChange}
-        />
-        {searchKeyword && <CancelSvg style={{ paddingRight: '4px' }} onClick={handleClearSearch}/>}
-      </AddScent>
-      {(searchResults.length > 0) && (
-        <SearchResultList>
-          {searchResults.map((result, idx) => (
-            <SearchResultItem key={idx} onClick={() => handleAddScent(result)}>
-              {result.name} ({result.nameOrg})
-            </SearchResultItem>
-          ))}
-        </SearchResultList>
-      )}
+      <div style={{ position: 'relative' }}>
+        <AddScent>
+          <ScentInput
+            placeholder={`${fav} 향 계열을 입력해주세요.`}
+            value={searchKeyword}
+            onChange={handleInputChange}
+          />
+          {searchKeyword && <CancelSvg style={{ paddingRight: '4px' }} onClick={handleClearSearch}/>}
+        </AddScent>
+        {(searchResults.length > 0) && (
+          <SearchResultList>
+            {searchResults.map((result, idx) => (
+              <SearchResultItem key={idx} onClick={() => handleAddScent(result)}>
+                {result.name} ({result.nameOrg})
+              </SearchResultItem>
+            ))}
+          </SearchResultList>
+        )}
+      </div>
       {showMaxScentMessage && searchKeyword && (
         <MaxScentMessage>
           <ErrorSvg/>
