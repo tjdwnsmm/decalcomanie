@@ -31,7 +31,7 @@ const PerfumeReviewCarousel: React.FC<PerfumeReviewCarouselProps> = ({
           key={perfume.perfumeId}
           rate={rates[index]}
           brand={perfume.brandName}
-          name={perfume.nameOrg}
+          name={perfume.name}
           img={perfume.picture}
         />
       ))}

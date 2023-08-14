@@ -27,4 +27,5 @@ export interface EachFeedInfo {
   followed: boolean;
   hearted: boolean;
   userInfoDto: ProfileUpdateInfo;
+  followingButtonActivate: boolean;
 }

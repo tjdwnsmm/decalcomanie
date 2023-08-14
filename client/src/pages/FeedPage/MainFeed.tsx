@@ -25,6 +25,7 @@ export const MainFeed = () => {
       setFeeds(res.data);
       setLoading(false);
       // console.log(res.data);
+      console.log(res.data);
     });
   };
 

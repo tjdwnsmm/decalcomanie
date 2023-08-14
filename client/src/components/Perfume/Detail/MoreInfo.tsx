@@ -62,7 +62,7 @@ export const Progress = styled.div<ProgressProps>`
   width: ${(props) => (props.score / props.total) * 100}%;
   background-color: var(--primary-color);
   ${({ score, total }) => css`
-    animation: ${progressAnimation(score, total)} 3s;
+    animation: ${progressAnimation(score, total)} 5s;
   `};
 `;
 export const progressAnimation = (score: number, total: number) => keyframes`

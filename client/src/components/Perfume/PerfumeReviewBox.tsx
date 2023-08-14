@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import Rating from '@mui/material/Rating';
+import { styled as MUstyled } from '@mui/material/styles';
 import { ReactComponent as EmptyStarSvg } from '../../assets/icon/empty-star.svg';
 import { ReactComponent as FillStarSvg } from '../../assets/icon/fill-star.svg';
 
@@ -18,11 +20,6 @@ const PerfumeReviewBoxContainer = styled.div`
   padding: 15px 30px;
 `;
 
-const StarRatingContainer = styled.div`
-  display: flex;
-  margin-bottom: 15px;
-`;
-
 const TextInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -38,7 +35,7 @@ const PerfumeBrand = styled.div`
 
 const PerfumeName = styled.div`
   color: var(--black-color);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
 `;
 
@@ -48,31 +45,38 @@ const ImgBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   img {
     max-width: 100%;
     max-height: 100%;
   }
 `;
 
-function PerfumeReviewBox({ rate, brand, name, img }: PerfumeReviewInfo) {
-  const renderStars = () => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      if (i <= rate) {
-        stars.push(<FillStarSvg key={i} />);
-      } else {
-        stars.push(<EmptyStarSvg key={i} />);
-      }
-    }
+const StarRate = styled.div`
+  margin-left: -2px;
+  margin-bottom: 4px;
+`;
 
-    return stars;
-  };
+function PerfumeReviewBox({ rate, brand, name, img }: PerfumeReviewInfo) {
+  const StyledRating = MUstyled(Rating)({
+    '& .MuiRating-iconFilled': {
+      color: 'var(--primary-color)',
+    },
+  });
 
   return (
     <PerfumeReviewBoxContainer>
       <TextInfoContainer>
-        <StarRatingContainer>{renderStars()}</StarRatingContainer>
+        <StarRate>
+          <StyledRating
+            name={`rating-${name}`}
+            value={rate}
+            precision={0.5}
+            sx={{ fontSize: 20 }}
+            readOnly
+          />
+        </StarRate>
+        {/* <StarRatingContainer>{renderStars()}</StarRatingContainer> */}
         <PerfumeBrand>{brand}</PerfumeBrand>
         <PerfumeName>{name}</PerfumeName>
       </TextInfoContainer>
