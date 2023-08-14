@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 
 import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
 import static com.eightlow.decalcomanie.sns.entity.QArticle.article;
+import static com.eightlow.decalcomanie.sns.entity.QBookMark.bookMark;
 
 @RequiredArgsConstructor
 @Service
@@ -216,7 +217,10 @@ public class ArticleServiceImpl implements IArticleService {
 
         List<FollowingResponse> followingResponses = userService.getFollowingUsers(userId);
         System.out.println(followingResponses.toString());
-
+        // 팔로잉한 사람이 없다면 return
+        if (followingResponses.size() == 0) {
+            return null;
+        }
         List<String> userIds = followingResponses.stream()
                 .map(FollowingResponse::getUserId)
                 .collect(Collectors.toList());
@@ -250,7 +254,13 @@ public class ArticleServiceImpl implements IArticleService {
     @Override
     public List<FeedResponse> getArticlesOfFollowingUser(FeedInquiryRequest feedInquiryRequest, String userId) {
         List<Article> articles = searchArticlesOfFollowingUser(feedInquiryRequest, userId);
-        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles, feedInquiryRequest.getDataSize());
+        List<FeedResponse> feedResponse = new ArrayList<>();
+        if (articles != null) {
+            feedResponse = getFeedInfoForArticles(userId, articles, feedInquiryRequest.getDataSize());
+        } else {
+            feedResponse = null;
+        }
+
         return feedResponse;
     }
 
@@ -728,7 +738,8 @@ public class ArticleServiceImpl implements IArticleService {
     }
 
     // 피드 정보 조회 (사용자 정보, 글 정보, 포함된 향수 정보를 포함)
-    private List<FeedResponse> getFeedInfoForArticles(String userId, List<Article> articles, int datasize){
+    @Override
+    public List<FeedResponse> getFeedInfoForArticles(String userId, List<Article> articles, int datasize){
 
         final String GHOST = "00000000-0000-0000-0000-000000000000";
         // 각 article에 담긴 사용자 정보와 향수 정보를 담아둔 Dto의 리스트
@@ -823,5 +834,43 @@ public class ArticleServiceImpl implements IArticleService {
 //            cnt++;
         }
         return feedResponses;
+    }
+
+    @Override
+    @Transactional
+    public List<FeedResponse> getBookmarkArticle(FeedInquiryRequest feedInquiryRequest, String userId) {
+        List<BookMark> bookMarks = queryFactory
+                .selectFrom(bookMark)
+                .where(
+                        bookMark.user.userId.eq(userId)
+                )
+                .orderBy(bookMark.article.articleId.desc())
+                .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
+                .fetch();
+
+        // 북마크된 글이 없다면 return
+        if(bookMarks.size() == 0) {
+            return null;
+        }
+
+        // 북마크된 글의 아이디 저장
+        List<Integer> bookmarkArticleIds = new ArrayList<>();
+        for (BookMark bookmark : bookMarks) {
+            bookmarkArticleIds.add(bookmark.getArticle().getArticleId());
+        }
+        System.out.println(bookmarkArticleIds);
+        List<Article> articles = queryFactory
+                .selectFrom(article)
+                .where(
+                        article.articleId.loe(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
+                        articleIdEq(bookmarkArticleIds)
+                )
+                .orderBy(article.articleId.desc())
+                .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
+                .fetch();
+
+        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles, feedInquiryRequest.getDataSize());
+
+        return responses;
     }
 }
