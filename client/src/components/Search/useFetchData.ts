@@ -35,7 +35,7 @@ export const useFetchDatas = ({
         lastPick: lastPick === -1 ? null : lastPick,
         lastPerfumeId: lastPerfumeId === -1 ? null : lastPerfumeId,
       });
-
+      // console.log(response.data);
       console.log(`적용된 필터 ! : ${JSON.stringify(filter)}`);
       // console.log(
       //   `초기응답 : ${JSON.stringify(datas)} && 새로운 응답 :  ${JSON.stringify(
@@ -43,8 +43,12 @@ export const useFetchDatas = ({
       //   )}`,
       // );
       console.log(`필터 적용한 여부 : ${newSearch}`);
-      setDatas((prevDatas) => [...prevDatas, ...response.data]);
+      setDatas((prevDatas) => [
+        ...prevDatas,
+        ...response.data.searchedPerfumes,
+      ]);
 
+      setIsLastPage(response.data.lastPage);
       console.log(datas);
       localStorage.setItem('searchResults', JSON.stringify(datas));
 

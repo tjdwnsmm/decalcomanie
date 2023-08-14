@@ -124,7 +124,7 @@ const SearchTabPage: React.FC = () => {
       setSearchResults([]);
       try {
         const data = await searchPerfume(keyword);
-        setSearchResults(data);
+        setSearchResults(data.searchedPerfumes);
         console.log(data);
         setNewSearch(true);
       } catch (error) {
@@ -143,7 +143,7 @@ const SearchTabPage: React.FC = () => {
         scent: [],
         dataSize: 200,
       });
-      console.log(response);
+      console.log(response.data.searchedPerfumes);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -188,8 +188,11 @@ const SearchTabPage: React.FC = () => {
       setNewSearch(true);
     }
     const filterDatas = await filterSearch(filter);
-    setSearchResults(filterDatas); // 검색 결과
-    localStorage.setItem('searchResults', JSON.stringify(filterDatas));
+    setSearchResults(filterDatas.searchedPerfumes); // 검색 결과
+    localStorage.setItem(
+      'searchResults',
+      JSON.stringify(filterDatas.searchedPerfumes),
+    );
   };
 
   /**
