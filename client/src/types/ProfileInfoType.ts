@@ -6,13 +6,6 @@ export interface FollowInfo {
   isFollowing: boolean;
 }
 
-export interface ProfileUpdateInfo {
-  user: userInfo;
-  favorities: string[];
-  hates: string[];
-  img: string;
-}
-
 export interface userInfo {
   userId: string;
   accessToken: string;
@@ -20,4 +13,11 @@ export interface userInfo {
   picture: string;
   age: number;
   gender: number;
+}
+
+export interface ProfileUpdateInfo {
+  user: userInfo;
+  favorities: string[];
+  hates: string[];
+  img: string;
 }

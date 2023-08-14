@@ -1,46 +1,33 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { Main, MarginFrame, ConfirmButton, CenterFrame } from '../../style';
 import { ReactComponent as CloseSvg } from '../../assets/img/close.svg';
 import NewNickname from '../../components/Profile/NicknameModi';
 import ScentModi from '../../components/Profile/ScentModi';
-import { ProfileUpdateInfo } from '../../types/ProfileInfoType';
-import { USERID } from '../../api/apiController';
+import { scentDto, userInfoDto } from '../../types/PostInfoType';
+import axios from '../../api/apiController';
 import ProfileImgModi from '../../components/Profile/ProfileImgModi';
-
-// 임시데이터
-const user: ProfileUpdateInfo = {
-  user: {
-    nickname: '김수민',
-    userId: USERID,
-    accessToken: 'dummy',
-    age: 20,
-    gender: 1,
-    picture: 'src/assets/img/profile-img.png',
-  },
-  favorities: ['시트러스', '플로럴'],
-  hates: ['머스크', '스파이시'],
-  img: 'src/assets/img/profile-img.png',
-};
+import WithdrawModal from '../../components/Profile/WithdrawModal';
 
 const PageName = styled.div`
   background-color: var(--background-color);
   text-align: center;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   padding: 20px 0 10px 0;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: -1;
+  z-index: 1;
 `;
 
 const CancleBtn = styled.div`
   position: fixed;
   top: 20px;
   right: 20px;
-  z-index: 5;
+  z-index: 1;
   cursor: pointer;
 `;
 
@@ -84,15 +71,14 @@ const FixedPostButton = styled(ConfirmButton)`
   align-items: center;
   position: absolute;
   bottom: 12px;
+  cursor: pointer;
 `;
 
 const WithdrawButton = styled.div`
-  display: flex;
-  justify-content: center;
   color: var(--error-color);
   font-size: 13px;
-  text-decoration: underline;
-  text-underline-offset: 6px;
+  // text-decoration: underline;
+  // text-underline-offset: 6px;
   background-color: var(--background-color);
   cursor: pointer;
 `;
@@ -104,24 +90,85 @@ const CenterBackground = styled(CenterFrame)`
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: -1;
 `;
 
 const ProfileUpdate = () => {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState<userInfoDto>();
   const [modalOpen, setModalOpen] = useState(false);
+  const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
   const [profileImg, setProfileImg] = useState('');
+  const [nickName, setNickName] = useState('');
+  const [isCheck, setIsCheck] = useState(true);
+  const [isAvailable, setIsAvailable] = useState(true);
+  const [favoriteScent, setFavoriteScent] = useState<scentDto[]>([]);
+  const [hateScent, setHateScent] = useState<scentDto[]>([]);
 
   useEffect(() => {
-    setProfileImg(user.img);
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get('/user/info');
+        setUserData(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUserData();
   }, []);
 
+  useEffect(() => {
+    if (userData) {
+      if (userData.user.picture) {
+        setProfileImg(userData.user.picture);
+      } else {
+        setProfileImg('assets/avatar/peeps-avatar-alpha-1.png');
+      }
+      setNickName(userData.user.nickname);
+      setFavoriteScent(userData.favorities);
+      setHateScent(userData.hates);
+    }
+  }, [userData]);
+
   const handleCancel = () => {
-    window.location.href = '/mypage';
+    navigate(-1);
   };
 
-  const handleWithdraw = () => {
-    // 회원 탈퇴 로직 구현
-    console.log('회원 탈퇴');
+  const handleOpenWithdrawModal = () => {
+    setWithdrawModalOpen(true);
+  };
+
+  const handleCloseWithdrawModal = () => {
+    setWithdrawModalOpen(false);
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!isCheck) {
+      window.alert('중복검사를 실행해주세요.');
+      return;
+    }
+    if (!isAvailable) {
+      window.alert('사용할 수 없는 닉네임입니다.');
+      return;
+    }
+    if (window.confirm('프로필을 변경하시겠습니까?')) {
+      const favorite = favoriteScent.map((scent) => scent.scentId);
+      const hate = hateScent.map((scent) => scent.scentId);
+      const updatedProfileData = {
+        nickname: nickName,
+        favorite,
+        hate,
+        picture: profileImg,
+      };
+      try {
+        const response = await axios.put('/user/update', updatedProfileData);
+        navigate('/mypage');
+        console.log('프로필 업데이트 성공:', response.data);
+      } catch (error) {
+        console.error('프로필 업데이트 실패:', error);
+      }
+    }
   };
 
   const handleOpenModal = () => {
@@ -134,7 +181,7 @@ const ProfileUpdate = () => {
 
   return (
     <Main>
-      <MarginFrame margin="64px">
+      <MarginFrame margin="58px">
         <PageName>회원 정보 수정</PageName>
         <CancleBtn onClick={handleCancel}>
           <CloseSvg />
@@ -148,21 +195,43 @@ const ProfileUpdate = () => {
       </Profile>
       <MarginFrame margin="30px 40px">
         <UserInfoName>닉네임</UserInfoName>
-        <NewNickname nickname={user.user.nickname} />
+        <NewNickname
+          nickname={userData?.user.nickname}
+          setNicknameChange={setNickName}
+          onCheckStatusChange={(newIsCheck, newIsAvailable) => {
+            setIsCheck(newIsCheck);
+            setIsAvailable(newIsAvailable);
+          }}
+        />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>좋아요 😊</UserInfoName>
-        <ScentModi scents={user.favorities} fav="좋아하는" />
+        <ScentModi
+          targetList={favoriteScent}
+          setTargetList={setFavoriteScent}
+          fav="좋아하는"
+          anotherList={hateScent}
+        />
       </MarginFrame>
       <MarginFrame margin="30px 40px">
         <UserInfoName>싫어요 🙁</UserInfoName>
-        <ScentModi scents={user.hates} fav="싫어하는" />
+        <ScentModi
+          targetList={hateScent}
+          setTargetList={setHateScent}
+          fav="싫어하는"
+          anotherList={favoriteScent}
+        />
       </MarginFrame>
-      <MarginFrame margin="20px 0 76px">
-        <WithdrawButton onClick={handleWithdraw}>회원 탈퇴하기</WithdrawButton>
+      <MarginFrame margin="20px 0 76px" style={{ display: 'flex', justifyContent: 'center' }}>
+        <WithdrawButton onClick={handleOpenWithdrawModal}>회원 탈퇴하기</WithdrawButton>
       </MarginFrame>
       <CenterBackground>
-        <FixedPostButton background="primary" color="primary" fontWeight="700">
+        <FixedPostButton
+          background="primary"
+          color="primary"
+          fontWeight="700"
+          onClick={handleUpdateProfile}
+        >
           수정하기
         </FixedPostButton>
       </CenterBackground>
@@ -171,6 +240,13 @@ const ProfileUpdate = () => {
         <ProfileImgModi
           handleImg={setProfileImg}
           closeModal={handleCloseModal}
+        />
+      )}
+
+      {withdrawModalOpen && (
+        <WithdrawModal
+          // handleImg={setProfileImg}
+          closeModal={handleCloseWithdrawModal}
         />
       )}
     </Main>
