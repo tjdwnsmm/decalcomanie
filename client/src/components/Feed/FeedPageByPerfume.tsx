@@ -6,7 +6,6 @@ import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { CommentBtn } from '../Button/CommentBtn';
 import { useNavigate } from 'react-router-dom';
-import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
@@ -68,8 +67,7 @@ const FeedPageOnly = ({ feed, handleFollow }: FeedComponentProps) => {
                       handleFollowClick(feed.userInfoDto.user.userId);
                     }}
                   >
-                    {feed.userInfoDto.user.nickname !==
-                    getLoggedInUserNickname() ? (
+                    {feed.followingButtonActivate ? (
                       followed ? (
                         <div className="following">팔로잉</div>
                       ) : (
