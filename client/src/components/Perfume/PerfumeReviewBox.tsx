@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { ReactComponent as EmptyStarSvg } from '../../assets/icon/empty-star.svg';
 import { ReactComponent as FillStarSvg } from '../../assets/icon/fill-star.svg';
@@ -8,6 +9,7 @@ interface PerfumeReviewInfo {
   brand: string;
   name: string;
   img: string;
+  perfumeId: number;
 }
 
 const PerfumeReviewBoxContainer = styled.div`
@@ -42,7 +44,7 @@ const PerfumeName = styled.div`
   font-weight: 700;
 `;
 
-const ImgBox = styled.div`
+const ImgBox = styled(Link)`
   width: 120px;
   height: 120px;
   display: flex;
@@ -55,7 +57,7 @@ const ImgBox = styled.div`
   }
 `;
 
-function PerfumeReviewBox({ rate, brand, name, img }: PerfumeReviewInfo) {
+function PerfumeReviewBox({ rate, brand, name, img, perfumeId }: PerfumeReviewInfo) {
   const renderStars = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -76,7 +78,7 @@ function PerfumeReviewBox({ rate, brand, name, img }: PerfumeReviewInfo) {
         <PerfumeBrand>{brand}</PerfumeBrand>
         <PerfumeName>{name}</PerfumeName>
       </TextInfoContainer>
-      <ImgBox>
+      <ImgBox to={`/perfume-detail/${perfumeId}`}>
         <img src={img} />
       </ImgBox>
     </PerfumeReviewBoxContainer>
