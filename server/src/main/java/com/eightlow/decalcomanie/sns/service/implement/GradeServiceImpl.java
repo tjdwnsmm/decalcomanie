@@ -34,7 +34,7 @@ public class GradeServiceImpl implements IGradeService {
 
     @Override
     @Transactional
-    public void createGradeFromRequest(int articleId, List<Integer> perfumes, List<Integer> rates) {
+    public void createGradeFromRequest(int articleId, List<Integer> perfumes, List<Float> rates) {
         // ArticlePerfume 테이블에 정보 저장 
         for (int i = 0; i < perfumes.size(); i++) {
 //            ArticlePerfumeDto articlePerfumeDto = new ArticlePerfumeDto(articleId, perfumes.get(i), rates.get(i));
@@ -57,7 +57,7 @@ public class GradeServiceImpl implements IGradeService {
 
     @Override
     @Transactional
-    public void modifyGradeFromRequest(int articleId, List<Integer> perfumes, List<Integer> rates) {
+    public void modifyGradeFromRequest(int articleId, List<Integer> perfumes, List<Float> rates) {
         // ArticlePerfume의 rate 정보 수정
         for (int i = 0; i < perfumes.size(); i++) {
             articlePerfumeRepository.updateRateByArticleIdAndPerfumeId(articleId, perfumes.get(i), rates.get(i));

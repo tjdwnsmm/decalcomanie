@@ -17,5 +17,5 @@ public class CreateArticleRequest {
     private String userId;
     private String content;
     private List<Integer> perfumeId;
-    private List<Integer> rate;
+    private List<Float> rate;
 }

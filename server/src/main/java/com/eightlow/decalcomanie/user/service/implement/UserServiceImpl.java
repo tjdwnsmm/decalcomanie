@@ -229,6 +229,7 @@ public class UserServiceImpl implements IUserService {
                         .hates(userInfoDto.getHates())
                         .picture(userInfoDto.getUser().getPicture())
                         .isFollowing(isFollowing(myId, userInfoDto.getUser().getUserId()))
+                        .isFollowingButtonActivate(!userInfoDto.getUser().getUserId().equals(myId))
                         .build();
 
                 result.add(response);
@@ -255,6 +256,7 @@ public class UserServiceImpl implements IUserService {
                         .hates(userInfoDto.getHates())
                         .picture(userInfoDto.getUser().getPicture())
                         .isFollowing(isFollowing(myId, userInfoDto.getUser().getUserId()))
+                        .isFollowingButtonActivate(!userInfoDto.getUser().getUserId().equals(myId))
                         .build();
 
                 result.add(response);

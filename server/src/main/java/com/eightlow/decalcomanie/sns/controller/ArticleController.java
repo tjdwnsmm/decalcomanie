@@ -63,7 +63,7 @@ public class ArticleController {
             System.out.println("ininin");
             // 공병 태그가 붙어서 perfumelist가 비어있다면 0번향수(공병), 평점 정보 0를 넣어주자
             gradeService.createGradeFromRequest(articleId,
-                    Arrays.asList(0), Arrays.asList(0));
+                    Arrays.asList(0), Arrays.asList(0.0F));
         }
 
 
@@ -178,10 +178,6 @@ public class ArticleController {
     @GetMapping("/user")
     public ResponseEntity<List<FeedResponse>> getArticleByUserId(HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
-        System.out.println(userId);
-        List<Article> articles = articleService.searchArticleByUserId(userId);
-        System.out.println(articles);
-
         List<FeedResponse> responses  = articleService.getArticleByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);

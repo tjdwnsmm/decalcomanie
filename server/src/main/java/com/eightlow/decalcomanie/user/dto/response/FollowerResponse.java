@@ -16,9 +16,12 @@ public class FollowerResponse {
     private String nickname;
 
     private List<ScentDto> favorite;
+
     private List<ScentDto> hates;
 
     private String picture;
 
     private boolean isFollowing;
+
+    private boolean isFollowingButtonActivate;
 }
