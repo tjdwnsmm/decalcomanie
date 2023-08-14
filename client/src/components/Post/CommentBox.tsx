@@ -177,7 +177,11 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
   return (
     <CommentBoxContainer>
       <ProfileImage
-        src={commentUser.user.picture ? commentUser.user.picture : ''}
+        src={
+          commentUser.user.picture
+            ? commentUser.user.picture
+            : '/assets/avatar/peeps-avatar-alpha-9.png'
+        }
       />
       <CommentContent>
         <InfoBox>

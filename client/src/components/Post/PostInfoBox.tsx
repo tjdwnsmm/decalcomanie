@@ -127,7 +127,11 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
       <WriterInfoBox>
         <div style={{ display: 'flex' }}>
           <ProfileImg
-            src={userInfoDto.user.picture ? userInfoDto.user.picture : ''}
+            src={
+              userInfoDto.user.picture
+                ? userInfoDto.user.picture
+                : '/assets/avatar/peeps-avatar-alpha-9.png'
+            }
           />
           <InfoBox>
             <InfoBoxRow>
