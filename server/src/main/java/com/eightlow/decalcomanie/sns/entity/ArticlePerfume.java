@@ -27,5 +27,5 @@ public class ArticlePerfume {
     @JoinColumn(name = "perfumeId", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Perfume perfume;
 
-    private int rate;
+    private float rate;
 }

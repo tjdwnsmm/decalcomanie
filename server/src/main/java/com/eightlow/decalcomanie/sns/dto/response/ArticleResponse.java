@@ -19,9 +19,10 @@ public class ArticleResponse extends LikeAndBookmarkResponse{
     private List<CommentDto> comments;
     private List<UserInfoDto> commmentUsers;
     private List<PerfumeDto> perfumeInfos;
-    private List<Integer> rates;
+    private List<Float> rates;
 
-    public ArticleResponse(ArticleDto articleDto, UserInfoDto userInfo, boolean isFollowed, List<CommentDto> comments, List<UserInfoDto> commentUsers, List<PerfumeDto> perfumes, List<Integer> rateInfo, boolean isHearted, boolean isBookmarked) {
+    public ArticleResponse(ArticleDto articleDto, UserInfoDto userInfo, boolean isFollowed, List<CommentDto> comments, List<UserInfoDto> commentUsers, List<PerfumeDto> perfumes, List<Float
+            > rateInfo, boolean isHearted, boolean isBookmarked) {
         super(isHearted, isBookmarked);
         this.articleDto = articleDto;
         this.userInfoDto = userInfo;

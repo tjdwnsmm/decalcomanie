@@ -11,5 +11,5 @@ import lombok.experimental.SuperBuilder;
 public class ArticlePerfumeDto{
     private int articleId;
     private int perfumeId;
-    private int rate;
+    private float rate;
 }

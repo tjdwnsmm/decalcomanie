@@ -475,7 +475,7 @@ public class ArticleServiceImpl implements IArticleService {
         UserInfoDto userInfo = userService.getUserInfo(article.getUser().getUserId());
 
         // 향수 평점 정보
-        List<Integer> rateInfo = new ArrayList<>();
+        List<Float> rateInfo = new ArrayList<>();
         // 임베디드된 향수: 이름, 브랜드, 향수 사진 url
         List<PerfumeDto> perfumes = new ArrayList<>();
 

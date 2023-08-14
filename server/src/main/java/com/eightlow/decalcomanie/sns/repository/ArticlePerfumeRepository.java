@@ -22,7 +22,7 @@ public interface ArticlePerfumeRepository extends JpaRepository <ArticlePerfume,
     @Query("UPDATE ArticlePerfume ap SET ap.rate = :rate WHERE ap.article.articleId = :articleId AND ap.perfume.perfumeId = :perfumeId")
     void updateRateByArticleIdAndPerfumeId(@Param(value = "articleId") int articleId,
                                            @Param(value = "perfumeId") int perfumeId,
-                                           @Param(value = "rate") int rate);
+                                           @Param(value = "rate") float rate);
 
 //    void deleteByUserIdAndArticleIdAndPerfumeIdIn(String userId, int articleId, List<Integer> perfumeIdList);
 

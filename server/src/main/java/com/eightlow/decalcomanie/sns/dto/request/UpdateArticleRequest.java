@@ -17,7 +17,7 @@ public class UpdateArticleRequest {
     private String userId;
     private String content;
     private List<Integer> perfumeId;
-    private List<Integer> rate;
+    private List<Float> rate;
     private int heart;
     private int comment;
 }
