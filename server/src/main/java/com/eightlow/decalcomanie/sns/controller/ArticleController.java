@@ -178,10 +178,6 @@ public class ArticleController {
     @GetMapping("/user")
     public ResponseEntity<List<FeedResponse>> getArticleByUserId(HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
-        System.out.println(userId);
-        List<Article> articles = articleService.searchArticleByUserId(userId);
-        System.out.println(articles);
-
         List<FeedResponse> responses  = articleService.getArticleByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
