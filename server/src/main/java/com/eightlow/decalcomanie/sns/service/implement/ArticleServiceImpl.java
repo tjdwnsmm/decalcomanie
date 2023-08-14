@@ -193,8 +193,11 @@ public class ArticleServiceImpl implements IArticleService {
     }
 
     @Override
+    @Transactional
     public List<FeedResponse> getArticleByUserId(String userId) {
-        return null;
+        List<Article> articles = searchPopularArticles();
+        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles);
+        return feedResponse;
     }
 
     @Override
