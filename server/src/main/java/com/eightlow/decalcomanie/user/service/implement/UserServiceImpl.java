@@ -426,12 +426,11 @@ public class UserServiceImpl implements IUserService {
         Map<PerfumeDto, Map<ScentDto, Double>> result = new HashMap<>();
 
         List<UserPerfume> userPerfumes = userPerfumeRepository.findByUser_UserId(userId);
-        List<UserPerfumeDto> userPerfumesDto = userPerfumeMapper.toDto(userPerfumes);
 
         List<PerfumeDto> unpossessedPerfumes = perfumeMapper.toDto(queryFactory.
                 selectFrom(perfume)
                 .where(
-                        userPerfumeEq(userPerfumesDto)
+                        userPerfumeEq(userPerfumes)
                 )
                 .fetch());
 
@@ -516,12 +515,12 @@ public class UserServiceImpl implements IUserService {
         return result;
     }
 
-    private BooleanExpression userPerfumeEq(List<UserPerfumeDto> userPerfumes) {
+    private BooleanExpression userPerfumeEq(List<UserPerfume> userPerfumes) {
         if(userPerfumes.size() > 0) {
             List<Integer> perfumeIds = new ArrayList<>();
 
-            for(UserPerfumeDto userPerfume : userPerfumes) {
-                perfumeIds.add(userPerfume.getPerfumeId());
+            for(UserPerfume userPerfume : userPerfumes) {
+                perfumeIds.add(userPerfume.getPerfume().getPerfumeId());
             }
 
             return perfume.perfumeId.notIn(perfumeIds);
