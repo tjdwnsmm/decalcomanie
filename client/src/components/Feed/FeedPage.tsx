@@ -50,7 +50,7 @@ const FeedPage = ({ feed, handleDetail, handleFollow }: FeedComponentProps) => {
     <>
       <FeedBox>
         <div onClick={() => handleDetail(feed.articleDtos.articleId)}>
-          <PerfumeInfoBox feed={feed.perfumeDtos} />
+          <PerfumeInfoBox feed={feed.perfumeDtos ? feed.perfumeDtos : null} />
           <ContentBox>
             {removeHtmlTags(
               feed.articleDtos.content.length > 100

@@ -11,7 +11,7 @@ import { ReactComponent as StarSvg } from '../../assets/icon/fill-star.svg';
  */
 
 interface PerfumeInfoBoxProps {
-  feed: PerfumeDetail;
+  feed: PerfumeDetail | null;
 }
 
 const extractAccordNames = (accord: ScentDto[]): string => {
@@ -21,28 +21,49 @@ const extractAccordNames = (accord: ScentDto[]): string => {
     .join(', ');
 };
 
-const PerfumeInfoBox = ({ feed }: PerfumeInfoBoxProps) => (
-  <>
-    <PerfumeBox>
-      <TextInfo>
-        <PerfumeRate>
-          <StarSvg />
-          {feed.rate ? feed.rate : 4.2}
-        </PerfumeRate>
-        <PerfumeBrand>{feed.brandName}</PerfumeBrand>
-        <PerfumeName>
-          {feed.name.length > 14 ? feed.name.slice(0, 14) + '...' : feed.name}
-        </PerfumeName>
-        <PerfumeScent>{extractAccordNames(feed.accord)}</PerfumeScent>
-      </TextInfo>
-      <ImgBox>
-        <img src={feed.picture}></img>
-      </ImgBox>
-    </PerfumeBox>
-  </>
-);
+const PerfumeInfoBox = ({ feed }: PerfumeInfoBoxProps) => {
+  if (!feed) {
+    return (
+      <>
+        <EmptyChip>공병 게시글</EmptyChip>
+      </>
+    );
+  }
+  return (
+    <>
+      <PerfumeBox>
+        <TextInfo>
+          <PerfumeRate>
+            <StarSvg />
+            {feed.rate ? feed.rate : 4.2}
+          </PerfumeRate>
+          <PerfumeBrand>{feed.brandName}</PerfumeBrand>
+          <PerfumeName>
+            {feed.name.length > 14 ? feed.name.slice(0, 14) + '...' : feed.name}
+          </PerfumeName>
+          <PerfumeScent>{extractAccordNames(feed.accord)}</PerfumeScent>
+        </TextInfo>
+        <ImgBox>
+          <img src={feed.picture}></img>
+        </ImgBox>
+      </PerfumeBox>
+    </>
+  );
+};
 
 export default PerfumeInfoBox;
+
+const EmptyChip = styled.div`
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 10px;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border-radius: 5px;
+  font-size: 13.5px;
+  font-weight: 400;
+  margin-left: 4px;
+`;
 
 const PerfumeRate = styled.div`
   font-weight: 400;
