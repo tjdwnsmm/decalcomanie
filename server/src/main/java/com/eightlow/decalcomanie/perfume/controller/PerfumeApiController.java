@@ -34,7 +34,7 @@ public class PerfumeApiController {
 
         SearchResponse response = SearchResponse.builder()
                 .searchedPerfumes(searchedPerfumes)
-                .lastPage(searchedPerfumes.size() < (request.getDataSize() == null ? 50 : request.getDataSize()))
+                .isLastPage(searchedPerfumes.size() < (request.getDataSize() == null ? 50 : request.getDataSize()))
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
