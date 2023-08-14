@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserPerfumeRecommendRepository extends JpaRepository<UserPerfumeRecommend, Integer> {
+    void deleteAllByUser_UserId(String userId);
 }

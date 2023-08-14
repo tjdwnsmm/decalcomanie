@@ -376,6 +376,9 @@ public class UserServiceImpl implements IUserService {
         // result의 상단 10개 추출
         List<PerfumeDto> perfumeResultList = perfumeList.subList(0, Math.min(result.size(),10));
 
+        // 사용자에게 추천하였던 향수 전부 삭제
+        userPerfumeRecommendRepository.deleteAllByUser_UserId(userId);
+
         // 결과 한번에 DB 저장
         List<UserPerfumeRecommend> recommendList = new ArrayList<>();
         for(PerfumeDto p : perfumeResultList){
