@@ -3,6 +3,7 @@ package com.eightlow.decalcomanie.user.controller;
 import com.eightlow.decalcomanie.auth.jwt.JwtUtils;
 import com.eightlow.decalcomanie.auth.service.JwtService;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
+import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
@@ -39,6 +40,12 @@ public class UserApiController {
         String userMessage = userService.modifyUserPerfume((String)req.getAttribute("userId"), request.get("perfumeId"));
         userService.recommendUserPerfume((String)req.getAttribute("userId"));
         return new ResponseEntity<>(userMessage, HttpStatus.CREATED);
+    }
+
+    // 사용자 향 TOP 3 조회
+    @GetMapping("/scent/top")
+    public ResponseEntity<List<ScentDto>> getTopThreeScent(HttpServletRequest req){
+        return new ResponseEntity<>(userService.getTopThreeScent((String)req.getAttribute("userId")), HttpStatus.OK);
     }
 
     // 사용자 향수 조회

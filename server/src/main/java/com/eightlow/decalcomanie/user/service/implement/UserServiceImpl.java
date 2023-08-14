@@ -515,6 +515,49 @@ public class UserServiceImpl implements IUserService {
         return result;
     }
 
+
+    // 사용자 TOP 3 향 조회
+    @Override
+    public List<ScentDto> getTopThreeScent(String userId) {
+        List<ScentDto> result = new ArrayList<>();
+        // 사용자가 보유하고 있는 향수의 향들에대한 퍼센트 Map 생성
+        Map<ScentDto,Double> userScentPercent = new HashMap<>();
+
+        // 사용자가 보유하고 있는 향수의 향들에대한 퍼센트 List 생성
+        List<ScentPercent> userScentPercentList = new ArrayList<>();
+
+        // 사용자가 보유하고 있는 향수 정보를 가져온다.
+        List<UserPerfume> userPerfumes = userPerfumeRepository.findByUser_UserId(userId);
+
+        // 사용자의 향수 x 향 테이블 계산
+        // 사용자가 보유하고 있는 향수
+        for(UserPerfume userPerfume : userPerfumes) {
+            PerfumeDto perfumeDto = perfumeMapper.toDto(userPerfume.getPerfume());
+            List<ScentDto> accordList = perfumeDto.getAccord();
+            int sumScent = sumScentWeight(accordList);
+            for(ScentDto scentDto : accordList){
+                Double scentPercent = (double) scentDto.getWeight() / (double) sumScent;
+                if(userScentPercent.containsKey(scentDto)){
+                    double percent = userScentPercent.get(scentDto) + scentPercent;
+                    userScentPercent.put(scentDto,percent);
+                }else{
+                    userScentPercent.put(scentDto,scentPercent);
+                }
+            }
+        }
+
+        // userScentPercent를 단위벡터로 변경
+        for( ScentDto scentDto : userScentPercent.keySet()){
+            userScentPercentList.add(new ScentPercent(scentDto,userScentPercent.get(scentDto)));
+        }
+        Collections.sort(userScentPercentList,Comparator.reverseOrder());
+        for(ScentPercent pair :userScentPercentList){
+            result.add(pair.getFirst());
+        }
+
+        return result.subList(0, Math.min(userScentPercentList.size(),3));
+    }
+
     private BooleanExpression userPerfumeEq(List<UserPerfume> userPerfumes) {
         if(userPerfumes.size() > 0) {
             List<Integer> perfumeIds = new ArrayList<>();
