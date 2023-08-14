@@ -68,11 +68,11 @@ const MainPage = () => {
   };
 
   useEffect(() => {
-    // axios.get('/user/user/recommend').then((res) => {
-    //   const datas = res.data;
-    //   datas.length === 0 ? setDrawer(false) : setDrawer(true);
-    //   setRecommendPerfume(datas);
-    // });
+    axios.get('/user/recommend').then((res) => {
+      const datas = res.data;
+      datas.length === 0 ? setDrawer(false) : setDrawer(true);
+      setRecommendPerfume(datas);
+    });
 
     axios.get('/perfume/today').then((res) => {
       console.log(`today data : ${JSON.stringify(res.data)}`);

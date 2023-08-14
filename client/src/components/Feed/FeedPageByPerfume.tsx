@@ -6,6 +6,7 @@ import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { CommentBtn } from '../Button/CommentBtn';
 import { useNavigate } from 'react-router-dom';
+import { ScentDto } from '../../types/PerfumeInfoType';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
@@ -46,6 +47,7 @@ const FeedPageOnly = ({ feed, handleFollow }: FeedComponentProps) => {
     });
   };
 
+  console.log('pic > ', feed.userInfoDto.user.picture);
   return (
     <>
       <FeedBox>
@@ -56,7 +58,7 @@ const FeedPageOnly = ({ feed, handleFollow }: FeedComponentProps) => {
                 src={
                   feed.userInfoDto.user.picture
                     ? feed.userInfoDto.user.picture
-                    : '../../src/assets/img/profile-img.png'
+                    : '/assets/avatar/peeps-avatar-alpha-9.png'
                 }
               />
               <ProfileInfoBox>
@@ -87,10 +89,16 @@ const FeedPageOnly = ({ feed, handleFollow }: FeedComponentProps) => {
                   ) : (
                     <>
                       <FavScent>
-                        {feed.userInfoDto.favorities?.map((fav) => `#${fav}  `)}
+                        {feed.userInfoDto.favorities
+                          ?.slice(0, 3)
+                          .map((fav) => `#${fav.name}`)
+                          .join('  ')}
                       </FavScent>
                       <NoFavScent>
-                        {feed.userInfoDto.hates?.map((fav) => `#${fav}  `)}
+                        {feed.userInfoDto.hates
+                          ?.slice(0, 3)
+                          .map((fav) => `#${fav.name}`)
+                          .join('  ')}
                       </NoFavScent>
                     </>
                   )}

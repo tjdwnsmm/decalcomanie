@@ -123,7 +123,7 @@ const ProfileUpdate = () => {
       if (userData.user.picture) {
         setProfileImg(userData.user.picture);
       } else {
-        setProfileImg('assets/avatar/peeps-avatar-alpha-1.png');
+        setProfileImg('/assets/avatar/peeps-avatar-alpha-1.png');
       }
       setNickName(userData.user.nickname);
       setFavoriteScent(userData.favorities);
@@ -163,6 +163,7 @@ const ProfileUpdate = () => {
       };
       try {
         const response = await axios.put('/user/update', updatedProfileData);
+        localStorage.setItem('nickname', nickName);
         navigate('/mypage');
         console.log('프로필 업데이트 성공:', response.data);
       } catch (error) {

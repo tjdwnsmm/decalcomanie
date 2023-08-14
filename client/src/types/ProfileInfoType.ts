@@ -1,3 +1,5 @@
+import { ScentDto } from './PerfumeInfoType';
+
 export interface FollowInfo {
   userId: string;
   picture: string;
@@ -17,7 +19,7 @@ export interface userInfo {
 
 export interface ProfileUpdateInfo {
   user: userInfo;
-  favorities: string[];
-  hates: string[];
+  favorities: ScentDto[];
+  hates: ScentDto[];
   img: string;
 }
