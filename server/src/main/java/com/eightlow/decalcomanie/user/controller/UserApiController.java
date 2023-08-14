@@ -43,7 +43,7 @@ public class UserApiController {
     }
 
     // 사용자 향 TOP 3 조회
-    @PostMapping("/user/scent/top")
+    @GetMapping("/user/scent/top")
     public ResponseEntity<List<ScentDto>> getTopThreeScent(HttpServletRequest req){
         return new ResponseEntity<>(userService.getTopThreeScent((String)req.getAttribute("userId")), HttpStatus.OK);
     }
