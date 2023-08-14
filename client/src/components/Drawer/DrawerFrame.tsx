@@ -54,7 +54,7 @@ export const DrawerFrame: React.FC<DrawerFrameProps> = ({
           </PerfumeContainer>
         ))}
       </RowFrame>
-      <Image src="src/assets/img/drawer.png"></Image>
+      <Image src="assets/img/drawer.png"></Image>
     </>
   );
 };

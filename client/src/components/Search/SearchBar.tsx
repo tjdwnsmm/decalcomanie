@@ -119,8 +119,8 @@ const SearchBar: React.FC<SearchBoxProps> = ({
     console.log(e);
     //향수 이름 검색에 ENTER 지원
     if (e.key === 'Enter' && dataList) {
-      setKeyword('');
       onSearch(keyword, true);
+      setKeyword('');
       setIsSearch(false);
     }
   };
@@ -142,7 +142,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
         )}
       </SearchBox>
 
-      {isFetching ? (
+      {isFetching && keyword ? (
         <Spinner />
       ) : searchResults.length > 0 && keyword && !isSearch ? (
         <AutoSearchContainer>

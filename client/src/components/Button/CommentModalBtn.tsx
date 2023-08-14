@@ -1,6 +1,5 @@
 import { styled } from 'styled-components';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ReactComponent as PostModalSvg } from '../../assets/icon/more-vert.svg';
 import axios from '../../api/apiController';
 import { commentDto } from '../../types/PostInfoType';
@@ -12,7 +11,7 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-const ModalContainer = styled.div<{ justify: string; align : string;}>`
+const ModalContainer = styled.div<{ justify: string; align: string }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -25,7 +24,7 @@ const ModalContainer = styled.div<{ justify: string; align : string;}>`
   z-index: 1;
 `;
 
-const ModalContent = styled.div<{ top: number; }>`
+const ModalContent = styled.div<{ top: number }>`
   position: fixed;
   top: ${(props) => props.top + 15}px;
   background-color: white;
@@ -34,19 +33,19 @@ const ModalContent = styled.div<{ top: number; }>`
   border-radius: 8px;
 `;
 
-const OptionButton = styled.button<{ text: string; }>`
-background-color: transparent;
-border: none;
-cursor: pointer;
-font-size: 16px;
-font-weight: 500;
-padding: 8px;
-width: 100%;
-text-align: ${(props) => props.text};
+const OptionButton = styled.button<{ text: string }>`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 8px;
+  width: 100%;
+  text-align: ${(props) => props.text};
 
-&:hover {
-  background-color: var(--gray-color);
-}
+  &:hover {
+    background-color: var(--gray-color);
+  }
 `;
 
 const ConfirmModalContent = styled.div`
@@ -66,7 +65,16 @@ interface CommentModalBtnProps {
   setEditing: (isEditing: boolean) => void;
 }
 
-const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProps) => {
+interface requestProps {
+  commentId: number;
+  articleId: number;
+}
+
+const CommentModalBtn = ({
+  comment,
+  isEditing,
+  setEditing,
+}: CommentModalBtnProps) => {
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmationOpen, setConfirmationOpen] = useState(false);
@@ -77,6 +85,7 @@ const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProp
   };
 
   const handleEditClick = () => {
+    // 수정모드
     setEditing(true);
     setModalOpen(false);
   };
@@ -95,11 +104,11 @@ const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProp
   const handleConfirmDelete = async () => {
     try {
       const requestData = {
-        commentId: comment.commentId,
         articleId: comment.articleId,
       };
-      const response = await axios.delete(`/sns/comment/delete/${comment.commentId}`, requestData);
-      console.log(response.data);
+      await axios.delete(`/sns/comment/delete/${comment.commentId}`, {
+        data: requestData,
+      });
       setConfirmationOpen(false);
       window.location.reload();
     } catch (error) {
@@ -114,10 +123,18 @@ const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProp
         <PostModalSvg />
       </Button>
       {isModalOpen && (
-        <ModalContainer justify="right" align="start" onClick={handleModalContainerClick}>
+        <ModalContainer
+          justify="right"
+          align="start"
+          onClick={handleModalContainerClick}
+        >
           <ModalContent top={modalPosition.y}>
-            <OptionButton text='left' onClick={handleEditClick}>수정하기</OptionButton>
-            <OptionButton text='left' onClick={handleDeleteClick}>삭제하기</OptionButton>
+            <OptionButton text="left" onClick={handleEditClick}>
+              수정하기
+            </OptionButton>
+            <OptionButton text="left" onClick={handleDeleteClick}>
+              삭제하기
+            </OptionButton>
           </ModalContent>
         </ModalContainer>
       )}
@@ -125,8 +142,15 @@ const CommentModalBtn = ({ comment, isEditing, setEditing }: CommentModalBtnProp
         <ModalContainer justify="center" align="center">
           <ConfirmModalContent>
             <ConfirmationText>삭제하시겠습니까?</ConfirmationText>
-            <OptionButton text="center" onClick={handleConfirmDelete}>확인</OptionButton>
-            <OptionButton text="center" onClick={() => setConfirmationOpen(false)}>취소</OptionButton>
+            <OptionButton text="center" onClick={handleConfirmDelete}>
+              확인
+            </OptionButton>
+            <OptionButton
+              text="center"
+              onClick={() => setConfirmationOpen(false)}
+            >
+              취소
+            </OptionButton>
           </ConfirmModalContent>
         </ModalContainer>
       )}

@@ -60,9 +60,10 @@ const Content = styled.div`
 
 const StyledTextarea = styled.textarea<{ isEditing: boolean }>`
   display: ${({ isEditing }) => (isEditing ? 'block' : 'none')};
-  width: 75%;
+  width: 65%;
   height: 16px;
   border: 1px solid var(--gray-color);
+  outline-color: var(--gray-color);
   background-color: var(--background-color);
   resize: none;
   padding: 8px 10px;
@@ -70,12 +71,13 @@ const StyledTextarea = styled.textarea<{ isEditing: boolean }>`
   margin-top: 5px;
 `;
 
-const ModiBtn = styled.button< { isEditable: boolean } >`
+const ModiBtn = styled.button<{ isEditable: boolean }>`
   height: 32px;
   border: none;
   background-color: var(--background-color);
   font-size: 16px;
-  color: ${({ isEditable }) => (isEditable ? 'var(--primary-color)' : 'var(--gray-color)')};
+  color: ${({ isEditable }) =>
+    isEditable ? 'var(--primary-color)' : 'var(--gray-color)'};
   cursor: ${({ isEditable }) => (isEditable ? 'pointer' : '')};
 `;
 
@@ -160,7 +162,12 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
     }
   };
 
-  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleCancleClick = () => {
+    setEditedContent(comment.content);
+    setEditing(false);
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && isEditable) {
       event.preventDefault();
       handleEditClick();
@@ -169,7 +176,9 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
 
   return (
     <CommentBoxContainer>
-      <ProfileImage src={commentUser.user.picture} />
+      <ProfileImage
+        src={commentUser.user.picture ? commentUser.user.picture : ''}
+      />
       <CommentContent>
         <InfoBox>
           <UserNickname>{commentUser.user.nickname}</UserNickname>
@@ -182,9 +191,20 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
               isEditing={isEditing}
               value={editedContent}
               onChange={handleContentChange}
-              onKeyPress={handleKeyPress}
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) =>
+                handleKeyPress(e)
+              }
             />
-            <ModiBtn isEditable={isEditable} onClick={handleEditClick}>수정</ModiBtn>
+            <ModiBtn isEditable={isEditable} onClick={handleEditClick}>
+              수정
+            </ModiBtn>
+            <ModiBtn
+              isEditable={false}
+              onClick={handleCancleClick}
+              style={{ cursor: 'pointer' }}
+            >
+              취소
+            </ModiBtn>
           </InfoBox>
         )}
       </CommentContent>

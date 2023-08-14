@@ -10,18 +10,17 @@ export interface articleDto {
 
 export interface user {
   userId: string;
-  accessToken: string;
   nickname: string;
   deletedAt: string | null;
   age: number;
   gender: number;
-  refreshToken: string;
   picture: string | null;
 }
 
-export interface scent {
+export interface scentDto {
   scentId: number;
   weight: number;
+  nameOrg: string;
   name: string;
   rgb: string;
 }
@@ -49,29 +48,30 @@ export interface commmentUsers {
   following: boolean;
 }
 
-export interface perfumeInfos {
+export interface PerfumeInfos {
   perfumeId: number;
   name: string;
   nameOrg: string;
   brandName: string;
+  brandNameOrg: string;
   brandId: number;
   picture: string;
   rate: number;
 }
 
-export interface gradeDto {
-  userId: string;
-  perfumeId: number;
-  rate: number;
-}
+// export interface gradeDto {
+//   userId: string;
+//   perfumeId: number;
+//   rate: number;
+// }
 
 export interface PostDetailData {
   articleDto: articleDto;
   userInfoDto: userInfoDto;
   comments: commentDto[];
-  commmentUsers: commmentUsers[]
-  perfumeInfos: perfumeInfos[];
-  gradeDto: gradeDto[];
+  commmentUsers: commmentUsers[];
+  perfumeInfos: PerfumeInfos[];
+  rates: number[];
   hearted: boolean;
   bookmarked: boolean;
   followed: boolean;

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 // import axios from '../../api/apiController';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../api/apiController';
 
 const KakaoAuthHandler = () => {
   const navigate = useNavigate();
@@ -12,12 +13,12 @@ const KakaoAuthHandler = () => {
     const fetchTokens = async () => {
       try {
         // 서버로 코드를 보내고 응답 받기
-        const response = await axios.get(`http://localhost:8080/oauth/signin`, {
+        const response = await axios.get(`${BASE_URL}/oauth/signin`, {
           headers: {
             code: code,
           },
         });
-        // console.log(response.headers);
+        console.log(response.headers);
         const data = response.data;
 
         // 응답 헤더에서 Access Token과 Refresh Token 추출
@@ -29,11 +30,11 @@ const KakaoAuthHandler = () => {
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('nickname', data.nickname);
         navigate('/');
-        /**
-         *  콘솔에 출력
+        
+         //콘솔에 출력
         console.log('Access Token:', accessToken);
         console.log('Refresh Token:', refreshToken);
-         * */
+         
 
         //
       } catch (error) {
