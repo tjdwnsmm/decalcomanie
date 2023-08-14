@@ -23,12 +23,16 @@ import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.repository.*;
 import com.eightlow.decalcomanie.user.service.IUserService;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.*;
+
+import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
 
 @Service
 @Transactional
@@ -50,6 +54,7 @@ public class UserServiceImpl implements IUserService {
     private final EntityManager em;
     private final UserPerfumeMapper userPerfumeMapper;
     private final UserPerfumeRecommendRepository userPerfumeRecommendRepository;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public String modifyUserPerfume(String userId, int perfumeId) {
@@ -419,19 +424,22 @@ public class UserServiceImpl implements IUserService {
     // 유저가 보유한 향수들을 제외하고 향 단위 벡터를 계산하는 로직
     public Map<PerfumeDto, Map<ScentDto, Double>> allAccordVector(String userId) {
         Map<PerfumeDto, Map<ScentDto, Double>> result = new HashMap<>();
-        List<Perfume> allPerfume = perfumeRepository.findAll();
-        List<PerfumeDto> allPerfumeDto = perfumeMapper.toDto(allPerfume);
 
-        for(PerfumeDto perfumeDto : allPerfumeDto){
-            List<UserPerfume> userPerfumes = userPerfumeRepository.findByUser_UserId(userId);
-            List<UserPerfumeDto> userPerfumesDto = userPerfumeMapper.toDto(userPerfumes);
-            if(userPerfumesDto.contains(perfumeDto)){
-                System.out.println("사용자가 보유하고 있는 향수 리스트 : "+perfumeDto.getName());
-                continue;
-            }
+        List<UserPerfume> userPerfumes = userPerfumeRepository.findByUser_UserId(userId);
+        List<UserPerfumeDto> userPerfumesDto = userPerfumeMapper.toDto(userPerfumes);
+
+        List<PerfumeDto> unpossessedPerfumes = perfumeMapper.toDto(queryFactory.
+                selectFrom(perfume)
+                .where(
+                        userPerfumeEq(userPerfumesDto)
+                )
+                .fetch());
+
+        for(PerfumeDto perfumeDto : unpossessedPerfumes){
             Map<ScentDto, Double> scentPercent = calculate(perfumeDto);
             result.put(perfumeDto,scentPercent);
         }
+
         return result;
     }
 
@@ -506,5 +514,19 @@ public class UserServiceImpl implements IUserService {
         }
 
         return result;
+    }
+
+    private BooleanExpression userPerfumeEq(List<UserPerfumeDto> userPerfumes) {
+        if(userPerfumes.size() > 0) {
+            List<Integer> perfumeIds = new ArrayList<>();
+
+            for(UserPerfumeDto userPerfume : userPerfumes) {
+                perfumeIds.add(userPerfume.getPerfumeId());
+            }
+
+            return perfume.perfumeId.notIn(perfumeIds);
+        }
+
+        return null;
     }
 }
