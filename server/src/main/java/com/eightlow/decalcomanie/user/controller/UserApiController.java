@@ -89,7 +89,7 @@ public class UserApiController {
 
         CommonResponse response = CommonResponse.builder()
                 .targetUser(userInfoDto)
-                .data(userService.getOtherFollowingUsers(userId, (String)req.getAttribute("userId")))
+                .data(userService.getOtherFollowers(userId, (String)req.getAttribute("userId")))
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
