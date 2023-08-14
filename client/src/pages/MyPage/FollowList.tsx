@@ -21,14 +21,17 @@ const NoFollow = styled.div`
   padding: 5% 8%;
   text-align: center;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 700;
 
   .goFollow {
+    margin-top: 20px;
     font-size: 16px;
     border: none;
     background-color: var(--background-color);
     cursor: pointer;
-  }
+    &:hover {
+      color: var(--primary-color);
+    }
 `;
 
 const FollowList = () => {
@@ -97,18 +100,22 @@ const FollowList = () => {
       {activeTab === 'follower' && ((followerCount > 0) ? (
         <FollowBox followList={follower} />
       ) : (
-        <NoFollow>
-          {targetUser?.nickname}님을 팔로워하는 사람이 없어요.
-          <MarginFrame margin='10px 0px'>
-            {/* 마이페이지 api 완성 후 navigate 수정 필요 */}
-            <button className='goFollow' onClick={() => navigate('/mypage')}>팔로우하러 가기</button>
+          <MarginFrame margin="50px auto">
+            <NoFollow>
+              {targetUser?.nickname}님을 팔로워하는 사람이 없어요. 😥
+              {/* 마이페이지 api 완성 후 navigate 수정 필요 */}
+              <button className='goFollow' onClick={() => navigate('/mypage')}>팔로우하러 가기</button>
+            </NoFollow>
           </MarginFrame>
-        </NoFollow>
       ))}
       {activeTab === 'following' && ((followingCount > 0) ? (
         <FollowBox followList={following} />
       ) : (
-        <NoFollow>{targetUser?.nickname}님이 팔로잉하는 사람이 없어요.</NoFollow>
+        <MarginFrame margin="50px auto">
+          <NoFollow>
+            {targetUser?.nickname}님이 팔로잉하는 사람이 없어요. 😥
+          </NoFollow>
+        </MarginFrame>
       ))}
     </Main>
   );
