@@ -24,6 +24,7 @@ export interface EachFeedInfo {
   perfumeDtos: PerfumeDetail;
   articleDtos: ArticleDetail;
   bookmarked: boolean;
+  followed: boolean;
   hearted: boolean;
   followed: boolean;
   userInfoDto: ProfileUpdateInfo;

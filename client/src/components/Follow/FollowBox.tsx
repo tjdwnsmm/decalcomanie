@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { FollowInfo } from '../../types/ProfileInfoType';
 import FollowBtn from '../Button/FollowBtn';
-import { USERID } from '../../api/apiController';
+import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface FollowBoxProps {
   followList: FollowInfo[];
@@ -75,7 +75,7 @@ const FollowBox = ({ followList }: FollowBoxProps) => (
   <FollowListContainer>
     {followList.map((follow, idx) => (
       <FollowInfoBox key={idx}>
-        <ProfileImg src={follow.picture} alt="프로필" />
+        <ProfileImg src={follow.picture} />
         <InfoBox>
           <FollowNickname>{follow.nickname}</FollowNickname>
           <FavScentList>
@@ -85,10 +85,12 @@ const FollowBox = ({ followList }: FollowBoxProps) => (
           </FavScentList>
         </InfoBox>
         {/* 팔로잉 조회 시 isFollowing 값 안넘어옴 */}
-        <FollowBtn
-          to={follow.userId}
-          isFollow={follow.isFollowing ?? true}
-        />
+        { (getLoggedInUserNickname() !== follow.nickname) && (
+          <FollowBtn
+            to={follow.userId}
+            isFollow={follow.isFollowing ? follow.isFollowing : true}
+          />
+        )}
       </FollowInfoBox>
     ))}
   </FollowListContainer>

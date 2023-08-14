@@ -34,7 +34,7 @@ export default function Router() {
           <Route path="/post-detail/:id" element={<PostDetail />}></Route>
           <Route path="/perfume-detail/:id" element={<PerfumeDetail />}></Route>
           <Route path="/my-drawer" element={<MyDrawerPage />}></Route>
-          {/* <Route path="/follow-list" element={<FollowList />}></Route> */}
+          <Route path="/follow-list/:id" element={<FollowList />}></Route>
           <Route path="/profile-update" element={<ProfileUpdate />}></Route>
           <Route path="/post-update/:id" element={<PostUpdate />}></Route>
         </Route>
