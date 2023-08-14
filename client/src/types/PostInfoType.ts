@@ -27,8 +27,8 @@ export interface scentDto {
 
 export interface userInfoDto {
   user: user;
-  favorities: scent[];
-  hates: scent[];
+  favorities: scentDto[];
+  hates: scentDto[];
   following: boolean;
 }
 
@@ -43,8 +43,8 @@ export interface commentDto {
 
 export interface commmentUsers {
   user: user;
-  favorities: scent[];
-  hates: scent[];
+  favorities: scentDto[];
+  hates: scentDto[];
   following: boolean;
 }
 

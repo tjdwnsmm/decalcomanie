@@ -144,7 +144,7 @@ const ContentBox = styled.div`
   margin: 15px 10px;
 `;
 
-const Follow = styled.div<{ followed : boolean; }>`
+const Follow = styled.div`
   margin-left: 10px;
   color: var(--primary-color);
 

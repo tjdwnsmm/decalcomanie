@@ -77,8 +77,15 @@ export default function ProfileStats() {
       // 임시로 필요한 데이터만 작성
       nickname: '2948493336',
       userId: 'b18262f7-f7a6-455a-91ea-c74cd42b09b4',
+      age: 20,
+      gender: 0,
+      deletedAt: '',
+      picture: '',
     };
-    const urlEndpoint = getLoggedInUserNickname() === temporaryUser.nickname ? '/my-follow' : `/${temporaryUser.userId}`;
+    const urlEndpoint =
+      getLoggedInUserNickname() === temporaryUser.nickname
+        ? '/my-follow'
+        : `/${temporaryUser.userId}`;
     navigate(`/follow-list${urlEndpoint}?initialActiveTab=${initialActiveTab}`);
   };
 

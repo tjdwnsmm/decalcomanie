@@ -196,7 +196,7 @@ const ProfileUpdate = () => {
       <MarginFrame margin="30px 40px">
         <UserInfoName>닉네임</UserInfoName>
         <NewNickname
-          nickname={userData?.user.nickname}
+          nickname={userData?.user.nickname ? userData.user.nickname : ''}
           setNicknameChange={setNickName}
           onCheckStatusChange={(newIsCheck, newIsAvailable) => {
             setIsCheck(newIsCheck);
@@ -222,8 +222,13 @@ const ProfileUpdate = () => {
           anotherList={favoriteScent}
         />
       </MarginFrame>
-      <MarginFrame margin="20px 0 76px" style={{ display: 'flex', justifyContent: 'center' }}>
-        <WithdrawButton onClick={handleOpenWithdrawModal}>회원 탈퇴하기</WithdrawButton>
+      <MarginFrame
+        margin="20px 0 76px"
+        style={{ display: 'flex', justifyContent: 'center' }}
+      >
+        <WithdrawButton onClick={handleOpenWithdrawModal}>
+          회원 탈퇴하기
+        </WithdrawButton>
       </MarginFrame>
       <CenterBackground>
         <FixedPostButton

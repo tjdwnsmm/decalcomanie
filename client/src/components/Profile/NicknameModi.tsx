@@ -29,12 +29,12 @@ const NicknameInput = styled.input`
   }
 `;
 
-const CheckeBtn = styled.button<{ active?: boolean }>`
+const CheckeBtn = styled.button<{ active: boolean }>`
   background-color: var(--background-color);
   border: none;
   font-size: 15px;
   color: var(--success-color);
-  cursor: ${(props) => (props.active ? 'pointer' : 'default')};
+  cursor: ${(props) => (props.active ? 'pointer' : 'not-allowed')};
   opacity: ${(props) => (props.active ? 1 : 0.5)};
 `;
 
@@ -44,7 +44,8 @@ const Message = styled.div<{ available?: boolean }>`
   font-size: 13px;
   margin: 6px 12px;
   gap: 5px;
-  color: ${(props) => (props.available ? 'var(--success-color)' : 'var(--error-color)')};
+  color: ${(props) =>
+    props.available ? 'var(--success-color)' : 'var(--error-color)'};
 `;
 
 interface NewNicknameProps {
@@ -53,7 +54,11 @@ interface NewNicknameProps {
   onCheckStatusChange: (newIsCheck: boolean, newIsAvailable: boolean) => void;
 }
 
-function NewNickname({ nickname, setNicknameChange, onCheckStatusChange }: NewNicknameProps) {
+function NewNickname({
+  nickname,
+  setNicknameChange,
+  onCheckStatusChange,
+}: NewNicknameProps) {
   const [inputValue, setInputValue] = useState('');
   // 중복검사 해야되는데 안했을 때 false (입력값이 아무것도 없을 때는 중복검사 안해도 되므로 기본값 true)
   const [isCheck, setIsCheck] = useState(true);
@@ -64,7 +69,7 @@ function NewNickname({ nickname, setNicknameChange, onCheckStatusChange }: NewNi
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nowInput = e.target.value;
     setInputValue(nowInput);
-    if ((nowInput === '') || (nowInput === nickname)) {
+    if (nowInput === '' || nowInput === nickname) {
       setIsCheck(true);
       setIsAvailable(true);
       onCheckStatusChange(true, true);
@@ -121,21 +126,22 @@ function NewNickname({ nickname, setNicknameChange, onCheckStatusChange }: NewNi
           maxLength={10}
         />
         <CheckeBtn
-          active={inputValue.trim() && inputValue !== nickname}
+          active={inputValue.trim() !== nickname}
           onClick={handleCheckDuplicate}
         >
           중복 검사
         </CheckeBtn>
       </NicknameInputContainer>
       {inputValue === nickname ? (
-        <Message available={true}>
-           현재 닉네임과 같은 닉네임입니다.
-        </Message>
+        <Message available={true}>현재 닉네임과 같은 닉네임입니다.</Message>
       ) : (
-        inputValue && isCheck && (
+        inputValue &&
+        isCheck && (
           <Message available={isAvailable}>
             {isAvailable ? <SuccessSvg /> : <ErrorSvg />}
-            {isAvailable ? '사용 가능한 닉네임입니다.' : '이미 사용중인 닉네임입니다.'}
+            {isAvailable
+              ? '사용 가능한 닉네임입니다.'
+              : '이미 사용중인 닉네임입니다.'}
           </Message>
         )
       )}

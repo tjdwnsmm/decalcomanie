@@ -26,6 +26,5 @@ export interface EachFeedInfo {
   bookmarked: boolean;
   followed: boolean;
   hearted: boolean;
-  followed: boolean;
   userInfoDto: ProfileUpdateInfo;
 }
