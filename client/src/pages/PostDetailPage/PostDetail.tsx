@@ -23,9 +23,7 @@ const Button = styled.button`
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [postDetailData, setPostDetailData] = useState<PostDetailData | null>(
-    null,
-  );
+  const [postDetailData, setPostDetailData] = useState<PostDetailData>();
   const navigate = useNavigate();
 
   const handleLeftArrowClick = () => {
