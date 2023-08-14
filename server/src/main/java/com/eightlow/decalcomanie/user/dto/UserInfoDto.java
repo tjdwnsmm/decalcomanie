@@ -12,4 +12,6 @@ public class UserInfoDto {
     private List<ScentDto> favorities;
     private List<ScentDto> hates;
     private boolean isFollowing;
+    private boolean isMe;
+    private boolean isWithdrawal;
 }

@@ -465,17 +465,27 @@ public class ArticleServiceImpl implements IArticleService {
 
     @Override
     public ArticleResponse getDetail(int articleId, String userId) {
+        final String GHOST = "00000000-0000-0000-0000-000000000000";
+
         Article article = searchArticleByArticleId(articleId);
 
         // 사용자가 글 작성자를 팔로우 했는지
-        System.out.println(article.getUser().getUserId());
-        boolean isFollowed = userService.isFollowing(userId, article.getUser().getUserId());
+//        System.out.println(article.getUser().getUserId());
+        String articleWriterId = article.getUser().getUserId();
+        boolean isFollowed = userService.isFollowing(userId, articleWriterId);
+        System.out.println(articleWriterId);
+        System.out.println(userId);
+        boolean isMe = articleWriterId.equals(userId);
+        boolean isWithdrawal = articleWriterId.equals(GHOST);
 
         //articleId를 통해서 게시물의 임베디드된 향수정보를 가져온다.
         List<ArticlePerfume> perfumeList = searchArticlePerfumeId(articleId);
 
         // 작성자: 프로필, 닉네임, 선호 비선호향
-        UserInfoDto userInfo = userService.getUserInfo(article.getUser().getUserId());
+        UserInfoDto userInfo = userService.getUserInfo(article.getUser().getUserId()).toBuilder()
+                .isMe(isMe)
+                .isWithdrawal(isWithdrawal)
+                .build();
 
         // 향수 평점 정보
         List<Float> rateInfo = new ArrayList<>();
@@ -528,6 +538,8 @@ public class ArticleServiceImpl implements IArticleService {
                     .favorities(userInfoDto.getFavorities())
                     .hates(userInfoDto.getHates())
                     .isFollowing(flag)
+                    .isMe(commentDto.getUserId().equals(userId))
+                    .isWithdrawal(commentDto.getUserId().equals(GHOST))
                     .build();
 
 //            commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
