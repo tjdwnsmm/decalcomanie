@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { FollowInfo } from '../../types/ProfileInfoType';
 import FollowBtn from '../Button/FollowBtn';
-import getLoggedInUserNickname from '../../api/loggedInUserNickname';
+// import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface FollowBoxProps {
   followList: FollowInfo[];
@@ -75,20 +75,21 @@ const FollowBox = ({ followList }: FollowBoxProps) => (
   <FollowListContainer>
     {followList.map((follow, idx) => (
       <FollowInfoBox key={idx}>
-        <ProfileImg src={follow.picture} />
+        {/* picture default 논의 후 수정 */}
+        {follow.picture ? <ProfileImg src={`../../../public/${follow.picture}`} />
+          : <ProfileImg src='../../../public/assets/avatar/peeps-avatar-alpha-1.png' />}
         <InfoBox>
           <FollowNickname>{follow.nickname}</FollowNickname>
           <FavScentList>
             {follow.favorite.map((scent, index) => (
-              <Scent key={index}>{scent}</Scent>
+              <Scent key={index}>{scent.name}</Scent>
             ))}
           </FavScentList>
         </InfoBox>
-        {/* 팔로잉 조회 시 isFollowing 값 안넘어옴 */}
-        { (getLoggedInUserNickname() !== follow.nickname) && (
+        {follow.followingButtonActivate && (
           <FollowBtn
             to={follow.userId}
-            isFollow={follow.isFollowing ? follow.isFollowing : true}
+            isFollow={follow.following}
           />
         )}
       </FollowInfoBox>

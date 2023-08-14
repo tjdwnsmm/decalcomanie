@@ -1,9 +1,13 @@
+import { scentDto } from "./PostInfoType";
+
 export interface FollowInfo {
   userId: string;
   picture: string;
   nickname: string;
-  favorite: string[];
-  isFollowing: boolean;
+  favorite: scentDto[];
+  hate: scentDto[];
+  following: boolean;
+  followingButtonActivate: boolean;
 }
 
 export interface userInfo {

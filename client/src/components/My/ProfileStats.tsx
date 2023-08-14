@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { ReactComponent as Bar } from '../../assets/img/bar.svg';
 import { user } from '../../types/PostInfoType';
-import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface TextProp {
   size?: string;
@@ -72,21 +71,17 @@ export default function ProfileStats() {
   const navigate = useNavigate();
 
   const handleClick = (initialActiveTab: 'follower' | 'following') => {
-    // 임시) mypage 완성되면 mypage에서 userDto props로 넘겨줘서 해당 userNickname 사용
+    // 임시) mypage 완성되면 mypage에서 userDto props로 넘겨줘서 해당 userId 사용
     const temporaryUser: user = {
       // 임시로 필요한 데이터만 작성
       nickname: '2948493336',
-      userId: 'b18262f7-f7a6-455a-91ea-c74cd42b09b4',
+      userId: 'bef9ea06-6409-4294-b7d1-c44da38da1e1',
       age: 20,
       gender: 0,
       deletedAt: '',
       picture: '',
     };
-    const urlEndpoint =
-      getLoggedInUserNickname() === temporaryUser.nickname
-        ? '/my-follow'
-        : `/${temporaryUser.userId}`;
-    navigate(`/follow-list${urlEndpoint}?initialActiveTab=${initialActiveTab}`);
+    navigate(`/follow-list/${temporaryUser.userId}?initialActiveTab=${initialActiveTab}`);
   };
 
   return (
