@@ -17,7 +17,7 @@ public class UserPerfumeDto {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         UserPerfumeDto userPerfumeDto = (UserPerfumeDto) obj;
-        return userId == userPerfumeDto.userId;
+        return perfumeId == userPerfumeDto.perfumeId;
     }
 }
 
