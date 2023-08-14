@@ -190,7 +190,7 @@ const ProfileUpdate = () => {
       <Profile>
         <ProfileImg src={profileImg} alt="프로필 사진" />
         <ImgModiBox onClick={handleOpenModal}>
-          <img src="src/assets/img/pencil-float.png" width="26" height="26" />
+          <img src="/assets/img/pencil-float.png" width="26" height="26" />
         </ImgModiBox>
       </Profile>
       <MarginFrame margin="30px 40px">
