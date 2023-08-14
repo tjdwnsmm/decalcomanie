@@ -34,8 +34,8 @@ public interface IArticleService {
     ArticleResponse getDetail(int articleId, String userId);
 
     Article searchArticleByArticleId(int articleId);
-    List<Article> searchArticlesOfFollowingUser(String userId);
-    List<FeedResponse> getArticlesOfFollowingUser(String userId);
+    List<Article> searchArticlesOfFollowingUser(FeedInquiryRequest feedInquiryRequest, String userId);
+    List<FeedResponse> getArticlesOfFollowingUser(FeedInquiryRequest feedInquiryRequest, String userId);
     List<Article> searchPopularArticles(FeedInquiryRequest feedInquiryRequest);
     List<FeedResponse> getPopularArticles(FeedInquiryRequest feedInquiryRequest, String userId);
     List<Article> searchLatestArticles(FeedInquiryRequest feedInquiryRequest);

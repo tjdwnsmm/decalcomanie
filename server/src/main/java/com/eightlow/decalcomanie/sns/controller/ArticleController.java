@@ -176,7 +176,7 @@ public class ArticleController {
      */
 
     // 사용자가 쓴 글을 조회(내가 쓴글 조회)
-    @GetMapping("/user")
+    @PostMapping("/user")
     public ResponseEntity<List<FeedResponse>> getArticleByUserId(HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
         List<FeedResponse> responses  = articleService.getArticleByUserId(userId);
@@ -185,17 +185,17 @@ public class ArticleController {
     }
 
     // 팔로워의 피드를 조희
-    @GetMapping("/feed/following")
-    public ResponseEntity<List<FeedResponse>> getFollowingArticles(HttpServletRequest req) {
+    @PostMapping("/feed/following")
+    public ResponseEntity<List<FeedResponse>> getFollowingArticles(@RequestBody FeedInquiryRequest feedInquiryRequest, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
         // TODO: 사용자의 follower list를 받아와서 그 사용자들의 피드를 조회해야함 (정렬은 최신순으로)
-        List<FeedResponse> responses  = articleService.getArticlesOfFollowingUser(userId);
+        List<FeedResponse> responses  = articleService.getArticlesOfFollowingUser(feedInquiryRequest, userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     // 피드 인기순 조회
-    @GetMapping("/feed/popularity")
+    @PostMapping("/feed/popularity")
     public ResponseEntity<List<FeedResponse>> getPopularArticles(@RequestBody @Valid FeedInquiryRequest feedInquiryRequest, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
 
@@ -204,7 +204,7 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
-    @GetMapping("/feed/latest")
+    @PostMapping("/feed/latest")
     public ResponseEntity<List<FeedResponse>> getLatestArticles(@RequestBody @Valid FeedInquiryRequest feedInquiryRequest, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
         System.out.println(feedInquiryRequest.toString());
@@ -214,7 +214,7 @@ public class ArticleController {
     }
 
     // 향수별 피드 조회
-    @GetMapping("/perfume/{perfumeId}")
+    @PostMapping("/perfume/{perfumeId}")
     public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@PathVariable int perfumeId, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
 //        List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);

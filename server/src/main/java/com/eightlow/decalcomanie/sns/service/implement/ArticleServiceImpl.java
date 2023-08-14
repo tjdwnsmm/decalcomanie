@@ -21,6 +21,7 @@ import com.eightlow.decalcomanie.user.entity.User;
 import com.eightlow.decalcomanie.user.entity.UserScent;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.service.IUserService;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ import java.util.*;
 
 import java.util.stream.Collectors;
 
+import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
 import static com.eightlow.decalcomanie.sns.entity.QArticle.article;
 
 @RequiredArgsConstructor
@@ -209,7 +211,7 @@ public class ArticleServiceImpl implements IArticleService {
 
     @Override
     @Transactional
-    public List<Article> searchArticlesOfFollowingUser(String userId) {
+    public List<Article> searchArticlesOfFollowingUser(FeedInquiryRequest feedInquiryRequest, String userId) {
 
         List<FollowingResponse> followingResponses = userService.getFollowingUsers(userId);
         System.out.println(followingResponses.toString());
@@ -219,13 +221,20 @@ public class ArticleServiceImpl implements IArticleService {
                 .collect(Collectors.toList());
         log.info(String.valueOf(userIds));
 
-        List<Article> articles = new ArrayList<>();
+        List<Article> articles = queryFactory
+                .selectFrom(article)
+                .where(
+                        article.articleId.loe(feedInquiryRequest.getLastArticleId()),
+                        userIdEq(userIds)
+                )
+                .orderBy(article.articleId.desc())
+                .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
+                .fetch();
 
-        // 팔로워들의 글을 다 가져옴 (select 한번에)
-        articles= articleRepository.findByUser_UserIdIn(userIds);
-//        for(String id : userIds) {
-//            articles.addAll(searchArticleByUserId(id));
-//        }
+//        List<Article> articles = new ArrayList<>();
+//
+//        // 팔로워들의 글을 다 가져옴 (select 한번에)
+//        articles= articleRepository.findByUser_UserIdIn(userIds);
 
 
         Collections.sort(articles, Comparator.comparing(Article::getCreatedAt).reversed());
@@ -233,9 +242,13 @@ public class ArticleServiceImpl implements IArticleService {
         return articles;
     }
 
+    private BooleanExpression userIdEq(List<String> userIds) {
+        return userIds.size() > 0 ? article.user.userId.in(userIds) : null;
+    }
+
     @Override
-    public List<FeedResponse> getArticlesOfFollowingUser(String userId) {
-        List<Article> articles = searchArticlesOfFollowingUser(userId);
+    public List<FeedResponse> getArticlesOfFollowingUser(FeedInquiryRequest feedInquiryRequest, String userId) {
+        List<Article> articles = searchArticlesOfFollowingUser(feedInquiryRequest, userId);
         List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles);
         return feedResponse;
     }
