@@ -41,11 +41,7 @@ export const MainFeed = () => {
     }
   });
 
-  const fetchFeedsForTab = (tab: string) => {};
-
-  useEffect(() => {
-    fetchFeedsForTab(nowActive);
-  }, [nowActive]);
+  useEffect(() => {}, [nowActive]);
 
   const handleDetail = (articleId: number) => {
     navigate(`/post-detail/${articleId}`);
@@ -53,7 +49,6 @@ export const MainFeed = () => {
 
   const handleTabClick = (tab: string) => {
     setNowActive(tab);
-    fetchFeedsForTab(tab);
   };
 
   const handleFollow = (userId: string, followed: boolean) => {
