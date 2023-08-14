@@ -13,12 +13,6 @@ import MainScent from '../../components/Main/MainScent';
 import axios from '../../api/apiController';
 import Spinner from '../../components/common/Spinner';
 
-const favScent: ScentDto[] = [
-  { scentId: 1, weight: 100, name: '시트러스', rgb: '#F9FF52' },
-  { scentId: 20, weight: 93, name: '흙 내음', rgb: '#544838' },
-  { scentId: 9, weight: 86, name: '우디', rgb: '#774414' },
-];
-
 interface BaseInfoProps {
   curSeason: string;
   curTime: string;
