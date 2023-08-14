@@ -6,7 +6,9 @@ import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
 import com.eightlow.decalcomanie.perfume.dto.response.DailyRecommendResponse;
 import com.eightlow.decalcomanie.perfume.dto.response.PerfumeNameResponse;
+import com.eightlow.decalcomanie.perfume.dto.response.SearchResponse;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
+import com.eightlow.decalcomanie.user.dto.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +29,15 @@ public class PerfumeApiController {
 
     // 향수 검색
     @PostMapping("/search")
-    public ResponseEntity<List<PerfumeDto>> searchPerfume(@RequestBody PerfumeSearchRequest request) {
-        List<PerfumeDto> perfumes = perfumeService.findMatchingPerfumes(request);
+    public ResponseEntity<SearchResponse> searchPerfume(@RequestBody PerfumeSearchRequest request) {
+        List<PerfumeDto> searchedPerfumes = perfumeService.findMatchingPerfumes(request);
 
-        return new ResponseEntity<>(perfumes, HttpStatus.OK);
+        SearchResponse response = SearchResponse.builder()
+                .searchedPerfumes(searchedPerfumes)
+                .lastPage(searchedPerfumes.size() < (request.getDataSize() == null ? 50 : request.getDataSize()))
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 향수 상세보기
