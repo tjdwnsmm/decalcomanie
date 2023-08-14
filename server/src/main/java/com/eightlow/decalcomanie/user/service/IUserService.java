@@ -28,7 +28,7 @@ public interface IUserService {
     UserInfoDto getUserInfo(String userId);
 
     // 사용자 개인 추천 향수
-    List<PerfumeDto> recommendUserPerfume(String userId);
+    boolean recommendUserPerfume(String userId);
 
     List<FollowerResponse> getOtherFollowingUsers(String userId, String myId);
 
@@ -39,4 +39,7 @@ public interface IUserService {
     String updateUserInfo(UserInfoUpdateRequest request, String userId);
 
     void withdrawUser(String userId);
+
+    // 사용자 추천 향수 캐시 조회
+    List<PerfumeDto> getUserPerfumeRecommend(String userId);
 }

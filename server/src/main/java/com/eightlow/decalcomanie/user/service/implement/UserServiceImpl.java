@@ -14,20 +14,14 @@ import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
 import com.eightlow.decalcomanie.sns.repository.ArticleRepository;
 import com.eightlow.decalcomanie.sns.repository.BookMarkRepository;
 import com.eightlow.decalcomanie.sns.repository.CommentRepository;
-import com.eightlow.decalcomanie.user.dto.PerfumeWeight;
-import com.eightlow.decalcomanie.user.dto.UserInfoDto;
-import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
-import com.eightlow.decalcomanie.user.dto.UserPerfumeId;
+import com.eightlow.decalcomanie.user.dto.*;
 import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.entity.*;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
-import com.eightlow.decalcomanie.user.repository.FollowRepository;
-import com.eightlow.decalcomanie.user.repository.UserPerfumeRepository;
-import com.eightlow.decalcomanie.user.repository.UserRepository;
-import com.eightlow.decalcomanie.user.repository.UserScentRepository;
+import com.eightlow.decalcomanie.user.repository.*;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -55,6 +49,7 @@ public class UserServiceImpl implements IUserService {
     private final PerfumeMapper perfumeMapper;
     private final EntityManager em;
     private final UserPerfumeMapper userPerfumeMapper;
+    private final UserPerfumeRecommendRepository userPerfumeRecommendRepository;
 
     @Override
     public String modifyUserPerfume(String userId, int perfumeId) {
@@ -362,31 +357,12 @@ public class UserServiceImpl implements IUserService {
 
     // 사용자 개인 추천 향수
     @Override
-    public List<PerfumeDto> recommendUserPerfume(String userId) {
+    public boolean recommendUserPerfume(String userId) {
         // 사용자 향 단위 벡터 계산
         Map<ScentDto,Double> userPerfumeVector = userAccordVector(userId);
-        // 사용자 향 단위 벡터 검증
-//        System.out.println("사용자 향 단위 벡터");
-//        System.out.print("[");
-//        for( ScentDto scentDto : userPerfumeVector.keySet()){
-//            System.out.print(scentDto.getName()+":"+userPerfumeVector.get(scentDto)+",");
-//        }
-//        System.out.println("]");
 
         // 사용자가 보유하지 않은 모든 향수들에 대한 향수 단위 벡터 계산
         Map<PerfumeDto,Map<ScentDto,Double>> allPerfumeVector = allAccordVector(userId);
-
-        // 사용자가 보유하지 않은 향수 향 단위 벡터 검증
-//        System.out.println("사용자가 보유하지 않은 향수의 향 단위 벡터");
-//        for( PerfumeDto perfumeDto : allPerfumeVector.keySet()){
-//            System.out.println("["+perfumeDto.getName()+"]");
-//            System.out.print("[");
-//            Map<ScentDto,Double> scentPercent = allPerfumeVector.get(perfumeDto);
-//            for(ScentDto scentDto : scentPercent.keySet()){
-//                System.out.print(scentDto.getName()+":"+scentPercent.get(scentDto)+",");
-//            }
-//            System.out.println("]");
-//        }
 
         // 사용자 향 단위 벡터를 모든 향수 향 단위 벡터와 유사도 계산
         List<PerfumeWeight> result = calculateSimilarity(userPerfumeVector,allPerfumeVector);
@@ -397,8 +373,33 @@ public class UserServiceImpl implements IUserService {
         for (PerfumeWeight pair : result) {
             perfumeList.add(pair.getFirst());
         }
-        // result의 상단 10개하여 반환
-        return perfumeList.subList(0, Math.min(result.size(),10));
+        // result의 상단 10개 추출
+        List<PerfumeDto> perfumeResultList = perfumeList.subList(0, Math.min(result.size(),10));
+
+        // 사용자에게 추천하였던 향수 전부 삭제
+        userPerfumeRecommendRepository.deleteAllByUser_UserId(userId);
+
+        // 결과 한번에 DB 저장
+        List<UserPerfumeRecommend> recommendList = new ArrayList<>();
+        for(PerfumeDto p : perfumeResultList){
+            Integer perfumeId = p.getPerfumeId();
+            Perfume perfume = em.find(Perfume.class, perfumeId);
+            User user = em.find(User.class, userId);
+            if(user == null) {
+                throw new CustomException(CustomErrorCode.USER_NOT_FOUND);
+            }
+            if(perfume == null) {
+                throw new CustomException(CustomErrorCode.PERFUME_NOT_FOUND);
+            }
+
+            UserPerfumeRecommend userPerfumeRecommend = UserPerfumeRecommend.builder()
+                    .user(user)
+                    .perfume(perfume)
+                    .build();
+            recommendList.add(userPerfumeRecommend);
+        }
+        userPerfumeRecommendRepository.saveAll(recommendList);
+        return true;
     }
 
     // 사용자 향 단위 벡터와 모든 향수 향 단위 벡터와 유사도 계산
@@ -487,4 +488,20 @@ public class UserServiceImpl implements IUserService {
         return sum;
     }
 
+    // 사용자 추천 향수 캐시 조회
+    @Override
+    public List<PerfumeDto> getUserPerfumeRecommend(String userId){
+        List<UserPerfumeRecommend> searchResult = em.createQuery("select p from UserPerfumeRecommend p", UserPerfumeRecommend.class).getResultList();
+        List<PerfumeDto> result = new ArrayList<>();
+        if(getUserPerfume(userId).size()==0){
+            return result;
+        }
+
+        for(UserPerfumeRecommend p : searchResult){
+            Perfume perfume = p.getPerfume();
+            result.add(perfumeMapper.toDto(perfume));
+        }
+
+        return result;
+    }
 }
