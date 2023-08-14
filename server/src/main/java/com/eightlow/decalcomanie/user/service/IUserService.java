@@ -28,7 +28,7 @@ public interface IUserService {
     UserInfoDto getUserInfo(String userId);
 
     // 사용자 개인 추천 향수
-    List<PerfumeDto> recommendUserPerfume(String userId);
+    boolean recommendUserPerfume(String userId);
 
     List<FollowerResponse> getOtherFollowingUsers(String userId, String myId);
 
