@@ -4,7 +4,11 @@ import com.eightlow.decalcomanie.auth.jwt.JwtUtils;
 import com.eightlow.decalcomanie.auth.service.JwtService;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
+import com.eightlow.decalcomanie.sns.dto.request.FeedInquiryRequest;
+import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
+import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
+import com.eightlow.decalcomanie.sns.service.IArticleService;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
 import com.eightlow.decalcomanie.user.dto.response.CommonResponse;
@@ -20,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +38,8 @@ public class UserApiController {
 
     private final IUserService userService;
     private final JwtService jwtService;
+
+    private final IArticleService articleService;
 
     // 사용자 향수 등록, 삭제
     @PostMapping("/perfume/manage")
@@ -143,5 +150,13 @@ public class UserApiController {
         userService.withdrawUser((String)req.getAttribute("userId"));
         return new ResponseEntity<>("회원 탈퇴 완료!", HttpStatus.OK);
     }
+
+    @PostMapping("/bookmark")
+    public ResponseEntity<List<FeedResponse>> getBookmark(@RequestBody @Valid FeedInquiryRequest feedInquiryRequest,
+                                                          HttpServletRequest req){
+        List<FeedResponse> responses  = articleService.getBookmarkArticle(feedInquiryRequest, (String)req.getAttribute("userId"));
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
+    }
+
 }
 

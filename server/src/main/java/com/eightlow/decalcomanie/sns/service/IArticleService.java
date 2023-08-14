@@ -75,4 +75,7 @@ public interface IArticleService {
 
 
     String getUserIdFromRequest(HttpServletRequest request);
+    List<FeedResponse> getFeedInfoForArticles(String userId, List<Article> articles, int datasize);
+
+    List<FeedResponse> getBookmarkArticle(FeedInquiryRequest feedInquiryRequest, String userId);
 }
