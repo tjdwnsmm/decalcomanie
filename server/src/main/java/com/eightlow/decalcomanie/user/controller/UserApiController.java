@@ -37,6 +37,7 @@ public class UserApiController {
     @PostMapping("/perfume/manage")
     public ResponseEntity<String> modifyUserPerfume(@RequestBody Map<String, Integer> request, HttpServletRequest req) {
         String userMessage = userService.modifyUserPerfume((String)req.getAttribute("userId"), request.get("perfumeId"));
+        userService.recommendUserPerfume((String)req.getAttribute("userId"));
         return new ResponseEntity<>(userMessage, HttpStatus.CREATED);
     }
 
@@ -100,11 +101,6 @@ public class UserApiController {
         return new ResponseEntity<>(userService.getUserPerfumeRecommend((String)req.getAttribute("userId")), HttpStatus.OK);
     }
 
-    // 사용자 향수 추천 로직 실행
-    @GetMapping("/recommend/update")
-    public ResponseEntity<List<PerfumeDto>> recommendUpdate(HttpServletRequest req) {
-        return new ResponseEntity<>(userService.recommendUserPerfume((String)req.getAttribute("userId")), HttpStatus.OK);
-    }
 
     // 닉네임 중복검사
     @GetMapping("/update/check/{nickname}")
