@@ -6,6 +6,7 @@ import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
+import com.eightlow.decalcomanie.user.dto.response.CommonResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.service.IUserService;
@@ -66,14 +67,32 @@ public class UserApiController {
 
     // 다른 유저의 팔로잉 목록 조회
     @GetMapping("/following/{userId}")
-    public ResponseEntity<List<FollowerResponse>> getOtherFollowingUsers(@PathVariable String userId, HttpServletRequest req) {
-        return new ResponseEntity<>(userService.getOtherFollowingUsers(userId, (String)req.getAttribute("userId")), HttpStatus.OK);
+    public ResponseEntity<CommonResponse> getOtherFollowingUsers(@PathVariable String userId, HttpServletRequest req) {
+        UserInfoDto userInfoDto = userService.getUserInfo(userId).toBuilder()
+                .isMe(userId.equals((String)req.getAttribute("userId")))
+                .build();
+
+        CommonResponse response = CommonResponse.builder()
+                .targetUser(userInfoDto)
+                .data(userService.getOtherFollowingUsers(userId, (String)req.getAttribute("userId")))
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 다른 유저의 팔로우 목록 조회
     @GetMapping("/follower/{userId}")
-    public ResponseEntity<List<FollowerResponse>> getOtherFollowers(@PathVariable String userId, HttpServletRequest req) {
-        return new ResponseEntity<>(userService.getOtherFollowers(userId, (String)req.getAttribute("userId")), HttpStatus.OK);
+    public ResponseEntity<CommonResponse> getOtherFollowers(@PathVariable String userId, HttpServletRequest req) {
+        UserInfoDto userInfoDto = userService.getUserInfo(userId).toBuilder()
+                .isMe(userId.equals((String)req.getAttribute("userId")))
+                .build();
+
+        CommonResponse response = CommonResponse.builder()
+                .targetUser(userInfoDto)
+                .data(userService.getOtherFollowingUsers(userId, (String)req.getAttribute("userId")))
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 사용자 개인 추천 향수
