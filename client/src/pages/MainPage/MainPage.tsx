@@ -31,6 +31,7 @@ const MainPage = () => {
   const [isDrawer, setDrawer] = useState(true);
   const backFrameRef = useRef<HTMLDivElement>(null);
   const [nickname, setNickname] = useState('');
+  const [recommendScent, setRecommendScent] = useState<ScentDto[]>([]);
   const [recommendPerfume, setRecommendPerfume] = useState<
     PerfumeDetail[] | null
   >(null);
@@ -68,6 +69,10 @@ const MainPage = () => {
   };
 
   useEffect(() => {
+    axios.get('/user/scent/top').then((res) => {
+      const scentData = res.data;
+      setRecommendScent(scentData);
+    });
     axios.get('/user/recommend').then((res) => {
       const datas = res.data;
       datas.length === 0 ? setDrawer(false) : setDrawer(true);
@@ -129,7 +134,7 @@ const MainPage = () => {
                     서랍에 담은 향수들에 기반한 맞춤 추천 결과입니다
                   </div>
                   <>
-                    <MainScent accord={favScent} />
+                    <MainScent accord={recommendScent} />
                   </>
                 </Info>
                 {recommendPerfume ? (
