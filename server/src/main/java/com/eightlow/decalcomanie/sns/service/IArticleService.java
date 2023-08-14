@@ -42,8 +42,8 @@ public interface IArticleService {
     List<FeedResponse> getLatestArticles(FeedInquiryRequest feedInquiryRequest, String userId);
     List<Article> searchArticleByUserId(String userId);
     List<FeedResponse> getArticleByUserId(String userId);
-    List<Article> searchArticleByPerfumeId(int perfumeId);
-    List<FeedResponse> getArticleByPerfumeId(String userId, int perfumeId);
+    List<Article> searchArticleByPerfumeId(FeedInquiryRequest feedInquiryRequest, int perfumeId);
+    List<FeedResponse> getArticleByPerfumeId(FeedInquiryRequest feedInquiryRequest,String userId, int perfumeId);
 
     List<ArticlePerfume> searchArticlePerfumeId(int articleId);
 
