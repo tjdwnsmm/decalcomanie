@@ -357,7 +357,7 @@ public class UserServiceImpl implements IUserService {
 
     // 사용자 개인 추천 향수
     @Override
-    public boolean recommendUserPerfume(String userId) {
+    public List<PerfumeDto> recommendUserPerfume(String userId) {
         // 사용자 향 단위 벡터 계산
         Map<ScentDto,Double> userPerfumeVector = userAccordVector(userId);
 
@@ -367,7 +367,7 @@ public class UserServiceImpl implements IUserService {
         // 사용자 향 단위 벡터를 모든 향수 향 단위 벡터와 유사도 계산
         List<PerfumeWeight> result = calculateSimilarity(userPerfumeVector,allPerfumeVector);
         // Percentage로 정렬
-        Collections.sort(result);
+        Collections.sort(result, Comparator.reverseOrder());
         // 탑 10 추출
         List<PerfumeDto> perfumeList = new ArrayList<>();
         for (PerfumeWeight pair : result) {
@@ -399,7 +399,7 @@ public class UserServiceImpl implements IUserService {
             recommendList.add(userPerfumeRecommend);
         }
         userPerfumeRecommendRepository.saveAll(recommendList);
-        return true;
+        return perfumeResultList;
     }
 
     // 사용자 향 단위 벡터와 모든 향수 향 단위 벡터와 유사도 계산
@@ -425,7 +425,10 @@ public class UserServiceImpl implements IUserService {
         for(PerfumeDto perfumeDto : allPerfumeDto){
             List<UserPerfume> userPerfumes = userPerfumeRepository.findByUser_UserId(userId);
             List<UserPerfumeDto> userPerfumesDto = userPerfumeMapper.toDto(userPerfumes);
-            if(userPerfumesDto.contains(perfumeDto)) continue;
+            if(userPerfumesDto.contains(perfumeDto)){
+                System.out.println("사용자가 보유하고 있는 향수 리스트 : "+perfumeDto.getName());
+                continue;
+            }
             Map<ScentDto, Double> scentPercent = calculate(perfumeDto);
             result.put(perfumeDto,scentPercent);
         }
