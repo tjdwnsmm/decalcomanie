@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FeedTab } from '../../components/TabBar/FeedTab';
 import FeedPage from '../../components/Feed/FeedPage';
 import { CenterFrame, Main, MarginFrame } from '../../style';
@@ -9,6 +9,8 @@ import { EachFeedInfo } from '../../types/FeedInfoType';
 import Spinner from '../../components/common/Spinner';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
+import { useFetchDatas } from '../../components/Feed/useFetchData';
+import useIntersect from '../../hooks/useIntersect';
 
 export const MainFeed = () => {
   //default 탭 : following
@@ -16,22 +18,30 @@ export const MainFeed = () => {
   const [nowActive, setNowActive] = useState('following');
   const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
   const navigate = useNavigate();
-  const [isLoading, setLoading] = useState(false);
+  const [heartCnt, setHeartCnt] = useState(-1);
+  const [lastArticleId, setLastArticleId] = useState(-1);
+  const [initLoading, setLoading] = useState(false);
 
-  const fetchFeedsForTab = (tab: string) => {
-    // setFeeds(null);
-    setLoading(true);
-    axios.get(`/sns/feed/${tab}`).then((res) => {
-      setFeeds(res.data);
-      setLoading(false);
-      // console.log(res.data);
-      console.log(res.data);
+  const { data, hasNextPage, isFetching, fetchNextPage, isLoading } =
+    useFetchDatas({
+      heartCnt,
+      lastArticleId,
+      urlTab: nowActive,
     });
-  };
 
-  useEffect(() => {
-    fetchFeedsForTab(nowActive);
-  }, [nowActive]);
+  const datas = useMemo(() => (data ? data : []), [data]);
+
+  const ref = useIntersect(async (entry, observer) => {
+    observer.unobserve(entry.target);
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
+      console.log('✅ 이전까지 받아온 데이터!', datas);
+      setLastArticleId(datas[datas.length - 1].articleDtos.articleId);
+      setHeartCnt(datas[datas.length - 1].articleDtos.heart);
+    }
+  });
+
+  useEffect(() => {}, [nowActive]);
 
   const handleDetail = (articleId: number) => {
     navigate(`/post-detail/${articleId}`);
@@ -39,7 +49,6 @@ export const MainFeed = () => {
 
   const handleTabClick = (tab: string) => {
     setNowActive(tab);
-    fetchFeedsForTab(tab);
   };
 
   const handleFollow = (userId: string, followed: boolean) => {
@@ -63,8 +72,8 @@ export const MainFeed = () => {
     <Main>
       <FeedTab setNowActive={handleTabClick} />
       <Feeds>
-        {!isLoading && feeds ? (
-          feeds.length === 0 ? (
+        {!isLoading && datas ? (
+          datas.length === 0 ? (
             <>
               <MarginFrame margin="100px auto">
                 <CenterFrame className="errorTitle">
@@ -73,14 +82,19 @@ export const MainFeed = () => {
               </MarginFrame>
             </>
           ) : (
-            feeds.map((feed, idx) => (
-              <FeedPage
-                key={idx}
-                feed={feed}
-                handleDetail={handleDetail}
-                handleFollow={handleFollow}
-              />
-            ))
+            <>
+              {datas.map((feed, idx) => (
+                <FeedPage
+                  key={idx}
+                  feed={feed}
+                  handleDetail={handleDetail}
+                  handleFollow={handleFollow}
+                />
+              ))}
+              {!isFetching && isLoading && <Spinner />}
+              <MarginFrame margin="10px auto" />
+              <Target ref={ref} />
+            </>
           )
         ) : (
           <MarginFrame margin="240px 0 0">
@@ -93,6 +107,9 @@ export const MainFeed = () => {
     </Main>
   );
 };
+const Target = styled.div`
+  height: 3px;
+`;
 
 const Feeds = styled.div`
   display: flex;

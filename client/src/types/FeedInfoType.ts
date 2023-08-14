@@ -21,6 +21,7 @@ export interface ArticleDetail {
 }
 
 export interface EachFeedInfo {
+  lastPage?: boolean;
   perfumeDtos: PerfumeDetail;
   articleDtos: ArticleDetail;
   bookmarked: boolean;

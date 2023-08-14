@@ -67,7 +67,7 @@ const SearchMyPerfume: React.FC = () => {
       setSearchResults([]);
       try {
         const data = await searchPerfume(keyword);
-        setSearchResults(data);
+        setSearchResults(data.searchedPerfumes);
         setNewSearch(true);
         console.log(`진짜 데이터 검색 : ${searchResults}`);
       } catch (error) {

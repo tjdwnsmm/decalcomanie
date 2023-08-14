@@ -13,12 +13,6 @@ import MainScent from '../../components/Main/MainScent';
 import axios from '../../api/apiController';
 import Spinner from '../../components/common/Spinner';
 
-const favScent: ScentDto[] = [
-  { scentId: 1, weight: 100, name: '시트러스', rgb: '#F9FF52' },
-  { scentId: 20, weight: 93, name: '흙 내음', rgb: '#544838' },
-  { scentId: 9, weight: 86, name: '우디', rgb: '#774414' },
-];
-
 interface BaseInfoProps {
   curSeason: string;
   curTime: string;
@@ -31,6 +25,7 @@ const MainPage = () => {
   const [isDrawer, setDrawer] = useState(true);
   const backFrameRef = useRef<HTMLDivElement>(null);
   const [nickname, setNickname] = useState('');
+  const [recommendScent, setRecommendScent] = useState<ScentDto[]>([]);
   const [recommendPerfume, setRecommendPerfume] = useState<
     PerfumeDetail[] | null
   >(null);
@@ -68,6 +63,10 @@ const MainPage = () => {
   };
 
   useEffect(() => {
+    axios.get('/user/scent/top').then((res) => {
+      const scentData = res.data;
+      setRecommendScent(scentData);
+    });
     axios.get('/user/recommend').then((res) => {
       const datas = res.data;
       datas.length === 0 ? setDrawer(false) : setDrawer(true);
@@ -129,7 +128,7 @@ const MainPage = () => {
                     서랍에 담은 향수들에 기반한 맞춤 추천 결과입니다
                   </div>
                   <>
-                    <MainScent accord={favScent} />
+                    <MainScent accord={recommendScent} />
                   </>
                 </Info>
                 {recommendPerfume ? (
