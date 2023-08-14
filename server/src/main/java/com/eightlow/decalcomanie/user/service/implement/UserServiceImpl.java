@@ -14,10 +14,7 @@ import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
 import com.eightlow.decalcomanie.sns.repository.ArticleRepository;
 import com.eightlow.decalcomanie.sns.repository.BookMarkRepository;
 import com.eightlow.decalcomanie.sns.repository.CommentRepository;
-import com.eightlow.decalcomanie.user.dto.PerfumeWeight;
-import com.eightlow.decalcomanie.user.dto.UserInfoDto;
-import com.eightlow.decalcomanie.user.dto.UserPerfumeDto;
-import com.eightlow.decalcomanie.user.dto.UserPerfumeId;
+import com.eightlow.decalcomanie.user.dto.*;
 import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
@@ -396,6 +393,9 @@ public class UserServiceImpl implements IUserService {
             perfumeList.add(pair.getFirst());
         }
         // result의 상단 10개하여 반환
+
+        List<PerfumeDto> perfumeResultList = perfumeList.subList(0, Math.min(result.size(),10));
+
         return perfumeList.subList(0, Math.min(result.size(),10));
     }
 
@@ -485,4 +485,20 @@ public class UserServiceImpl implements IUserService {
         return sum;
     }
 
+    // 사용자 추천 향수 캐시 조회
+    @Override
+    public List<PerfumeDto> getUserPerfumeRecommend(String userId){
+        List<UserPerfumeRecommend> searchResult = em.createQuery("select p from UserPerfumeRecommend p", UserPerfumeRecommend.class).getResultList();
+        List<PerfumeDto> result = new ArrayList<>();
+        if(getUserPerfume(userId).size()==0){
+            return result;
+        }
+
+        for(UserPerfumeRecommend p : searchResult){
+            Perfume perfume = p.getPerfume();
+            result.add(perfumeMapper.toDto(perfume));
+        }
+
+        return result;
+    }
 }

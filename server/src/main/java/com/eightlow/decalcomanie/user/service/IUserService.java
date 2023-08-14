@@ -39,4 +39,7 @@ public interface IUserService {
     String updateUserInfo(UserInfoUpdateRequest request, String userId);
 
     void withdrawUser(String userId);
+
+    // 사용자 추천 향수 캐시 조회
+    List<PerfumeDto> getUserPerfumeRecommend(String userId);
 }
