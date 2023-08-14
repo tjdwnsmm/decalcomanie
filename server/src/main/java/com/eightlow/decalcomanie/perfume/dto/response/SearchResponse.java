@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @Builder(toBuilder = true)
 public class SearchResponse {
-    boolean lastPage;
+    boolean isLastPage;
     List<PerfumeDto> searchedPerfumes;
 }

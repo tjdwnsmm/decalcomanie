@@ -87,7 +87,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
                         genderEq(condition.getGender()),
                         keywordEq(condition.getKeyword()),
                         perfume.pick.loe(condition.getLastPick() == null ? 999999999 : condition.getLastPick()),
-                        perfume.perfumeId.gt(condition.getLastPerfumeId() == null ? 0 : condition.getLastPerfumeId())
+                        perfume.perfumeId.gt(condition.getLastPerfumeId() == null ? 1 : condition.getLastPerfumeId())
                 )
                 .orderBy(perfume.pick.desc())
                 .orderBy(perfume.perfumeId.asc())
