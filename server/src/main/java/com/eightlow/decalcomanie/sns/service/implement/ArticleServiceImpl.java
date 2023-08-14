@@ -7,6 +7,7 @@ import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import com.eightlow.decalcomanie.sns.dto.*;
+import com.eightlow.decalcomanie.sns.dto.request.FeedInquiryRequest;
 import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
 import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
 import com.eightlow.decalcomanie.sns.dto.response.Response;
@@ -20,6 +21,7 @@ import com.eightlow.decalcomanie.user.entity.User;
 import com.eightlow.decalcomanie.user.entity.UserScent;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.service.IUserService;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import java.util.stream.Collectors;
+
+import static com.eightlow.decalcomanie.sns.entity.QArticle.article;
 
 @RequiredArgsConstructor
 @Service
@@ -64,6 +68,8 @@ public class ArticleServiceImpl implements IArticleService {
     private final PerfumeMapper perfumeMapper;
 
     private final EntityManager entityManager;
+
+    private final JPAQueryFactory queryFactory;
 
 
     @Override
@@ -195,9 +201,10 @@ public class ArticleServiceImpl implements IArticleService {
     @Override
     @Transactional
     public List<FeedResponse> getArticleByUserId(String userId) {
-        List<Article> articles = searchPopularArticles();
-        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles);
-        return feedResponse;
+//        List<Article> articles = searchPopularArticles();
+//        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles);
+//        return feedResponse;
+        return null;
     }
 
     @Override
@@ -235,27 +242,45 @@ public class ArticleServiceImpl implements IArticleService {
 
     @Override
     @Transactional
-    public List<Article> searchPopularArticles() {
-        return articleRepository.findArticlesOrderByHeart();
+    public List<Article> searchPopularArticles(FeedInquiryRequest feedInquiryRequest) {
+        List<Article> articles = queryFactory
+                .selectFrom(article)
+                .where(
+                        article.heart.loe(feedInquiryRequest.getHeartCnt())
+                )
+                .orderBy(article.heart.desc())
+                .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
+                .fetch();
+
+        return articles;
     }
 
     @Override
-    public List<FeedResponse> getPopularArticles(String userId) {
-        List<Article> articles = searchPopularArticles();
+    public List<FeedResponse> getPopularArticles(FeedInquiryRequest feedInquiryRequest, String userId) {
+        List<Article> articles = searchPopularArticles(feedInquiryRequest);
         List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles);
         return feedResponse;
     }
 
     @Override
     @Transactional
-    public List<Article> searchLatestArticles() {
-        return articleRepository.findArticlesOrderByCreateTime();
+    public List<Article> searchLatestArticles(FeedInquiryRequest feedInquiryRequest) {
+        List<Article> articles = queryFactory
+                .selectFrom(article)
+                .where(
+                        article.articleId.loe(feedInquiryRequest.getLastArticleId())
+                )
+                .orderBy(article.articleId.desc())
+                .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
+                .fetch();
+
+        return articles;
     }
 
     @Override
     @Transactional
-    public List<FeedResponse> getLatestArticles(String userId) {
-        List<Article> articles= searchLatestArticles();
+    public List<FeedResponse> getLatestArticles(FeedInquiryRequest feedInquiryRequest, String userId) {
+        List<Article> articles= searchLatestArticles(feedInquiryRequest);
         List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
         return responses;
     }
@@ -685,12 +710,13 @@ public class ArticleServiceImpl implements IArticleService {
 
         //사용자의 팔로우 목록을 받아온다.
         List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
-        int cnt = 0;
+//        int cnt = 0;
+
         // articleId를 보고 사용자 정보와 향수 정보를 담음
         for(Article article: articles){
-            if (cnt == 10) {
-                break;
-            }
+//            if (cnt == 10) {
+//                break;
+//            }
             // TODO: perfumeId가 하나만 필요함으로 추후 쿼리 최적화가 필요!!(완료)
             int perfumeId = article.getArticlePerfume().get(0).getPerfume().getPerfumeId();
             log.info(String.valueOf(perfumeId));
@@ -762,7 +788,7 @@ public class ArticleServiceImpl implements IArticleService {
                     .build();
 
             feedResponses.add(new FeedResponse(userInfoDto, isFollowed, isFollowingButtonActivate, articleDto, perfumeDto, isHearted, isBookmarked));
-            cnt++;
+//            cnt++;
         }
         return feedResponses;
     }

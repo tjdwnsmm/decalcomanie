@@ -6,6 +6,7 @@ import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import com.eightlow.decalcomanie.sns.dto.*;
 import com.eightlow.decalcomanie.sns.dto.request.CommentRequest;
 import com.eightlow.decalcomanie.sns.dto.request.CreateArticleRequest;
+import com.eightlow.decalcomanie.sns.dto.request.FeedInquiryRequest;
 import com.eightlow.decalcomanie.sns.dto.request.UpdateArticleRequest;
 import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
 import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
@@ -195,19 +196,19 @@ public class ArticleController {
 
     // 피드 인기순 조회
     @GetMapping("/feed/popularity")
-    public ResponseEntity<List<FeedResponse>> getPopularArticles(HttpServletRequest req) {
+    public ResponseEntity<List<FeedResponse>> getPopularArticles(@RequestBody @Valid FeedInquiryRequest feedInquiryRequest, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
 
-        List<FeedResponse> responses  = articleService.getPopularArticles(userId);
+        List<FeedResponse> responses  = articleService.getPopularArticles(feedInquiryRequest, userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     @GetMapping("/feed/latest")
-    public ResponseEntity<List<FeedResponse>> getLatestArticles(HttpServletRequest req) {
+    public ResponseEntity<List<FeedResponse>> getLatestArticles(@RequestBody @Valid FeedInquiryRequest feedInquiryRequest, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
-
-        List<FeedResponse> responses  = articleService.getLatestArticles(userId);
+        System.out.println(feedInquiryRequest.toString());
+        List<FeedResponse> responses  = articleService.getLatestArticles(feedInquiryRequest, userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
