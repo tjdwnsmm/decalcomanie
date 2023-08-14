@@ -23,12 +23,16 @@ import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.repository.*;
 import com.eightlow.decalcomanie.user.service.IUserService;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.*;
+
+import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
 
 @Service
 @Transactional
@@ -50,6 +54,7 @@ public class UserServiceImpl implements IUserService {
     private final EntityManager em;
     private final UserPerfumeMapper userPerfumeMapper;
     private final UserPerfumeRecommendRepository userPerfumeRecommendRepository;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public String modifyUserPerfume(String userId, int perfumeId) {
@@ -357,7 +362,7 @@ public class UserServiceImpl implements IUserService {
 
     // 사용자 개인 추천 향수
     @Override
-    public boolean recommendUserPerfume(String userId) {
+    public List<PerfumeDto> recommendUserPerfume(String userId) {
         // 사용자 향 단위 벡터 계산
         Map<ScentDto,Double> userPerfumeVector = userAccordVector(userId);
 
@@ -367,7 +372,7 @@ public class UserServiceImpl implements IUserService {
         // 사용자 향 단위 벡터를 모든 향수 향 단위 벡터와 유사도 계산
         List<PerfumeWeight> result = calculateSimilarity(userPerfumeVector,allPerfumeVector);
         // Percentage로 정렬
-        Collections.sort(result);
+        Collections.sort(result, Comparator.reverseOrder());
         // 탑 10 추출
         List<PerfumeDto> perfumeList = new ArrayList<>();
         for (PerfumeWeight pair : result) {
@@ -399,7 +404,7 @@ public class UserServiceImpl implements IUserService {
             recommendList.add(userPerfumeRecommend);
         }
         userPerfumeRecommendRepository.saveAll(recommendList);
-        return true;
+        return perfumeResultList;
     }
 
     // 사용자 향 단위 벡터와 모든 향수 향 단위 벡터와 유사도 계산
@@ -419,16 +424,21 @@ public class UserServiceImpl implements IUserService {
     // 유저가 보유한 향수들을 제외하고 향 단위 벡터를 계산하는 로직
     public Map<PerfumeDto, Map<ScentDto, Double>> allAccordVector(String userId) {
         Map<PerfumeDto, Map<ScentDto, Double>> result = new HashMap<>();
-        List<Perfume> allPerfume = perfumeRepository.findAll();
-        List<PerfumeDto> allPerfumeDto = perfumeMapper.toDto(allPerfume);
 
-        for(PerfumeDto perfumeDto : allPerfumeDto){
-            List<UserPerfume> userPerfumes = userPerfumeRepository.findByUser_UserId(userId);
-            List<UserPerfumeDto> userPerfumesDto = userPerfumeMapper.toDto(userPerfumes);
-            if(userPerfumesDto.contains(perfumeDto)) continue;
+        List<UserPerfume> userPerfumes = userPerfumeRepository.findByUser_UserId(userId);
+
+        List<PerfumeDto> unpossessedPerfumes = perfumeMapper.toDto(queryFactory.
+                selectFrom(perfume)
+                .where(
+                        userPerfumeEq(userPerfumes)
+                )
+                .fetch());
+
+        for(PerfumeDto perfumeDto : unpossessedPerfumes){
             Map<ScentDto, Double> scentPercent = calculate(perfumeDto);
             result.put(perfumeDto,scentPercent);
         }
+
         return result;
     }
 
@@ -503,5 +513,19 @@ public class UserServiceImpl implements IUserService {
         }
 
         return result;
+    }
+
+    private BooleanExpression userPerfumeEq(List<UserPerfume> userPerfumes) {
+        if(userPerfumes.size() > 0) {
+            List<Integer> perfumeIds = new ArrayList<>();
+
+            for(UserPerfume userPerfume : userPerfumes) {
+                perfumeIds.add(userPerfume.getPerfume().getPerfumeId());
+            }
+
+            return perfume.perfumeId.notIn(perfumeIds);
+        }
+
+        return null;
     }
 }
