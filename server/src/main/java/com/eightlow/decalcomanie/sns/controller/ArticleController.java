@@ -215,14 +215,25 @@ public class ArticleController {
 
     // 향수별 피드 조회
     @PostMapping("/perfume/{perfumeId}")
-    public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@PathVariable int perfumeId, HttpServletRequest req) {
+    public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@PathVariable int perfumeId,
+                                                                 @RequestBody @Valid FeedInquiryRequest feedInquiryRequest,
+                                                                 HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
 //        List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);
 //        log.info(articles.toString());
-        List<FeedResponse> responses  = articleService.getArticleByPerfumeId(userId, perfumeId);
+        List<FeedResponse> responses  = articleService.getArticleByPerfumeId(feedInquiryRequest, userId, perfumeId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
+//    @PostMapping("/perfume/{perfumeId}")
+//    public ResponseEntity<List<FeedResponse>> getPerfumeArticles(@PathVariable int perfumeId, HttpServletRequest req) {
+//        String userId = articleService.getUserIdFromRequest(req);
+////        List<ArticleDto> articles= articleService.searchArticleByPerfumeId(perfumeId);
+////        log.info(articles.toString());
+//        List<FeedResponse> responses  = articleService.getArticleByPerfumeId(userId, perfumeId);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(responses);
+//    }
 
     // 조회 파트 끝
 

@@ -21,6 +21,7 @@ import com.eightlow.decalcomanie.user.entity.User;
 import com.eightlow.decalcomanie.user.entity.UserScent;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.service.IUserService;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -224,7 +225,7 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = queryFactory
                 .selectFrom(article)
                 .where(
-                        article.articleId.loe(feedInquiryRequest.getLastArticleId()),
+                        article.articleId.loe(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
                         userIdEq(userIds)
                 )
                 .orderBy(article.articleId.desc())
@@ -249,7 +250,7 @@ public class ArticleServiceImpl implements IArticleService {
     @Override
     public List<FeedResponse> getArticlesOfFollowingUser(FeedInquiryRequest feedInquiryRequest, String userId) {
         List<Article> articles = searchArticlesOfFollowingUser(feedInquiryRequest, userId);
-        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles);
+        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles, feedInquiryRequest.getDataSize());
         return feedResponse;
     }
 
@@ -259,7 +260,7 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = queryFactory
                 .selectFrom(article)
                 .where(
-                        article.heart.loe(feedInquiryRequest.getHeartCnt())
+                        article.heart.loe(feedInquiryRequest.getHeartCnt() == null ? 2130000000 : feedInquiryRequest.getHeartCnt())
                 )
                 .orderBy(article.heart.desc())
                 .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
@@ -271,7 +272,7 @@ public class ArticleServiceImpl implements IArticleService {
     @Override
     public List<FeedResponse> getPopularArticles(FeedInquiryRequest feedInquiryRequest, String userId) {
         List<Article> articles = searchPopularArticles(feedInquiryRequest);
-        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles);
+        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles, feedInquiryRequest.getDataSize());
         return feedResponse;
     }
 
@@ -281,7 +282,7 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = queryFactory
                 .selectFrom(article)
                 .where(
-                        article.articleId.loe(feedInquiryRequest.getLastArticleId())
+                        article.articleId.loe(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId())
                 )
                 .orderBy(article.articleId.desc())
                 .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
@@ -294,31 +295,43 @@ public class ArticleServiceImpl implements IArticleService {
     @Transactional
     public List<FeedResponse> getLatestArticles(FeedInquiryRequest feedInquiryRequest, String userId) {
         List<Article> articles= searchLatestArticles(feedInquiryRequest);
-        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles);
+        List<FeedResponse> responses  = getFeedInfoForArticles(userId, articles, feedInquiryRequest.getDataSize());
         return responses;
     }
 
 
     @Override
     @Transactional
-    public List<Article> searchArticleByPerfumeId(int perfumeId) {
+    public List<Article> searchArticleByPerfumeId(FeedInquiryRequest feedInquiryRequest, int perfumeId) {
         List<ArticlePerfume> articlePerfumes = articlePerfumeRepository.findByPerfume_PerfumeId(perfumeId);
         List<Integer> articleIds = new ArrayList<>();
         for(ArticlePerfume articlePerfume : articlePerfumes) {
             articleIds.add(articlePerfume.getArticle().getArticleId());
         }
 
-        // articleId를 통해 정보 조회 (select한번)
-        List<Article> articles = new ArrayList<>();
-        articles = articleRepository.findByArticleIdIn(articleIds);
+        List<Article> articles = queryFactory
+                .selectFrom(article)
+                .where(
+                        article.articleId.loe(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
+                        articleIdEq(articleIds)
+                )
+                .orderBy(article.articleId.desc())
+                .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
+                .fetch();
+
         System.out.println(articles);
         return articles;
     }
 
+    private BooleanExpression articleIdEq(List<Integer> articleIds) {
+        return articleIds.size() > 0 ? article.articleId.in(articleIds) : null;
+    }
+
     @Override
-    public List<FeedResponse> getArticleByPerfumeId(String userId, int perfumeId) {
-        List<Article> articles = searchArticleByPerfumeId(perfumeId);
-        List<FeedResponse> feedResponses = getFeedInfoForArticles(userId, articles);
+    public List<FeedResponse> getArticleByPerfumeId(FeedInquiryRequest feedInquiryRequest, String userId,
+                                                    int perfumeId) {
+        List<Article> articles = searchArticleByPerfumeId(feedInquiryRequest, perfumeId);
+        List<FeedResponse> feedResponses = getFeedInfoForArticles(userId, articles ,feedInquiryRequest.getDataSize());
         return feedResponses;
     }
 
@@ -715,11 +728,16 @@ public class ArticleServiceImpl implements IArticleService {
     }
 
     // 피드 정보 조회 (사용자 정보, 글 정보, 포함된 향수 정보를 포함)
-    private List<FeedResponse> getFeedInfoForArticles(String userId, List<Article> articles){
+    private List<FeedResponse> getFeedInfoForArticles(String userId, List<Article> articles, int datasize){
 
         final String GHOST = "00000000-0000-0000-0000-000000000000";
         // 각 article에 담긴 사용자 정보와 향수 정보를 담아둔 Dto의 리스트
         List<FeedResponse> feedResponses = new ArrayList<>();
+
+        boolean isLastPage = false;
+        if(articles.size()  < datasize) {
+            isLastPage = true;
+        }
 
         //사용자의 팔로우 목록을 받아온다.
         List<FollowingResponse> followerInfoResponses = userService.getFollowingUsers(userId);
@@ -800,7 +818,8 @@ public class ArticleServiceImpl implements IArticleService {
                     .updatedAt(article.getUpdatedAt())
                     .build();
 
-            feedResponses.add(new FeedResponse(userInfoDto, isFollowed, isFollowingButtonActivate, articleDto, perfumeDto, isHearted, isBookmarked));
+            feedResponses.add(new FeedResponse(userInfoDto, isFollowed, isFollowingButtonActivate, articleDto,
+                    perfumeDto, isHearted, isBookmarked, isLastPage));
 //            cnt++;
         }
         return feedResponses;
