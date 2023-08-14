@@ -1,6 +1,7 @@
 package com.eightlow.decalcomanie.user.service;
 
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
+import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.entity.Perfume;
 import com.eightlow.decalcomanie.user.dto.FollowDto;
 import com.eightlow.decalcomanie.user.dto.UserInfoDto;
@@ -42,4 +43,7 @@ public interface IUserService {
 
     // 사용자 추천 향수 캐시 조회
     List<PerfumeDto> getUserPerfumeRecommend(String userId);
+
+    // 사용자 향 TOP 3 조회
+    List<ScentDto> getTopThreeScent(String userId);
 }
