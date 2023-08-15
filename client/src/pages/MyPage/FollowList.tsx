@@ -8,6 +8,7 @@ import FollowTab from '../../components/TabBar/FollowTab';
 import FollowBox from '../../components/Follow/FollowBox';
 import { FollowInfo } from '../../types/ProfileInfoType';
 import { userInfoDto } from '../../types/PostInfoType';
+import { act } from 'react-dom/test-utils';
 
 const TopBar = styled.div`
   position: fixed;
@@ -81,8 +82,8 @@ const FollowList = () => {
         setFollowing(followingResponse.data.data);
         console.log('팔로잉', followingResponse.data);
 
-        setFollowerCount(follower.length);
-        setFollowingCount(following.length);
+        setFollowerCount(followerResponse.data.data.length);
+        setFollowingCount(followingResponse.data.data.length);
         setTargetUser(followerResponse.data.targetUser);
       } catch (error) {
         console.error('오류:', error);
@@ -90,7 +91,7 @@ const FollowList = () => {
     };
 
     fetchFollowData();
-  }, [id]);
+  }, [id, activeTab]);
 
   useEffect(() => {
     // URL에서 초기 activeTab 값 가져오기
@@ -102,6 +103,10 @@ const FollowList = () => {
       setActiveTab(initialActiveTabFromURL);
     }
   }, [location]);
+  
+  useEffect(() => {
+    setFollowingCount(following.length);
+  }, [following]);
 
   return (
     <Main>
@@ -120,7 +125,7 @@ const FollowList = () => {
       </TopBar>
       <MarginFrame margin='112px'/>
       {activeTab === 'follower' && ((followerCount > 0) ? (
-        <FollowBox followList={follower}/>
+        <FollowBox followList={follower} setFollowingList={setFollowing} isMe={targetUser?.me}/>
       ) : (
         <NoFollow>
           {targetUser?.user.nickname}님을 팔로우하는 사람이 없어요. 😥<br/>
@@ -131,7 +136,7 @@ const FollowList = () => {
         </NoFollow>
       ))}
       {activeTab === 'following' && ((followingCount > 0) ? (
-        <FollowBox followList={following}/>
+        <FollowBox followList={following} setFollowingList={setFollowing} isMe={targetUser?.me}/>
       ) : (
         <NoFollow>
           {targetUser?.user.nickname}님이 팔로잉하는 사람이 없어요. 😥

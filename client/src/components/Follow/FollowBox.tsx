@@ -7,6 +7,8 @@ import { DEFAULT_PICTURE } from '../../api/apiController';
 interface FollowBoxProps {
   followList: FollowInfo[];
   follow?: FollowInfo;
+  setFollowing: React.Dispatch<React.SetStateAction<FollowInfo[]>>;
+  isMe: boolean;
 }
 
 /**
@@ -71,30 +73,46 @@ const Scent = styled.div`
   border-radius: 7px;
 `;
 
-const FollowBox = ({ followList }: FollowBoxProps) => (
-  <FollowListContainer>
-    {followList.map((follow, idx) => (
-      <FollowInfoBox key={idx}>
-        {/* picture default 논의 후 수정 */}
-        <ProfileImg
-          src={follow.picture ? `/${follow.picture}` : DEFAULT_PICTURE} />
-        <InfoBox>
-          <FollowNickname>{follow.nickname}</FollowNickname>
-          <FavScentList>
-            {follow.favorite.map((scent, index) => (
-              <Scent key={index}>{scent.name}</Scent>
-            ))}
-          </FavScentList>
-        </InfoBox>
-        {follow.followingButtonActivate && (
-          <FollowBtn
-            to={follow.userId}
-            isFollow={follow.following}
-          />
-        )}
-      </FollowInfoBox>
-    ))}
-  </FollowListContainer>
-);
+const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
+  const updateFollowing = (followInfo: FollowInfo) => {
+    setFollowingList(prevList => {
+      const isAlreadyFollowing = prevList.some(item => item.userId === followInfo.userId);
+
+      if (isAlreadyFollowing) {
+        return prevList.filter(item => item.userId !== followInfo.userId);
+      } else {
+        return [...prevList, followInfo];
+      }
+    });
+  };
+
+  return (
+    <FollowListContainer>
+      {followList.map((follow) => (
+        <FollowInfoBox key={follow.userId}>
+          {/* picture default 논의 후 수정 */}
+          <ProfileImg
+            src={follow.picture ? `/${follow.picture}` : DEFAULT_PICTURE} />
+          <InfoBox>
+            <FollowNickname>{follow.nickname}</FollowNickname>
+            <FavScentList>
+              {follow.favorite.map((scent, index) => (
+                <Scent key={index}>{scent.name}</Scent>
+              ))}
+            </FavScentList>
+          </InfoBox>
+          {follow.followingButtonActivate && (
+            <div onClick={isMe ? () => updateFollowing(follow) : undefined}>
+              <FollowBtn
+                to={follow.userId}
+                isFollow={follow.following}
+              />
+            </div>
+          )}
+        </FollowInfoBox>
+      ))}
+    </FollowListContainer>
+  );
+}
 
 export default FollowBox;
