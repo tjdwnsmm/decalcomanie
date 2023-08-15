@@ -7,18 +7,35 @@ import { ReactComponent as LeftArrow } from '../../assets/icon/left-arrow.svg';
 import FollowTab from '../../components/TabBar/FollowTab';
 import FollowBox from '../../components/Follow/FollowBox';
 import { FollowInfo } from '../../types/ProfileInfoType';
-import { user } from '../../types/PostInfoType';
+import { userInfoDto } from '../../types/PostInfoType';
+
+const TopBar = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--background-color);
+`;                                                             
+
+const InnerTop = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+`;
 
 const Button = styled.button`
+  position: absolute;
   background: none;
   border: none;
-  margin: 24px 18px 0px;
+  left: 18px;
   cursor: pointer;
 `;
 
 const NoFollow = styled.div`
   width: 84%;
-  padding: 5% 8%;
+  padding: 8%;
   text-align: center;
   font-size: 18px;
   font-weight: 700;
@@ -43,11 +60,12 @@ const FollowList = () => {
   const [following, setFollowing] = useState<FollowInfo[]>([]);
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
-  const [targetUser, setTargetUser] = useState<user>();
+  const [targetUser, setTargetUser] = useState<userInfoDto>();
   const location = useLocation();
 
   const handleLeftArrowClick = () => {
-    navigate(-1);
+    // api 연결 후 변경 필
+    navigate('/mypage');
   };
 
   useEffect(() => {
@@ -63,10 +81,9 @@ const FollowList = () => {
         setFollowing(followingResponse.data.data);
         console.log('팔로잉', followingResponse.data);
 
-        // 팔로워 수, 팔로잉 수, 유저 정보 설정
-        setFollowerCount(followerResponse.data.data.length);
-        setFollowingCount(followingResponse.data.data.length);
-        setTargetUser(followerResponse.data.targetUser.user);
+        setFollowerCount(follower.length);
+        setFollowingCount(following.length);
+        setTargetUser(followerResponse.data.targetUser);
       } catch (error) {
         console.error('오류:', error);
       }
@@ -88,34 +105,37 @@ const FollowList = () => {
 
   return (
     <Main>
-      <Button onClick={handleLeftArrowClick}>
-        <LeftArrow />
-      </Button>
-      {targetUser?.nickname}
-      <FollowTab
-        setNowActive={setActiveTab}
-        followerCount={followerCount}
-        followingCount={followingCount}
-      />
+      <TopBar>
+        <InnerTop>
+          <div style={{ fontWeight: '600'}}>{targetUser?.user.nickname}</div>
+          <Button onClick={handleLeftArrowClick}>
+            <LeftArrow />
+          </Button>
+        </InnerTop>
+        <FollowTab
+          setNowActive={setActiveTab}
+          followerCount={followerCount}
+          followingCount={followingCount}
+        />
+      </TopBar>
+      <MarginFrame margin='112px'/>
       {activeTab === 'follower' && ((followerCount > 0) ? (
-        <FollowBox followList={follower} />
+        <FollowBox followList={follower}/>
       ) : (
-          <MarginFrame margin="50px auto">
-            <NoFollow>
-              {targetUser?.nickname}님을 팔로워하는 사람이 없어요. 😥
-              {/* 마이페이지 api 완성 후 navigate 수정 필요 */}
-              <button className='goFollow' onClick={() => navigate('/mypage')}>팔로우하러 가기</button>
-            </NoFollow>
-          </MarginFrame>
+        <NoFollow>
+          {targetUser?.user.nickname}님을 팔로우하는 사람이 없어요. 😥<br/>
+          {/* 마이페이지 api 완성 후 navigate 수정 필요 */}
+          {!targetUser?.me && (
+            <button className='goFollow' onClick={() => navigate('/mypage')}>팔로우하러 가기</button>
+          )}
+        </NoFollow>
       ))}
       {activeTab === 'following' && ((followingCount > 0) ? (
-        <FollowBox followList={following} />
+        <FollowBox followList={following}/>
       ) : (
-        <MarginFrame margin="50px auto">
-          <NoFollow>
-            {targetUser?.nickname}님이 팔로잉하는 사람이 없어요. 😥
-          </NoFollow>
-        </MarginFrame>
+        <NoFollow>
+          {targetUser?.user.nickname}님이 팔로잉하는 사람이 없어요. 😥
+        </NoFollow>
       ))}
     </Main>
   );
