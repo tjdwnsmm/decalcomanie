@@ -1,31 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import axios from '../../api/apiController';
-import { ReactComponent as ProfileImg } from '../../assets/img/profile-img.svg';
+import { ScentDto } from '../../types/PerfumeInfoType';
 
 interface ImageProps {
-  imageUrl: string;
+  imageUrl: string | null;
 }
 
-interface Res {
-  res: {
-    favorite: string[];
-  };
+interface Props {
+  userImage: string | null;
+  likes: ScentDto[];
 }
 
-const testRes: Res = {
-  res: {
-    favorite: ['우디', '플로럴', '시트러스'],
-  },
-};
+interface LoaderInnerProps {
+  rgb: string | null;
+}
+
+export default function ProfileImage({ userImage, likes }: Props) {
+  const [inner1Rgb, setInner1Rgb] = useState<string | null>(null);
+  const [inner2Rgb, setInner2Rgb] = useState<string | null>(null);
+  const [inner3Rgb, setInner3Rgb] = useState<string | null>(null);
+
+  useEffect(() => {
+    axios
+      .get('/perfume/search/scent')
+      .then((response) => {
+        const matchingRgbValues: string[] = [];
+        likes.forEach((like) => {
+          const matchingScent = response.data.find(
+            (scent: { name: string }) => scent.name === like.name,
+          );
+          if (matchingScent) {
+            matchingRgbValues.push(matchingScent.rgb);
+          }
+        });
+
+        if (matchingRgbValues.length > 0) {
+          setInner1Rgb(matchingRgbValues[0]);
+          setInner2Rgb(matchingRgbValues[1]);
+          setInner3Rgb(matchingRgbValues[2]);
+        } else {
+          setInner1Rgb(null);
+          setInner2Rgb(null);
+          setInner3Rgb(null);
+        }
+      })
+      .catch((error) => {
+        console.error('API 호출 에러:', error);
+      });
+  }, [likes]);
+
+  return (
+    <Root>
+      <LoaderContainer>
+        {/* 시각화 Loader 3개 */}
+        <LoaderInner1 rgb={inner1Rgb} />
+        <LoaderInner2 rgb={inner2Rgb} />
+        <LoaderInner3 rgb={inner3Rgb} />
+
+        {/* 프로필 이미지 */}
+        <ImageDiv>
+          <Image imageUrl={userImage} />
+        </ImageDiv>
+      </LoaderContainer>
+    </Root>
+  );
+}
 
 const Image = styled.div<ImageProps>`
   width: 150px;
   height: 150px;
   border-radius: 100%;
   background-color: var(--primary-color);
-  background-image: ${({ imageUrl }) =>
-    imageUrl ? `url(${imageUrl})` : 'none'};
+  background-image: ${({ imageUrl }) => imageUrl ? `url(${imageUrl})` : 'none'};
   background-size: cover;
   z-index: 0;
 `;
@@ -71,11 +118,6 @@ const rotateOtherAnimation = keyframes`
   }
 `;
 
-interface LoaderInnerProps {
-  rgb?: string;
-  size: string;
-}
-
 const LoaderInner1 = styled.span<LoaderInnerProps>`
   position: absolute;
   display: block;
@@ -83,59 +125,21 @@ const LoaderInner1 = styled.span<LoaderInnerProps>`
   height: var(--size);
   border-radius: 50%;
   box-shadow: 0 -10px 0 0 ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
-    -7.5px 5px 0 0 ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
+    -10.5px 5px 0 0 ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
     7.5px 5px 0 0 ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'};
-  animation: ${rotateAnimation} 10s alternate linear infinite;
+  animation: ${rotateAnimation} 5s alternate linear infinite;
 `;
 
-const LoaderInner2 = styled(LoaderInner1)`
-  box-shadow: 7.5px -5px 0 0  ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
-    -7.5px -5px 0 0  ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
-    5px 0px 0 0  ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'};
-  animation: ${rotateOtherAnimation} 10s alternate linear infinite;
+const LoaderInner2 = styled(LoaderInner1)<LoaderInnerProps>`
+  box-shadow: 7.5px -5px 0 0 ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
+    -10.5px -5px 0 0 ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
+    5px 0px 0 0 ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'};
+  animation: ${rotateOtherAnimation} 5s alternate linear infinite;
 `;
 
-const LoaderInner3 = styled(LoaderInner1)`
-  box-shadow: 5px 0px 0 0  ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
-    5px 0px 0 0  ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
-    0 -10px 0 0  ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'};
-  animation: ${rotateAnimation} 10s alternate linear infinite;
+const LoaderInner3 = styled(LoaderInner1)<LoaderInnerProps>`
+  box-shadow: 5px 0px 0 0 ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
+    10px 0px 0 0 ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'},
+    0 -10px 0 0 ${(props) => props.rgb || 'rgba(0, 0, 0, 0)'};
+  animation: ${rotateAnimation} 5s alternate linear infinite;
 `;
-
-export default function ProfileImage() {
-  const [inner1Rgb, setInner1Rgb] = useState('');
-  const [inner2Rgb, setInner2Rgb] = useState('');
-  const [inner3Rgb, setInner3Rgb] = useState('');
-
-  axios.get('/perfume/search/scent').then((response) => {
-    testRes.res.favorite.forEach((favoriteScent) => {
-      const matchingScent = response.data.find((scent) => scent.name === favoriteScent);
-      if (matchingScent) {
-        const rgbValue = matchingScent.rgb;
-        if (favoriteScent === testRes.res.favorite[0]) {
-          setInner1Rgb(rgbValue);
-        } else if (favoriteScent === testRes.res.favorite[1]) {
-          setInner2Rgb(rgbValue);
-        } else if (favoriteScent === testRes.res.favorite[2]) {
-          setInner3Rgb(rgbValue);
-        }
-      }
-    });
-  });
-
-  return (
-    <Root>
-      <LoaderContainer>
-        <LoaderInner1 rgb={inner1Rgb} />
-        <LoaderInner2 rgb={inner2Rgb} />
-        <LoaderInner3 rgb={inner3Rgb} />
-        <ImageDiv>
-          <Image imageUrl="">
-            {/* 개인 프로필 이미지 들어와야 하는 부분 */}
-            <ProfileImg />
-          </Image>
-        </ImageDiv>
-      </LoaderContainer>
-    </Root>
-  );
-}
