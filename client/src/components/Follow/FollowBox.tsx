@@ -90,8 +90,12 @@ const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
     });
   };
 
-  const handleOtherProfile = (id: string) => {
-    navigate(`/profile-page/${id}`);
+  const handleOtherProfile = (id: string, notMe: boolean) => {
+    if (notMe) {
+      navigate(`/profile-page/${id}`);
+    } else {
+      navigate('/mypage');
+    }
   };
 
   return (
@@ -108,7 +112,7 @@ const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
           />
           <InfoBox
             onClick={() => {
-              handleOtherProfile(follow.userId);
+              handleOtherProfile(follow.userId, follow.followingButtonActivate);
             }}
           >
             <FollowNickname>{follow.nickname}</FollowNickname>

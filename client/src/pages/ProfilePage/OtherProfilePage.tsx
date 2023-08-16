@@ -34,7 +34,7 @@ export default function OtherProfilePage() {
   const [followingCount, setFollowingCount] = useState<number>(0);
 
   const [userImage, setUserImage] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string>('');
+  // const [userId, setUserId] = useState<string>('');
   const [nickname, setUserNickname] = useState<string>('');
   const navigation = useNavigate();
 
@@ -48,7 +48,7 @@ export default function OtherProfilePage() {
       setFavorites(userData.userInfo.favorities);
       setHates(userData.userInfo.hates);
       setUserImage(userData.userInfo.user.picture);
-      setUserId(userData.userInfo.user.userId);
+      // setUserId(userData.userInfo.user.userId);
       setUserNickname(userData.userInfo.user.nickname);
     });
 
@@ -94,7 +94,7 @@ export default function OtherProfilePage() {
           postCount={postCount}
           followerCount={followerCount}
           followingCount={followingCount}
-          userId={userId}
+          userId={id}
         />
         <MypageContainer>
           {feeds ? (
