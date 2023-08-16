@@ -53,7 +53,7 @@ export default function OtherProfilePage() {
       setUserId(userData.userInfo.user.userId);
       setUserNickname(userData.userInfo.user.nickname);
       setFollow(userData.userInfo.following);
-      setIsMe(userData.userInfo.user.me);
+      setIsMe(userData.userInfo.me);
     });
 
     axios
@@ -78,7 +78,7 @@ export default function OtherProfilePage() {
   };
 
   if (isMe) {
-    navigation('mypage');
+    navigation('/mypage');
   }
   return (
     <Main>
