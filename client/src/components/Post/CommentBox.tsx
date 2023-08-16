@@ -1,4 +1,5 @@
 import React, { useState, useEffect, KeyboardEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { commentDto, commmentUsers } from '../../types/PostInfoType';
 import CommentModalBtn from '../Button/CommentModalBtn';
@@ -110,6 +111,7 @@ const getTimeString = (elapsedTime: number, createdAt: string): string => {
 };
 
 const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
+  const navigate = useNavigate();
   const [elapsedTime, setElapsedTime] = useState(
     getElapsedTime(comment.createdAt),
   );
@@ -171,15 +173,34 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
     }
   };
 
+  const handleOtherProfile = (id: string, notMe: boolean, withdraw:boolean) => {
+    console.log(notMe);
+    if (withdraw) {
+      return;
+    }
+    if (notMe) {
+      navigate(`/profile-page/${id}`);
+    } else {
+      navigate('/mypage');
+    }
+  };
+
   return (
     <CommentBoxContainer>
-      <ProfileImage
-        src={
-          commentUser.user.picture
-            ? commentUser.user.picture
-            : '/assets/avatar/peeps-avatar-alpha-9.png'
-        }
-      />
+      <div
+        style={{ display: 'flex' }}
+        onClick={() => {
+          handleOtherProfile(commentUser.user.userId, !commentUser.me, commentUser.withdrawal);
+        }}
+      >
+        <ProfileImage
+          src={
+            commentUser.user.picture
+              ? commentUser.user.picture
+              : '/assets/avatar/peeps-avatar-alpha-9.png'
+          }
+        />
+      </div>
       <CommentContent>
         <InfoBox>
           <UserNickname>{commentUser.user.nickname}</UserNickname>
