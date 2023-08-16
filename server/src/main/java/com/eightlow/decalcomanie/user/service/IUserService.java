@@ -11,6 +11,7 @@ import com.eightlow.decalcomanie.user.dto.UserInfoDto;
 import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
+import com.eightlow.decalcomanie.user.dto.response.ProfileResponse;
 import com.eightlow.decalcomanie.user.entity.Follow;
 import com.eightlow.decalcomanie.user.entity.UserPerfume;
 
@@ -49,6 +50,8 @@ public interface IUserService {
 
     // 사용자 향 TOP 3 조회
     List<ScentDto> getTopThreeScent(String userId);
+
+    ProfileResponse getUserProfile(String userId);
 
 //    List<FeedResponse> getBookmarkArticle(FeedInquiryRequest feedInquiryRequest, String userId);
 }

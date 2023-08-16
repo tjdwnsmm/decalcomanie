@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FeedInquiryRequest {
+    private String userId;
+
     private Integer dataSize;
 
     private Integer heartCnt;

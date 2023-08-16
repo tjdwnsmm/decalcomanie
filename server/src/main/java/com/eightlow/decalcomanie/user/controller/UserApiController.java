@@ -14,6 +14,7 @@ import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
 import com.eightlow.decalcomanie.user.dto.response.CommonResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
+import com.eightlow.decalcomanie.user.dto.response.ProfileResponse;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -156,6 +157,11 @@ public class UserApiController {
                                                           HttpServletRequest req){
         List<FeedResponse> responses  = articleService.getBookmarkArticle(feedInquiryRequest, (String)req.getAttribute("userId"));
         return ResponseEntity.status(HttpStatus.OK).body(responses);
+    }
+
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<ProfileResponse> getProfile(@PathVariable String userId, HttpServletRequest req) {
+        return new ResponseEntity(userService.getUserProfile(userId), HttpStatus.OK);
     }
 
 }

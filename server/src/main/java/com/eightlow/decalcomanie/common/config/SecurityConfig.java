@@ -32,7 +32,6 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .csrf().disable()
                 .authorizeRequests()
-//                .antMatchers("/**").permitAll()
                 .antMatchers("/oauth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

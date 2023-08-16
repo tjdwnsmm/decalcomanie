@@ -11,25 +11,19 @@ import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
 import com.eightlow.decalcomanie.perfume.repository.PerfumePickRepository;
 import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
-import com.eightlow.decalcomanie.sns.dto.request.FeedInquiryRequest;
-import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
-import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
-import com.eightlow.decalcomanie.sns.entity.Article;
-import com.eightlow.decalcomanie.sns.entity.BookMark;
 import com.eightlow.decalcomanie.sns.repository.ArticleRepository;
 import com.eightlow.decalcomanie.sns.repository.BookMarkRepository;
 import com.eightlow.decalcomanie.sns.repository.CommentRepository;
-import com.eightlow.decalcomanie.sns.service.IArticleService;
 import com.eightlow.decalcomanie.user.dto.*;
 import com.eightlow.decalcomanie.user.dto.request.UserInfoUpdateRequest;
 import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
+import com.eightlow.decalcomanie.user.dto.response.ProfileResponse;
 import com.eightlow.decalcomanie.user.entity.*;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
 import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.repository.*;
 import com.eightlow.decalcomanie.user.service.IUserService;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
 import static com.eightlow.decalcomanie.sns.entity.QArticle.article;
@@ -567,6 +560,17 @@ public class UserServiceImpl implements IUserService {
         }
 
         return result.subList(0, Math.min(userScentPercentList.size(),3));
+    }
+
+    @Override
+    public ProfileResponse getUserProfile(String userId) {
+        ProfileResponse profileResponse = ProfileResponse.builder()
+                .following(getFollowingUsers(userId).size())
+                .follower(getFollowers(userId).size())
+                .userInfo(getUserInfo(userId))
+                .build();
+
+        return profileResponse;
     }
 
 //    @Override
