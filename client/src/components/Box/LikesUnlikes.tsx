@@ -38,8 +38,9 @@ const LikeBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 65px;
-  height: 30px;
+  width: fit-content;
+  height: fit-content;
+  padding: 4px 8px;
   border-radius: 4px;
   background-color: var(--primary-color);
   color: var(--white-color);
