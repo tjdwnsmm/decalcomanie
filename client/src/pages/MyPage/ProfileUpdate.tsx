@@ -13,7 +13,7 @@ import WithdrawModal from '../../components/Profile/WithdrawModal';
 const PageName = styled.div`
   background-color: var(--background-color);
   text-align: center;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   padding: 20px 0 10px 0;
   position: fixed;

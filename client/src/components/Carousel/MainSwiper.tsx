@@ -47,6 +47,7 @@ const SwiperContainer = styled.div`
 
   .each-slide {
     margin: 0;
+    cursor: pointer;
   }
   .swiper-slide {
     width: fit-content;

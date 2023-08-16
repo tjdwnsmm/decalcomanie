@@ -67,7 +67,7 @@ const CreatedAt = styled.div`
 const Scent = styled.div`
   display: flex;
   color: ${(props) =>
-    props.color === 'fav' ? 'var(--primary-color)' : 'var(--gray-color)'};
+    props.color === 'fav' ? 'var(--primary-color)' : 'var(--dark-gray-color)'};
   font-size: 10px;
   font-weight: 500;
   margin-right: 5px;
