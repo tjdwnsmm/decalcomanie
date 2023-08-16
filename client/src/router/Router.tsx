@@ -15,6 +15,7 @@ import LoginPage from '../pages/LoginPage/LoginPage';
 import KakaoAuthHandle from '../pages/LoginPage/KakaoAuthHandler';
 import PrivateRoute from './PrivateRoute';
 import PostUpdate from '../pages/PostPages/PostUpdate';
+import OtherProfilePage from '../pages/ProfilePage/OtherProfilePage';
 
 export default function Router() {
   return (
@@ -31,6 +32,10 @@ export default function Router() {
           <Route path="/search-myperfume" element={<SearchMyPerfume />}></Route>
           <Route path="/post" element={<Post />}></Route>
           <Route path="/mypage" element={<Mypage />}></Route>
+          <Route
+            path="/profile-page/:id"
+            element={<OtherProfilePage />}
+          ></Route>
           <Route path="/post-detail/:id" element={<PostDetail />}></Route>
           <Route path="/perfume-detail/:id" element={<PerfumeDetail />}></Route>
           <Route path="/my-drawer" element={<MyDrawerPage />}></Route>
