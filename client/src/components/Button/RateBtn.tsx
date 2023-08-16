@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { ReactComponent as StarSvg } from '../../assets/icon/empty-star.svg';
 
 interface RateBtnProps {
-  count: number;
+  count: number | string;
 }
 
 /** @param {number} count : 평점*/

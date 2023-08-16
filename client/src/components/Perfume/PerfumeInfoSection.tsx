@@ -22,7 +22,7 @@ const PerfumeInfoSection: React.FC<PerfumeInfoSectionProps> = ({ perfume }) => {
             dislikeUrl="/perfume/pick"
             perfumeId={perfume.perfumeId}
           />
-          <RateBtn count={perfume.rate ? perfume.rate : 0} />
+          <RateBtn count={perfume.rate ? perfume.rate.toFixed(1) : 0} />
         </PerfumeIcon>
         <Brand>{perfume.brandName}</Brand>
         <PerfumeName>{perfume.name}</PerfumeName>
