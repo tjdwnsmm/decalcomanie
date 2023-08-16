@@ -76,7 +76,7 @@ export const MainFeed = () => {
       <FeedTab setNowActive={handleTabClick} />
       <Feeds>
         {feeds ? (
-          feeds.length === 0 ? (
+          feeds.length === 0 && isFetching ? (
             <>
               <MarginFrame margin="100px auto">
                 <CenterFrame className="errorTitle">
