@@ -2,7 +2,7 @@ import React, { useState, useEffect, KeyboardEvent } from 'react';
 import styled from 'styled-components';
 import { commentDto, commmentUsers } from '../../types/PostInfoType';
 import CommentModalBtn from '../Button/CommentModalBtn';
-import axios, { DEFAULT_PICTURE } from '../../api/apiController';
+import axios from '../../api/apiController';
 
 interface CommentBoxProps {
   comment: commentDto;
@@ -174,7 +174,11 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
   return (
     <CommentBoxContainer>
       <ProfileImage
-        src={commentUser.user.picture ? `/${commentUser.user.picture}` : DEFAULT_PICTURE}
+        src={
+          commentUser.user.picture
+            ? commentUser.user.picture
+            : '/assets/avatar/peeps-avatar-alpha-9.png'
+        }
       />
       <CommentContent>
         <InfoBox>

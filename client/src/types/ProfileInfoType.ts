@@ -1,11 +1,11 @@
-import { scentDto } from "./PostInfoType";
+import { ScentDto } from './PerfumeInfoType';
 
 export interface FollowInfo {
   userId: string;
   picture: string;
   nickname: string;
-  favorite: scentDto[];
-  hate: scentDto[];
+  favorite: ScentDto[];
+  hate: ScentDto[];
   following: boolean;
   followingButtonActivate: boolean;
 }
@@ -21,7 +21,7 @@ export interface userInfo {
 
 export interface ProfileUpdateInfo {
   user: userInfo;
-  favorities: string[];
-  hates: string[];
+  favorities: ScentDto[];
+  hates: ScentDto[];
   img: string;
 }

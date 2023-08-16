@@ -5,7 +5,6 @@ import FollowBtn from '../Button/FollowBtn';
 import PostModalBtn from '../Button/PostModalBtn';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
-import { DEFAULT_PICTURE } from '../../api/apiController';
 
 /**
 @summary
@@ -124,7 +123,11 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
       <WriterInfoBox>
         <div style={{ display: 'flex' }}>
           <ProfileImg
-            src={userInfoDto.user.picture ? `/${userInfoDto.user.picture}` : DEFAULT_PICTURE}
+            src={
+              userInfoDto.user.picture
+                ? userInfoDto.user.picture
+                : '/assets/avatar/peeps-avatar-alpha-9.png'
+            }
           />
           <InfoBox>
             <InfoBoxRow>

@@ -5,7 +5,6 @@ import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
 import { useEffect, useState } from 'react';
 import axios from '../../api/apiController';
-import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface FeedComponentProps {
   feed: EachFeedInfo;
@@ -50,7 +49,7 @@ const FeedPage = ({ feed, handleDetail, handleFollow }: FeedComponentProps) => {
     <>
       <FeedBox>
         <div onClick={() => handleDetail(feed.articleDtos.articleId)}>
-          <PerfumeInfoBox feed={feed.perfumeDtos} />
+          <PerfumeInfoBox feed={feed.perfumeDtos ? feed.perfumeDtos : null} />
           <ContentBox>
             {removeHtmlTags(
               feed.articleDtos.content.length > 100
@@ -74,7 +73,7 @@ const FeedPage = ({ feed, handleDetail, handleFollow }: FeedComponentProps) => {
                 handleFollowClick(feed.userInfoDto.user.userId);
               }}
             >
-              {feed.userInfoDto.user.nickname !== getLoggedInUserNickname() ? (
+              {feed.followingButtonActivate ? (
                 followed ? (
                   <div className="following">팔로잉</div>
                 ) : (

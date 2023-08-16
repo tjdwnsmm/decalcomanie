@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 export const USERID = '07161c43-bc03-44f6-95c1-a56d440a23bf';
-export const DEFAULT_PICTURE = '/assets/avatar/peeps-avatar-alpha-1.png';
 export const BASE_URL = import.meta.env.VITE_REACT_APP_SERVER;
 
 const instance = axios.create({

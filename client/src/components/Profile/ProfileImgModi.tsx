@@ -32,10 +32,10 @@ const ProfileImgModi = ({ closeModal, handleImg }: ProfileProps) => {
             <ProfileEach
               key={index}
               onClick={() => {
-                handleImageClick(`assets/avatar/${imageName}`);
+                handleImageClick(`/assets/avatar/${imageName}`);
               }}
             >
-              <ProfileImage src={`assets/avatar/${imageName}`} />
+              <ProfileImage src={`/assets/avatar/${imageName}`} />
             </ProfileEach>
           ))}
         </ImgList>

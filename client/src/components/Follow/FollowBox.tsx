@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { FollowInfo } from '../../types/ProfileInfoType';
 import FollowBtn from '../Button/FollowBtn';
-import { DEFAULT_PICTURE } from '../../api/apiController';
 
 interface FollowBoxProps {
   followList: FollowInfo[];
@@ -92,7 +91,12 @@ const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
         <FollowInfoBox key={follow.userId}>
           {/* picture default 논의 후 수정 */}
           <ProfileImg
-            src={follow.picture ? `/${follow.picture}` : DEFAULT_PICTURE} />
+            src={
+              follow.picture
+                ? follow.picture
+                : '/assets/avatar/peeps-avatar-alpha-9.png'
+            }
+          />
           <InfoBox>
             <FollowNickname>{follow.nickname}</FollowNickname>
             <FavScentList>

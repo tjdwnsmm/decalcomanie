@@ -4,22 +4,41 @@ import PerfumeInfoBox from '../../components/Perfume/PerfumeInfoBox';
 import { styled } from 'styled-components';
 import FeedPageOnly from '../../components/Feed/FeedPageByPerfume';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import axios from '../../api/apiController';
 import Spinner from '../../components/common/Spinner';
 import { ReactComponent as BackSvg } from '../../assets/icon/prevBack.svg';
+import { useFetchPerfumeDatas } from '../../components/Feed/useFetchPerfumeData';
+import useIntersect from '../../hooks/useIntersect';
 
 export const PerfumeFeed = () => {
   const { id } = useParams<{ id: string }>();
   const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
   const navigate = useNavigate();
+  const [heartCnt, setHeartCnt] = useState(-1);
+  const [lastArticleId, setLastArticleId] = useState(-1);
 
-  useEffect(() => {
-    axios.get(`/sns/perfume/${id}`).then((res) => {
-      setFeeds(res.data);
-      console.log(res.data);
+  const { data, hasNextPage, isFetching, fetchNextPage, isLoading } =
+    useFetchPerfumeDatas({
+      heartCnt,
+      lastArticleId,
+      id: id ? id : '',
     });
-  }, []);
+
+  const datas = useMemo(() => (data ? data : []), [data]);
+  useEffect(() => {
+    setFeeds(datas);
+  }, [datas]);
+
+  const ref = useIntersect(async (entry, observer) => {
+    observer.unobserve(entry.target);
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
+      console.log('✅ 이전까지 받아온 데이터!', datas);
+      setLastArticleId(datas[datas.length - 1].articleDtos.articleId);
+      setHeartCnt(datas[datas.length - 1].articleDtos.heart);
+    }
+  });
 
   const handleBack = () => {
     navigate(`/perfume-detail/${id}`);
@@ -82,10 +101,16 @@ export const PerfumeFeed = () => {
         {feeds.map((eachFeed, idx) => (
           <FeedPageOnly key={idx} feed={eachFeed} handleFollow={handleFollow} />
         ))}
+        {!isFetching && isLoading && <Spinner />}
+        <MarginFrame margin="10px auto" />
+        <Target ref={ref} />
       </FeedBody>
     </Main>
   );
 };
+const Target = styled.div`
+  height: 3px;
+`;
 
 const PerfumeFeedBox = styled.div`
   margin-top: 12px;
