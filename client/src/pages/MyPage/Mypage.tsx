@@ -45,7 +45,7 @@ const splitFeeds = (arr: Feed[]): [Feed[], Feed[]] => {
 };
 
 export default function Mypage() {
-  const [nowActive, setNowActive] = useState<string>('following');
+  const [nowActive, setNowActive] = useState<string>('post');
   const [feeds, setFeeds] = useState<Feed[] | null>([]);
   const [isLoading, setLoading] = useState(false);
 
@@ -60,12 +60,11 @@ export default function Mypage() {
         }));
         setFeeds(myBookmarks);
         setLoading(false);
-        console.log(myBookmarks);
       });
 
       // 내가 쓴 글
     } else if (tab === 'post') {
-      axios.post('/sns/user').then((res) => {
+      axios.post('/sns/user', { dataSize: 20, lastArticleId: null }).then((res) => {
         const myPosts = res.data.map((postData: EachFeedInfo) => ({
           id: postData.articleDtos.articleId,
           picture: postData.perfumeDtos.picture,
@@ -73,7 +72,6 @@ export default function Mypage() {
         setPostCount(myPosts.length);
         setFeeds(myPosts);
         setLoading(false);
-        console.log(myPosts);
       });
 
       // 내가 찜한 향수
@@ -81,7 +79,6 @@ export default function Mypage() {
       axios.get('/perfume/picked').then((res) => {
         setFeeds(res.data);
         setLoading(false);
-        console.log(res.data);
       });
     }
   };
@@ -155,7 +152,7 @@ export default function Mypage() {
         <MyPageTab setNowActive={handleTabClick} />
         <MypageContainer>
           <Column>
-            {firstColumnFeeds.map((firstColumnFeed) => (
+            {firstColumnFeeds.map((firstColumnFeed, index) => (
               <ProfileTabs
                 onClick={() => {
                   if (firstColumnFeed.perfumeId) {
@@ -164,7 +161,7 @@ export default function Mypage() {
                     navigation(`/post-detail/${firstColumnFeed.id}`);
                   }
                 }}
-                key={firstColumnFeed.id}
+                key={index}
                 id={firstColumnFeed.id}
                 picture={firstColumnFeed.picture}
                 perfumeId={firstColumnFeed.perfumeId}
@@ -172,7 +169,7 @@ export default function Mypage() {
             ))}
           </Column>
           <Column>
-            {secondColumnFeeds.map((secondColumnFeed) => (
+            {secondColumnFeeds.map((secondColumnFeed, index) => (
               <ProfileTabs
                 onClick={() => {
                   if (secondColumnFeed.perfumeId) {
@@ -181,7 +178,7 @@ export default function Mypage() {
                     navigation(`/post-detail/${secondColumnFeed.id}`);
                   }
                 }}
-                key={secondColumnFeed.id}
+                key={index}
                 id={secondColumnFeed.id}
                 picture={secondColumnFeed.picture}
                 perfumeId={secondColumnFeed.perfumeId}
