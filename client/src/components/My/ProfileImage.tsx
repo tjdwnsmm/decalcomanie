@@ -71,15 +71,15 @@ const Image = styled.div<ImageProps>`
   width: 150px;
   height: 150px;
   border-radius: 100%;
-  background-color: var(--primary-color);
-  background-image: ${({ imageUrl }) => imageUrl ? `url(${imageUrl})` : 'none'};
+  background-image: ${({ imageUrl }) =>
+    imageUrl ? `url(${imageUrl})` : 'none'};
   background-size: cover;
   z-index: 0;
 `;
 
 const ImageDiv = styled.div`
   width: 100%;
-  height: 140px;
+  height: 115px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -105,7 +105,7 @@ const rotateAnimation = keyframes`
     transform: scale(1) rotate(360deg);
   }
   100% {
-    transform: scale(1.1) rotate(720deg);
+    transform: scale(1) rotate(720deg);
   }
 `;
 
@@ -114,7 +114,7 @@ const rotateOtherAnimation = keyframes`
     transform: scale(1) rotate(-360deg);
   }
   100% {
-    transform: scale(1.1) rotate(-720deg);
+    transform: scale(1) rotate(-720deg);
   }
 `;
 
