@@ -53,26 +53,34 @@ export default function Mypage() {
     setLoading(true);
     // 북마크
     if (tab === 'bookmark') {
-      axios.post('/user/bookmark', { dataSize: 20, lastArticleId: null }).then((res) => {
-        const myBookmarks = res.data.map((bookmarkData: EachFeedInfo) => ({
-          id: bookmarkData.articleDtos.articleId,
-          picture: bookmarkData.perfumeDtos.picture,
-        }));
-        setFeeds(myBookmarks);
-        setLoading(false);
-      });
+      axios
+        .post('/user/bookmark', { dataSize: 20, lastArticleId: null })
+        .then((res) => {
+          console.log(res.data);
+          const myBookmarks = res.data.map((bookmarkData: EachFeedInfo) => ({
+            id: bookmarkData.articleDtos.articleId,
+            picture: bookmarkData.perfumeDtos
+              ? bookmarkData.perfumeDtos.picture
+              : '',
+          }));
+          setFeeds(myBookmarks);
+          setLoading(false);
+        });
 
       // 내가 쓴 글
     } else if (tab === 'post') {
-      axios.post('/sns/user', { dataSize: 20, lastArticleId: null }).then((res) => {
-        const myPosts = res.data.map((postData: EachFeedInfo) => ({
-          id: postData.articleDtos.articleId,
-          picture: postData.perfumeDtos.picture,
-        }));
-        setPostCount(myPosts.length);
-        setFeeds(myPosts);
-        setLoading(false);
-      });
+      axios
+        .post('/sns/user', { dataSize: 20, lastArticleId: null })
+        .then((res) => {
+          console.log(res.data);
+          const myPosts = res.data.map((postData: EachFeedInfo) => ({
+            id: postData.articleDtos.articleId,
+            picture: postData.perfumeDtos ? postData.perfumeDtos.picture : '',
+          }));
+          setPostCount(myPosts.length);
+          setFeeds(myPosts);
+          setLoading(false);
+        });
 
       // 내가 찜한 향수
     } else if (tab === 'like') {
@@ -186,6 +194,7 @@ export default function Mypage() {
             ))}
           </Column>
         </MypageContainer>
+        <MarginFrame margin="80px"></MarginFrame>
       </MarginFrame>
       <BottomNav />
     </Main>
