@@ -12,14 +12,14 @@ export default function LikesUnlikes({ likes, unlikes }: Props) {
     <>
       <BoxDiv>
         {/* 좋아하는 향료 3개 이름 출력 */}
-        {likes.map((like) => (
-          <LikeBox>{like.name}</LikeBox>
+        {likes.map((like, index) => (
+          <LikeBox key={index}>{like.name}</LikeBox>
         ))}
       </BoxDiv>
       <BoxDiv>
         {/* 싫어하는 향료 3개 이름 출력 */}
-        {unlikes.map((unlike) => (
-          <UnlikeBox>{unlike.name}</UnlikeBox>
+        {unlikes.map((unlike, index) => (
+          <UnlikeBox key={index}>{unlike.name}</UnlikeBox>
         ))}
       </BoxDiv>
     </>
