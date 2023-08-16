@@ -12,7 +12,7 @@ import MoreRateInfo from '../../components/Main/MoreRateInfo';
 import MainScent from '../../components/Main/MainScent';
 import axios from '../../api/apiController';
 import Spinner from '../../components/common/Spinner';
-
+import { ReactComponent as RefreshSvg } from '../../../public/assets/img/refresh.svg';
 interface BaseInfoProps {
   curSeason: string;
   curTime: string;
@@ -24,6 +24,8 @@ const MainPage = () => {
   const navigate = useNavigate();
   const [isDrawer, setDrawer] = useState(true);
   const backFrameRef = useRef<HTMLDivElement>(null);
+  const [saveRecommend, setSaveRecommend] = useState<boolean>(false);
+
   const [nickname, setNickname] = useState('');
   const [recommendScent, setRecommendScent] = useState<ScentDto[]>([]);
   const [recommendPerfume, setRecommendPerfume] = useState<
@@ -48,6 +50,17 @@ const MainPage = () => {
     navigate('/search-myperfume');
   };
 
+  const handleRecommend = () => {
+    //추천 새로고침
+    setRecommendPerfume(null);
+    setSaveRecommend(false);
+    axios.get('/perfume/recommend').then((res) => {
+      console.log(res.data);
+      setRecommendPerfume(res.data);
+      setSaveRecommend(true);
+    });
+  };
+
   const getSeasonTime = (season: string) => {
     switch (season) {
       case 'summer':
@@ -67,9 +80,9 @@ const MainPage = () => {
       const scentData = res.data;
       setRecommendScent(scentData);
     });
+
     axios.get('/user/recommend').then((res) => {
       const datas = res.data;
-      datas.length === 0 ? setDrawer(false) : setDrawer(true);
       setRecommendPerfume(datas);
     });
 
@@ -85,6 +98,8 @@ const MainPage = () => {
         gender: res.data.gender,
         age: res.data.age,
       });
+      setSaveRecommend(res.data.userPerfumeExist);
+      setDrawer(res.data.drawerPerfumeExist);
     });
   }, []);
 
@@ -127,12 +142,22 @@ const MainPage = () => {
                   <div className="subtitle">
                     서랍에 담은 향수들에 기반한 맞춤 추천 결과입니다
                   </div>
-                  <>
+                  <RecommendBox>
                     <MainScent accord={recommendScent} />
-                  </>
+                    <RefreshSvg onClick={handleRecommend} />
+                  </RecommendBox>
                 </Info>
-                {recommendPerfume ? (
-                  <MainSwiper perfumes={recommendPerfume} />
+                {saveRecommend ? (
+                  recommendPerfume ? (
+                    <MainSwiper perfumes={recommendPerfume} />
+                  ) : (
+                    <NoSaveRecommend>
+                      <>아직 추천된 데이터가 없어요 😥</>
+                      <div onClick={handleRecommend}>
+                        추천 향수 업데이트하기
+                      </div>
+                    </NoSaveRecommend>
+                  )
                 ) : (
                   <Spinner info="맞춤 추천 중입니다. 잠시만 기다려주세요 😄" />
                 )}
@@ -195,6 +220,38 @@ const MainPage = () => {
 
 export default MainPage;
 
+const NoSaveRecommend = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-weight: 600;
+  margin-top: 5px;
+
+  div {
+    color: var(--white-color);
+    background-color: var(--primary-color);
+    width: fit-content;
+    height: fit-content;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 400;
+  }
+`;
+
+const RecommendBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+`;
 const BackFrame = styled.div`
   background: linear-gradient(
     180deg,
