@@ -18,4 +18,5 @@ public class DailyRecommendResponse {
     private int gender;
     private int age;
     private boolean isUserPerfumeExist;
+    private boolean isDrawerPerfumeExist;
 }

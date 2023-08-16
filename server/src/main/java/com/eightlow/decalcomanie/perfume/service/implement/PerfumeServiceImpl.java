@@ -242,6 +242,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
                 .gender(loginUser.getGender())
                 .curSeason(getSeason(today))
                 .curTime(getTime(curTime))
+                .isDrawerPerfumeExist(userService.getUserPerfume(userId).size() > 0)
                 .isUserPerfumeExist(userService.getUserPerfumeRecommend(userId).size() > 0)
                 .build();
     }
