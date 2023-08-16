@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Main, MarginFrame } from '../../style';
-import { MyPageTab } from '../../components/TabBar/MypageTab';
+import { useNavigate, useParams } from 'react-router-dom';
+import { CenterFrame, Main, MarginFrame } from '../../style';
 import ProfileImage from '../../components/My/ProfileImage';
-import LikesUnlikes from '../../components/Box/LikesUnlikes';
 import ProfileStats from '../../components/My/ProfileStats';
+import LikesUnlikes from '../../components/Box/LikesUnlikes';
 import ProfileTabs from '../../components/My/ProfileTabs';
 import BottomNav from '../../components/common/BottomNav';
 import axios from '../../api/apiController';
@@ -25,84 +24,48 @@ interface Feed {
   perfumeId: number;
 }
 
-// feeds 배열을 두 개의 열로 나누는 함수
-const splitFeeds = (arr: Feed[]): [Feed[], Feed[]] => {
-  const oddColumn: Feed[] = [];
-  const evenColumn: Feed[] = [];
-
-  if (arr) {
-    arr.forEach((feed, idx) => {
-      if (idx % 2 === 1) {
-        evenColumn.push(feed);
-      } else {
-        oddColumn.push(feed);
-      }
-    });
-  }
-
-  return [oddColumn, evenColumn];
-};
-
 export default function OtherProfilePage() {
-  const [nowActive, setNowActive] = useState<string>('post');
   const [feeds, setFeeds] = useState<Feed[] | null>([]);
   const [isLoading, setLoading] = useState(false);
-
   const [favorites, setFavorites] = useState<ScentDto[]>([]);
   const [hates, setHates] = useState<ScentDto[]>([]);
-
   const [postCount, setPostCount] = useState<number>(0);
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
 
   const [userImage, setUserImage] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>('');
-
-  const [dataLoaded, setDataLoaded] = useState(false);
+  const [nickname, setUserNickname] = useState<string>('');
   const navigation = useNavigate();
 
+  const { id } = useParams<{ id: string }>();
   useEffect(() => {
+    axios.get(`/user/profile/${id}`).then((res) => {
+      const userData = res.data;
+      console.log(userData);
+      setFollowerCount(userData.follower);
+      setFollowingCount(userData.following);
+      setFavorites(userData.userInfo.favorities);
+      setHates(userData.userInfo.hates);
+      setUserImage(userData.userInfo.user.picture);
+      setUserId(userData.userInfo.user.userId);
+      setUserNickname(userData.userInfo.user.nickname);
+    });
+
     axios
-      .post('/sns/user', { dataSize: 20, lastArticleId: null })
+      .post('/sns/user', { dataSize: 100, lastArticleId: null, userId: id })
       .then((res) => {
         console.log(res.data);
-        const myBookmarks = res.data.map((bookmarkData: EachFeedInfo) => ({
-          id: bookmarkData.articleDtos.articleId,
-          picture: bookmarkData.perfumeDtos
-            ? bookmarkData.perfumeDtos.picture
-            : '',
+        setPostCount(res.data.length);
+        const otherFeed = res.data.map((feedData: EachFeedInfo) => ({
+          id: feedData.articleDtos.articleId,
+          picture: feedData.perfumeDtos
+            ? feedData.perfumeDtos.picture
+            : '/src/assets/img/perfume-drawer.svg',
         }));
-        setFeeds(myBookmarks);
+        setFeeds(otherFeed);
         setLoading(false);
       });
-
-    // 데이터 로드 함수 정의
-    const loadData = async () => {
-      try {
-        // 프로필 이미지, 선호/비선호 향료 관련
-        const infoRes = await axios.get('/user/info');
-        setUserImage(infoRes.data.user.picture);
-        setFavorites(infoRes.data.favorities);
-        setHates(infoRes.data.hates);
-        setUserId(infoRes.data.user.userId);
-
-        // Follower 수
-        const followerRes = await axios.get('/user/follower');
-        setFollowerCount(followerRes.data.length);
-
-        // Following 수
-        const followingRes = await axios.get('/user/following');
-        setFollowingCount(followingRes.data.length);
-
-        // 모든 데이터 로딩 완료
-        setDataLoaded(true);
-      } catch (error) {
-        console.error('Error loading data:', error);
-      }
-    };
-
-    // 데이터 로드 실행
-    loadData();
   }, []);
 
   const handleLeftArrowClick = () => {
@@ -120,9 +83,13 @@ export default function OtherProfilePage() {
         </TopDiv>
         <ProfileImage userImage={userImage} likes={favorites} />
         <MypageText size="18px" fontWeight="bold" textalign="center">
-          {localStorage.getItem('nickname')}
+          {nickname}
         </MypageText>
-        <LikesUnlikes likes={favorites} unlikes={hates} />
+        {favorites.length === 0 && hates.length === 0 ? (
+          <Text>사용자가 선호/비선호향을 등록하지 않았습니다</Text>
+        ) : (
+          <LikesUnlikes likes={favorites} unlikes={hates} />
+        )}
         <ProfileStats
           postCount={postCount}
           followerCount={followerCount}
@@ -130,21 +97,31 @@ export default function OtherProfilePage() {
           userId={userId}
         />
         <MypageContainer>
-          {feeds?.map((firstColumnFeed, index) => (
-            <ProfileTabs
-              onClick={() => {
-                if (firstColumnFeed.perfumeId) {
-                  navigation(`/perfume/detail/${firstColumnFeed.perfumeId}`);
-                } else {
-                  navigation(`/post-detail/${firstColumnFeed.id}`);
-                }
-              }}
-              key={index}
-              id={firstColumnFeed.id}
-              picture={firstColumnFeed.picture}
-              perfumeId={firstColumnFeed.perfumeId}
-            />
-          ))}
+          {feeds ? (
+            feeds.map((feed, index) => (
+              <ProfileTabs
+                onClick={() => {
+                  if (feed.perfumeId) {
+                    navigation(`/perfume/detail/${feed.perfumeId}`);
+                  } else {
+                    navigation(`/post-detail/${feed.id}`);
+                  }
+                }}
+                key={index}
+                id={feed.id}
+                picture={feed.picture}
+                perfumeId={feed.perfumeId}
+              />
+            ))
+          ) : (
+            <>
+              <MarginFrame margin="100px auto">
+                <CenterFrame className="errorTitle">
+                  작성된 글이 없습니다 😥
+                </CenterFrame>
+              </MarginFrame>
+            </>
+          )}
         </MypageContainer>
         <MarginFrame margin="80px"></MarginFrame>
       </MarginFrame>
@@ -165,6 +142,10 @@ const MypageContainer = styled.div`
   flex-wrap: wrap;
   justify-content: flex-start;
   margin-left: 10px;
+
+  .errorTitle {
+    font-weight: 700;
+  }
 `;
 
 const TopDiv = styled.div`
@@ -181,4 +162,10 @@ const Button = styled.button`
   border: none;
   margin: 8px;
   cursor: pointer;
+`;
+const Text = styled.div`
+  margin-top: 5px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--gray-color);
 `;
