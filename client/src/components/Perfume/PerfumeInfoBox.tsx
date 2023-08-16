@@ -35,7 +35,7 @@ const PerfumeInfoBox = ({ feed }: PerfumeInfoBoxProps) => {
         <TextInfo>
           <PerfumeRate>
             <StarSvg />
-            {feed.rate ? feed.rate : 4.2}
+            {feed.rate ? feed.rate : 0}
           </PerfumeRate>
           <PerfumeBrand>{feed.brandName}</PerfumeBrand>
           <PerfumeName>
