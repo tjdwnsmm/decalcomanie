@@ -8,7 +8,6 @@ import FollowTab from '../../components/TabBar/FollowTab';
 import FollowBox from '../../components/Follow/FollowBox';
 import { FollowInfo } from '../../types/ProfileInfoType';
 import { userInfoDto } from '../../types/PostInfoType';
-import { act } from 'react-dom/test-utils';
 
 const TopBar = styled.div`
   position: fixed;
@@ -103,7 +102,7 @@ const FollowList = () => {
       setActiveTab(initialActiveTabFromURL);
     }
   }, [location]);
-  
+
   useEffect(() => {
     setFollowingCount(following.length);
   }, [following]);
@@ -112,7 +111,7 @@ const FollowList = () => {
     <Main>
       <TopBar>
         <InnerTop>
-          <div style={{ fontWeight: '600'}}>{targetUser?.user.nickname}</div>
+          <div style={{ fontWeight: '700'}}>{targetUser?.user.nickname}</div>
           <Button onClick={handleLeftArrowClick}>
             <LeftArrow />
           </Button>

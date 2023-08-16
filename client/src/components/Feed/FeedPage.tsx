@@ -64,7 +64,7 @@ const FeedPage = ({ feed, handleDetail, handleFollow }: FeedComponentProps) => {
               src={
                 feed.userInfoDto.user.picture
                   ? feed.userInfoDto.user.picture
-                  : 'assets/avatar/peeps-avatar-alpha-1.png'
+                  : 'assets/avatar/peeps-avatar-alpha-9.png'
               }
             />
             {feed.userInfoDto.user.nickname}

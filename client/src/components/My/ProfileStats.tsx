@@ -14,6 +14,7 @@ interface StatProp {
   postCount: number;
   followingCount: number;
   followerCount: number;
+  userId: string;
 }
 
 const formatNumber = (number: number): string => {
@@ -28,11 +29,11 @@ const formatNumber = (number: number): string => {
   }
 };
 
-export default function ProfileStats({ postCount, followerCount, followingCount }: StatProp) {
+export default function ProfileStats({ postCount, followerCount, followingCount, userId }: StatProp) {
   const navigate = useNavigate();
 
   const handleClick = (initialActiveTab: 'follower' | 'following') => {
-    navigate(`/follow-list?initialActiveTab=${initialActiveTab}`);
+    navigate(`/follow-list/${userId}?initialActiveTab=${initialActiveTab}`);
   };
 
   return (

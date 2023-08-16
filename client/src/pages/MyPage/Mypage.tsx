@@ -100,6 +100,7 @@ export default function Mypage() {
   const [followingCount, setFollowingCount] = useState<number>(0);
 
   const [userImage, setUserImage] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string>('');
 
   const [firstColumnFeeds, secondColumnFeeds] = splitFeeds(feeds || []);
 
@@ -115,6 +116,7 @@ export default function Mypage() {
         setUserImage(infoRes.data.user.picture);
         setFavorites(infoRes.data.favorities);
         setHates(infoRes.data.hates);
+        setUserId(infoRes.data.user.userId);
 
         // Follower 수
         const followerRes = await axios.get('/user/follower');
@@ -148,6 +150,7 @@ export default function Mypage() {
           postCount={postCount}
           followerCount={followerCount}
           followingCount={followingCount}
+          userId={userId}
         />
         <MyPageTab setNowActive={handleTabClick} />
         <MypageContainer>
