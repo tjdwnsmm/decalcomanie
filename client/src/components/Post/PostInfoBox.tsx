@@ -5,6 +5,7 @@ import FollowBtn from '../Button/FollowBtn';
 import PostModalBtn from '../Button/PostModalBtn';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
+import { useNavigate } from 'react-router-dom';
 
 /**
 @summary
@@ -115,13 +116,28 @@ const formatDateTime = (datetimeStr: string) => {
 };
 
 const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
+  const navigate = useNavigate();
   const { articleDto, bookmarked, userInfoDto, hearted, followed } = postInfo;
-  const hasScent = userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
+  const hasScent =
+    userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
 
+  const handleOtherProfile = (id: string, notMe: boolean) => {
+    console.log(notMe);
+    if (notMe) {
+      navigate(`/profile-page/${id}`);
+    } else {
+      navigate('/mypage');
+    }
+  };
   return (
     <PostInfoBoxContainer>
       <WriterInfoBox>
-        <div style={{ display: 'flex' }}>
+        <div
+          style={{ display: 'flex' }}
+          onClick={() => {
+            handleOtherProfile(userInfoDto.user.userId, !userInfoDto.me);
+          }}
+        >
           <ProfileImg
             src={
               userInfoDto.user.picture
@@ -149,7 +165,9 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
         {/* 탈퇴한 회원이 아닐 때 div 박스
           div : 내가 쓴 글이면 모달, 아니라면 팔로우 버튼 */}
         {!userInfoDto.withdrawal && (
-          <div style={{ height: '42px', display: 'flex', alignItems: 'center' }}>
+          <div
+            style={{ height: '42px', display: 'flex', alignItems: 'center' }}
+          >
             {userInfoDto.me ? (
               <PostModalBtn articleId={articleDto.articleId} />
             ) : (

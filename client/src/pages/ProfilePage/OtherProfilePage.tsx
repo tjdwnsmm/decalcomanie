@@ -107,7 +107,7 @@ export default function OtherProfilePage() {
           postCount={postCount}
           followerCount={followerCount}
           followingCount={followingCount}
-          userId={id}
+          userId={id ? id : ''}
         />
         <MypageContainer>
           {feeds ? (
