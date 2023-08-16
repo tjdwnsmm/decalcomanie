@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { ReactComponent as MoreVert } from '../../assets/icon/more-vert.svg';
 import { ReactComponent as LeftArrow } from '../../assets/icon/left-arrow.svg';
-import { useNavigate } from 'react-router-dom';
+import axios from '../../api/apiController';
 
 const TopDiv = styled.div`
   display: flex;
@@ -76,9 +77,27 @@ export default function OptionMenu() {
     navigate('/profile-update');
   };
 
-  // 로그아웃 하시겠습니까? 모달 창 띄우기
   const handleLogoutClick = () => {
     // 로그아웃 API
+    const id = 'user123';
+    axios
+      .post('/oauth/signout', {
+        headers: {
+          id,
+        },
+      })
+      .then((res) => {
+        // 로그아웃이 성공했을 때 로컬 스토리지에서 토큰 제거
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('nickname');
+
+        // 로그아웃 후 로그인 화면으로 이동
+        navigate('/login');
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
 
   // 바깥 영역을 클릭 시 모달이 닫힘

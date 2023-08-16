@@ -1,23 +1,25 @@
 import styled from 'styled-components';
-import { EachFeedInfo } from '../../types/FeedInfoType';
 import ProfileInfoBox from './ProfileInfoBox';
 
 interface FeedComponentProps {
-  feed: string;
+  id: string;
+  picture: string;
+  perfumeId: number;
+  onClick: () => void;
 }
+
+const ProfileTabs = ({ id, picture, perfumeId, onClick }: FeedComponentProps) => (
+  <>
+    <FeedBox onClick={onClick}>
+      <ProfileInfoBox picture={picture} />
+    </FeedBox>
+  </>
+);
+
+export default ProfileTabs;
 
 const FeedBox = styled.div`
   display: flex;
   flex-direction: column;
   padding: 10px;
 `;
-
-const ProfileTabs = ({ feed }: FeedComponentProps) => (
-  <>
-    <FeedBox>
-      <ProfileInfoBox picture={feed} />
-    </FeedBox>
-  </>
-);
-
-export default ProfileTabs;
