@@ -37,7 +37,7 @@ export default function OtherProfilePage() {
   const [isFollow, setFollow] = useState<boolean>(false);
   const [isMe, setIsMe] = useState<boolean>(false);
   const [userImage, setUserImage] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string>('');
+  // const [userId, setUserId] = useState<string>('');
   const [nickname, setUserNickname] = useState<string>('');
   const navigation = useNavigate();
 
@@ -50,7 +50,7 @@ export default function OtherProfilePage() {
       setFavorites(userData.userInfo.favorities);
       setHates(userData.userInfo.hates);
       setUserImage(userData.userInfo.user.picture);
-      setUserId(userData.userInfo.user.userId);
+      // setUserId(userData.userInfo.user.userId);
       setUserNickname(userData.userInfo.user.nickname);
       setFollow(userData.userInfo.following);
       setIsMe(userData.userInfo.me);
@@ -107,7 +107,7 @@ export default function OtherProfilePage() {
           postCount={postCount}
           followerCount={followerCount}
           followingCount={followingCount}
-          userId={userId}
+          userId={id}
         />
         <MypageContainer>
           {feeds ? (

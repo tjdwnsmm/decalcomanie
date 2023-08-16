@@ -124,7 +124,7 @@ const ProfileUpdate = () => {
       if (userData.user.picture) {
         setProfileImg(userData.user.picture);
       } else {
-        setProfileImg('/assets/avatar/peeps-avatar-alpha-1.png');
+        setProfileImg('/assets/avatar/peeps-avatar-alpha-9.png');
       }
       setNickName(userData.user.nickname);
       setFavoriteScent(userData.favorities);
