@@ -566,6 +566,7 @@ public class UserServiceImpl implements IUserService {
     public ProfileResponse getUserProfile(String userId, String myId) {
         UserInfoDto userInfoDto = getUserInfo(userId).toBuilder()
                 .isFollowing(isFollowing(myId, userId))
+                .isMe(userId.equals(myId) ? true: false)
                 .build();
 
         ProfileResponse profileResponse = ProfileResponse.builder()
