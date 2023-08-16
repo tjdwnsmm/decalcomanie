@@ -5,15 +5,17 @@ import { styled } from 'styled-components';
 import FeedPageOnly from '../../components/Feed/FeedPageByPerfume';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
-import axios from '../../api/apiController';
 import Spinner from '../../components/common/Spinner';
 import { ReactComponent as BackSvg } from '../../assets/icon/prevBack.svg';
 import { useFetchPerfumeDatas } from '../../components/Feed/useFetchPerfumeData';
 import useIntersect from '../../hooks/useIntersect';
 
+const SEARCH_RESULT_TIMEOUT = 5000; // 5 seconds
+
 export const PerfumeFeed = () => {
   const { id } = useParams<{ id: string }>();
   const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
+  const [showNoResultsMessage, setShowNoResultsMessage] = useState(false); // State to control the message display
   const navigate = useNavigate();
   const [heartCnt, setHeartCnt] = useState(-1);
   const [lastArticleId, setLastArticleId] = useState(-1);
@@ -26,8 +28,15 @@ export const PerfumeFeed = () => {
     });
 
   const datas = useMemo(() => (data ? data : []), [data]);
+  console.log(datas);
   useEffect(() => {
+    console.log('datas', datas);
     setFeeds(datas);
+    if (datas.length === 0) {
+      setTimeout(() => {
+        setShowNoResultsMessage(true);
+      }, SEARCH_RESULT_TIMEOUT);
+    }
   }, [datas]);
 
   const ref = useIntersect(async (entry, observer) => {
@@ -41,6 +50,7 @@ export const PerfumeFeed = () => {
   });
 
   const handleBack = () => {
+    setFeeds(null);
     navigate(`/perfume-detail/${id}`);
   };
 
@@ -61,15 +71,7 @@ export const PerfumeFeed = () => {
     });
   };
 
-  if (!feeds) {
-    return (
-      <MarginFrame margin="200px auto">
-        <Spinner />
-      </MarginFrame>
-    );
-  }
-
-  if (feeds.length === 0) {
+  if (showNoResultsMessage) {
     return (
       <>
         <ErrorTxt>검색 결과가 없습니다 😥</ErrorTxt>
@@ -87,6 +89,15 @@ export const PerfumeFeed = () => {
       </>
     );
   }
+
+  if (!feeds || feeds.length === 0) {
+    return (
+      <MarginFrame margin="200px auto">
+        <Spinner />
+      </MarginFrame>
+    );
+  }
+
   return (
     <Main>
       <MarginFrame margin="20px 25px 0">
