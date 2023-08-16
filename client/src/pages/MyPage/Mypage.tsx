@@ -26,27 +26,9 @@ interface Feed {
   perfumeId: number;
 }
 
-// feeds 배열을 두 개의 열로 나누는 함수
-const splitFeeds = (arr: Feed[]): [Feed[], Feed[]] => {
-  const oddColumn: Feed[] = [];
-  const evenColumn: Feed[] = [];
-
-  if (arr) {
-    arr.forEach((feed, idx) => {
-      if (idx % 2 === 1) {
-        evenColumn.push(feed);
-      } else {
-        oddColumn.push(feed);
-      }
-    });
-  }
-
-  return [oddColumn, evenColumn];
-};
-
 export default function Mypage() {
   const [nowActive, setNowActive] = useState<string>('post');
-  const [feeds, setFeeds] = useState<Feed[] | null>([]);
+  const [feeds, setFeeds] = useState<Feed[]>([]);
   const [isLoading, setLoading] = useState(false);
 
   const fetchFeedsForTab = (tab: string) => {
@@ -56,15 +38,18 @@ export default function Mypage() {
       axios
         .post('/user/bookmark', { dataSize: 20, lastArticleId: null })
         .then((res) => {
-          console.log(res.data);
-          const myBookmarks = res.data.map((bookmarkData: EachFeedInfo) => ({
-            id: bookmarkData.articleDtos.articleId,
-            picture: bookmarkData.perfumeDtos
-              ? bookmarkData.perfumeDtos.picture
-              : '',
-          }));
-          setFeeds(myBookmarks);
-          setLoading(false);
+          if (res.data === '') {
+            setFeeds([]);
+          } else {
+            const myBookmarks = res.data.map((bookmarkData: EachFeedInfo) => ({
+              id: bookmarkData.articleDtos.articleId,
+              picture: bookmarkData.perfumeDtos
+                ? bookmarkData.perfumeDtos.picture
+                : 'src/assets/img/perfume-drawer.svg',
+            }));
+            setFeeds(myBookmarks);
+            setLoading(false);
+          }
         });
 
       // 내가 쓴 글
@@ -72,21 +57,31 @@ export default function Mypage() {
       axios
         .post('/sns/user', { dataSize: 20, lastArticleId: null })
         .then((res) => {
-          console.log(res.data);
-          const myPosts = res.data.map((postData: EachFeedInfo) => ({
-            id: postData.articleDtos.articleId,
-            picture: postData.perfumeDtos ? postData.perfumeDtos.picture : '',
-          }));
-          setPostCount(myPosts.length);
-          setFeeds(myPosts);
-          setLoading(false);
+          console.log('res : ', res);
+          if (res.data === '') {
+            setFeeds([]);
+          } else {
+            const myPosts = res.data.map((postData: EachFeedInfo) => ({
+              id: postData.articleDtos.articleId,
+              picture: postData.perfumeDtos
+                ? postData.perfumeDtos.picture
+                : 'src/assets/img/perfume-drawer.svg',
+            }));
+            setPostCount(myPosts.length);
+            setFeeds(myPosts);
+            setLoading(false);
+          }
         });
 
       // 내가 찜한 향수
     } else if (tab === 'like') {
       axios.get('/perfume/picked').then((res) => {
-        setFeeds(res.data);
-        setLoading(false);
+        if (res.data === '') {
+          setFeeds([]);
+        } else {
+          setFeeds(res.data);
+          setLoading(false);
+        }
       });
     }
   };
@@ -109,8 +104,6 @@ export default function Mypage() {
 
   const [userImage, setUserImage] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>('');
-
-  const [firstColumnFeeds, secondColumnFeeds] = splitFeeds(feeds || []);
 
   const [dataLoaded, setDataLoaded] = useState(false);
   const navigation = useNavigate();
@@ -162,40 +155,29 @@ export default function Mypage() {
         />
         <MyPageTab setNowActive={handleTabClick} />
         <MypageContainer>
-          <Column>
-            {firstColumnFeeds.map((firstColumnFeed, index) => (
-              <ProfileTabs
-                onClick={() => {
-                  if (firstColumnFeed.perfumeId) {
-                    navigation(`/perfume/detail/${firstColumnFeed.perfumeId}`);
-                  } else {
-                    navigation(`/post-detail/${firstColumnFeed.id}`);
-                  }
-                }}
-                key={index}
-                id={firstColumnFeed.id}
-                picture={firstColumnFeed.picture}
-                perfumeId={firstColumnFeed.perfumeId}
-              />
-            ))}
-          </Column>
-          <Column>
-            {secondColumnFeeds.map((secondColumnFeed, index) => (
-              <ProfileTabs
-                onClick={() => {
-                  if (secondColumnFeed.perfumeId) {
-                    navigation(`/perfume/detail/${secondColumnFeed.perfumeId}`);
-                  } else {
-                    navigation(`/post-detail/${secondColumnFeed.id}`);
-                  }
-                }}
-                key={index}
-                id={secondColumnFeed.id}
-                picture={secondColumnFeed.picture}
-                perfumeId={secondColumnFeed.perfumeId}
-              />
-            ))}
-          </Column>
+          {feeds.length === 0 ? (
+            <Nothing>아직 데이터가 없습니다 😥</Nothing>
+          ) : (
+            <>
+              <Column>
+                {feeds.map((feed, index) => (
+                  <ProfileTabs
+                    onClick={() => {
+                      if (feed.perfumeId) {
+                        navigation(`/perfume-detail/${feed.perfumeId}`);
+                      } else {
+                        navigation(`/post-detail/${feed.id}`);
+                      }
+                    }}
+                    key={index}
+                    id={feed.id}
+                    picture={feed.picture}
+                    perfumeId={feed.perfumeId}
+                  />
+                ))}
+              </Column>
+            </>
+          )}
         </MypageContainer>
         <MarginFrame margin="80px"></MarginFrame>
       </MarginFrame>
@@ -213,10 +195,25 @@ const MypageText = styled.div<TextProp>`
 
 const MypageContainer = styled.div`
   display: flex;
-  padding: 10px 50px;
+  padding: 10px 20px;
   justify-content: center;
 `;
 
 const Column = styled.div`
-  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 0px 5px;
+
+  div {
+    width: 150px;
+  }
+`;
+
+const Nothing = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  margin-top: 15px;
 `;
