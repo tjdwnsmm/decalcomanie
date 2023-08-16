@@ -6,8 +6,8 @@ import FollowBtn from '../Button/FollowBtn';
 interface FollowBoxProps {
   followList: FollowInfo[];
   follow?: FollowInfo;
-  setFollowing: React.Dispatch<React.SetStateAction<FollowInfo[]>>;
-  isMe: boolean;
+  setFollowingList: React.Dispatch<React.SetStateAction<FollowInfo[]>>;
+  isMe: boolean | undefined;
 }
 
 /**
@@ -74,11 +74,13 @@ const Scent = styled.div`
 
 const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
   const updateFollowing = (followInfo: FollowInfo) => {
-    setFollowingList(prevList => {
-      const isAlreadyFollowing = prevList.some(item => item.userId === followInfo.userId);
+    setFollowingList((prevList) => {
+      const isAlreadyFollowing = prevList.some(
+        (item) => item.userId === followInfo.userId,
+      );
 
       if (isAlreadyFollowing) {
-        return prevList.filter(item => item.userId !== followInfo.userId);
+        return prevList.filter((item) => item.userId !== followInfo.userId);
       } else {
         return [...prevList, followInfo];
       }
@@ -107,16 +109,13 @@ const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
           </InfoBox>
           {follow.followingButtonActivate && (
             <div onClick={isMe ? () => updateFollowing(follow) : undefined}>
-              <FollowBtn
-                to={follow.userId}
-                isFollow={follow.following}
-              />
+              <FollowBtn to={follow.userId} isFollow={follow.following} />
             </div>
           )}
         </FollowInfoBox>
       ))}
     </FollowListContainer>
   );
-}
+};
 
 export default FollowBox;

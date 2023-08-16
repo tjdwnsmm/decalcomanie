@@ -59,7 +59,13 @@ const StarRate = styled.div`
   margin-bottom: 4px;
 `;
 
-function PerfumeReviewBox({ rate, brand, name, img }: PerfumeReviewInfo) {
+function PerfumeReviewBox({
+  rate,
+  brand,
+  name,
+  img,
+  perfumeId,
+}: PerfumeReviewInfo) {
   const StyledRating = MUstyled(Rating)({
     '& .MuiRating-iconFilled': {
       color: 'var(--primary-color)',
