@@ -123,8 +123,6 @@ public class OAuthController {
             oAuthService.signIn(loginUser);
 
             LoginResponse loginResponse = LoginResponse.builder()
-//                    .userId(userCredential.getUserId())
-//                    .email(userCredential.getEmail())
                     .nickname(nickname)
                     .build();
 
@@ -149,19 +147,22 @@ public class OAuthController {
 
         int age = Integer.parseInt(kakaoProfile.getKakaoAccount().getAgeRange().split("~")[0]);
 
+        int avatarNum = (int)(Math.random()*9)+1;
+
+        String picture = "https://decalcomanieimagebucket.s3.ap-northeast-2.amazonaws.com/avatar/peeps-avatar-alpha-" + avatarNum + ".png";
+
         UserDto userInfo = UserDto.builder()
                 .userId(userId.toString())
                 .nickname(kakaoProfile.getId().toString())
                 .age(age)
                 .gender(kakaoProfile.getKakaoAccount().getGender().equals("male") ? 0 : 1)
+                .picture(picture)
                 .build();
 
         oAuthService.register(userCredential, userMapper.toEntity(userInfo));
 
         LoginResponse loginResponse = LoginResponse.builder()
-//                .userId(userId.toString())
                 .nickname(userInfo.getNickname())
-//                .email(userCredential.getEmail())
                 .build();
 
         HttpHeaders responseHeaders = new HttpHeaders();

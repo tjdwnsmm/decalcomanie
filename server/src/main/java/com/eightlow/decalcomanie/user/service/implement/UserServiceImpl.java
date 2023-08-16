@@ -573,18 +573,9 @@ public class UserServiceImpl implements IUserService {
         return profileResponse;
     }
 
-//    @Override
-//    public List<FeedResponse> getBookmarkArticle(FeedInquiryRequest feedInquiryRequest, String userId) {
-//
-//
-//        return responses;
-//    }
-
     private BooleanExpression articleIdEq(List<Integer> bookmarkArticleIds) {
         return bookmarkArticleIds.size() > 0 ? article.articleId.in(bookmarkArticleIds) : null;
     }
-
-
 
     private BooleanExpression userPerfumeEq(List<UserPerfume> userPerfumes) {
         if(userPerfumes.size() > 0) {

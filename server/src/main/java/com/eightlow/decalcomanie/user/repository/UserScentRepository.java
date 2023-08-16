@@ -1,6 +1,5 @@
 package com.eightlow.decalcomanie.user.repository;
 
-import com.eightlow.decalcomanie.user.entity.Follow;
 import com.eightlow.decalcomanie.user.entity.UserScent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

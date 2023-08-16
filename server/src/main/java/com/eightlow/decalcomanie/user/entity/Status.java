@@ -2,8 +2,6 @@ package com.eightlow.decalcomanie.user.entity;
 
 import lombok.Getter;
 
-import javax.persistence.Table;
-
 @Getter
 public enum Status {
     FAVORITE("FAVORITE"),

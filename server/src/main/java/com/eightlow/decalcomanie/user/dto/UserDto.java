@@ -2,7 +2,6 @@ package com.eightlow.decalcomanie.user.dto;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
