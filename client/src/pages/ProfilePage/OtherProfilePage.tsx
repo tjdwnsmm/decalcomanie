@@ -11,6 +11,7 @@ import axios from '../../api/apiController';
 import { ScentDto } from '../../types/PerfumeInfoType';
 import { EachFeedInfo } from '../../types/FeedInfoType';
 import { ReactComponent as LeftArrow } from '../../assets/icon/left-arrow.svg';
+import FollowBtn from '../../components/Button/FollowBtn';
 interface TextProp {
   size?: string;
   fontWeight?: string;
@@ -25,6 +26,7 @@ interface Feed {
 }
 
 export default function OtherProfilePage() {
+  const { id } = useParams<{ id: string }>();
   const [feeds, setFeeds] = useState<Feed[] | null>([]);
   const [isLoading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState<ScentDto[]>([]);
@@ -32,13 +34,13 @@ export default function OtherProfilePage() {
   const [postCount, setPostCount] = useState<number>(0);
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
-
+  const [isFollow, setFollow] = useState<boolean>(false);
+  const [isMe, setIsMe] = useState<boolean>(false);
   const [userImage, setUserImage] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>('');
   const [nickname, setUserNickname] = useState<string>('');
   const navigation = useNavigate();
 
-  const { id } = useParams<{ id: string }>();
   useEffect(() => {
     axios.get(`/user/profile/${id}`).then((res) => {
       const userData = res.data;
@@ -50,6 +52,8 @@ export default function OtherProfilePage() {
       setUserImage(userData.userInfo.user.picture);
       setUserId(userData.userInfo.user.userId);
       setUserNickname(userData.userInfo.user.nickname);
+      setFollow(userData.userInfo.following);
+      setIsMe(userData.userInfo.user.me);
     });
 
     axios
@@ -73,6 +77,9 @@ export default function OtherProfilePage() {
     navigation(-1);
   };
 
+  if (isMe) {
+    navigation('mypage');
+  }
   return (
     <Main>
       <MarginFrame margin="10px 0">
@@ -90,6 +97,12 @@ export default function OtherProfilePage() {
         ) : (
           <LikesUnlikes likes={favorites} unlikes={hates} />
         )}
+        <MarginFrame margin="10px 0 -10px ">
+          <CenterFrame>
+            <FollowBtn isFollow={isFollow} to={id ? id : ''} />
+          </CenterFrame>
+        </MarginFrame>
+
         <ProfileStats
           postCount={postCount}
           followerCount={followerCount}

@@ -93,7 +93,7 @@ const MainPage = () => {
     if (nickname) {
       setNickname(nickname);
     } else {
-      // navigate('/login');
+      navigate('/login');
     }
   }, []);
 
