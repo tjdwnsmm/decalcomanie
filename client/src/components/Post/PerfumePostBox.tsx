@@ -93,7 +93,7 @@ export default PerfumePostBox;
 
 const DeleteBtn = styled.div`
   color: var(--error-color);
-  margin-top: 30px;
+  margin-top: 15px;
   font-weight: 700;
   font-size: 13px;
   width: fit-content;
@@ -126,7 +126,7 @@ const PerfumeName = styled.div`
   color: var(--black-color);
   font-size: 18px;
   font-weight: bold;
-  width: max-content;
+  width: 170px;
 `;
 
 const ImgBox = styled.div`
