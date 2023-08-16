@@ -25,7 +25,7 @@ const CommentInputBox = styled.div`
 
 const CommentInput = styled.input`
   width: 300px;
-  height: 45px;
+  height: 42px;
   background-color: var(--background-color);
   margin: 0px 15px;
   font-size: 16px;
@@ -41,14 +41,14 @@ interface CommentButtonProps {
 const CommentButton = styled.button<CommentButtonProps>`
   flex: 0 0 auto;
   width: 60px;
-  height: 45px;
+  height: 45.1px;
   border-radius: 20px;
   background-color: var(--background-color);
   font-size: 16px;
   border: none;
   cursor: ${({ hasContent }) => (hasContent ? 'pointer' : '')};
   color: ${({ hasContent }) =>
-    (hasContent ? 'var(--primary-color)' : 'var(--gray-color)')};
+    hasContent ? 'var(--primary-color)' : 'var(--gray-color)'};
 `;
 
 function CommentInputForm({ articleId }: { articleId: number }) {

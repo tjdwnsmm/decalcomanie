@@ -106,7 +106,7 @@ export const PerfumeFeed = () => {
   if (!feeds || feeds.length === 0) {
     return (
       <MarginFrame margin="200px auto">
-        <Spinner />
+        <Spinner info="잠시 기다려주세요! 작성된 글들을 찾고있어요🔍" />
       </MarginFrame>
     );
   }
