@@ -52,10 +52,8 @@ public class UserServiceImpl implements IUserService {
     private final PerfumePickRepository perfumePickRepository;
     private final UserMapper userMapper;
     private final ScentMapper scentMapper;
-    private final PerfumeRepository perfumeRepository;
     private final PerfumeMapper perfumeMapper;
     private final EntityManager em;
-    private final UserPerfumeMapper userPerfumeMapper;
     private final UserPerfumeRecommendRepository userPerfumeRecommendRepository;
     private final JPAQueryFactory queryFactory;
 

@@ -17,4 +17,5 @@ public class DailyRecommendResponse {
     private String curTime;
     private int gender;
     private int age;
+    private boolean isUserPerfumeExist;
 }

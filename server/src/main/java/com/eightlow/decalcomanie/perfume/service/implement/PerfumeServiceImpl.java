@@ -12,6 +12,7 @@ import com.eightlow.decalcomanie.perfume.repository.*;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import com.eightlow.decalcomanie.user.entity.QUser;
 import com.eightlow.decalcomanie.user.entity.User;
+import com.eightlow.decalcomanie.user.service.IUserService;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -41,6 +42,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
     private final AccordRepository accordRepository;
     private final PerfumePickRepository perfumePickRepository;
     private final PerfumeMapper perfumeMapper;
+    private final IUserService userService;
     private final BrandMapper brandMapper;
     private final ScentMapper scentMapper;
     private final JPAQueryFactory queryFactory;
@@ -242,6 +244,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
                 .gender(loginUser.getGender())
                 .curSeason(getSeason(today))
                 .curTime(getTime(curTime))
+                .isUserPerfumeExist(userService.getUserPerfumeRecommend(userId).size() > 0)
                 .build();
     }
 

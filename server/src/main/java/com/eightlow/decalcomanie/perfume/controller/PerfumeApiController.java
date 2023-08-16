@@ -8,7 +8,7 @@ import com.eightlow.decalcomanie.perfume.dto.response.DailyRecommendResponse;
 import com.eightlow.decalcomanie.perfume.dto.response.PerfumeNameResponse;
 import com.eightlow.decalcomanie.perfume.dto.response.SearchResponse;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
-import com.eightlow.decalcomanie.user.dto.response.CommonResponse;
+import com.eightlow.decalcomanie.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +26,7 @@ import java.util.Map;
 public class PerfumeApiController {
 
     private final IPerfumeService perfumeService;
+    private final IUserService userService;
 
     // 향수 검색
     @PostMapping("/search")
@@ -105,5 +106,10 @@ public class PerfumeApiController {
         return new ResponseEntity<>(perfumeService.recommendByOccasion(userId), HttpStatus.OK);
     }
 
+    @GetMapping("/recommend")
+    public ResponseEntity<List<PerfumeDto>> updateRecommendPerfume(HttpServletRequest req) {
+        userService.recommendUserPerfume((String)req.getAttribute("userId"));
+        return new ResponseEntity<>(userService.getUserPerfumeRecommend((String)req.getAttribute("userId")), HttpStatus.OK);
+    }
 }
 
