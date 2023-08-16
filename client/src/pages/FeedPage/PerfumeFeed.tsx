@@ -26,6 +26,9 @@ export const PerfumeFeed = () => {
     });
 
   const datas = useMemo(() => (data ? data : []), [data]);
+  useEffect(() => {
+    setFeeds(datas);
+  }, [datas]);
 
   const ref = useIntersect(async (entry, observer) => {
     observer.unobserve(entry.target);
@@ -58,7 +61,7 @@ export const PerfumeFeed = () => {
     });
   };
 
-  if (!datas) {
+  if (!feeds) {
     return (
       <MarginFrame margin="200px auto">
         <Spinner />
@@ -66,7 +69,7 @@ export const PerfumeFeed = () => {
     );
   }
 
-  if (datas.length === 0) {
+  if (feeds.length === 0) {
     return (
       <>
         <ErrorTxt>검색 결과가 없습니다 😥</ErrorTxt>
@@ -91,11 +94,11 @@ export const PerfumeFeed = () => {
       </MarginFrame>
 
       <PerfumeFeedBox>
-        <PerfumeInfoBox feed={datas[0].perfumeDtos} />
+        <PerfumeInfoBox feed={feeds[0].perfumeDtos} />
       </PerfumeFeedBox>
 
       <FeedBody>
-        {datas.map((eachFeed, idx) => (
+        {feeds.map((eachFeed, idx) => (
           <FeedPageOnly key={idx} feed={eachFeed} handleFollow={handleFollow} />
         ))}
         {!isFetching && isLoading && <Spinner />}
