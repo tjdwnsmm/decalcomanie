@@ -24,8 +24,6 @@ public interface ArticlePerfumeRepository extends JpaRepository <ArticlePerfume,
                                            @Param(value = "perfumeId") int perfumeId,
                                            @Param(value = "rate") float rate);
 
-//    void deleteByUserIdAndArticleIdAndPerfumeIdIn(String userId, int articleId, List<Integer> perfumeIdList);
-
     @Modifying(clearAutomatically = true)
     @Query("DELETE FROM ArticlePerfume ap WHERE ap.article.articleId = :articleId")
     void deleteAllByArticleId(@Param(value = "articleId") int articleId);

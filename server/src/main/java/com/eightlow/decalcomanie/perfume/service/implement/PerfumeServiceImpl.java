@@ -61,9 +61,6 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return perfumeMapper.toDto(perfume);
     }
 
-    @Override
-    public List<PerfumeDto> findAllPerfume() { return perfumeMapper.toDto(perfumeRepository.findAll()); }
-
     // 전체 브랜드 조회
     @Override
     public List<BrandDto> findAllBrand() {
@@ -166,30 +163,6 @@ public class PerfumeServiceImpl implements IPerfumeService {
         }
 
         return searchedPerfumes;
-    }
-
-    // 향수 평점 업데이트
-    @Override
-    public void updatePerfumeRate(int perfumeId, float rate) {
-        Perfume perfume = em.find(Perfume.class, perfumeId);
-
-        if(perfume == null) {
-            throw new CustomException(CustomErrorCode.PERFUME_NOT_FOUND);
-        }
-
-        perfume.updateRate(rate);
-    }
-
-    // 향 정보를 가져오기
-    @Override
-    public ScentDto getScentById(int scentId) {
-        Scent scent = em.find(Scent.class, scentId);
-
-        if(scent == null) {
-            throw new CustomException(CustomErrorCode.SCENT_NOT_FOUND);
-        }
-
-        return scentMapper.toDto(scent);
     }
 
     // 검색창 자동완성을 위해 향수 이름만 가져오기

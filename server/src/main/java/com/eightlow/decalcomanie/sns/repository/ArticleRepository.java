@@ -14,22 +14,6 @@ import java.util.Optional;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
-    Optional<Article> findByArticleId(int articleId);
-    List<Article> findByArticleIdIn(List<Integer> userIds);
-
-    @Query("SELECT a  FROM Article a WHERE a.user.userId = :userId ORDER BY a.createdAt DESC")
-    List<Article> findByUserId(@Param(value = "userId") String userId);
-
-    List<Article> findByUser_UserIdIn(List<String> userIds);
-
-    @Query("SELECT a  FROM Article a ORDER BY a.heart DESC")
-    @Transactional
-    List<Article> findArticlesOrderByHeart();
-
-    @Query("SELECT a FROM Article a ORDER BY a.createdAt DESC")
-    @Transactional
-    List<Article> findArticlesOrderByCreateTime();
-
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE Article a SET a.comment = a.comment + 1 WHERE a.articleId = :articleId")

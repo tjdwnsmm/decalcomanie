@@ -6,14 +6,11 @@ import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
 import com.eightlow.decalcomanie.perfume.dto.response.DailyRecommendResponse;
 import com.eightlow.decalcomanie.perfume.dto.response.PerfumeNameResponse;
-import com.eightlow.decalcomanie.perfume.entity.Scent;
 
 import java.util.List;
 
 public interface IPerfumeService {
     public PerfumeDto getPerfume(int perfumeId);
-
-    public List<PerfumeDto> findAllPerfume();
 
     public List<BrandDto> findAllBrand();
 
@@ -26,10 +23,6 @@ public interface IPerfumeService {
     boolean isPickedPerfume(int perfumeId, String userId);
 
     List<PerfumeDto> findAllPickedPerfume(String userId);
-
-    void updatePerfumeRate(int perfumeId, float rate);
-
-    ScentDto getScentById(int scentId);
 
     List<PerfumeNameResponse> findAllNames();
 

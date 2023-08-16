@@ -56,7 +56,6 @@ public class OAuthController {
 
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
