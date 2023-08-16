@@ -30,6 +30,9 @@ export const MainFeed = () => {
     });
 
   const datas = useMemo(() => (data ? data : []), [data]);
+  useEffect(() => {
+    setFeeds(datas);
+  }, [datas]);
 
   const ref = useIntersect(async (entry, observer) => {
     observer.unobserve(entry.target);
@@ -72,8 +75,8 @@ export const MainFeed = () => {
     <Main>
       <FeedTab setNowActive={handleTabClick} />
       <Feeds>
-        {!isLoading && datas ? (
-          datas.length === 0 ? (
+        {feeds ? (
+          feeds.length === 0 ? (
             <>
               <MarginFrame margin="100px auto">
                 <CenterFrame className="errorTitle">
@@ -83,7 +86,7 @@ export const MainFeed = () => {
             </>
           ) : (
             <>
-              {datas.map((feed, idx) => (
+              {feeds.map((feed, idx) => (
                 <FeedPage
                   key={idx}
                   feed={feed}
