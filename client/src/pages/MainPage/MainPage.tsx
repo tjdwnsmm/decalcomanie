@@ -53,7 +53,7 @@ const MainPage = () => {
   const handleRecommend = () => {
     //추천 새로고침
     setRecommendPerfume(null);
-
+    setSaveRecommend(false);
     axios.get('/perfume/recommend').then((res) => {
       console.log(res.data);
       setRecommendPerfume(res.data);
@@ -147,8 +147,8 @@ const MainPage = () => {
                     <RefreshSvg onClick={handleRecommend} />
                   </RecommendBox>
                 </Info>
-                {recommendPerfume ? (
-                  saveRecommend ? (
+                {saveRecommend ? (
+                  recommendPerfume ? (
                     <MainSwiper perfumes={recommendPerfume} />
                   ) : (
                     <NoSaveRecommend>
