@@ -69,6 +69,7 @@ const NoteTitle = styled.div`
 `;
 const NoteList = styled.div`
   margin-left: 12px;
+  margin-right: 12px;
 `;
 const ModalBackground = styled.div`
   position: fixed;

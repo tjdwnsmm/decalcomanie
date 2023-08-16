@@ -46,4 +46,5 @@ const BackToList = styled.div`
   color: var(--primary-color);
   margin-top: 18px;
   font-weight: 700;
+  cursor: pointer;
 `;

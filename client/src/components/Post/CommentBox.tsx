@@ -70,7 +70,7 @@ const StyledTextarea = styled.textarea<{ isEditing: boolean }>`
   margin-top: 5px;
 `;
 
-const ModiBtn = styled.button<{ isEditable: boolean }>`
+const ModiBtn = styled.button<{ isEditable?: boolean }>`
   height: 32px;
   border: none;
   background-color: var(--background-color);
@@ -198,9 +198,8 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
               수정
             </ModiBtn>
             <ModiBtn
-              isEditable={false}
               onClick={handleCancleClick}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'pointer', color: 'var(--dark-gray-color' }}
             >
               취소
             </ModiBtn>

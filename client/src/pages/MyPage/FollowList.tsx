@@ -15,7 +15,7 @@ const TopBar = styled.div`
   left: 0;
   width: 100%;
   background-color: var(--background-color);
-`;                                                             
+`;
 
 const InnerTop = styled.div`
   width: 100%;
@@ -65,7 +65,7 @@ const FollowList = () => {
 
   const handleLeftArrowClick = () => {
     // api 연결 후 변경 필
-    navigate('/mypage');
+    navigate(-1);
   };
 
   useEffect(() => {
@@ -111,7 +111,7 @@ const FollowList = () => {
     <Main>
       <TopBar>
         <InnerTop>
-          <div style={{ fontWeight: '700'}}>{targetUser?.user.nickname}</div>
+          <div style={{ fontWeight: '700' }}>{targetUser?.user.nickname}</div>
           <Button onClick={handleLeftArrowClick}>
             <LeftArrow />
           </Button>
@@ -130,7 +130,7 @@ const FollowList = () => {
           {targetUser?.user.nickname}님을 팔로우하는 사람이 없어요. 😥<br/>
           {/* 마이페이지 api 완성 후 navigate 수정 필요 */}
           {!targetUser?.me && (
-            <button className='goFollow' onClick={() => navigate('/mypage')}>팔로우하러 가기</button>
+            <button className='goFollow' onClick={() => navigate(`/profile-page/${targetUser?.user.userId}`)}>팔로우하러 가기</button>
           )}
         </NoFollow>
       ))}

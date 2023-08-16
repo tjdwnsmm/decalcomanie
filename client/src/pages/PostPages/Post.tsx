@@ -174,17 +174,15 @@ const PostBody = styled.div`
 
 const TitleAlign = styled.div`
   width: 80%;
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 20px;
   text-align: center;
-  padding-left: 10px;
 `;
 
 const LeftTitleAlign = styled(TitleAlign)`
   text-align: left;
   font-size: 17px;
   margin: 10px 0 5px;
-  padding-left: 0;
 `;
 
 const Buttons = styled.div`

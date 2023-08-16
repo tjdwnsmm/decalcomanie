@@ -47,7 +47,7 @@ const FeedPageOnly = ({ feed, handleFollow }: FeedComponentProps) => {
     });
   };
 
-  console.log('pic > ', feed.userInfoDto.user.picture);
+  // console.log('pic > ', feed.userInfoDto.user.picture);
   return (
     <>
       <FeedBox>
