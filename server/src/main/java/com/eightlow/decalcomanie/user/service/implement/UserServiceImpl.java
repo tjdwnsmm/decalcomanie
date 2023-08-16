@@ -10,7 +10,6 @@ import com.eightlow.decalcomanie.perfume.entity.Scent;
 import com.eightlow.decalcomanie.perfume.mapper.PerfumeMapper;
 import com.eightlow.decalcomanie.perfume.mapper.ScentMapper;
 import com.eightlow.decalcomanie.perfume.repository.PerfumePickRepository;
-import com.eightlow.decalcomanie.perfume.repository.PerfumeRepository;
 import com.eightlow.decalcomanie.sns.repository.ArticleRepository;
 import com.eightlow.decalcomanie.sns.repository.BookMarkRepository;
 import com.eightlow.decalcomanie.sns.repository.CommentRepository;
@@ -21,7 +20,6 @@ import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.dto.response.ProfileResponse;
 import com.eightlow.decalcomanie.user.entity.*;
 import com.eightlow.decalcomanie.user.mapper.UserMapper;
-import com.eightlow.decalcomanie.user.mapper.UserPerfumeMapper;
 import com.eightlow.decalcomanie.user.repository.*;
 import com.eightlow.decalcomanie.user.service.IUserService;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -35,8 +33,7 @@ import java.util.*;
 
 import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
 import static com.eightlow.decalcomanie.sns.entity.QArticle.article;
-import static com.eightlow.decalcomanie.sns.entity.QBookMark.bookMark;
-
+import static com.eightlow.decalcomanie.user.entity.QUserPerfumeRecommend.userPerfumeRecommend;
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -503,8 +500,12 @@ public class UserServiceImpl implements IUserService {
     // 사용자 추천 향수 캐시 조회
     @Override
     public List<PerfumeDto> getUserPerfumeRecommend(String userId){
-        List<UserPerfumeRecommend> searchResult = em.createQuery("select p from UserPerfumeRecommend p", UserPerfumeRecommend.class).getResultList();
+        List<UserPerfumeRecommend> searchResult = queryFactory.selectFrom(userPerfumeRecommend)
+                .where(userPerfumeRecommend.user.userId.eq(userId))
+                .fetch();
+
         List<PerfumeDto> result = new ArrayList<>();
+
         if(getUserPerfume(userId).size()==0){
             return result;
         }
