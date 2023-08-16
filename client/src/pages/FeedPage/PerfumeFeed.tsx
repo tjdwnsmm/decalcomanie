@@ -15,7 +15,7 @@ const SEARCH_RESULT_TIMEOUT = 5000; // 5 seconds
 export const PerfumeFeed = () => {
   const { id } = useParams<{ id: string }>();
   const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
-  const [showNoResultsMessage, setShowNoResultsMessage] = useState(false); // State to control the message display
+  const [showNoResultsMessage, setShowNoResultsMessage] = useState(false);
   const navigate = useNavigate();
   const [heartCnt, setHeartCnt] = useState(-1);
   const [lastArticleId, setLastArticleId] = useState(-1);
@@ -29,14 +29,27 @@ export const PerfumeFeed = () => {
 
   const datas = useMemo(() => (data ? data : []), [data]);
   console.log(datas);
+
+  useEffect(() => {
+    if (!datas || datas.length === 0) {
+      const timeoutId = setTimeout(() => {
+        setShowNoResultsMessage((prevShowNoResultsMessage) => {
+          if (prevShowNoResultsMessage || !datas || datas.length === 0) {
+            return true;
+          }
+          return prevShowNoResultsMessage;
+        });
+      }, SEARCH_RESULT_TIMEOUT);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [datas]);
+
   useEffect(() => {
     console.log('datas', datas);
     setFeeds(datas);
-    if (datas.length === 0) {
-      setTimeout(() => {
-        setShowNoResultsMessage(true);
-      }, SEARCH_RESULT_TIMEOUT);
-    }
   }, [datas]);
 
   const ref = useIntersect(async (entry, observer) => {
