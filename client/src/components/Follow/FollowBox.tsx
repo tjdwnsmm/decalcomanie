@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { FollowInfo } from '../../types/ProfileInfoType';
 import FollowBtn from '../Button/FollowBtn';
+import { useNavigate } from 'react-router-dom';
 
 interface FollowBoxProps {
   followList: FollowInfo[];
@@ -73,6 +74,8 @@ const Scent = styled.div`
 `;
 
 const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
+  const navigate = useNavigate();
+
   const updateFollowing = (followInfo: FollowInfo) => {
     setFollowingList((prevList) => {
       const isAlreadyFollowing = prevList.some(
@@ -87,6 +90,10 @@ const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
     });
   };
 
+  const handleOtherProfile = (id: string) => {
+    navigate(`/profile-page/${id}`);
+  };
+
   return (
     <FollowListContainer>
       {followList.map((follow) => (
@@ -99,7 +106,11 @@ const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
                 : '/assets/avatar/peeps-avatar-alpha-9.png'
             }
           />
-          <InfoBox>
+          <InfoBox
+            onClick={() => {
+              handleOtherProfile(follow.userId);
+            }}
+          >
             <FollowNickname>{follow.nickname}</FollowNickname>
             <FavScentList>
               {follow.favorite.map((scent, index) => (
