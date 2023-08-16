@@ -24,6 +24,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   addUrl,
 }) => {
   const [loading, setLoading] = useState<boolean>(true);
+  const [addLoading, setAddloading] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(false);
@@ -78,14 +79,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             alert('이미 추가된 향수입니다');
             navigate('/my-drawer');
           } else {
+            setAddloading(true);
             axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
               console.log('Data added!', res.data);
+              setAddloading(false);
               navigate(`/my-drawer`);
             });
           }
         } else {
+          setAddloading(true);
           axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
             console.log('Data added!', res.data);
+            setAddloading(false);
             navigate(`/my-drawer`);
           });
         }
@@ -95,7 +100,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   return (
     <>
-      {!loading && results?.length ? (
+      {!addLoading && !loading && results?.length ? (
         <PerfumeList>
           <MarginFrame margin="-4px 0" />
           {results.map((feed) => (
@@ -140,7 +145,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         </PerfumeList>
       ) : (
         <MarginFrame margin="100px auto">
-          <Spinner />
+          <Spinner info="향수정보를 로딩중입니다" />
         </MarginFrame>
       )}
     </>
