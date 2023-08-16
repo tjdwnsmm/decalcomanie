@@ -57,7 +57,6 @@ export default function Mypage() {
       axios
         .post('/sns/user', { dataSize: 20, lastArticleId: null })
         .then((res) => {
-          console.log('res : ', res);
           if (res.data === '') {
             setFeeds([]);
           } else {
@@ -76,6 +75,7 @@ export default function Mypage() {
       // 내가 찜한 향수
     } else if (tab === 'like') {
       axios.get('/perfume/picked').then((res) => {
+        console.log('res :', res);
         if (res.data === '') {
           setFeeds([]);
         } else {
