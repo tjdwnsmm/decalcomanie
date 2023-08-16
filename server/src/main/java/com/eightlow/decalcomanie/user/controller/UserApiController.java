@@ -41,7 +41,6 @@ public class UserApiController {
     @PostMapping("/perfume/manage")
     public ResponseEntity<String> modifyUserPerfume(@RequestBody Map<String, Integer> request, HttpServletRequest req) {
         String userMessage = userService.modifyUserPerfume((String)req.getAttribute("userId"), request.get("perfumeId"));
-        userService.recommendUserPerfume((String)req.getAttribute("userId"));
         return new ResponseEntity<>(userMessage, HttpStatus.CREATED);
     }
 
