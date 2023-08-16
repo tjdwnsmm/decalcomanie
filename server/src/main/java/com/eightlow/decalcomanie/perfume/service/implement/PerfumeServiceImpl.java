@@ -151,8 +151,9 @@ public class PerfumeServiceImpl implements IPerfumeService {
     // 사용자가 찜한 향수 모두 조회
     @Override
     public List<PerfumeDto> findAllPickedPerfume(String userId) {
-        List<PerfumePick> searchResult = em.createQuery("select p from PerfumePick p", PerfumePick.class)
-                .getResultList();
+        List<PerfumePick> searchResult = queryFactory.selectFrom(perfumePick)
+                .where(perfumePick.user.userId.eq(userId))
+                .fetch();
 
         List<PerfumeDto> searchedPerfumes = new ArrayList<>();
 
