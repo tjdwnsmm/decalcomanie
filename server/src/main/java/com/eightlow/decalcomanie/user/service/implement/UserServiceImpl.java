@@ -563,11 +563,15 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ProfileResponse getUserProfile(String userId) {
+    public ProfileResponse getUserProfile(String userId, String myId) {
+        UserInfoDto userInfoDto = getUserInfo(userId).toBuilder()
+                .isFollowing(isFollowing(myId, userId))
+                .build();
+
         ProfileResponse profileResponse = ProfileResponse.builder()
                 .following(getFollowingUsers(userId).size())
                 .follower(getFollowers(userId).size())
-                .userInfo(getUserInfo(userId))
+                .userInfo(userInfoDto)
                 .build();
 
         return profileResponse;

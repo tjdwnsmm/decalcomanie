@@ -44,5 +44,5 @@ public interface IUserService {
     // 사용자 향 TOP 3 조회
     List<ScentDto> getTopThreeScent(String userId);
 
-    ProfileResponse getUserProfile(String userId);
+    ProfileResponse getUserProfile(String userId, String myId);
 }

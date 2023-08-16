@@ -156,7 +156,7 @@ public class UserApiController {
 
     @GetMapping("/profile/{userId}")
     public ResponseEntity<ProfileResponse> getProfile(@PathVariable String userId, HttpServletRequest req) {
-        return new ResponseEntity(userService.getUserProfile(userId), HttpStatus.OK);
+        return new ResponseEntity(userService.getUserProfile(userId, (String)req.getAttribute("userId")), HttpStatus.OK);
     }
 
 }
