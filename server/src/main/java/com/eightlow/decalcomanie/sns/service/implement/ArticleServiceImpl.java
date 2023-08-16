@@ -352,8 +352,21 @@ public class ArticleServiceImpl implements IArticleService {
     public List<FeedResponse> getArticleByPerfumeId(FeedInquiryRequest feedInquiryRequest, String userId,
                                                     int perfumeId) {
         List<Article> articles = searchArticleByPerfumeId(feedInquiryRequest, perfumeId);
+        // 요청한 향수가 가장 처음으로 오도록 수정하는 작업
         if (articles == null) {
             return null;
+        } else {
+            for(Article article: articles) {
+                Article a = article;
+                for (int i = 0;i < a.getArticlePerfume().size();i++) {
+                    //  ID같으면 0번으로 이동 (swap)
+                    if (a.getArticlePerfume().get(i).getPerfume().getPerfumeId() == perfumeId) {
+                        Collections.swap(a.getArticlePerfume(),0, i);
+                        break;
+                    }
+
+                }
+            }
         }
         List<FeedResponse> feedResponses = getFeedInfoForArticles(userId, articles ,feedInquiryRequest.getDataSize());
         return feedResponses;
@@ -617,8 +630,6 @@ public class ArticleServiceImpl implements IArticleService {
                     .isWithdrawal(commentDto.getUserId().equals(GHOST))
                     .build();
 
-//            commentUsers.add(new UserInfoDto(userInfoDto.getUser(), userInfoDto.getFavorities(),
-//                    userInfoDto.getHates(), flag));
 
             commentUsers.add(uidto);
         }
