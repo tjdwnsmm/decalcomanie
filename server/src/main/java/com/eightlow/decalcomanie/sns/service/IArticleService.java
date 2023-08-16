@@ -40,8 +40,8 @@ public interface IArticleService {
     List<FeedResponse> getPopularArticles(FeedInquiryRequest feedInquiryRequest, String userId);
     List<Article> searchLatestArticles(FeedInquiryRequest feedInquiryRequest);
     List<FeedResponse> getLatestArticles(FeedInquiryRequest feedInquiryRequest, String userId);
-    List<Article> searchArticleByUserId(String userId);
-    List<FeedResponse> getArticleByUserId(String userId);
+    List<Article> searchArticleByUserId(FeedInquiryRequest feedInquiryRequest, String userId);
+    List<FeedResponse> getArticleByUserId(FeedInquiryRequest feedInquiryRequest, String userId);
     List<Article> searchArticleByPerfumeId(FeedInquiryRequest feedInquiryRequest, int perfumeId);
     List<FeedResponse> getArticleByPerfumeId(FeedInquiryRequest feedInquiryRequest,String userId, int perfumeId);
 

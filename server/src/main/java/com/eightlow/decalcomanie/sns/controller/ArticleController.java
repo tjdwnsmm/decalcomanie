@@ -177,9 +177,9 @@ public class ArticleController {
 
     // 사용자가 쓴 글을 조회(내가 쓴글 조회)
     @PostMapping("/user")
-    public ResponseEntity<List<FeedResponse>> getArticleByUserId(HttpServletRequest req) {
+    public ResponseEntity<List<FeedResponse>> getArticleByUserId(@RequestBody FeedInquiryRequest feedInquiryRequest, HttpServletRequest req) {
         String userId = articleService.getUserIdFromRequest(req);
-        List<FeedResponse> responses  = articleService.getArticleByUserId(userId);
+        List<FeedResponse> responses  = articleService.getArticleByUserId(feedInquiryRequest, userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }

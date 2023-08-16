@@ -198,17 +198,29 @@ public class ArticleServiceImpl implements IArticleService {
      */
     @Override
     @Transactional
-    public List<Article> searchArticleByUserId(String userId) {
-        return articleRepository.findByUserId(userId);
+    public List<Article> searchArticleByUserId(FeedInquiryRequest feedInquiryRequest, String userId) {
+        List<Article> articles = queryFactory
+                .selectFrom(article)
+                .where(
+                        article.articleId.loe(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
+                        userIdEq(List.of(userId))
+                )
+                .orderBy(article.articleId.desc())
+                .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
+                .fetch();
+
+        log.info(articles.toString());
+        return articles;
     }
 
     @Override
     @Transactional
-    public List<FeedResponse> getArticleByUserId(String userId) {
-//        List<Article> articles = searchPopularArticles();
-//        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles);
-//        return feedResponse;
-        return null;
+    public List<FeedResponse> getArticleByUserId(FeedInquiryRequest feedInquiryRequest, String userId) {
+
+        List<Article> articles = searchArticleByUserId(feedInquiryRequest, userId);
+        List<FeedResponse> feedResponse = getFeedInfoForArticles(userId, articles, feedInquiryRequest.getDataSize());
+        return feedResponse;
+//        return null;
     }
 
     @Override
@@ -235,11 +247,6 @@ public class ArticleServiceImpl implements IArticleService {
                 .orderBy(article.articleId.desc())
                 .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
                 .fetch();
-
-//        List<Article> articles = new ArrayList<>();
-//
-//        // 팔로워들의 글을 다 가져옴 (select 한번에)
-//        articles= articleRepository.findByUser_UserIdIn(userIds);
 
 
         Collections.sort(articles, Comparator.comparing(Article::getCreatedAt).reversed());
