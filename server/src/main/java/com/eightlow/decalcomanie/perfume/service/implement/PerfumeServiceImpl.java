@@ -36,7 +36,6 @@ import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
 @Transactional
 @RequiredArgsConstructor
 public class PerfumeServiceImpl implements IPerfumeService {
-    private final PerfumeRepository perfumeRepository;
     private final BrandRepository brandRepository;
     private final ScentRepository scentRepository;
     private final AccordRepository accordRepository;
