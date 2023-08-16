@@ -11,16 +11,57 @@ interface TextProp {
 }
 
 interface StatProp {
-  following: number;
-  post: number;
-  follower: number;
+  postCount: number;
+  followingCount: number;
+  followerCount: number;
 }
 
-const data: StatProp = {
-  following: 123123,
-  post: 123123123,
-  follower: 123123123123,
+const formatNumber = (number: number): string => {
+  if (number >= 1000000000) {
+    return (number / 1000000000).toFixed(1) + 'B';
+  } else if (number >= 1000000) {
+    return (number / 1000000).toFixed(1) + 'M';
+  } else if (number >= 1000) {
+    return (number / 1000).toFixed(1) + 'K';
+  } else {
+    return number.toString();
+  }
 };
+
+export default function ProfileStats({ postCount, followerCount, followingCount }: StatProp) {
+  const navigate = useNavigate();
+
+  const handleClick = (initialActiveTab: 'follower' | 'following') => {
+    navigate(`/follow-list?initialActiveTab=${initialActiveTab}`);
+  };
+
+  return (
+    <StatsDiv>
+      <StatsBox>
+        <CountBox onClick={() => handleClick('follower')}>
+          <BoxText size="13pt" color="var(--primary-color)" fontWeight="700">
+            {formatNumber(followerCount)}
+          </BoxText>
+          <BoxText size="9.5pt">Follower</BoxText>
+        </CountBox>
+        <Bar />
+        <div>
+          <BoxText size="13pt" color="var(--primary-color)" fontWeight="700">
+            {formatNumber(postCount)}
+          </BoxText>
+          <BoxText size="9.5pt">Post</BoxText>
+        </div>
+        <Bar />
+        <CountBox onClick={() => handleClick('following')}>
+          <BoxText size="13pt" color="var(--primary-color)" fontWeight="700">
+            {formatNumber(followingCount)}
+          </BoxText>
+          <BoxText size="9.5pt">Following</BoxText>
+        </CountBox>
+      </StatsBox>
+    </StatsDiv>
+  );
+}
 
 const BoxText = styled.div<TextProp>`
   display: flex;
@@ -54,60 +95,3 @@ const CountBox = styled.div`
     cursor: pointer;
   }
 `;
-
-const formatNumber = (number: number): string => {
-  if (number >= 1000000000) {
-    return (number / 1000000000).toFixed(1) + 'B';
-  } else if (number >= 1000000) {
-    return (number / 1000000).toFixed(1) + 'M';
-  } else if (number >= 1000) {
-    return (number / 1000).toFixed(1) + 'K';
-  } else {
-    return number.toString();
-  }
-};
-
-export default function ProfileStats() {
-  const navigate = useNavigate();
-
-  const handleClick = (initialActiveTab: 'follower' | 'following') => {
-    // 임시) mypage 완성되면 mypage에서 userDto props로 넘겨줘서 해당 userId 사용
-    const temporaryUser: user = {
-      // 임시로 필요한 데이터만 작성
-      nickname: '2948493336',
-      userId: 'bef9ea06-6409-4294-b7d1-c44da38da1e1',
-      age: 20,
-      gender: 0,
-      deletedAt: '',
-      picture: '',
-    };
-    navigate(`/follow-list/${temporaryUser.userId}?initialActiveTab=${initialActiveTab}`);
-  };
-
-  return (
-    <StatsDiv>
-      <StatsBox>
-        <CountBox onClick={() => handleClick('follower')}>
-          <BoxText size="13pt" color="var(--primary-color)" fontWeight="700">
-            {formatNumber(data.follower)}
-          </BoxText>
-          <BoxText size="9.5pt">Follower</BoxText>
-        </CountBox>
-        <Bar />
-        <div>
-          <BoxText size="13pt" color="var(--primary-color)" fontWeight="700">
-            {formatNumber(data.post)}
-          </BoxText>
-          <BoxText size="9.5pt">Post</BoxText>
-        </div>
-        <Bar />
-        <CountBox onClick={() => handleClick('following')}>
-          <BoxText size="13pt" color="var(--primary-color)" fontWeight="700">
-            {formatNumber(data.following)}
-          </BoxText>
-          <BoxText size="9.5pt">Following</BoxText>
-        </CountBox>
-      </StatsBox>
-    </StatsDiv>
-  );
-}

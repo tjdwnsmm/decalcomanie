@@ -1,10 +1,18 @@
 import styled from 'styled-components';
-import { PerfumeDetail } from '../../types/PerfumeInfoType';
 
-const ImgDiv = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
+interface ImgBoxProps {
+  picture: string;
+}
+
+const ProfileInfoBox = ({ picture }: ImgBoxProps) => (
+  <>
+    <ImgBox>
+      <PerfumeImg src={picture} />
+    </ImgBox>
+  </>
+);
+
+export default ProfileInfoBox;
 
 const ImgBox = styled.div`
   width: 165px;
@@ -20,18 +28,7 @@ const ImgBox = styled.div`
   }
 `;
 
-interface ImgBoxProps {
-  picture: string;
-}
-
-const ProfileInfoBox = ({ picture }: ImgBoxProps) => (
-  <>
-    <ImgDiv>
-      <ImgBox>
-        <img src={picture} />
-      </ImgBox>
-    </ImgDiv>
-  </>
-);
-
-export default ProfileInfoBox;
+const PerfumeImg = styled.img`
+  width: 100px;
+  height: 100px;
+`;

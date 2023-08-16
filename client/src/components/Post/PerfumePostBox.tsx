@@ -75,7 +75,7 @@ function PerfumePostBox({ perfume, id, setPerfumeList }: ReviewBoxProps) {
                 setPerfumeList(updatedList);
               }}
             >
-              삭제하기 🗑
+              삭제하기
             </DeleteBtn>
           ) : (
             <></>
@@ -96,6 +96,7 @@ const DeleteBtn = styled.div`
   margin-top: 30px;
   font-weight: 700;
   font-size: 13px;
+  width: fit-content;
 `;
 
 const PerfumeReviewBoxContainer = styled.div`
