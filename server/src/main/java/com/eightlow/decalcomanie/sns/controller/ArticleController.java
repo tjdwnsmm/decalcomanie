@@ -1,5 +1,6 @@
 package com.eightlow.decalcomanie.sns.controller;
 
+import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
 import com.eightlow.decalcomanie.sns.dto.*;
 import com.eightlow.decalcomanie.sns.dto.request.CommentRequest;
 import com.eightlow.decalcomanie.sns.dto.request.CreateArticleRequest;
@@ -30,6 +31,7 @@ import java.util.*;
 public class ArticleController {
     private final IArticleService articleService;
     private final IGradeService gradeService;
+    private final IPerfumeService perfumeService;
 
     private final ArticleDtoMapper articleDtoMapper;
     private final CommentDtoMapper commentDtoMapper;
@@ -56,6 +58,15 @@ public class ArticleController {
         // 평점 등록시 perfume테이블의 평점 수정!!!
         // grade 테이블을 통해서 평균을 내준다 (perfume id 갯수 카운트, rate 더하기 로)
         // perfume service 호출해서 값을 넣어준다.
+
+        // articlePerfueme에서 향수의 언급된 갯수 count해서 저장
+        Map<Integer, PerfumeRateDto> perfumesMap = articleService.getPerfumeCountAndSumRate(createArticleRequest.getPerfumeId());
+
+        for(int i = 0;i < createArticleRequest.getPerfumeId().size();i++) {
+
+
+            perfumeService.updatePerfumeRate(perfumesMap.get(createArticleRequest.getPerfumeId().get(i)), createArticleRequest.getPerfumeId().get(i), createArticleRequest.getRate().get(i));
+        }
 
         Map<String, String> res = new HashMap<>();
         res.put("articleId", String.valueOf(articleId));

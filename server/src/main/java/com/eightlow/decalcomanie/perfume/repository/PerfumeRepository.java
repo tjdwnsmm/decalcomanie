@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface PerfumeRepository extends JpaRepository<Perfume, Integer> {
     List<Perfume> findAll();
 
-    Optional<Perfume> findByPerfumeId(int perfumeId);
+    List<Perfume> findByPerfumeId(int perfumeId);
 }

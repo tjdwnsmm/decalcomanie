@@ -37,6 +37,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.eightlow.decalcomanie.sns.entity.QArticle.article;
+import static com.eightlow.decalcomanie.sns.entity.QArticlePerfume.articlePerfume;
 import static com.eightlow.decalcomanie.sns.entity.QBookMark.bookMark;
 
 @RequiredArgsConstructor
@@ -76,6 +77,37 @@ public class ArticleServiceImpl implements IArticleService {
         Article a = articleRepository.save(article);
         log.info("ArticleServiceImpl::: finish ", String.valueOf(article.getArticleId()));
         return article.getArticleId();
+    }
+
+    @Override
+    public Map<Integer, PerfumeRateDto> getPerfumeCountAndSumRate(List<Integer> perfumeIds) {
+        List<Integer> perfumeCnt = new ArrayList<>();
+
+        Map<Integer, PerfumeRateDto> perfumeMap = new HashMap<>();
+
+
+        for(int i = 0; i < perfumeIds.size(); i++) {
+            long cnt = queryFactory
+                    .selectFrom(articlePerfume)
+                    .where(
+                            articlePerfume.perfume.perfumeId.eq(perfumeIds.get(i))
+                    )
+                    .fetchCount();
+
+            Float sum = queryFactory
+                    .select(articlePerfume.rate.sum())
+                    .from(articlePerfume)
+                    .where(articlePerfume.perfume.perfumeId.eq(perfumeIds.get(i)))
+                    .fetchOne();
+//            float sum = queryFactory
+//                    .selectFrom(articlePerfume.rate.sumAsFloat())
+//                    .where(articlePerfume.perfume.perfumeId.eq(perfumeIds.get(i)))
+//                    .fetchOne();
+            perfumeMap.put(perfumeIds.get(i), new PerfumeRateDto((int)cnt, sum));
+
+        }
+
+        return perfumeMap;
     }
 
     @Override

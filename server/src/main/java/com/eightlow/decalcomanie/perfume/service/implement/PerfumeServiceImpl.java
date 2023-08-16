@@ -10,6 +10,7 @@ import com.eightlow.decalcomanie.perfume.entity.*;
 import com.eightlow.decalcomanie.perfume.mapper.*;
 import com.eightlow.decalcomanie.perfume.repository.*;
 import com.eightlow.decalcomanie.perfume.service.IPerfumeService;
+import com.eightlow.decalcomanie.sns.dto.PerfumeRateDto;
 import com.eightlow.decalcomanie.user.entity.QUser;
 import com.eightlow.decalcomanie.user.entity.User;
 import com.querydsl.core.types.OrderSpecifier;
@@ -25,10 +26,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static com.eightlow.decalcomanie.perfume.entity.QPerfume.perfume;
 
@@ -244,6 +242,25 @@ public class PerfumeServiceImpl implements IPerfumeService {
                 .curSeason(getSeason(today))
                 .curTime(getTime(curTime))
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public void updatePerfumeRate(PerfumeRateDto perfumeRateDto, int perfumeId, float rate) {
+        Perfume perfume = em.find(Perfume.class, perfumeId);
+
+        if(perfume == null) {
+            throw new CustomException(CustomErrorCode.PERFUME_NOT_FOUND);
+        }
+
+        // rate 계산 파트
+        int perfumeCnt = perfumeRateDto.getCnt();
+        float perfumeRateSum = perfumeRateDto.getRateSum();
+
+        float newPerfumeRate = (perfumeRateSum + rate) / (perfumeCnt + 1);
+        System.out.println(perfume);
+
+        perfume.updateRate(newPerfumeRate);
     }
 
     private String getTime(String curTime) {

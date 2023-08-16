@@ -6,6 +6,7 @@ import com.eightlow.decalcomanie.perfume.dto.ScentDto;
 import com.eightlow.decalcomanie.perfume.dto.request.PerfumeSearchRequest;
 import com.eightlow.decalcomanie.perfume.dto.response.DailyRecommendResponse;
 import com.eightlow.decalcomanie.perfume.dto.response.PerfumeNameResponse;
+import com.eightlow.decalcomanie.sns.dto.PerfumeRateDto;
 
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface IPerfumeService {
     List<PerfumeNameResponse> findAllNames();
 
     DailyRecommendResponse recommendByOccasion(String userId);
+
+    void updatePerfumeRate(PerfumeRateDto perfumeRateDto, int perfumeId, float rate);
 }

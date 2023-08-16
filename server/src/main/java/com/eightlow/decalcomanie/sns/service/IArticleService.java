@@ -1,9 +1,6 @@
 package com.eightlow.decalcomanie.sns.service;
 
-import com.eightlow.decalcomanie.sns.dto.ArticleDto;
-import com.eightlow.decalcomanie.sns.dto.BookMarkDto;
-import com.eightlow.decalcomanie.sns.dto.CommentDto;
-import com.eightlow.decalcomanie.sns.dto.HeartDto;
+import com.eightlow.decalcomanie.sns.dto.*;
 import com.eightlow.decalcomanie.sns.dto.request.FeedInquiryRequest;
 import com.eightlow.decalcomanie.sns.dto.response.ArticleResponse;
 import com.eightlow.decalcomanie.sns.dto.response.FeedResponse;
@@ -16,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface IArticleService {
@@ -24,6 +22,8 @@ public interface IArticleService {
      */
     boolean existArticleById(int id);
     int createArticle(ArticleDto articleDto);
+
+    Map<Integer, PerfumeRateDto> getPerfumeCountAndSumRate(List<Integer> perfumeIds);
 
     int updateArticle(ArticleDto articleDto, String userId);
 
