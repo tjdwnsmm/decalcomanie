@@ -7,32 +7,52 @@ import { ReactComponent as LeftArrow } from '../../assets/icon/left-arrow.svg';
 import FollowTab from '../../components/TabBar/FollowTab';
 import FollowBox from '../../components/Follow/FollowBox';
 import { FollowInfo } from '../../types/ProfileInfoType';
+import { userInfoDto } from '../../types/PostInfoType';
+
+const TopBar = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--background-color);
+`;                                                             
+
+const InnerTop = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+`;
 
 const Button = styled.button`
+  position: absolute;
   background: none;
   border: none;
-  margin: 24px 18px 0px;
+  left: 18px;
   cursor: pointer;
 `;
 
 const NoFollow = styled.div`
   width: 84%;
-  padding: 5% 8%;
+  padding: 8%;
   text-align: center;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 700;
 
   .goFollow {
+    margin-top: 20px;
     font-size: 16px;
     border: none;
     background-color: var(--background-color);
     cursor: pointer;
-  }
+    &:hover {
+      color: var(--primary-color);
+    }
 `;
 
 const FollowList = () => {
   const { id } = useParams<{ id: string }>();
-  const userId = id === 'my-follow' ? '' : `/${id}`;
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'follower' | 'following'>('follower');
@@ -40,10 +60,12 @@ const FollowList = () => {
   const [following, setFollowing] = useState<FollowInfo[]>([]);
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
+  const [targetUser, setTargetUser] = useState<userInfoDto>();
   const location = useLocation();
 
   const handleLeftArrowClick = () => {
-    navigate(-1);
+    // api 연결 후 변경 필
+    navigate('/mypage');
   };
 
   useEffect(() => {
@@ -51,23 +73,24 @@ const FollowList = () => {
     const fetchFollowData = async () => {
       try {
         // 팔로워 목록 조회
-        const followerResponse = await axios.get(`/user/follower${userId}`);
-        setFollower(followerResponse.data);
-
+        const followerResponse = await axios.get(`/user/follower/${id}`);
+        setFollower(followerResponse.data.data);
+        console.log('팔로워', followerResponse.data);
         // 팔로잉 목록 조회
-        const followingResponse = await axios.get(`/user/following${userId}`);
-        setFollowing(followingResponse.data);
+        const followingResponse = await axios.get(`/user/following/${id}`);
+        setFollowing(followingResponse.data.data);
+        console.log('팔로잉', followingResponse.data);
 
-        // 팔로워 수, 팔로잉 수 조회
-        setFollowerCount(followerResponse.data.length);
-        setFollowingCount(followingResponse.data.length);
+        setFollowerCount(followerResponse.data.data.length);
+        setFollowingCount(followingResponse.data.data.length);
+        setTargetUser(followerResponse.data.targetUser);
       } catch (error) {
         console.error('오류:', error);
       }
     };
 
     fetchFollowData();
-  }, [userId]);
+  }, [id, activeTab]);
 
   useEffect(() => {
     // URL에서 초기 activeTab 값 가져오기
@@ -80,30 +103,43 @@ const FollowList = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    setFollowingCount(following.length);
+  }, [following]);
+
   return (
     <Main>
-      <Button onClick={handleLeftArrowClick}>
-        <LeftArrow />
-      </Button>
-      <FollowTab
-        setNowActive={setActiveTab}
-        followerCount={followerCount}
-        followingCount={followingCount}
-      />
+      <TopBar>
+        <InnerTop>
+          <div style={{ fontWeight: '700'}}>{targetUser?.user.nickname}</div>
+          <Button onClick={handleLeftArrowClick}>
+            <LeftArrow />
+          </Button>
+        </InnerTop>
+        <FollowTab
+          setNowActive={setActiveTab}
+          followerCount={followerCount}
+          followingCount={followingCount}
+        />
+      </TopBar>
+      <MarginFrame margin='112px'/>
       {activeTab === 'follower' && ((followerCount > 0) ? (
-        <FollowBox followList={follower} />
+        <FollowBox followList={follower} setFollowingList={setFollowing} isMe={targetUser?.me}/>
       ) : (
         <NoFollow>
-          {id}님을 팔로워하는 사람이 없어요.
-          <MarginFrame margin='10px 0px'>
+          {targetUser?.user.nickname}님을 팔로우하는 사람이 없어요. 😥<br/>
+          {/* 마이페이지 api 완성 후 navigate 수정 필요 */}
+          {!targetUser?.me && (
             <button className='goFollow' onClick={() => navigate('/mypage')}>팔로우하러 가기</button>
-          </MarginFrame>
+          )}
         </NoFollow>
       ))}
       {activeTab === 'following' && ((followingCount > 0) ? (
-        <FollowBox followList={following} />
+        <FollowBox followList={following} setFollowingList={setFollowing} isMe={targetUser?.me}/>
       ) : (
-        <NoFollow>{id}님이 팔로잉하는 사람이 없어요.</NoFollow>
+        <NoFollow>
+          {targetUser?.user.nickname}님이 팔로잉하는 사람이 없어요. 😥
+        </NoFollow>
       ))}
     </Main>
   );

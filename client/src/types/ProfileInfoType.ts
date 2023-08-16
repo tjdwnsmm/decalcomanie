@@ -4,8 +4,10 @@ export interface FollowInfo {
   userId: string;
   picture: string;
   nickname: string;
-  favorite: string[];
-  isFollowing: boolean;
+  favorite: ScentDto[];
+  hate: ScentDto[];
+  following: boolean;
+  followingButtonActivate: boolean;
 }
 
 export interface userInfo {

@@ -5,7 +5,6 @@ import FollowBtn from '../Button/FollowBtn';
 import PostModalBtn from '../Button/PostModalBtn';
 import { LikeBtn } from '../Button/LikeBtn';
 import { ScrapBtn } from '../Button/ScrapBtn';
-import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 /**
 @summary
@@ -117,10 +116,7 @@ const formatDateTime = (datetimeStr: string) => {
 
 const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
   const { articleDto, bookmarked, userInfoDto, hearted, followed } = postInfo;
-
-  const hasScent =
-    userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
-  const isMyPost = getLoggedInUserNickname() === userInfoDto.user.nickname;
+  const hasScent = userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
 
   return (
     <PostInfoBoxContainer>
@@ -150,12 +146,17 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
             )}
           </InfoBox>
         </div>
-        <div style={{ height: '42px', display: 'flex', alignItems: 'center' }}>
-          {!isMyPost && (
-            <FollowBtn to={articleDto.userId} isFollow={followed} />
-          )}
-          {isMyPost && <PostModalBtn articleId={articleDto.articleId} />}
-        </div>
+        {/* 탈퇴한 회원이 아닐 때 div 박스
+          div : 내가 쓴 글이면 모달, 아니라면 팔로우 버튼 */}
+        {!userInfoDto.withdrawal && (
+          <div style={{ height: '42px', display: 'flex', alignItems: 'center' }}>
+            {userInfoDto.me ? (
+              <PostModalBtn articleId={articleDto.articleId} />
+            ) : (
+              <FollowBtn to={articleDto.userId} isFollow={followed} />
+            )}
+          </div>
+        )}
       </WriterInfoBox>
       <ContentBox>{articleDto.content}</ContentBox>
       <IconBox>

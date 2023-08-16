@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { ReactComponent as Bar } from '../../assets/img/bar.svg';
+import { user } from '../../types/PostInfoType';
 
 interface TextProp {
   size?: string;
@@ -13,6 +14,7 @@ interface StatProp {
   postCount: number;
   followingCount: number;
   followerCount: number;
+  userId: string;
 }
 
 const formatNumber = (number: number): string => {
@@ -27,11 +29,11 @@ const formatNumber = (number: number): string => {
   }
 };
 
-export default function ProfileStats({ postCount, followerCount, followingCount }: StatProp) {
+export default function ProfileStats({ postCount, followerCount, followingCount, userId }: StatProp) {
   const navigate = useNavigate();
 
   const handleClick = (initialActiveTab: 'follower' | 'following') => {
-    navigate(`/follow-list?initialActiveTab=${initialActiveTab}`);
+    navigate(`/follow-list/${userId}?initialActiveTab=${initialActiveTab}`);
   };
 
   return (

@@ -56,6 +56,7 @@ const ImgModiBox = styled.div`
   background-color: var(--white-color);
   border-radius: 40px;
   box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 `;
 
 const UserInfoName = styled.div`

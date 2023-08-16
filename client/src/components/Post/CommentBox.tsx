@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { commentDto, commmentUsers } from '../../types/PostInfoType';
 import CommentModalBtn from '../Button/CommentModalBtn';
 import axios from '../../api/apiController';
-import getLoggedInUserNickname from '../../api/loggedInUserNickname';
 
 interface CommentBoxProps {
   comment: commentDto;
@@ -111,8 +110,6 @@ const getTimeString = (elapsedTime: number, createdAt: string): string => {
 };
 
 const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
-  const isMyComment = getLoggedInUserNickname() === commentUser.user.nickname;
-
   const [elapsedTime, setElapsedTime] = useState(
     getElapsedTime(comment.createdAt),
   );
@@ -195,9 +192,7 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
               isEditing={isEditing}
               value={editedContent}
               onChange={handleContentChange}
-              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) =>
-                handleKeyPress(e)
-              }
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => handleKeyPress(e)}
             />
             <ModiBtn isEditable={isEditable} onClick={handleEditClick}>
               수정
@@ -212,7 +207,7 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
           </InfoBox>
         )}
       </CommentContent>
-      {isMyComment && !isEditing && (
+      {commentUser.me && !isEditing && (
         <CommentModalBtn
           comment={comment}
           isEditing={isEditing}

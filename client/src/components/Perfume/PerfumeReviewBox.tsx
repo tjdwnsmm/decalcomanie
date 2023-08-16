@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Rating from '@mui/material/Rating';
 import { styled as MUstyled } from '@mui/material/styles';
@@ -10,6 +11,7 @@ interface PerfumeReviewInfo {
   brand: string;
   name: string;
   img: string;
+  perfumeId: number;
 }
 
 const PerfumeReviewBoxContainer = styled.div`
@@ -39,7 +41,7 @@ const PerfumeName = styled.div`
   font-weight: 700;
 `;
 
-const ImgBox = styled.div`
+const ImgBox = styled(Link)`
   width: 120px;
   height: 120px;
   display: flex;
@@ -80,7 +82,7 @@ function PerfumeReviewBox({ rate, brand, name, img }: PerfumeReviewInfo) {
         <PerfumeBrand>{brand}</PerfumeBrand>
         <PerfumeName>{name}</PerfumeName>
       </TextInfoContainer>
-      <ImgBox>
+      <ImgBox to={`/perfume-detail/${perfumeId}`}>
         <img src={img} />
       </ImgBox>
     </PerfumeReviewBoxContainer>

@@ -30,6 +30,8 @@ export interface userInfoDto {
   favorities: scentDto[];
   hates: scentDto[];
   following: boolean;
+  me: boolean;
+  withdrawal: boolean;
 }
 
 export interface commentDto {
@@ -46,6 +48,8 @@ export interface commmentUsers {
   favorities: scentDto[];
   hates: scentDto[];
   following: boolean;
+  me: boolean;
+  withdrawal: boolean;
 }
 
 export interface PerfumeInfos {
