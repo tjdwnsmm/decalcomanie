@@ -321,6 +321,10 @@ public class ArticleServiceImpl implements IArticleService {
     @Transactional
     public List<Article> searchArticleByPerfumeId(FeedInquiryRequest feedInquiryRequest, int perfumeId) {
         List<ArticlePerfume> articlePerfumes = articlePerfumeRepository.findByPerfume_PerfumeId(perfumeId);
+
+        if (articlePerfumes.size() == 0) {
+            return null;
+        }
         List<Integer> articleIds = new ArrayList<>();
         for(ArticlePerfume articlePerfume : articlePerfumes) {
             articleIds.add(articlePerfume.getArticle().getArticleId());
@@ -348,6 +352,9 @@ public class ArticleServiceImpl implements IArticleService {
     public List<FeedResponse> getArticleByPerfumeId(FeedInquiryRequest feedInquiryRequest, String userId,
                                                     int perfumeId) {
         List<Article> articles = searchArticleByPerfumeId(feedInquiryRequest, perfumeId);
+        if (articles == null) {
+            return null;
+        }
         List<FeedResponse> feedResponses = getFeedInfoForArticles(userId, articles ,feedInquiryRequest.getDataSize());
         return feedResponses;
     }
