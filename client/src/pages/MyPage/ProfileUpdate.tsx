@@ -56,6 +56,7 @@ const ImgModiBox = styled.div`
   background-color: var(--white-color);
   border-radius: 40px;
   box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 `;
 
 const UserInfoName = styled.div`
@@ -190,7 +191,7 @@ const ProfileUpdate = () => {
       <Profile>
         <ProfileImg src={profileImg} alt="프로필 사진" />
         <ImgModiBox onClick={handleOpenModal}>
-          <img src="src/assets/img/pencil-float.png" width="26" height="26" />
+          <img src="public/assets/img/pencil-float.png" width="26" height="26" />
         </ImgModiBox>
       </Profile>
       <MarginFrame margin="30px 40px">
