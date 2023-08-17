@@ -144,17 +144,27 @@ public class OAuthController {
                 .refreshToken(refreshToken)
                 .build();
 
-        int age = Integer.parseInt(kakaoProfile.getKakaoAccount().getAgeRange().split("~")[0]);
 
         int avatarNum = (int)(Math.random()*9)+1;
 
         String picture = "https://decalcomanieimagebucket.s3.ap-northeast-2.amazonaws.com/avatar/peeps-avatar-alpha-" + avatarNum + ".png";
 
+        int gender = 2;
+        int age = 20;
+
+        if(kakaoProfile.getKakaoAccount().hasAgeRange) {
+            age = Integer.parseInt(kakaoProfile.getKakaoAccount().getAgeRange().split("~")[0]);
+        }
+
+        if(kakaoProfile.getKakaoAccount().hasGender) {
+            gender = kakaoProfile.getKakaoAccount().getGender().equals("male") ? 0 : 1;
+        }
+
         UserDto userInfo = UserDto.builder()
                 .userId(userId.toString())
                 .nickname(kakaoProfile.getId().toString())
                 .age(age)
-                .gender(kakaoProfile.getKakaoAccount().getGender().equals("male") ? 0 : 1)
+                .gender(gender)
                 .picture(picture)
                 .build();
 
