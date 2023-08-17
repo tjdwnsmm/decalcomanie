@@ -13,10 +13,10 @@ import useIntersect from '../../hooks/useIntersect';
 const SEARCH_RESULT_TIMEOUT = 5000; // 5 seconds
 
 export const PerfumeFeed = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
   const [showNoResultsMessage, setShowNoResultsMessage] = useState(false);
-  const navigate = useNavigate();
   const [heartCnt, setHeartCnt] = useState(-1);
   const [lastArticleId, setLastArticleId] = useState(-1);
 
