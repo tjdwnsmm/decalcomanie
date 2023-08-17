@@ -73,34 +73,47 @@ const MainPage = () => {
     }
     return '';
   };
-
+  localStorage.removeItem('sort');
   useEffect(() => {
-    localStorage.removeItem('sort');
-    axios.get('/user/scent/top').then((res) => {
-      const scentData = res.data;
-      setRecommendScent(scentData);
-    });
+    const fetchData = async () => {
+      try {
+        const res1 = await axios.get('/user/scent/top');
+        const scentData = res1.data;
+        setRecommendScent(scentData);
+      } catch (error) {
+        console.error('Error fetching scent data:', error);
+      }
 
-    axios.get('/user/recommend').then((res) => {
-      const datas = res.data;
-      setRecommendPerfume(datas);
-    });
+      try {
+        const res2 = await axios.get('/user/recommend');
+        const datas = res2.data;
+        setRecommendPerfume(datas);
+      } catch (error) {
+        console.error('Error fetching recommend data:', error);
+      }
 
-    axios.get('/perfume/today').then((res) => {
-      //console.log(`today data : ${JSON.stringify(res.data)}`);
-      setWeatherPerfumes(res.data.season);
-      setDayNightPerfumes(res.data.dayNight);
-      setAgeGenderPerfumes(res.data.ageGender);
-      setOverallPerfumes(res.data.overall);
-      setBaseInfo({
-        curSeason: res.data.curSeason,
-        curTime: res.data.curTime,
-        gender: res.data.gender,
-        age: res.data.age,
-      });
-      setSaveRecommend(res.data.userPerfumeExist);
-      setDrawer(res.data.drawerPerfumeExist);
-    });
+      try {
+        const res3 = await axios.get('/perfume/today');
+        const weatherData = res3.data;
+
+        setWeatherPerfumes(weatherData.season);
+        setDayNightPerfumes(weatherData.dayNight);
+        setAgeGenderPerfumes(weatherData.ageGender);
+        setOverallPerfumes(weatherData.overall);
+        setBaseInfo({
+          curSeason: weatherData.curSeason,
+          curTime: weatherData.curTime,
+          gender: weatherData.gender,
+          age: weatherData.age,
+        });
+        setSaveRecommend(weatherData.userPerfumeExist);
+        setDrawer(weatherData.drawerPerfumeExist);
+      } catch (error) {
+        console.error('Error fetching weather data:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
