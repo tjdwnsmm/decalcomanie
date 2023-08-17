@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import axios from '../../api/apiController';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import { Filter } from '../../pages/SearchPage/SearchTabPage';
+import { SortOption } from './SortToggle';
 
 interface FetchProps {
   filter?: Filter;
   searchKeyword: string;
   newSearch: boolean;
   lastPick: number;
+  lastRate: number;
   lastPerfumeId: number;
 }
 
@@ -17,13 +19,19 @@ export const useFetchDatas = ({
   newSearch,
   lastPick,
   lastPerfumeId,
+  lastRate,
 }: FetchProps) => {
   const [datas, setDatas] = useState<PerfumeDetail[]>([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [isLastPage, setIsLastPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchDatas = async (lastPick: number, lastPerfumeId: number) => {
+  const fetchDatas = async (
+    lastPick: number,
+    lastPerfumeId: number,
+    lastRate: number,
+    orderType: number,
+  ) => {
     try {
       setIsLoading(true); // Set isLoading to true before making the API call
       const response = await axios.post('/perfume/search', {
@@ -34,7 +42,10 @@ export const useFetchDatas = ({
         dataSize: 50,
         lastPick: lastPick === -1 ? null : lastPick,
         lastPerfumeId: lastPerfumeId === -1 ? null : lastPerfumeId,
+        lastRate: lastRate === -1 ? null : lastRate,
+        orderType: orderType,
       });
+      console.log(orderType);
       // console.log(response.data);
       console.log(`적용된 필터 ! : ${JSON.stringify(filter)}`);
       // console.log(
@@ -64,7 +75,7 @@ export const useFetchDatas = ({
        * 이 코드는 지워도됨
        */
 
-      if (pageNumber > 10) {
+      if (pageNumber > 30) {
         setIsLastPage(true);
       }
     } catch (error) {
@@ -77,7 +88,14 @@ export const useFetchDatas = ({
   useEffect(() => {
     console.log(`isLast? ${isLastPage}`);
     if (!isLastPage && !isLoading) {
-      fetchDatas(lastPick, lastPerfumeId);
+      let orderType = 1; // Default value if localStorage does not contain 'sort'
+
+      const localStorageSort = localStorage.getItem('sort');
+      if (localStorageSort === '2') {
+        orderType = 2;
+      }
+
+      fetchDatas(lastPick, lastPerfumeId, lastRate, orderType);
       console.log(`${pageNumber + 1}번째 호출!`);
     }
   }, [pageNumber, 50, isLastPage]);

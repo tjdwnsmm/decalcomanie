@@ -26,6 +26,7 @@ const SearchMyPerfume: React.FC = () => {
   //필터나 검색어를 이용한 검색
   const [newSearch, setNewSearch] = useState(false);
   const [lastPick, setLastPick] = useState(-1);
+  const [lastRate, setLastRate] = useState(-1);
   const [lastPerfumeId, setLastPerfumeId] = useState(-1);
 
   const { data, hasNextPage, isFetching, fetchNextPage, isLoading } =
@@ -34,6 +35,7 @@ const SearchMyPerfume: React.FC = () => {
       newSearch,
       lastPick,
       lastPerfumeId,
+      lastRate,
     });
 
   const datas = useMemo(() => (data ? data : []), [data]);
@@ -46,6 +48,7 @@ const SearchMyPerfume: React.FC = () => {
       // datas = [];
       setLastPerfumeId(datas[datas.length - 1].perfumeId);
       setLastPick(datas[datas.length - 1].pick);
+      setLastRate(datas[datas.length - 1].rate);
     }
   });
 

@@ -45,12 +45,26 @@ const SearchTabPage: React.FC = () => {
   const [sortOption, setSortOption] = useState<SortOption>(
     SortOption.Popularity,
   );
+  const [sortChange, setSortChange] = useState(false);
 
   //필터나 검색어를 이용한 검색
   const [newSearch, setNewSearch] = useState(false);
 
   const [lastPick, setLastPick] = useState(-1);
+  const [lastRate, setLastRate] = useState(-1);
   const [lastPerfumeId, setLastPerfumeId] = useState(-1);
+
+  // const [datas, setDatas] = useState<PerfumeDetail[]>([]);
+  useEffect(() => {
+    if (!localStorage.getItem('sort')) {
+      setSortOption(SortOption.Popularity);
+    } else {
+      console.log('redirect - ', localStorage.getItem('sort'));
+      if (localStorage.getItem('sort') == '2') {
+        setSortOption(SortOption.Grade);
+      }
+    }
+  }, []);
 
   const { data, hasNextPage, isFetching, fetchNextPage, isLoading } =
     useFetchDatas({
@@ -59,6 +73,7 @@ const SearchTabPage: React.FC = () => {
       newSearch,
       lastPick,
       lastPerfumeId,
+      lastRate,
     });
 
   const datas = useMemo(() => (data ? data : []), [data]);
@@ -66,16 +81,26 @@ const SearchTabPage: React.FC = () => {
   const ref = useIntersect(async (entry, observer) => {
     observer.unobserve(entry.target);
     if (hasNextPage && !isFetching) {
-      fetchNextPage();
-      console.log('✅ 이전까지 받아온 데이터!', datas);
-
+      // setDatas([]);
+      await fetchNextPage();
+      // console.log('✅ 이전까지 받아온 데이터!', datas);
+      // setDatas((prevDatas) => [...prevDatas, ...datas]);
       setLastPerfumeId(datas[datas.length - 1].perfumeId);
       setLastPick(datas[datas.length - 1].pick);
+      setLastRate(datas[datas.length - 1].rate);
     }
   });
 
   const handleSortChange = (newSortOption: SortOption) => {
     setSortOption(newSortOption);
+    console.log('here');
+    localStorage.setItem(
+      'sort',
+      newSortOption === SortOption.Popularity ? '1' : '2',
+    );
+    location.reload();
+
+    setSortChange(true);
   };
 
   useEffect(() => {
@@ -84,33 +109,6 @@ const SearchTabPage: React.FC = () => {
       setOriginSearchResults(fullNames);
     });
   }, []);
-
-  useEffect(() => {
-    if (newSearch && searchResults && searchResults.length > 0) {
-      const sortedResults = sortResults(searchResults);
-      setSearchResults(sortedResults);
-      console.log('정렬완료');
-    } else if (!newSearch && datas?.length > 0) {
-      const sortedResults = sortResults(datas);
-      setSearchResults(sortedResults);
-      console.log('정렬완료');
-    }
-  }, [searchResults || datas, sortOption]);
-
-  const sortResults = (results: PerfumeDetail[]) => {
-    switch (sortOption) {
-      case SortOption.Popularity:
-        return results.sort((a, b) => b.pick - a.pick);
-      case SortOption.Grade:
-        return results.sort((a, b) => {
-          const rateA = a.rate !== null ? a.rate : 0;
-          const rateB = b.rate !== null ? b.rate : 0;
-          return rateB - rateA;
-        });
-      default:
-        return results;
-    }
-  };
 
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
@@ -123,10 +121,11 @@ const SearchTabPage: React.FC = () => {
       setSearchKeyword('');
       setSearchResults([]);
       try {
+        setNewSearch(true);
+        setSearchResults([]);
         const data = await searchPerfume(keyword);
         setSearchResults(data.searchedPerfumes);
         console.log(data);
-        setNewSearch(true);
       } catch (error) {
         console.error(error);
         setSearchResults([]);
@@ -142,6 +141,7 @@ const SearchTabPage: React.FC = () => {
         gender: [],
         scent: [],
         dataSize: 200,
+        orderType: sortOption === SortOption.Popularity ? 1 : 2,
       });
       console.log(response.data.searchedPerfumes);
       return response.data;
@@ -160,6 +160,7 @@ const SearchTabPage: React.FC = () => {
         gender: filter.gender ? filter.gender : [],
         scent: filter.scentId ? filter.scentId : [],
         dataSize: 200,
+        orderType: sortOption === SortOption.Popularity ? 1 : 2,
       });
       console.log(response);
       return response.data;

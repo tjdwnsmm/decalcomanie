@@ -76,6 +76,7 @@ const MainPage = () => {
   };
 
   useEffect(() => {
+    localStorage.removeItem('sort');
     axios.get('/user/scent/top').then((res) => {
       const scentData = res.data;
       setRecommendScent(scentData);

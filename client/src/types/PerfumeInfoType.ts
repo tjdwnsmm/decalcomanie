@@ -10,7 +10,7 @@ export interface PerfumeDetail {
   accord: ScentDto[];
   note: NoteListDto[];
   pick: number; // 찜 수
-  rate: number | null; // 평점
+  rate: number; // 평점
   longevity: number; // 지속력 (5점만점)
   sillage: number; // 잔향감 (4점만점)
   picked: boolean; //

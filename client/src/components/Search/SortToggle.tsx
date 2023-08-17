@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 
 export enum SortOption {
@@ -13,8 +13,19 @@ interface SortToggleProps {
 const SortToggle: React.FC<SortToggleProps> = ({ onSortChange }) => {
   const [sortOption, setSortOption] = useState(SortOption.Popularity);
 
+  useEffect(() => {
+    if (!localStorage.getItem('sort')) {
+      setSortOption(SortOption.Popularity);
+    } else {
+      console.log('redirect - ', localStorage.getItem('sort'));
+      if (localStorage.getItem('sort') == '2') {
+        setSortOption(SortOption.Grade);
+      }
+    }
+  }, []);
   const handleToggle = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSortOption = event.target.value as SortOption;
+    let newSortOption = event.target.value as SortOption;
+    console.log('handle', newSortOption);
     setSortOption(newSortOption);
     onSortChange(newSortOption);
   };
@@ -28,7 +39,6 @@ const SortToggle: React.FC<SortToggleProps> = ({ onSortChange }) => {
 };
 
 export default SortToggle;
-
 const Select = styled.select`
   border: none;
   outline: none;

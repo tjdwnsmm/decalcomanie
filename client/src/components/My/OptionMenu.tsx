@@ -91,6 +91,7 @@ export default function OptionMenu() {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('nickname');
+        localStorage.removeItem('sort');
 
         // 로그아웃 후 로그인 화면으로 이동
         navigate('/login');

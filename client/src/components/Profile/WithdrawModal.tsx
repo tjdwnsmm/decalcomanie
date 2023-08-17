@@ -15,6 +15,7 @@ const WithdrawModal = ({ closeModal }: WithdrawProps) => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('nickname');
+        localStorage.removeItem('sort');
         const response = await axios.delete('/user/withdrawal');
         navigate('/login');
         console.log(response.data);

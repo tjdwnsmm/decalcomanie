@@ -4,7 +4,6 @@ import FeedPage from '../../components/Feed/FeedPage';
 import { CenterFrame, Main, MarginFrame } from '../../style';
 import FloatingWriteBtn from '../../components/Button/FloatingWriteBtn';
 import BottomNav from '../../components/common/BottomNav';
-import axios from '../../api/apiController';
 import { EachFeedInfo } from '../../types/FeedInfoType';
 import Spinner from '../../components/common/Spinner';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +19,6 @@ export const MainFeed = () => {
   const navigate = useNavigate();
   const [heartCnt, setHeartCnt] = useState(-1);
   const [lastArticleId, setLastArticleId] = useState(-1);
-  const [initLoading, setLoading] = useState(false);
 
   const { data, hasNextPage, isFetching, fetchNextPage, isLoading } =
     useFetchDatas({
