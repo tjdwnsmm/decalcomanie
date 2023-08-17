@@ -49,9 +49,10 @@ instance.interceptors.response.use(
     //console.log(error.response, error.response.data.status, getRefreshToken());
     //401 에러면 refresh token 보내기
     if (error?.response?.data?.status === 401) {
-      //console.log('access-token 만료됐어');
+      //!console 지우기
+      console.log('access-token 만료됐어');
       try {
-        //console.log('refresh-token 보낼게!');
+        console.log('refresh-token 보낼게!');
         const response = await axios.get(`${BASE_URL}/oauth/reissue`, {
           headers: {
             refreshToken: getRefreshToken(),
@@ -75,7 +76,9 @@ instance.interceptors.response.use(
         // 만약 refreshToken 보내도 error 가 뜨면 login 화면으로 보내기 -> redirect
         //console.log('Error refreshing token:', error);
 
-        window.location.href = '/login'; // 로그인화면으로 보내기
+        //!login 이동
+        console.log('리프레시토큰도 에러났나');
+        // window.location.href = '/login'; // 로그인화면으로 보내기
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
       }
@@ -83,7 +86,9 @@ instance.interceptors.response.use(
       //access token 자체를 안보낸 경우
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      window.location.href = '/login';
+      //!login 이동
+      // window.location.href = '/login';
+      console.log('아니면 혹시 여기서? 여긴 403 에러');
     }
 
     return Promise.reject(error);
