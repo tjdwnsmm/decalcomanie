@@ -1,5 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import Rating from '@mui/material/Rating';
+import { styled as MUstyled } from '@mui/material/styles';
 import { ReactComponent as EmptyStarSvg } from '../../assets/icon/empty-star.svg';
 import { ReactComponent as FillStarSvg } from '../../assets/icon/fill-star.svg';
 
@@ -8,6 +11,7 @@ interface PerfumeReviewInfo {
   brand: string;
   name: string;
   img: string;
+  perfumeId: number;
 }
 
 const PerfumeReviewBoxContainer = styled.div`
@@ -16,10 +20,6 @@ const PerfumeReviewBoxContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-`;
-
-const StarRatingContainer = styled.div`
-  display: flex;
 `;
 
 const TextInfoContainer = styled.div`
@@ -31,46 +31,64 @@ const TextInfoContainer = styled.div`
 const PerfumeBrand = styled.div`
   color: var(--black-color);
   font-size: 13px;
-  font-weight: 400;
-  padding: 10px 0px;
+  font-weight: 600;
+  padding: 5px 0px;
 `;
 
 const PerfumeName = styled.div`
   color: var(--black-color);
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
 `;
 
-const ImgBox = styled.div`
-  width: 130px;
-  height: 130px;
+const ImgBox = styled(Link)`
+  width: 120px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+  }
 `;
 
-function PerfumeReviewBox({ rate, brand, name, img }: PerfumeReviewInfo) {
-  const renderStars = () => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      if (i <= rate) {
-        stars.push(<FillStarSvg alt="" key={i} />);
-      } else {
-        stars.push(<EmptyStarSvg alt="" key={i} />);
-      }
-    }
+const StarRate = styled.div`
+  margin-left: -2px;
+  margin-bottom: 4px;
+`;
 
-    return stars;
-  };
+function PerfumeReviewBox({
+  rate,
+  brand,
+  name,
+  img,
+  perfumeId,
+}: PerfumeReviewInfo) {
+  const StyledRating = MUstyled(Rating)({
+    '& .MuiRating-iconFilled': {
+      color: 'var(--primary-color)',
+    },
+  });
 
   return (
     <PerfumeReviewBoxContainer>
       <TextInfoContainer>
-        <StarRatingContainer>{renderStars()}</StarRatingContainer>
+        <StarRate>
+          <StyledRating
+            name={`rating-${name}`}
+            value={rate}
+            precision={0.5}
+            sx={{ fontSize: 20 }}
+            readOnly
+          />
+        </StarRate>
+        {/* <StarRatingContainer>{renderStars()}</StarRatingContainer> */}
         <PerfumeBrand>{brand}</PerfumeBrand>
         <PerfumeName>{name}</PerfumeName>
       </TextInfoContainer>
-      <ImgBox>
+      <ImgBox to={`/perfume-detail/${perfumeId}`}>
         <img src={img} />
       </ImgBox>
     </PerfumeReviewBoxContainer>

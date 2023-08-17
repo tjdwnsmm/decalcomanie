@@ -1,29 +1,41 @@
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 
-const modules = {
-  toolbar: false,
-};
-
-const StyledReactQuill = styled(ReactQuill)`
+const TextBox = styled.textarea`
   margin: 10px 0px 10px 0px;
-  width: 340px;
+  padding: 10px 15px;
+  width: 310px;
   height: 180px;
-  font-weight: bold;
+  font-weight: 500;
   border-radius: 10px;
+  line-height: 25px;
   background-color: var(--white-color);
-  box-shadow: 2px 2px 2px var(--gray-color);
-
-  .ql-container.ql-snow {
-    border: none;
-  }
+  border: none;
+  outline: none;
+  resize: none;
 `;
 
-export default function ContextBox() {
+interface ContextBoxProps {
+  newContent: string;
+  handleChange: (value: string) => void;
+}
+
+export default function ContextBox({
+  newContent,
+  handleChange,
+}: ContextBoxProps) {
+  // const [newContent, setContent] = useState(content);
+
+  // const handleChange = (value: string) => {
+  //   setContent(value);
+  // };
+
   return (
     <>
-      <StyledReactQuill modules={modules}></StyledReactQuill>
+      <TextBox
+        value={newContent}
+        onChange={(event) => handleChange(event.target.value)}
+      />
     </>
   );
 }

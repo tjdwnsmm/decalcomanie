@@ -1,25 +1,73 @@
 import { styled } from 'styled-components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ReactComponent as UnLikeSvg } from '../../assets/icon/empty-heart.svg';
 import { ReactComponent as LikeSvg } from '../../assets/icon/fill-heart.svg';
+import axios from '../../api/apiController';
 
 interface LikeBtnProps {
   count: number;
+  picked: boolean;
+  likeUrl: string;
+  dislikeUrl: string;
+  articleId?: number;
+  perfumeId?: number;
 }
 
 /** @param {number} count : 좋아요 수 */
-export const LikeBtn = ({ count }: LikeBtnProps) => {
+export const LikeBtn = ({
+  count,
+  picked,
+  likeUrl,
+  dislikeUrl,
+  articleId,
+  perfumeId,
+}: LikeBtnProps) => {
   const [liked, setLiked] = useState(false);
+  const [nowCount, setCount] = useState(0);
 
-  const handleLikeClick = () => {
-    setLiked(!liked);
+  useEffect(() => {
+    setLiked(picked);
+  }, [picked]);
+
+  useEffect(() => {
+    setCount(count);
+  }, [count]);
+
+  const handleLikeClick = async () => {
+    try {
+      if (liked) {
+        await sendLikeStatus(dislikeUrl);
+        setCount(nowCount - 1);
+      } else {
+        await sendLikeStatus(likeUrl);
+        setCount(nowCount + 1);
+      }
+      setLiked(!liked);
+    } catch (error) {
+      console.error('Error sending like status:', error);
+    }
+  };
+
+  const sendLikeStatus = async (url: string) => {
+    try {
+      const requestData = url.includes('sns')
+        ? { articleId: articleId }
+        : { perfumeId: perfumeId };
+
+      const response = await axios.post(url, requestData);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   };
 
   return (
     <>
       <Button onClick={handleLikeClick}>
         {liked ? <LikeSvg /> : <UnLikeSvg />}
-        {count}
+        {nowCount}
       </Button>
     </>
   );
@@ -33,4 +81,5 @@ export const Button = styled.div`
   font-size: 11px;
   font-weight: 500;
   line-height: 20px;
+  cursor: pointer;
 `;

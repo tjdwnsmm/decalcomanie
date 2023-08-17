@@ -1,93 +1,154 @@
-import { Main } from '../../style';
-import FloatingWriteBtn from '../../components/Button/FloatingWriteBtn';
-import { FeedProps } from '../../types/FeedInfoType';
+import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
+import { EachFeedInfo, FeedDetail } from '../../types/FeedInfoType';
 import PerfumeInfoBox from '../../components/Perfume/PerfumeInfoBox';
 import { styled } from 'styled-components';
-import FeedPageOnly from '../../components/Feed/FeedPageOnly';
+import FeedPageOnly from '../../components/Feed/FeedPageByPerfume';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import Spinner from '../../components/common/Spinner';
+import { ReactComponent as BackSvg } from '../../assets/icon/prevBack.svg';
+import { useFetchPerfumeDatas } from '../../components/Feed/useFetchPerfumeData';
+import useIntersect from '../../hooks/useIntersect';
 
-//API 호출 전 임시데이터
-const feeds: FeedProps[] = [
-  {
-    perfumeInfo: {
-      name: '탐다오',
-      brand: '딥디크',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임1',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도개인적으로도 너무 마음에 들고 회 ...',
-    favScent: ['우디', '플로럴', '시트러스'],
-    nofavScent: ['머스크', '코코넛', '스파이시'],
-  },
-  {
-    perfumeInfo: {
-      name: '탐다오',
-      brand: '딥디크',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임2',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도개인적으로도 너무 마음에 들고 회 ...',
-    favScent: ['우디', '플로럴', '시트러스'],
-    nofavScent: ['머스크', '코코넛'],
-  },
-  {
-    perfumeInfo: {
-      name: '탐다오',
-      brand: '딥디크',
-      scent: '미모사, 베르가못, 머스크',
-      img: 'src/assets/img/perfume1.png',
-    },
-    writer: '닉네임3',
-    profileImg: 'src/assets/img/profile-user.png',
-    like: 1069,
-    comment: 35,
-    isScrap: false,
-    content:
-      '개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도 개인적으로도 너무 마음에 들고 회사 직원들 그리고 주변 지인들도 모두가 좋아할 정도로 호불호 없고 깨끗하면서도개인적으로도 너무 마음에 들고 회 ...',
-    favScent: ['우디', '플로럴', '시트러스'],
-    nofavScent: ['머스크', '코코넛'],
-  },
-];
+const SEARCH_RESULT_TIMEOUT = 5000; // 5 seconds
 
 export const PerfumeFeed = () => {
+  const { id } = useParams<{ id: string }>();
+  const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
+  const [showNoResultsMessage, setShowNoResultsMessage] = useState(false);
+  const navigate = useNavigate();
+  const [heartCnt, setHeartCnt] = useState(-1);
+  const [lastArticleId, setLastArticleId] = useState(-1);
+
+  const { data, hasNextPage, isFetching, fetchNextPage, isLoading } =
+    useFetchPerfumeDatas({
+      heartCnt,
+      lastArticleId,
+      id: id ? id : '',
+    });
+
+  const datas = useMemo(() => (data ? data : []), [data]);
+  console.log(datas);
+
+  useEffect(() => {
+    if (!datas || datas.length === 0) {
+      const timeoutId = setTimeout(() => {
+        setShowNoResultsMessage((prevShowNoResultsMessage) => {
+          if (prevShowNoResultsMessage || !datas || datas.length === 0) {
+            return true;
+          }
+          return prevShowNoResultsMessage;
+        });
+      }, SEARCH_RESULT_TIMEOUT);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [datas]);
+
+  useEffect(() => {
+    console.log('datas', datas);
+    setFeeds(datas);
+  }, [datas]);
+
+  const ref = useIntersect(async (entry, observer) => {
+    observer.unobserve(entry.target);
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
+      console.log('✅ 이전까지 받아온 데이터!', datas);
+      setLastArticleId(datas[datas.length - 1].articleDtos.articleId);
+      setHeartCnt(datas[datas.length - 1].articleDtos.heart);
+    }
+  });
+
+  const handleBack = () => {
+    setFeeds(null);
+    navigate(`/perfume-detail/${id}`);
+  };
+
+  const handleFollow = (userId: string, followed: boolean) => {
+    // 팔로우 상태를 업데이트하는 로직 구현
+    setFeeds((prevFeeds) => {
+      if (!prevFeeds) return null;
+      return prevFeeds.map((feed) => {
+        if (feed.userInfoDto.user.userId === userId) {
+          // console.log(userId);
+          return {
+            ...feed,
+            followed,
+          };
+        }
+        return feed;
+      });
+    });
+  };
+
+  if (showNoResultsMessage) {
+    return (
+      <>
+        <ErrorTxt>검색 결과가 없습니다 😥</ErrorTxt>
+        <MarginFrame margin="15px 25px 0">
+          <CenterFrame>
+            <ConfirmButton
+              color="primary"
+              background="primary"
+              onClick={handleBack}
+            >
+              상세 페이지로 돌아가기
+            </ConfirmButton>
+          </CenterFrame>
+        </MarginFrame>
+      </>
+    );
+  }
+
+  if (!feeds || feeds.length === 0) {
+    return (
+      <MarginFrame margin="200px auto">
+        <Spinner info="잠시 기다려주세요! 작성된 글들을 찾고있어요🔍" />
+      </MarginFrame>
+    );
+  }
+
   return (
     <Main>
+      <MarginFrame margin="20px 25px 0">
+        <BackSvg onClick={handleBack} />
+      </MarginFrame>
+
       <PerfumeFeedBox>
-        <PerfumeInfoBox
-          brand={feeds[0].perfumeInfo.brand}
-          name={feeds[0].perfumeInfo.name}
-          scent={feeds[0].perfumeInfo.scent}
-          img={feeds[0].perfumeInfo.img}
-        />
+        <PerfumeInfoBox feed={feeds[0].perfumeDtos} />
       </PerfumeFeedBox>
 
       <FeedBody>
-        {feeds.map((feed, idx) => (
-          <FeedPageOnly key={idx} feed={feed} />
+        {feeds.map((eachFeed, idx) => (
+          <FeedPageOnly key={idx} feed={eachFeed} handleFollow={handleFollow} />
         ))}
+        {!isFetching && isLoading && <Spinner />}
+        <MarginFrame margin="10px auto" />
+        <Target ref={ref} />
       </FeedBody>
-      <FloatingWriteBtn />
     </Main>
   );
 };
+const Target = styled.div`
+  height: 3px;
+`;
 
 const PerfumeFeedBox = styled.div`
-  margin-top: 22px;
+  margin-top: 12px;
   padding: 0 18px;
 `;
 const FeedBody = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+`;
+
+const ErrorTxt = styled.div`
+  font-weight: 700;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 270px;
 `;
