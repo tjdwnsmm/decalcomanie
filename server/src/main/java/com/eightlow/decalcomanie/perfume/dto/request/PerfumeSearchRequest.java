@@ -24,6 +24,8 @@ public class PerfumeSearchRequest {
 
     private Integer lastPick;
 
+    private Float lastRate;
+
     private Integer lastPerfumeId;
 
     private Integer orderType;

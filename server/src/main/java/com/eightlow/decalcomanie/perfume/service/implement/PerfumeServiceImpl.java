@@ -20,6 +20,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -82,11 +83,10 @@ public class PerfumeServiceImpl implements IPerfumeService {
                         brandEq(condition.getBrand()),
                         genderEq(condition.getGender()),
                         keywordEq(condition.getKeyword()),
-                        perfume.pick.loe(condition.getLastPick() == null ? 999999999 : condition.getLastPick()),
+                        lastOrderTypeDataEq(condition.getOrderType(), condition),
                         perfume.perfumeId.gt(condition.getLastPerfumeId() == null ? 1 : condition.getLastPerfumeId())
                 )
                 .orderBy(orderTypeEq(condition.getOrderType()))
-//                .orderBy(perfume.pick.desc())
                 .orderBy(perfume.perfumeId.asc())
                 .limit(condition.getDataSize() == null ? 50 : condition.getDataSize())
                 .fetch();
@@ -263,7 +263,6 @@ public class PerfumeServiceImpl implements IPerfumeService {
         float perfumeRateSum = perfumeRateDto.getRateSum();
 
         float newPerfumeRate = (perfumeRateSum + rate) / (perfumeCnt + 1);
-        System.out.println(perfume);
 
         perfume.updateRate(newPerfumeRate);
     }
@@ -311,16 +310,6 @@ public class PerfumeServiceImpl implements IPerfumeService {
         return perfume.rate.desc();
     }
 
-    private OrderSpecifier<Float> timeEq(String curTime) {
-        int time = Integer.parseInt(curTime.split(":")[0]);
-
-        if(time >= 6 && time < 18) {
-            return perfume.day.desc();
-        }
-
-        return perfume.night.desc();
-    }
-
     private OrderSpecifier<Float> seasonEq(String today) {
         int month = Integer.parseInt(today.split("-")[1]);
 
@@ -337,6 +326,14 @@ public class PerfumeServiceImpl implements IPerfumeService {
         }
 
         return perfume.winter.desc();
+    }
+
+    private BooleanExpression lastOrderTypeDataEq(int orderType, PerfumeSearchRequest condition) {
+        if(orderType == 1) {
+            return perfume.pick.loe(condition.getLastPick() == null ? 999999999 : condition.getLastPick());
+        }
+
+        return perfume.rate.loe(condition.getLastRate() == null ? 5 : condition.getLastRate());
     }
 
     private BooleanExpression keywordEq(String keyword) {
