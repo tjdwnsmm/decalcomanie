@@ -30,9 +30,9 @@ export const MainFeed = () => {
   const datas = useMemo(() => (data ? data : []), [data]);
   useEffect(() => {
     // console.log(isFetching);
-    console.log('feed전', feeds);
+    // console.log('feed전', feeds);
     setFeeds(datas);
-    console.log('feed후', feeds);
+    // console.log('feed후', feeds);
   }, [datas]);
 
   const ref = useIntersect(async (entry, observer) => {
