@@ -29,7 +29,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .addFilter(corsConfig.corsFilter())
-                .httpBasic().disable()
+                .httpBasic()
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/oauth/**").permitAll()
