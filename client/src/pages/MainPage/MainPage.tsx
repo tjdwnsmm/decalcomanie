@@ -53,7 +53,6 @@ const MainPage = () => {
   const handleRecommend = () => {
     //추천 새로고침
     setRecommendPerfume(null);
-    setSaveRecommend(false);
     axios.get('/perfume/recommend').then((res) => {
       //console.log(res.data);
       setRecommendPerfume(res.data);
@@ -152,15 +151,13 @@ const MainPage = () => {
                   recommendPerfume ? (
                     <MainSwiper perfumes={recommendPerfume} />
                   ) : (
-                    <NoSaveRecommend>
-                      <>아직 추천된 데이터가 없어요 😥</>
-                      <div onClick={handleRecommend}>
-                        추천 향수 업데이트하기
-                      </div>
-                    </NoSaveRecommend>
+                    <Spinner info="맞춤 추천 중입니다. 잠시만 기다려주세요 😄" />
                   )
                 ) : (
-                  <Spinner info="맞춤 추천 중입니다. 잠시만 기다려주세요 😄" />
+                  <NoSaveRecommend>
+                    <>아직 추천된 데이터가 없어요 😥</>
+                    <div onClick={handleRecommend}>추천 향수 업데이트하기</div>
+                  </NoSaveRecommend>
                 )}
               </>
             )}
@@ -228,7 +225,9 @@ const NoSaveRecommend = styled.div`
   align-items: center;
   text-align: center;
   font-weight: 600;
-  margin-top: 5px;
+  font-size: 15px;
+  margin-bottom: -10px;
+  margin-top: 30px;
 
   div {
     color: var(--white-color);
