@@ -147,7 +147,7 @@ public class OAuthController {
 
         int avatarNum = (int)(Math.random()*9)+1;
 
-        String picture = "https://decalcomanieimagebucket.s3.ap-northeast-2.amazonaws.com/avatar/peeps-avatar-alpha-" + avatarNum + ".png";
+        String picture = "/assets/avatar/peeps-avatar-alpha-" + avatarNum + ".png";
 
         int gender = 2;
         int age = 20;
