@@ -55,7 +55,9 @@ const FollowList = () => {
   const { id } = useParams<{ id: string }>();
 
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'follower' | 'following'>('follower');
+  const [activeTab, setActiveTab] = useState<'follower' | 'following'>(
+    'follower',
+  );
   const [follower, setFollower] = useState<FollowInfo[]>([]);
   const [following, setFollowing] = useState<FollowInfo[]>([]);
   const [followerCount, setFollowerCount] = useState<number>(0);
@@ -75,11 +77,11 @@ const FollowList = () => {
         // 팔로워 목록 조회
         const followerResponse = await axios.get(`/user/follower/${id}`);
         setFollower(followerResponse.data.data);
-        console.log('팔로워', followerResponse.data);
+        //console.log('팔로워', followerResponse.data);
         // 팔로잉 목록 조회
         const followingResponse = await axios.get(`/user/following/${id}`);
         setFollowing(followingResponse.data.data);
-        console.log('팔로잉', followingResponse.data);
+        //console.log('팔로잉', followingResponse.data);
 
         setFollowerCount(followerResponse.data.data.length);
         setFollowingCount(followingResponse.data.data.length);
@@ -122,25 +124,43 @@ const FollowList = () => {
           followingCount={followingCount}
         />
       </TopBar>
-      <MarginFrame margin='112px'/>
-      {activeTab === 'follower' && ((followerCount > 0) ? (
-        <FollowBox followList={follower} setFollowingList={setFollowing} isMe={targetUser?.me}/>
-      ) : (
-        <NoFollow>
-          {targetUser?.user.nickname}님을 팔로우하는 사람이 없어요. 😥<br/>
-          {/* 마이페이지 api 완성 후 navigate 수정 필요 */}
-          {!targetUser?.me && (
-            <button className='goFollow' onClick={() => navigate(`/profile-page/${targetUser?.user.userId}`)}>팔로우하러 가기</button>
-          )}
-        </NoFollow>
-      ))}
-      {activeTab === 'following' && ((followingCount > 0) ? (
-        <FollowBox followList={following} setFollowingList={setFollowing} isMe={targetUser?.me}/>
-      ) : (
-        <NoFollow>
-          {targetUser?.user.nickname}님이 팔로잉하는 사람이 없어요. 😥
-        </NoFollow>
-      ))}
+      <MarginFrame margin="112px" />
+      {activeTab === 'follower' &&
+        (followerCount > 0 ? (
+          <FollowBox
+            followList={follower}
+            setFollowingList={setFollowing}
+            isMe={targetUser?.me}
+          />
+        ) : (
+          <NoFollow>
+            {targetUser?.user.nickname}님을 팔로우하는 사람이 없어요. 😥
+            <br />
+            {/* 마이페이지 api 완성 후 navigate 수정 필요 */}
+            {!targetUser?.me && (
+              <button
+                className="goFollow"
+                onClick={() =>
+                  navigate(`/profile-page/${targetUser?.user.userId}`)
+                }
+              >
+                팔로우하러 가기
+              </button>
+            )}
+          </NoFollow>
+        ))}
+      {activeTab === 'following' &&
+        (followingCount > 0 ? (
+          <FollowBox
+            followList={following}
+            setFollowingList={setFollowing}
+            isMe={targetUser?.me}
+          />
+        ) : (
+          <NoFollow>
+            {targetUser?.user.nickname}님이 팔로잉하는 사람이 없어요. 😥
+          </NoFollow>
+        ))}
     </Main>
   );
 };

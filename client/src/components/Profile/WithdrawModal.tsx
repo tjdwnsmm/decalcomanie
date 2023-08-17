@@ -18,7 +18,7 @@ const WithdrawModal = ({ closeModal }: WithdrawProps) => {
         localStorage.removeItem('sort');
         const response = await axios.delete('/user/withdrawal');
         navigate('/login');
-        console.log(response.data);
+        //console.log(response.data);
       } catch (error) {
         console.error(error);
       }

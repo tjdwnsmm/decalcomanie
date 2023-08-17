@@ -35,7 +35,7 @@ const FeedPage = ({ feed, handleDetail, handleFollow }: FeedComponentProps) => {
 
   const handleFollowClick = (userId: string) => {
     axios.post('/user/follow', { to: userId }).then((res) => {
-      console.log(res.data);
+      //console.log(res.data);
       handleFollow(feed.userInfoDto.user.userId, !followed);
       setFollowed(!followed);
     });

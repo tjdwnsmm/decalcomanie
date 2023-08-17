@@ -45,30 +45,30 @@ export const useFetchDatas = ({
         lastRate: lastRate === -1 ? null : lastRate,
         orderType: orderType,
       });
-      console.log(orderType);
-      // console.log(response.data);
-      console.log(`적용된 필터 ! : ${JSON.stringify(filter)}`);
-      // console.log(
+      //console.log(orderType);
+      // //console.log(response.data);
+      //console.log(`적용된 필터 ! : ${JSON.stringify(filter)}`);
+      // //console.log(
       //   `초기응답 : ${JSON.stringify(datas)} && 새로운 응답 :  ${JSON.stringify(
       //     response.data,
       //   )}`,
       // );
-      console.log(`필터 적용한 여부 : ${newSearch}`);
+      //console.log(`필터 적용한 여부 : ${newSearch}`);
       setDatas((prevDatas) => [
         ...prevDatas,
         ...response.data.searchedPerfumes,
       ]);
 
       setIsLastPage(response.data.lastPage);
-      console.log(datas);
+      //console.log(datas);
       localStorage.setItem('searchResults', JSON.stringify(datas));
 
       // setLastPick(datas[datas.length - 1].pick);
       // setLastPerfumeId(datas[datas.length - 1].perfumeId);
 
-      console.log(
-        `지난 마지막 perfume id : ${lastPerfumeId} && 지난 마지막 찜 갯수 : ${lastPick}`,
-      );
+      //console.log(
+      //   `지난 마지막 perfume id : ${lastPerfumeId} && 지난 마지막 찜 갯수 : ${lastPick}`,
+      // );
 
       /**
        * !지금 여기 나중에 무한 스크롤 백 코드 받으면 거기서 알려주는 값으로!
@@ -86,7 +86,7 @@ export const useFetchDatas = ({
   };
 
   useEffect(() => {
-    console.log(`isLast? ${isLastPage}`);
+    //console.log(`isLast? ${isLastPage}`);
     if (!isLastPage && !isLoading) {
       let orderType = 1; // Default value if localStorage does not contain 'sort'
 
@@ -96,7 +96,7 @@ export const useFetchDatas = ({
       }
 
       fetchDatas(lastPick, lastPerfumeId, lastRate, orderType);
-      console.log(`${pageNumber + 1}번째 호출!`);
+      //console.log(`${pageNumber + 1}번째 호출!`);
     }
   }, [pageNumber, 50, isLastPage]);
 

@@ -26,11 +26,10 @@ export const ConfirmAlert = ({
 
   const deletePerfume = (deleteIdx: number) => {
     handlePerfume(deleteIdx);
-    axios
-      .post('/user/perfume/manage', {
-        perfumeId: perfumeId,
-      })
-      .then((res) => console.log(`삭제!! ${res.data}`));
+    axios.post('/user/perfume/manage', {
+      perfumeId: perfumeId,
+    });
+    // .then((res) => //console.log(`삭제!! ${res.data}`));
     setOpen(false);
   };
 

@@ -31,11 +31,11 @@ const setRefreshToken = (refreshToken: string) => {
 instance.interceptors.request.use(
   (config) => {
     const accessToken = getAccessToken();
-    console.log(`보내기 > ${accessToken}`);
+    //console.log(`보내기 > ${accessToken}`);
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    // console.log(config);
+    // //console.log(config);
     return config;
   },
   (error) => Promise.reject(error),
@@ -46,12 +46,12 @@ instance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log(error.response, error.response.data.status, getRefreshToken());
+    //console.log(error.response, error.response.data.status, getRefreshToken());
     //401 에러면 refresh token 보내기
     if (error?.response?.data?.status === 401) {
-      console.log('access-token 만료됐어');
+      //console.log('access-token 만료됐어');
       try {
-        console.log('refresh-token 보낼게!');
+        //console.log('refresh-token 보낼게!');
         const response = await axios.get(`${BASE_URL}/oauth/reissue`, {
           headers: {
             refreshToken: getRefreshToken(),
@@ -68,12 +68,12 @@ instance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
         //새로운 토큰 발급 확인
-        console.log(accessToken, refreshToken);
+        //console.log(accessToken, refreshToken);
 
         return axios(originalRequest);
       } catch (error) {
         // 만약 refreshToken 보내도 error 가 뜨면 login 화면으로 보내기 -> redirect
-        console.log('Error refreshing token:', error);
+        //console.log('Error refreshing token:', error);
 
         window.location.href = '/login'; // 로그인화면으로 보내기
         localStorage.removeItem('accessToken');

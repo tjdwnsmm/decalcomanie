@@ -28,7 +28,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   useEffect(() => {
     setLoading(false);
-    console.log(results);
+    //console.log(results);
   }, [results]);
 
   const navigate = useNavigate();
@@ -81,7 +81,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           } else {
             setAddloading(true);
             axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
-              console.log('Data added!', res.data);
+              //console.log('Data added!', res.data);
               setAddloading(false);
               navigate(`/my-drawer`);
             });
@@ -89,7 +89,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         } else {
           setAddloading(true);
           axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
-            console.log('Data added!', res.data);
+            //console.log('Data added!', res.data);
             setAddloading(false);
             navigate(`/my-drawer`);
           });

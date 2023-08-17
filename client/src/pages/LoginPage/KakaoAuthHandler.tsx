@@ -9,7 +9,7 @@ const KakaoAuthHandler = () => {
   useEffect(() => {
     // URL로부터 코드 획득
     const code = new URL(window.location.href).searchParams.get('code');
-    console.log(code);
+    //console.log(code);
     const fetchTokens = async () => {
       try {
         // 서버로 코드를 보내고 응답 받기
@@ -18,7 +18,7 @@ const KakaoAuthHandler = () => {
             code: code,
           },
         });
-        console.log(response.headers);
+        //console.log(response.headers);
         const data = response.data;
 
         // 응답 헤더에서 Access Token과 Refresh Token 추출
@@ -30,11 +30,10 @@ const KakaoAuthHandler = () => {
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('nickname', data.nickname);
         navigate('/');
-        
-         //콘솔에 출력
-        console.log('Access Token:', accessToken);
-        console.log('Refresh Token:', refreshToken);
-         
+
+        //콘솔에 출력
+        //console.log('Access Token:', accessToken);
+        //console.log('Refresh Token:', refreshToken);
 
         //
       } catch (error) {
