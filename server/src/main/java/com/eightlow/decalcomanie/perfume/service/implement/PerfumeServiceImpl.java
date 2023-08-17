@@ -196,8 +196,7 @@ public class PerfumeServiceImpl implements IPerfumeService {
 
         List<Perfume> dayNight = queryFactory
                 .selectFrom(perfume)
-                .orderBy(Expressions.numberTemplate(Double.class,
-                        "({0} / ({0} + {1}))", perfume.day, perfume.night).desc())
+                .orderBy(timeEq(curTime))
                 .limit(10)
                 .fetch();
 
@@ -326,6 +325,16 @@ public class PerfumeServiceImpl implements IPerfumeService {
         }
 
         return perfume.winter.desc();
+    }
+
+    private OrderSpecifier<Float> timeEq(String curTime) {
+        int time = Integer.parseInt(curTime.split(":")[0]);
+
+        if(time >= 6 && time < 18) {
+            return perfume.day.desc();
+        }
+
+        return perfume.night.desc();
     }
 
     private BooleanExpression lastOrderTypeDataEq(int orderType, PerfumeSearchRequest condition) {
