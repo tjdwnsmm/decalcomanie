@@ -77,15 +77,18 @@ const FollowList = () => {
         // 팔로워 목록 조회
         const followerResponse = await axios.get(`/user/follower/${id}`);
         setFollower(followerResponse.data.data);
-        //console.log('팔로워', followerResponse.data);
+        //console.log('팔로워', followerResponse.data)
+        setFollowerCount(followerResponse.data.data.length);
+        setTargetUser(followerResponse.data.targetUser);
+      } catch (error) {
+        console.error('오류:', error);
+      }
+
+      try {
         // 팔로잉 목록 조회
         const followingResponse = await axios.get(`/user/following/${id}`);
         setFollowing(followingResponse.data.data);
-        //console.log('팔로잉', followingResponse.data);
-
-        setFollowerCount(followerResponse.data.data.length);
         setFollowingCount(followingResponse.data.data.length);
-        setTargetUser(followerResponse.data.targetUser);
       } catch (error) {
         console.error('오류:', error);
       }

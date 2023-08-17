@@ -118,11 +118,17 @@ export default function Mypage() {
         setFavorites(infoRes.data.favorities);
         setHates(infoRes.data.hates);
         setUserId(infoRes.data.user.userId);
-
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+      try {
         // Follower 수
         const followerRes = await axios.get('/user/follower');
         setFollowerCount(followerRes.data.length);
-
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+      try {
         // Following 수
         const followingRes = await axios.get('/user/following');
         setFollowingCount(followingRes.data.length);

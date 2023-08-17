@@ -45,10 +45,10 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   async (response) => {
     // 요청이 성공했는지 확인하고, 성공한 경우에만 다음 요청으로 진행
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 201) {
       return response;
     } else {
-      // 만약 200이 아닌 경우, 에러 처리
+      // 만약 200이나 201 아닌 경우, 에러 처리
       return Promise.reject(response);
     }
   },
