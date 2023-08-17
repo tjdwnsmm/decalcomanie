@@ -49,6 +49,8 @@ export const MainFeed = () => {
 
   useEffect(() => {
     setFeeds([]);
+    setLastArticleId(-1);
+    setHeartCnt(-1);
   }, [nowActive]);
 
   const handleDetail = (articleId: number) => {
