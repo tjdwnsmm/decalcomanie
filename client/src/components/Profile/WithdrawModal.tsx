@@ -12,11 +12,13 @@ const WithdrawModal = ({ closeModal }: WithdrawProps) => {
   const handleWithdraw = async () => {
     if (window.confirm('탈퇴하시겠습니까?')) {
       try {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('nickname');
-        localStorage.removeItem('sort');
         const response = await axios.delete('/user/withdrawal');
+        if (response) {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('nickname');
+          localStorage.removeItem('sort');
+        }
         navigate('/login');
         //console.log(response.data);
       } catch (error) {
