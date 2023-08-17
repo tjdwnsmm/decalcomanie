@@ -200,7 +200,7 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = queryFactory
                 .selectFrom(article)
                 .where(
-                        article.articleId.loe(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
+                        article.articleId.lt(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
                         userIdEq(List.of(userId))
                 )
                 .orderBy(article.articleId.desc())
@@ -238,7 +238,7 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = queryFactory
                 .selectFrom(article)
                 .where(
-                        article.articleId.loe(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
+                        article.articleId.lt(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
                         userIdEq(userIds)
                 )
                 .orderBy(article.articleId.desc())
@@ -274,7 +274,8 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = queryFactory
                 .selectFrom(article)
                 .where(
-                        article.heart.loe(feedInquiryRequest.getHeartCnt() == null ? 2130000000 : feedInquiryRequest.getHeartCnt())
+                        article.heart.loe(feedInquiryRequest.getHeartCnt() == null ? 2130000000 : feedInquiryRequest.getHeartCnt()),
+                        article.articleId.lt(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId())
                 )
                 .orderBy(article.heart.desc())
                 .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
@@ -296,7 +297,7 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = queryFactory
                 .selectFrom(article)
                 .where(
-                        article.articleId.loe(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId())
+                        article.articleId.lt(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId())
                 )
                 .orderBy(article.articleId.desc())
                 .limit(feedInquiryRequest.getDataSize() == null ? 20 : feedInquiryRequest.getDataSize())
@@ -330,7 +331,7 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = queryFactory
                 .selectFrom(article)
                 .where(
-                        article.articleId.loe(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
+                        article.articleId.lt(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
                         articleIdEq(articleIds)
                 )
                 .orderBy(article.articleId.desc())
@@ -829,7 +830,7 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = queryFactory
                 .selectFrom(article)
                 .where(
-                        article.articleId.loe(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
+                        article.articleId.lt(feedInquiryRequest.getLastArticleId() == null ? 2130000000 : feedInquiryRequest.getLastArticleId()),
                         articleIdEq(bookmarkArticleIds)
                 )
                 .orderBy(article.articleId.desc())
