@@ -45,7 +45,7 @@ export default function Mypage() {
               id: bookmarkData.articleDtos.articleId,
               picture: bookmarkData.perfumeDtos
                 ? bookmarkData.perfumeDtos.picture
-                : '../../assets/img/perfume-drawer.svg',
+                : '../../../public/assets/img/perfume-drawer.svg',
             }));
             setFeeds(myBookmarks);
             setLoading(false);
@@ -64,7 +64,7 @@ export default function Mypage() {
               id: postData.articleDtos.articleId,
               picture: postData.perfumeDtos
                 ? postData.perfumeDtos.picture
-                : '../../assets/img/perfume-drawer.svg',
+                : '../../../public/assets/img/perfume-drawer.svg',
             }));
             setPostCount(myPosts.length);
             setFeeds(myPosts);

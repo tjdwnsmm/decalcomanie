@@ -65,7 +65,7 @@ export default function OtherProfilePage() {
           id: feedData.articleDtos.articleId,
           picture: feedData.perfumeDtos
             ? feedData.perfumeDtos.picture
-            : '../../assets/img/perfume-drawer.svg',
+            : '../../../public/assets/img/perfume-drawer.svg',
         }));
         setFeeds(otherFeed);
         setLoading(false);
