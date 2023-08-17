@@ -35,14 +35,26 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
   const SCENT_URL = `/perfume/search/scent`;
 
   useEffect(() => {
-    axios.get(BRAND_URL).then((res) => {
-      const dataArray = res.data.map((data: dataByUrlProps) => data);
-      setBrandInfo(dataArray);
-    });
-    axios.get(SCENT_URL).then((res) => {
-      const dataArray = res.data.map((data: dataByUrlProps) => data);
-      setScentInfo(dataArray);
-    });
+    const fetchData = async () => {
+      try {
+        const brandResponse = await axios.get(BRAND_URL);
+        const scentResponse = await axios.get(SCENT_URL);
+
+        const brandDataArray = brandResponse.data.map(
+          (data: dataByUrlProps) => data,
+        );
+        const scentDataArray = scentResponse.data.map(
+          (data: dataByUrlProps) => data,
+        );
+
+        setBrandInfo(brandDataArray);
+        setScentInfo(scentDataArray);
+      } catch (error) {
+        console.error('오류:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   /**
