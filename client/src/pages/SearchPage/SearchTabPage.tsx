@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import SearchBar from '../../components/Search/SearchBar';
 import { styled } from 'styled-components';
-import { Main, MarginFrame } from '../../style';
+import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
 import SearchResults from '../../components/Search/SearchResults-more';
 import SortToggle, { SortOption } from '../../components/Search/SortToggle';
 import BottomNav from '../../components/common/BottomNav';
@@ -12,6 +12,7 @@ import useIntersect from '../../hooks/useIntersect';
 import { useFetchDatas } from '../../components/Search/useFetchData';
 import { AutoSearch } from '../../types/SearchType';
 import FilterSection from '../../components/Search/FilterSection';
+import { useNavigate } from 'react-router-dom';
 
 export interface Filter {
   brandName?: string[];
@@ -20,13 +21,16 @@ export interface Filter {
   scent?: string[];
   scentId?: number[];
 }
+const SEARCH_RESULT_TIMEOUT = 5000; // 5 seconds
 
 const SearchTabPage: React.FC = () => {
+  const navigate = useNavigate();
   //필터링 창 꺼졌는지 켜졌는지 현 상태
   const [modalOpen, setModalOpen] = useState(false);
 
   //현재 검색할 단어
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [showNoResultsMessage, setShowNoResultsMessage] = useState(false);
 
   //
   const [filter, setFilter] = useState<Filter>({});
@@ -109,6 +113,31 @@ const SearchTabPage: React.FC = () => {
       setOriginSearchResults(fullNames);
     });
   }, []);
+
+  useEffect(() => {
+    if (newSearch && (!searchResults || searchResults.length === 0)) {
+      const timeoutId = setTimeout(() => {
+        setShowNoResultsMessage((prevShowNoResultsMessage) => {
+          if (
+            prevShowNoResultsMessage ||
+            !searchResults ||
+            searchResults.length === 0
+          ) {
+            return true;
+          }
+          return prevShowNoResultsMessage;
+        });
+      }, SEARCH_RESULT_TIMEOUT);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [searchResults]);
+
+  const handleBack = () => {
+    location.reload();
+  };
 
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
@@ -210,6 +239,25 @@ const SearchTabPage: React.FC = () => {
     return cnt;
   };
 
+  if (showNoResultsMessage) {
+    return (
+      <>
+        <ErrorTxt>검색 결과가 없습니다 😥</ErrorTxt>
+        <MarginFrame margin="15px 25px 0">
+          <CenterFrame>
+            <ConfirmButton
+              color="primary"
+              background="primary"
+              onClick={handleBack}
+            >
+              검색화면으로 돌아가기
+            </ConfirmButton>
+          </CenterFrame>
+        </MarginFrame>
+      </>
+    );
+  }
+
   return (
     <Main>
       <FilterSection
@@ -291,4 +339,10 @@ const SortArea = styled.div`
   display: flex;
   flex-direction: row-reverse;
   margin: 15px 20px 0;
+`;
+const ErrorTxt = styled.div`
+  font-weight: 700;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 270px;
 `;
