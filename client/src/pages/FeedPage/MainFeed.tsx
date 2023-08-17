@@ -30,18 +30,20 @@ export const MainFeed = () => {
   const datas = useMemo(() => (data ? data : []), [data]);
   useEffect(() => {
     // console.log(isFetching);
+    console.log('feed전', feeds);
     setFeeds(datas);
+    console.log('feed후', feeds);
   }, [datas]);
 
   const ref = useIntersect(async (entry, observer) => {
     observer.unobserve(entry.target);
     if (hasNextPage && !isFetching) {
-      fetchNextPage();
       //console.log('✅ 이전까지 받아온 데이터!', datas);
       if (datas.length > 0) {
         setLastArticleId(datas[datas.length - 1].articleDtos.articleId);
         setHeartCnt(datas[datas.length - 1].articleDtos.heart);
       }
+      fetchNextPage();
     }
   });
 
