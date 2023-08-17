@@ -11,6 +11,9 @@ spring:
   config:
     import: env.yml
 
+  kakao:
+    admin-key: ${KAKAO_ADMIN_KEY}
+
   security:
     oauth2:
       client:

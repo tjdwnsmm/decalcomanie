@@ -23,4 +23,7 @@ public class UserCredential {
 
     @Column(name="refreshToken")
     private String refreshToken;
+
+    @Column(name="kakaoUserNum")
+    private String kakaoUserNum;
 }

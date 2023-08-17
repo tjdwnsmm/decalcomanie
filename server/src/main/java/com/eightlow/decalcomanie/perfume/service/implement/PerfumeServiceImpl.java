@@ -85,7 +85,8 @@ public class PerfumeServiceImpl implements IPerfumeService {
                         perfume.pick.loe(condition.getLastPick() == null ? 999999999 : condition.getLastPick()),
                         perfume.perfumeId.gt(condition.getLastPerfumeId() == null ? 1 : condition.getLastPerfumeId())
                 )
-                .orderBy(perfume.pick.desc())
+                .orderBy(orderTypeEq(condition.getOrderType()))
+//                .orderBy(perfume.pick.desc())
                 .orderBy(perfume.perfumeId.asc())
                 .limit(condition.getDataSize() == null ? 50 : condition.getDataSize())
                 .fetch();
@@ -300,6 +301,14 @@ public class PerfumeServiceImpl implements IPerfumeService {
         if (perfume != null) {
             perfume.updatePick(value);
         }
+    }
+
+    private OrderSpecifier<?> orderTypeEq(int orderType) {
+        if(orderType == 1) {
+            return perfume.pick.desc();
+        }
+
+        return perfume.rate.desc();
     }
 
     private OrderSpecifier<Float> timeEq(String curTime) {
