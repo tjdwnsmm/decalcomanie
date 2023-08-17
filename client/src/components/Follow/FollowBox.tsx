@@ -27,7 +27,7 @@ const FollowListContainer = styled.div`
 const FollowInfoBox = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: start;
   margin-bottom: 12px;
   padding: 10px;
   background-color: var(--white-color);
@@ -38,6 +38,8 @@ const ProfileImg = styled.img`
   width: 45px;
   height: 45px;
   border-radius: 50%;
+  cursor: pointer;
+  margin-top: 3px;
 `;
 
 const InfoBox = styled.div`
@@ -45,22 +47,23 @@ const InfoBox = styled.div`
   flex: 1;
   flex-direction: column;
   justify-content: space-around;
-  padding: 0px 10px;
-  gap: 3px;
+  padding: 0px 5px;
+  // gap: 2px;
 `;
 
 const FollowNickname = styled.div`
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 1px;
-  margin: 5px;
+  margin: 7px 5px 5px;
+  cursor: pointer;
 `;
 
 const FavScentList = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 7px;
+  // gap: 7px;
 `;
 
 const Scent = styled.div`
@@ -69,7 +72,8 @@ const Scent = styled.div`
   font-size: 11px;
   font-weight: 500;
   text-align: center;
-  padding: 5px 10px;
+  padding: 4px 10px;
+  margin: 4px 3px;
   border-radius: 7px;
 `;
 
@@ -102,20 +106,27 @@ const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
     <FollowListContainer>
       {followList.map((follow) => (
         <FollowInfoBox key={follow.userId}>
-          {/* picture default 논의 후 수정 */}
-          <ProfileImg
-            src={
-              follow.picture
-                ? follow.picture
-                : '/assets/avatar/peeps-avatar-alpha-9.png'
-            }
-          />
-          <InfoBox
+          <div
             onClick={() => {
               handleOtherProfile(follow.userId, follow.followingButtonActivate);
             }}
           >
-            <FollowNickname>{follow.nickname}</FollowNickname>
+            <ProfileImg
+              src={
+                follow.picture
+                  ? follow.picture
+                  : '/assets/avatar/peeps-avatar-alpha-9.png'
+              }
+            />
+          </div>
+          <InfoBox>
+            <FollowNickname
+              onClick={() => {
+                handleOtherProfile(follow.userId, follow.followingButtonActivate);
+              }}
+            >
+              {follow.nickname}
+            </FollowNickname>
             <FavScentList>
               {follow.favorite.map((scent, index) => (
                 <Scent key={index}>{scent.name}</Scent>
@@ -123,7 +134,10 @@ const FollowBox = ({ followList, setFollowingList, isMe }: FollowBoxProps) => {
             </FavScentList>
           </InfoBox>
           {follow.followingButtonActivate && (
-            <div onClick={isMe ? () => updateFollowing(follow) : undefined}>
+            <div
+              onClick={isMe ? () => updateFollowing(follow) : undefined}
+              style={{ display: 'flex', alignItems: 'center', height: '45px', marginTop: '3px' }}
+            >
               <FollowBtn to={follow.userId} isFollow={follow.following} />
             </div>
           )}
