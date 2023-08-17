@@ -2,7 +2,7 @@ server:
   port: 8080
 
   servlet:
-#    context-path: /api
+    context-path: /api
     encoding:
       charset: UTF-8
       force: true
@@ -40,11 +40,11 @@ spring:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     hikari:
-      maximum-pool-size: 150
+      maximum-pool-size: 250
       max-lifetime: 60000
 
   jpa:
-    show-sql: true
+#    show-sql: true
     hibernate:
       ddl-auto: update
       naming:
