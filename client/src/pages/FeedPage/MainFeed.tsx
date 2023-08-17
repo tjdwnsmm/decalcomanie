@@ -29,6 +29,7 @@ export const MainFeed = () => {
 
   const datas = useMemo(() => (data ? data : []), [data]);
   useEffect(() => {
+    // console.log(isFetching);
     setFeeds(datas);
   }, [datas]);
 
@@ -36,9 +37,11 @@ export const MainFeed = () => {
     observer.unobserve(entry.target);
     if (hasNextPage && !isFetching) {
       fetchNextPage();
-      console.log('✅ 이전까지 받아온 데이터!', datas);
-      setLastArticleId(datas[datas.length - 1].articleDtos.articleId);
-      setHeartCnt(datas[datas.length - 1].articleDtos.heart);
+      //console.log('✅ 이전까지 받아온 데이터!', datas);
+      if (datas.length > 0) {
+        setLastArticleId(datas[datas.length - 1].articleDtos.articleId);
+        setHeartCnt(datas[datas.length - 1].articleDtos.heart);
+      }
     }
   });
 

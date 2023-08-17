@@ -30,7 +30,7 @@ export default function Post() {
   const handleEmptyChecked = () => {
     setPerfumeList([]);
     localStorage.removeItem('postPerfume');
-    console.log('empty!!');
+    //console.log('empty!!');
   };
 
   useEffect(() => {
@@ -85,8 +85,8 @@ export default function Post() {
       };
 
       const response = await axios.post('/sns/create/', requestData);
-      console.log('Request Data : ', requestData);
-      console.log('API 응답:', response.data);
+      //console.log('Request Data : ', requestData);
+      //console.log('API 응답:', response.data);
 
       // 작성 글 상세 페이지로 이동
       navigate(`/post-detail/${response.data.articleId}`);

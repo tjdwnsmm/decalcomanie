@@ -110,7 +110,7 @@ const ProfileUpdate = () => {
       try {
         const response = await axios.get('/user/info');
         setUserData(response.data);
-        console.log(response.data);
+        //console.log(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -166,7 +166,7 @@ const ProfileUpdate = () => {
         const response = await axios.put('/user/update', updatedProfileData);
         localStorage.setItem('nickname', nickName);
         navigate('/mypage');
-        console.log('프로필 업데이트 성공:', response.data);
+        //console.log('프로필 업데이트 성공:', response.data);
       } catch (error) {
         console.error('프로필 업데이트 실패:', error);
       }

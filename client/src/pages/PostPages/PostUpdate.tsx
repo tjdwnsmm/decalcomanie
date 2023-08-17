@@ -52,7 +52,7 @@ export default function PostUpdate() {
       try {
         const response = await axios.get(`/sns/search/${id}`);
         setPostDetailData(response.data);
-        console.log('update 용 데이터 확인 : ', response.data);
+        //console.log('update 용 데이터 확인 : ', response.data);
 
         const combinedArray: RateInfo[] = response.data.perfumeInfos.map(
           (perfume: PerfumeDetail, index: number) => ({
@@ -90,9 +90,9 @@ export default function PostUpdate() {
         perfumeId: parsedList.map((perfume) => perfume.perfumeId),
         rate: parsedList.map((perfume) => perfume.rate),
       };
-      // console.log(requestData);
+      // //console.log(requestData);
       const response = await axios.put('/sns/update', requestData);
-      console.log(response.data);
+      //console.log(response.data);
       localStorage.removeItem('postPerfume');
       navigate(`/post-detail/${id}`);
     } catch (error) {

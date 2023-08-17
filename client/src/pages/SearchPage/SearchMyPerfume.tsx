@@ -44,7 +44,7 @@ const SearchMyPerfume: React.FC = () => {
     observer.unobserve(entry.target);
     if (hasNextPage && !isFetching) {
       fetchNextPage();
-      console.log('✅ 이전까지 받아온 데이터!', datas);
+      //console.log('✅ 이전까지 받아온 데이터!', datas);
       // datas = [];
       setLastPerfumeId(datas[datas.length - 1].perfumeId);
       setLastPick(datas[datas.length - 1].pick);
@@ -62,7 +62,7 @@ const SearchMyPerfume: React.FC = () => {
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
    */
   const handleSearch = async (keyword: string, isSearch: boolean) => {
-    console.log(`💨 ${keyword} and ${isSearch}`);
+    //console.log(`💨 ${keyword} and ${isSearch}`);
     if (!isSearch) {
       setSearchKeyword(keyword);
     } else {
@@ -72,7 +72,7 @@ const SearchMyPerfume: React.FC = () => {
         const data = await searchPerfume(keyword);
         setSearchResults(data.searchedPerfumes);
         setNewSearch(true);
-        console.log(`진짜 데이터 검색 : ${searchResults}`);
+        //console.log(`진짜 데이터 검색 : ${searchResults}`);
       } catch (error) {
         console.error(error);
         setSearchResults([]);
@@ -91,7 +91,7 @@ const SearchMyPerfume: React.FC = () => {
         lastPick: null,
         lastPerfumeId: null,
       });
-      // console.log(response);
+      // //console.log(response);
       return response.data;
     } catch (error) {
       console.error(error);

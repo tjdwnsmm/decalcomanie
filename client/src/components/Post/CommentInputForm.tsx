@@ -67,7 +67,7 @@ function CommentInputForm({ articleId }: { articleId: number }) {
           userId: USERID,
         });
 
-        console.log('댓글이 등록되었습니다:', response.data);
+        //console.log('댓글이 등록되었습니다:', response.data);
 
         setCommentContent('');
         window.location.reload();

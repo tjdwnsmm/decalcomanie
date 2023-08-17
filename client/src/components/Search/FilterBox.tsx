@@ -65,7 +65,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
   };
 
   const getId = (type: string, searchKeyword: string): number => {
-    console.log(brandInfo, scentInfo);
+    //console.log(brandInfo, scentInfo);
     let id: number | undefined = 0;
 
     switch (type) {
@@ -90,7 +90,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
 
   const handleBrandSearch = (keyword: string, isSearch: boolean) => {
     const nowId = getId('brand', keyword);
-    console.log(`nowID = ${nowId}`);
+    //console.log(`nowID = ${nowId}`);
     if (isSearch) {
       setFilter((prevFilter) => ({
         ...prevFilter,
@@ -103,9 +103,9 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
     }
   };
   const handleScentSearch = (keyword: string, isSearch: boolean) => {
-    // console.log(`💨Filter-Scent > ${keyword} and ${isSearch}`);
+    // //console.log(`💨Filter-Scent > ${keyword} and ${isSearch}`);
     const nowId = getId('scent', keyword);
-    console.log(`nowID = ${nowId}`);
+    //console.log(`nowID = ${nowId}`);
     if (isSearch) {
       setFilter((prevFilter) => ({
         ...prevFilter,

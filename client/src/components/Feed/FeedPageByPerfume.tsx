@@ -41,13 +41,13 @@ const FeedPageOnly = ({ feed, handleFollow }: FeedComponentProps) => {
 
   const handleFollowClick = (userId: string) => {
     axios.post('/user/follow', { to: userId }).then((res) => {
-      console.log(res.data);
+      //console.log(res.data);
       handleFollow(feed.userInfoDto.user.userId, !followed);
       setFollowed(!followed);
     });
   };
 
-  // console.log('pic > ', feed.userInfoDto.user.picture);
+  // //console.log('pic > ', feed.userInfoDto.user.picture);
   return (
     <>
       <FeedBox>

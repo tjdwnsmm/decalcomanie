@@ -35,7 +35,7 @@ const PostDetail = () => {
       try {
         const response = await axios.get(`/sns/search/${id}`);
         setPostDetailData(response.data);
-        console.log(response.data);
+        //console.log(response.data);
       } catch (error) {
         console.error('오류:', error);
       }
