@@ -35,14 +35,26 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
   const SCENT_URL = `/perfume/search/scent`;
 
   useEffect(() => {
-    axios.get(BRAND_URL).then((res) => {
-      const dataArray = res.data.map((data: dataByUrlProps) => data);
-      setBrandInfo(dataArray);
-    });
-    axios.get(SCENT_URL).then((res) => {
-      const dataArray = res.data.map((data: dataByUrlProps) => data);
-      setScentInfo(dataArray);
-    });
+    const fetchData = async () => {
+      try {
+        const brandResponse = await axios.get(BRAND_URL);
+        const scentResponse = await axios.get(SCENT_URL);
+
+        const brandDataArray = brandResponse.data.map(
+          (data: dataByUrlProps) => data,
+        );
+        const scentDataArray = scentResponse.data.map(
+          (data: dataByUrlProps) => data,
+        );
+
+        setBrandInfo(brandDataArray);
+        setScentInfo(scentDataArray);
+      } catch (error) {
+        console.error('오류:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   /**
@@ -65,7 +77,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
   };
 
   const getId = (type: string, searchKeyword: string): number => {
-    console.log(brandInfo, scentInfo);
+    //console.log(brandInfo, scentInfo);
     let id: number | undefined = 0;
 
     switch (type) {
@@ -90,7 +102,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
 
   const handleBrandSearch = (keyword: string, isSearch: boolean) => {
     const nowId = getId('brand', keyword);
-    console.log(`nowID = ${nowId}`);
+    //console.log(`nowID = ${nowId}`);
     if (isSearch) {
       setFilter((prevFilter) => ({
         ...prevFilter,
@@ -103,9 +115,9 @@ const FilterBox: React.FC<FilterBoxProps> = ({ onApplyFilters, filterNow }) => {
     }
   };
   const handleScentSearch = (keyword: string, isSearch: boolean) => {
-    // console.log(`💨Filter-Scent > ${keyword} and ${isSearch}`);
+    // //console.log(`💨Filter-Scent > ${keyword} and ${isSearch}`);
     const nowId = getId('scent', keyword);
-    console.log(`nowID = ${nowId}`);
+    //console.log(`nowID = ${nowId}`);
     if (isSearch) {
       setFilter((prevFilter) => ({
         ...prevFilter,

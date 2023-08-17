@@ -45,7 +45,7 @@ export default function Mypage() {
               id: bookmarkData.articleDtos.articleId,
               picture: bookmarkData.perfumeDtos
                 ? bookmarkData.perfumeDtos.picture
-                : 'src/assets/img/perfume-drawer.svg',
+                : 'assets/img/drawer-float.png',
             }));
             setFeeds(myBookmarks);
             setLoading(false);
@@ -64,7 +64,7 @@ export default function Mypage() {
               id: postData.articleDtos.articleId,
               picture: postData.perfumeDtos
                 ? postData.perfumeDtos.picture
-                : 'src/assets/img/perfume-drawer.svg',
+                : 'assets/img/drawer-float.png',
             }));
             setPostCount(myPosts.length);
             setFeeds(myPosts);
@@ -75,7 +75,7 @@ export default function Mypage() {
       // 내가 찜한 향수
     } else if (tab === 'like') {
       axios.get('/perfume/picked').then((res) => {
-        console.log('res :', res);
+        //console.log('res :', res);
         if (res.data === '') {
           setFeeds([]);
         } else {
@@ -118,11 +118,17 @@ export default function Mypage() {
         setFavorites(infoRes.data.favorities);
         setHates(infoRes.data.hates);
         setUserId(infoRes.data.user.userId);
-
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+      try {
         // Follower 수
         const followerRes = await axios.get('/user/follower');
         setFollowerCount(followerRes.data.length);
-
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+      try {
         // Following 수
         const followingRes = await axios.get('/user/following');
         setFollowingCount(followingRes.data.length);

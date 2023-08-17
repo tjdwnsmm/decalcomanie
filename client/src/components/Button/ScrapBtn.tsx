@@ -24,7 +24,7 @@ export const ScrapBtn = ({ isScrap, articleId }: ScrapProps) => {
         await sendScrapStatus('/sns/cancelBookmark');
       }
       setScrap(!scrap);
-      console.log(scrap);
+      //console.log(scrap);
     } catch (error) {
       console.error('Error sending scrap status:', error);
     }
@@ -34,7 +34,7 @@ export const ScrapBtn = ({ isScrap, articleId }: ScrapProps) => {
     try {
       const requestData = { articleId: articleId };
       const response = await axios.post(url, requestData);
-      console.log(response.data);
+      //console.log(response.data);
       return response.data;
     } catch (error) {
       console.error(error, url);

@@ -72,8 +72,10 @@ const Image = styled.div<ImageProps>`
   height: 150px;
   border-radius: 100%;
   background-image: ${({ imageUrl }) =>
-    imageUrl ? `url(${imageUrl})` : 'url(/assets/avatar/peeps-avatar-alpha-9.png)'};
-  background-size: cover;
+    imageUrl
+      ? `url(${imageUrl})`
+      : 'url(/assets/avatar/peeps-avatar-alpha-9.png)'};
+  background-size: contain;
   z-index: 0;
 `;
 

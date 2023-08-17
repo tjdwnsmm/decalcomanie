@@ -31,4 +31,5 @@ const ImgBox = styled.div`
 const PerfumeImg = styled.img`
   width: 100px;
   height: 100px;
+  object-fit: contain;
 `;

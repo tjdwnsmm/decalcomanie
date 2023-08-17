@@ -13,10 +13,10 @@ import useIntersect from '../../hooks/useIntersect';
 const SEARCH_RESULT_TIMEOUT = 5000; // 5 seconds
 
 export const PerfumeFeed = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
   const [showNoResultsMessage, setShowNoResultsMessage] = useState(false);
-  const navigate = useNavigate();
   const [heartCnt, setHeartCnt] = useState(-1);
   const [lastArticleId, setLastArticleId] = useState(-1);
 
@@ -28,7 +28,7 @@ export const PerfumeFeed = () => {
     });
 
   const datas = useMemo(() => (data ? data : []), [data]);
-  console.log(datas);
+  //console.log(datas);
 
   useEffect(() => {
     if (!datas || datas.length === 0) {
@@ -48,7 +48,7 @@ export const PerfumeFeed = () => {
   }, [datas]);
 
   useEffect(() => {
-    console.log('datas', datas);
+    //console.log('datas', datas);
     setFeeds(datas);
   }, [datas]);
 
@@ -56,7 +56,7 @@ export const PerfumeFeed = () => {
     observer.unobserve(entry.target);
     if (hasNextPage && !isFetching) {
       fetchNextPage();
-      console.log('✅ 이전까지 받아온 데이터!', datas);
+      //console.log('✅ 이전까지 받아온 데이터!', datas);
       setLastArticleId(datas[datas.length - 1].articleDtos.articleId);
       setHeartCnt(datas[datas.length - 1].articleDtos.heart);
     }
@@ -73,7 +73,7 @@ export const PerfumeFeed = () => {
       if (!prevFeeds) return null;
       return prevFeeds.map((feed) => {
         if (feed.userInfoDto.user.userId === userId) {
-          // console.log(userId);
+          // //console.log(userId);
           return {
             ...feed,
             followed,

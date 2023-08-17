@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import SearchBar from '../../components/Search/SearchBar';
 import { styled } from 'styled-components';
-import { Main, MarginFrame } from '../../style';
+import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
 import SearchResults from '../../components/Search/SearchResults-more';
 import SortToggle, { SortOption } from '../../components/Search/SortToggle';
 import BottomNav from '../../components/common/BottomNav';
@@ -12,6 +12,7 @@ import useIntersect from '../../hooks/useIntersect';
 import { useFetchDatas } from '../../components/Search/useFetchData';
 import { AutoSearch } from '../../types/SearchType';
 import FilterSection from '../../components/Search/FilterSection';
+import { useNavigate } from 'react-router-dom';
 
 export interface Filter {
   brandName?: string[];
@@ -20,13 +21,16 @@ export interface Filter {
   scent?: string[];
   scentId?: number[];
 }
+const SEARCH_RESULT_TIMEOUT = 5000; // 5 seconds
 
 const SearchTabPage: React.FC = () => {
+  const navigate = useNavigate();
   //필터링 창 꺼졌는지 켜졌는지 현 상태
   const [modalOpen, setModalOpen] = useState(false);
 
   //현재 검색할 단어
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [showNoResultsMessage, setShowNoResultsMessage] = useState(false);
 
   //
   const [filter, setFilter] = useState<Filter>({});
@@ -59,7 +63,7 @@ const SearchTabPage: React.FC = () => {
     if (!localStorage.getItem('sort')) {
       setSortOption(SortOption.Popularity);
     } else {
-      console.log('redirect - ', localStorage.getItem('sort'));
+      //console.log('redirect - ', localStorage.getItem('sort'));
       if (localStorage.getItem('sort') == '2') {
         setSortOption(SortOption.Grade);
       }
@@ -83,7 +87,7 @@ const SearchTabPage: React.FC = () => {
     if (hasNextPage && !isFetching) {
       // setDatas([]);
       await fetchNextPage();
-      // console.log('✅ 이전까지 받아온 데이터!', datas);
+      // //console.log('✅ 이전까지 받아온 데이터!', datas);
       // setDatas((prevDatas) => [...prevDatas, ...datas]);
       setLastPerfumeId(datas[datas.length - 1].perfumeId);
       setLastPick(datas[datas.length - 1].pick);
@@ -93,7 +97,7 @@ const SearchTabPage: React.FC = () => {
 
   const handleSortChange = (newSortOption: SortOption) => {
     setSortOption(newSortOption);
-    console.log('here');
+    //console.log('here');
     localStorage.setItem(
       'sort',
       newSortOption === SortOption.Popularity ? '1' : '2',
@@ -110,11 +114,36 @@ const SearchTabPage: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (newSearch && (!searchResults || searchResults.length === 0)) {
+      const timeoutId = setTimeout(() => {
+        setShowNoResultsMessage((prevShowNoResultsMessage) => {
+          if (
+            prevShowNoResultsMessage ||
+            !searchResults ||
+            searchResults.length === 0
+          ) {
+            return true;
+          }
+          return prevShowNoResultsMessage;
+        });
+      }, SEARCH_RESULT_TIMEOUT);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [searchResults]);
+
+  const handleBack = () => {
+    location.reload();
+  };
+
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
    */
   const handleSearch = async (keyword: string, isSearch: boolean) => {
-    console.log(`💨 ${keyword} and ${isSearch}`);
+    //console.log(`💨 ${keyword} and ${isSearch}`);
     if (!isSearch) {
       setSearchKeyword(keyword);
     } else {
@@ -125,7 +154,7 @@ const SearchTabPage: React.FC = () => {
         setSearchResults([]);
         const data = await searchPerfume(keyword);
         setSearchResults(data.searchedPerfumes);
-        console.log(data);
+        //console.log(data);
       } catch (error) {
         console.error(error);
         setSearchResults([]);
@@ -143,7 +172,7 @@ const SearchTabPage: React.FC = () => {
         dataSize: 200,
         orderType: sortOption === SortOption.Popularity ? 1 : 2,
       });
-      console.log(response.data.searchedPerfumes);
+      //console.log(response.data.searchedPerfumes);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -152,7 +181,7 @@ const SearchTabPage: React.FC = () => {
   };
 
   const filterSearch = async (filter: Filter) => {
-    console.log(filter);
+    //console.log(filter);
     try {
       const response = await axios.post('/perfume/search', {
         keyword: searchKeyword,
@@ -162,7 +191,7 @@ const SearchTabPage: React.FC = () => {
         dataSize: 200,
         orderType: sortOption === SortOption.Popularity ? 1 : 2,
       });
-      console.log(response);
+      //console.log(response);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -176,12 +205,12 @@ const SearchTabPage: React.FC = () => {
   const handleApplyFilters = async (filter: Filter) => {
     setModalOpen(false); // 모달 닫기
     setFilter(filter);
-    console.log(
-      `나 적용된 필터! 💫: ${JSON.stringify(
-        filter,
-      )} filter 갯수는 : ${calcFilteringNum(filter)} 개!
-      }`,
-    );
+    //console.log(
+    //   `나 적용된 필터! 💫: ${JSON.stringify(
+    //     filter,
+    //   )} filter 갯수는 : ${calcFilteringNum(filter)} 개!
+    //   }`,
+    // );
     setSearchResults(null);
     if (calcFilteringNum(filter) === 0) {
       setNewSearch(false);
@@ -209,6 +238,25 @@ const SearchTabPage: React.FC = () => {
     });
     return cnt;
   };
+
+  if (showNoResultsMessage) {
+    return (
+      <>
+        <ErrorTxt>검색 결과가 없습니다 😥</ErrorTxt>
+        <MarginFrame margin="15px 25px 0">
+          <CenterFrame>
+            <ConfirmButton
+              color="primary"
+              background="primary"
+              onClick={handleBack}
+            >
+              검색화면으로 돌아가기
+            </ConfirmButton>
+          </CenterFrame>
+        </MarginFrame>
+      </>
+    );
+  }
 
   return (
     <Main>
@@ -283,7 +331,6 @@ const SearchTabPage: React.FC = () => {
 };
 
 export default SearchTabPage;
-
 const Target = styled.div`
   height: 3px;
 `;
@@ -292,4 +339,10 @@ const SortArea = styled.div`
   display: flex;
   flex-direction: row-reverse;
   margin: 15px 20px 0;
+`;
+const ErrorTxt = styled.div`
+  font-weight: 700;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 270px;
 `;

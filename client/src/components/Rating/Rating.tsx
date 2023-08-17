@@ -67,12 +67,12 @@ export default function AddRating({ perfumes, rates }: Props) {
   }, [rateData]);
 
   const handleRatingChange = (perfumeId: number, newRate: number) => {
-    // console.log('prev : ', rateData);
+    // //console.log('prev : ', rateData);
     const updatedRateData = rateData.map((item) =>
       item.perfumeId === perfumeId ? { ...item, rate: newRate } : item,
     );
     setRateData(updatedRateData);
-    // console.log('after : ', updatedRateData);
+    // //console.log('after : ', updatedRateData);
   };
 
   return (

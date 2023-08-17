@@ -53,9 +53,8 @@ const MainPage = () => {
   const handleRecommend = () => {
     //추천 새로고침
     setRecommendPerfume(null);
-    setSaveRecommend(false);
     axios.get('/perfume/recommend').then((res) => {
-      console.log(res.data);
+      //console.log(res.data);
       setRecommendPerfume(res.data);
       setSaveRecommend(true);
     });
@@ -74,34 +73,47 @@ const MainPage = () => {
     }
     return '';
   };
-
+  localStorage.removeItem('sort');
   useEffect(() => {
-    localStorage.removeItem('sort');
-    axios.get('/user/scent/top').then((res) => {
-      const scentData = res.data;
-      setRecommendScent(scentData);
-    });
+    const fetchData = async () => {
+      try {
+        const res1 = await axios.get('/user/scent/top');
+        const scentData = res1.data;
+        setRecommendScent(scentData);
+      } catch (error) {
+        console.error('Error fetching scent data:', error);
+      }
 
-    axios.get('/user/recommend').then((res) => {
-      const datas = res.data;
-      setRecommendPerfume(datas);
-    });
+      try {
+        const res2 = await axios.get('/user/recommend');
+        const datas = res2.data;
+        setRecommendPerfume(datas);
+      } catch (error) {
+        console.error('Error fetching recommend data:', error);
+      }
 
-    axios.get('/perfume/today').then((res) => {
-      console.log(`today data : ${JSON.stringify(res.data)}`);
-      setWeatherPerfumes(res.data.season);
-      setDayNightPerfumes(res.data.dayNight);
-      setAgeGenderPerfumes(res.data.ageGender);
-      setOverallPerfumes(res.data.overall);
-      setBaseInfo({
-        curSeason: res.data.curSeason,
-        curTime: res.data.curTime,
-        gender: res.data.gender,
-        age: res.data.age,
-      });
-      setSaveRecommend(res.data.userPerfumeExist);
-      setDrawer(res.data.drawerPerfumeExist);
-    });
+      try {
+        const res3 = await axios.get('/perfume/today');
+        const weatherData = res3.data;
+
+        setWeatherPerfumes(weatherData.season);
+        setDayNightPerfumes(weatherData.dayNight);
+        setAgeGenderPerfumes(weatherData.ageGender);
+        setOverallPerfumes(weatherData.overall);
+        setBaseInfo({
+          curSeason: weatherData.curSeason,
+          curTime: weatherData.curTime,
+          gender: weatherData.gender,
+          age: weatherData.age,
+        });
+        setSaveRecommend(weatherData.userPerfumeExist);
+        setDrawer(weatherData.drawerPerfumeExist);
+      } catch (error) {
+        console.error('Error fetching weather data:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -152,15 +164,13 @@ const MainPage = () => {
                   recommendPerfume ? (
                     <MainSwiper perfumes={recommendPerfume} />
                   ) : (
-                    <NoSaveRecommend>
-                      <>아직 추천된 데이터가 없어요 😥</>
-                      <div onClick={handleRecommend}>
-                        추천 향수 업데이트하기
-                      </div>
-                    </NoSaveRecommend>
+                    <Spinner info="맞춤 추천 중입니다. 잠시만 기다려주세요 😄" />
                   )
                 ) : (
-                  <Spinner info="맞춤 추천 중입니다. 잠시만 기다려주세요 😄" />
+                  <NoSaveRecommend>
+                    <>아직 추천된 데이터가 없어요 😥</>
+                    <div onClick={handleRecommend}>추천 향수 업데이트하기</div>
+                  </NoSaveRecommend>
                 )}
               </>
             )}
@@ -228,7 +238,9 @@ const NoSaveRecommend = styled.div`
   align-items: center;
   text-align: center;
   font-weight: 600;
-  margin-top: 5px;
+  font-size: 15px;
+  margin-bottom: -10px;
+  margin-top: 30px;
 
   div {
     color: var(--white-color);

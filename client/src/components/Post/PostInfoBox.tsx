@@ -121,8 +121,12 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
   const hasScent =
     userInfoDto.favorities?.length > 0 || userInfoDto.hates?.length > 0;
 
-  const handleOtherProfile = (id: string, notMe: boolean, withdraw:boolean) => {
-    console.log(notMe);
+  const handleOtherProfile = (
+    id: string,
+    notMe: boolean,
+    withdraw: boolean,
+  ) => {
+    //console.log(notMe);
     if (withdraw) {
       return;
     }
@@ -138,7 +142,11 @@ const PostInfoBox = ({ postInfo }: PostInfoBoxProps) => {
         <div
           style={{ display: 'flex' }}
           onClick={() => {
-            handleOtherProfile(userInfoDto.user.userId, !userInfoDto.me, userInfoDto.withdrawal);
+            handleOtherProfile(
+              userInfoDto.user.userId,
+              !userInfoDto.me,
+              userInfoDto.withdrawal,
+            );
           }}
         >
           <ProfileImg
