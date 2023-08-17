@@ -34,10 +34,16 @@ export const useFetchDatas = ({
         lastArticleId: lastArticleId === -1 ? null : lastArticleId,
       });
 
-      setIsLastPage(
-        response.data[0].lastPage ? response.data[0].lastPage : false,
-      );
-      //console.log('response', response);
+      if (response.data.length > 0) {
+        setIsLastPage(
+          response.data[0].lastPage ? response.data[0].lastPage : false,
+        );
+      } else {
+        setPageNumber(0);
+        setIsLastPage(true);
+      }
+
+      // console.log('response', response.data);
       setDatas((prevDatas) => [...prevDatas, ...response.data]);
 
       //console.log(datas);
@@ -76,7 +82,7 @@ export const useFetchDatas = ({
   return {
     data: datas,
     hasNextPage: !isLastPage,
-    isFetching: pageNumber > 0 && isLastPage,
+    isFetching: pageNumber >= 0 && isLastPage,
     fetchNextPage: loadMore,
     isLoading: isLoading,
   };
