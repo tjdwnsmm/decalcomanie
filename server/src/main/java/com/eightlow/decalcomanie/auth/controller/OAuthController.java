@@ -141,7 +141,7 @@ public class OAuthController {
                 .userId(userId.toString())
                 .email(kakaoProfile.getKakaoAccount().getEmail())
                 .kakaoUserNum(kakaoProfile.getId().toString())
-                .refreshToken(jwtService.generateRefreshToken(refreshToken, userId.toString()))
+                .refreshToken(refreshToken)
                 .build();
 
         int age = Integer.parseInt(kakaoProfile.getKakaoAccount().getAgeRange().split("~")[0]);
