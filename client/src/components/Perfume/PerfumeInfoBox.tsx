@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import SecondaryBox from '../Box/SecondaryBox';
 import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
+import { ReactComponent as StarSvg } from '../../assets/icon/fill-star.svg';
 
 /**
  * @param {PerfumeDetail} PerfumeInfo
@@ -10,7 +11,7 @@ import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
  */
 
 interface PerfumeInfoBoxProps {
-  feed: PerfumeDetail;
+  feed: PerfumeDetail | null;
 }
 
 const extractAccordNames = (accord: ScentDto[]): string => {
@@ -20,27 +21,62 @@ const extractAccordNames = (accord: ScentDto[]): string => {
     .join(', ');
 };
 
-const PerfumeInfoBox = ({ feed }: PerfumeInfoBoxProps) => (
-  <>
-    <PerfumeBox>
-      <TextInfo>
-        <PerfumeBrand>{feed.brandName}</PerfumeBrand>
-        <PerfumeName>
-          {feed.name.length > 14 ? feed.name.slice(0, 14) + '...' : feed.name}
-        </PerfumeName>
-        <PerfumeScent>{extractAccordNames(feed.accord)}</PerfumeScent>
-      </TextInfo>
-      <ImgBox>
-        <img src={feed.picture}></img>
-      </ImgBox>
-    </PerfumeBox>
-  </>
-);
+const PerfumeInfoBox = ({ feed }: PerfumeInfoBoxProps) => {
+  if (!feed) {
+    return (
+      <>
+        <EmptyChip>공병 게시글</EmptyChip>
+      </>
+    );
+  }
+  return (
+    <>
+      <PerfumeBox>
+        <TextInfo>
+          <PerfumeRate>
+            <StarSvg />
+            {feed.rate ? feed.rate.toFixed(1) : 0}
+          </PerfumeRate>
+          <PerfumeBrand>{feed.brandName}</PerfumeBrand>
+          <PerfumeName>
+            {feed.name.length > 14 ? feed.name.slice(0, 14) + '...' : feed.name}
+          </PerfumeName>
+          <PerfumeScent>{extractAccordNames(feed.accord)}</PerfumeScent>
+        </TextInfo>
+        <ImgBox>
+          <img src={feed.picture}></img>
+        </ImgBox>
+      </PerfumeBox>
+    </>
+  );
+};
 
 export default PerfumeInfoBox;
+
+const EmptyChip = styled.div`
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 10px;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border-radius: 5px;
+  font-size: 13.5px;
+  font-weight: 400;
+  margin-left: 4px;
+`;
+
+const PerfumeRate = styled.div`
+  font-weight: 400;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  // color: var(--primary-color);
+  margin-bottom: 10px;
+`;
 const PerfumeBox = styled(SecondaryBox)`
   justify-content: space-between;
-  padding: 25px 20px;
+  padding: 15px 20px;
   align-items: center;
 `;
 const TextInfo = styled.div`
@@ -49,8 +85,8 @@ const TextInfo = styled.div`
 `;
 const PerfumeBrand = styled.div`
   color: var(--black-color);
-  font-size: 11px;
-  font-weight: 400;
+  font-size: 13px;
+  font-weight: 500;
   margin-bottom: 5px;
 `;
 const PerfumeName = styled.div`
@@ -59,10 +95,10 @@ const PerfumeName = styled.div`
   font-weight: 600;
 `;
 const PerfumeScent = styled.div`
-  margin-top: 28px;
+  margin-top: 20px;
   color: var(--black-color);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
 `;
 const ImgBox = styled.div`
   width: 110px;

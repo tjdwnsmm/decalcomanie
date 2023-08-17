@@ -1,35 +1,56 @@
 import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
+import { ReactComponent as ArrowSvg } from '../../assets/icon/nextArrow.svg';
+import { useNavigate } from 'react-router';
+import Logo from '../common/Logo';
 
-const UserInfo = {
-  name: '김수민',
-  weather: 0,
-  scent: 0,
-};
+interface Props {
+  nickname: string;
+}
 
-const weatherTitle = ['햇살이 따스한 오늘 🌞'];
-
-const scentTitle = ['경쾌하고 상큼한 시트러스'];
-
-const MainRecommend = () => {
+const MainRecommend = ({ nickname }: Props) => {
+  const navigate = useNavigate();
+  const handleDrawer = () => {
+    navigate('my-drawer');
+  };
   return (
-    <MarginFrame margin="0 30px 0">
-      <UserName>{UserInfo.name} 님,</UserName>
-      <WeatherInfo>{weatherTitle[UserInfo.weather]}</WeatherInfo>
-      <ScentInfo>
-        <AccentText>{scentTitle[UserInfo.scent]}</AccentText>
-        어떠신가요?
-      </ScentInfo>
+    <MarginFrame margin="0 30px 35px">
+      <Frame>
+        <LeftSection>
+          <UserName>{nickname} 님,</UserName>
+          <ScentInfo>
+            <AccentText>
+              <div>오늘의 추천 향수를 </div>
+              <div>만나보세요 🖐</div>
+            </AccentText>
+          </ScentInfo>
+        </LeftSection>
+        <RightSection>
+          <Logo />
+        </RightSection>
+      </Frame>
+      <GoToDrawer onClick={handleDrawer}>
+        내가 가진 향수 등록하기 <ArrowSvg />
+      </GoToDrawer>
     </MarginFrame>
   );
 };
 
 export default MainRecommend;
 
+const Frame = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 80px;
+`;
+const LeftSection = styled.div``;
+const RightSection = styled.div`
+  margin-top: -30px;
+`;
 export const UserName = styled.div`
   display: flex;
-  margin-top: 40px;
-  font-size: 22px;
+  margin-top: 50px;
+  font-size: 21px;
   font-weight: 700;
   letter-spacing: 0.44px;
 `;
@@ -42,26 +63,37 @@ export const WeatherInfo = styled.div`
   letter-spacing: 0.6px;
 `;
 const ScentInfo = styled.div`
-  margin-top: 5px;
-  font-size: 22px;
+  margin-top: 8px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.44px;
 `;
 
 const AccentText = styled.div`
-  font-size: 30px;
-  font-weight: 800;
+  font-size: 26px;
+  font-weight: 700;
   letter-spacing: 0.6px;
   margin-bottom: 10px;
-  &:after {
-    content: '';
-    position: absolute;
-    left: 30px;
-    width: 80%;
-    height: 10px;
-    background-color: var(--secondary-color);
-    top: 160px;
-    z-index: -1;
-    border-radius: 10px;
+  margin-top: 5px;
+  span {
+  }
+`;
+
+const GoToDrawer = styled.div`
+  color: var(--primary-color);
+  margin: 10px 0 0 5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  svg g path {
+    stroke: var(--primary-color);
+  }
+
+  svg {
+    margin-top: 2px;
+    width: 20px;
+    height: 30px;
   }
 `;

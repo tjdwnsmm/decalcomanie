@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, KeyboardEvent } from 'react';
 import { styled } from 'styled-components';
+import axios, { USERID } from '../../api/apiController';
 
 const CommentInputContainer = styled.div`
   position: absolute;
@@ -24,7 +25,7 @@ const CommentInputBox = styled.div`
 
 const CommentInput = styled.input`
   width: 300px;
-  height: 45px;
+  height: 42px;
   background-color: var(--background-color);
   margin: 0px 15px;
   font-size: 16px;
@@ -33,35 +34,52 @@ const CommentInput = styled.input`
   border: none;
   outline: none;
 `;
+interface CommentButtonProps {
+  hasContent: boolean; // Add the hasContent prop and define its type
+}
 
-const CommentButton = styled.button`
+const CommentButton = styled.button<CommentButtonProps>`
   flex: 0 0 auto;
   width: 60px;
-  height: 45px;
+  height: 45.1px;
   border-radius: 20px;
   background-color: var(--background-color);
   font-size: 16px;
   border: none;
-  cursor: pointer;
+  cursor: ${({ hasContent }) => (hasContent ? 'pointer' : '')};
   color: ${({ hasContent }) =>
     hasContent ? 'var(--primary-color)' : 'var(--gray-color)'};
 `;
 
-function CommentInputForm() {
+function CommentInputForm({ articleId }: { articleId: number }) {
   const [commentContent, setCommentContent] = useState('');
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCommentContent(event.target.value);
   };
 
-  const handleCommentSubmit = () => {
-    // 댓글 등록 처리 로직
-    // 등록 후 댓글 입력창을 초기화
-    setCommentContent('');
+  const handleCommentSubmit = async () => {
+    if (commentContent.trim().length > 0) {
+      try {
+        const response = await axios.post('/sns/comment/create', {
+          articleId,
+          content: commentContent,
+          userId: USERID,
+        });
+
+        console.log('댓글이 등록되었습니다:', response.data);
+
+        setCommentContent('');
+        window.location.reload();
+      } catch (error) {
+        console.error('댓글 등록 중 오류:', error);
+      }
+    }
   };
 
   const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      event.preventDefault();
       handleCommentSubmit();
     }
   };

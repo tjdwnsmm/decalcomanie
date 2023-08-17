@@ -21,9 +21,12 @@ export interface ArticleDetail {
 }
 
 export interface EachFeedInfo {
+  lastPage?: boolean;
   perfumeDtos: PerfumeDetail;
   articleDtos: ArticleDetail;
   bookmarked: boolean;
+  followed: boolean;
   hearted: boolean;
   userInfoDto: ProfileUpdateInfo;
+  followingButtonActivate: boolean;
 }

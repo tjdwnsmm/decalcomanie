@@ -4,33 +4,87 @@ import PerfumeInfoBox from '../../components/Perfume/PerfumeInfoBox';
 import { styled } from 'styled-components';
 import FeedPageOnly from '../../components/Feed/FeedPageByPerfume';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import axios from '../../api/apiController';
+import { useEffect, useMemo, useState } from 'react';
 import Spinner from '../../components/common/Spinner';
 import { ReactComponent as BackSvg } from '../../assets/icon/prevBack.svg';
+import { useFetchPerfumeDatas } from '../../components/Feed/useFetchPerfumeData';
+import useIntersect from '../../hooks/useIntersect';
+
+const SEARCH_RESULT_TIMEOUT = 5000; // 5 seconds
 
 export const PerfumeFeed = () => {
   const { id } = useParams<{ id: string }>();
-  const [feed, setFeed] = useState<EachFeedInfo[] | null>(null);
+  const [feeds, setFeeds] = useState<EachFeedInfo[] | null>(null);
+  const [showNoResultsMessage, setShowNoResultsMessage] = useState(false);
+  const navigate = useNavigate();
+  const [heartCnt, setHeartCnt] = useState(-1);
+  const [lastArticleId, setLastArticleId] = useState(-1);
+
+  const { data, hasNextPage, isFetching, fetchNextPage, isLoading } =
+    useFetchPerfumeDatas({
+      heartCnt,
+      lastArticleId,
+      id: id ? id : '',
+    });
+
+  const datas = useMemo(() => (data ? data : []), [data]);
+  console.log(datas);
 
   useEffect(() => {
-    axios.get(`/sns/perfume/${id}`).then((res) => {
-      setFeed(res.data);
-      console.log(res.data);
-    });
-  }, []);
+    if (!datas || datas.length === 0) {
+      const timeoutId = setTimeout(() => {
+        setShowNoResultsMessage((prevShowNoResultsMessage) => {
+          if (prevShowNoResultsMessage || !datas || datas.length === 0) {
+            return true;
+          }
+          return prevShowNoResultsMessage;
+        });
+      }, SEARCH_RESULT_TIMEOUT);
 
-  const navigate = useNavigate();
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [datas]);
+
+  useEffect(() => {
+    console.log('datas', datas);
+    setFeeds(datas);
+  }, [datas]);
+
+  const ref = useIntersect(async (entry, observer) => {
+    observer.unobserve(entry.target);
+    if (hasNextPage && !isFetching) {
+      fetchNextPage();
+      console.log('✅ 이전까지 받아온 데이터!', datas);
+      setLastArticleId(datas[datas.length - 1].articleDtos.articleId);
+      setHeartCnt(datas[datas.length - 1].articleDtos.heart);
+    }
+  });
 
   const handleBack = () => {
+    setFeeds(null);
     navigate(`/perfume-detail/${id}`);
   };
 
-  if (!feed) {
-    return <Spinner />;
-  }
+  const handleFollow = (userId: string, followed: boolean) => {
+    // 팔로우 상태를 업데이트하는 로직 구현
+    setFeeds((prevFeeds) => {
+      if (!prevFeeds) return null;
+      return prevFeeds.map((feed) => {
+        if (feed.userInfoDto.user.userId === userId) {
+          // console.log(userId);
+          return {
+            ...feed,
+            followed,
+          };
+        }
+        return feed;
+      });
+    });
+  };
 
-  if (feed.length === 0) {
+  if (showNoResultsMessage) {
     return (
       <>
         <ErrorTxt>검색 결과가 없습니다 😥</ErrorTxt>
@@ -48,6 +102,15 @@ export const PerfumeFeed = () => {
       </>
     );
   }
+
+  if (!feeds || feeds.length === 0) {
+    return (
+      <MarginFrame margin="200px auto">
+        <Spinner info="잠시 기다려주세요! 작성된 글들을 찾고있어요🔍" />
+      </MarginFrame>
+    );
+  }
+
   return (
     <Main>
       <MarginFrame margin="20px 25px 0">
@@ -55,17 +118,23 @@ export const PerfumeFeed = () => {
       </MarginFrame>
 
       <PerfumeFeedBox>
-        <PerfumeInfoBox feed={feed[0].perfumeDtos} />
+        <PerfumeInfoBox feed={feeds[0].perfumeDtos} />
       </PerfumeFeedBox>
 
       <FeedBody>
-        {feed.map((eachFeed, idx) => (
-          <FeedPageOnly key={idx} feed={eachFeed} />
+        {feeds.map((eachFeed, idx) => (
+          <FeedPageOnly key={idx} feed={eachFeed} handleFollow={handleFollow} />
         ))}
+        {!isFetching && isLoading && <Spinner />}
+        <MarginFrame margin="10px auto" />
+        <Target ref={ref} />
       </FeedBody>
     </Main>
   );
 };
+const Target = styled.div`
+  height: 3px;
+`;
 
 const PerfumeFeedBox = styled.div`
   margin-top: 12px;
@@ -78,9 +147,8 @@ const FeedBody = styled.div`
 `;
 
 const ErrorTxt = styled.div`
-  color: var(--primary-color);
   font-weight: 700;
-  font-size: 22px;
+  font-size: 20px;
   text-align: center;
   margin-top: 270px;
 `;

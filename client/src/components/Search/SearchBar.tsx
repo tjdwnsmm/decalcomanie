@@ -6,16 +6,18 @@ import { ReactComponent as SearchSvg } from '../../assets/icon/search.svg';
 import Spinner from '../common/Spinner';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import axios from '../../api/apiController';
+import { AutoSearch } from '../../types/SearchType';
 
 interface SearchBoxProps {
   onSearch: (keyword: string, booleanCheck: boolean) => void;
   placeholder: string;
-  dataList?: PerfumeDetail[] | null;
+  dataList?: AutoSearch[] | null;
   fetchURL?: string;
 }
 
 export interface dataByUrlProps {
   name: string;
+  nameOrg: string;
   brandId?: number;
   scentId?: number;
 }
@@ -47,6 +49,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
         setDataByURL(dataArray);
       });
     }
+    // console.log('받아온 데이터 - ', dataByURL);
   }, []);
 
   /**
@@ -62,10 +65,14 @@ const SearchBar: React.FC<SearchBoxProps> = ({
    */
   const updateData = async () => {
     setIsFetching(true);
+
+    //이 부분은 데이터 이름으로 바로 검색 가능한 경우 ex. 브랜드, 성별
     if (fetchURL) {
       const filteredResults = dataByURL
-        .filter((list: dataByUrlProps) =>
-          list.name.toLowerCase().includes(keyword.toLowerCase()),
+        .filter(
+          (list: dataByUrlProps) =>
+            list.nameOrg.toLowerCase().includes(keyword.toLowerCase()) ||
+            list.name.includes(keyword),
         )
         .map((data: dataByUrlProps) => data.name)
         .slice(0, 8);
@@ -73,18 +80,16 @@ const SearchBar: React.FC<SearchBoxProps> = ({
       setSearchResults(filteredResults);
       setIsFetching(false);
     }
-    //
+
+    // 향수 전체 이름으로 검색할 떄 사용
     if (dataList) {
       const filteredResults = dataList
         .filter(
-          (list: PerfumeDetail) =>
-            list.nameOrg.includes(keyword) || list.name.includes(keyword),
+          (list: AutoSearch) =>
+            list.nameOrg.toLowerCase().includes(keyword.toLowerCase()) ||
+            list.name.includes(keyword),
         )
-        .map((perfume: PerfumeDetail) =>
-          perfume.nameOrg.length > 30
-            ? perfume.nameOrg.slice(0, 30) + '...'
-            : perfume.nameOrg,
-        )
+        .map((perfume: AutoSearch) => perfume.name)
         .slice(0, 8);
       setSearchResults(filteredResults);
       setIsFetching(false);
@@ -110,6 +115,16 @@ const SearchBar: React.FC<SearchBoxProps> = ({
     setIsSearch(false);
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    console.log(e);
+    //향수 이름 검색에 ENTER 지원
+    if (e.key === 'Enter' && dataList) {
+      onSearch(keyword, true);
+      setKeyword('');
+      setIsSearch(false);
+    }
+  };
+
   return (
     <>
       <SearchBox>
@@ -118,6 +133,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
           value={keyword}
           onChange={handleKeywordChange}
           placeholder={placeholder}
+          onKeyDown={handleKeyPress}
         />
         {keyword && (
           <ExitBox onClick={clearKeyword}>
@@ -126,7 +142,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
         )}
       </SearchBox>
 
-      {isFetching ? (
+      {isFetching && keyword ? (
         <Spinner />
       ) : searchResults.length > 0 && keyword && !isSearch ? (
         <AutoSearchContainer>
@@ -141,7 +157,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
                 }}
               >
                 <a href="#">
-                  {search.length > 30 ? search.slice(0, 30) + '...' : search}
+                  {search.length > 20 ? search.slice(0, 20) + '...' : search}
                 </a>
               </AutoSearchData>
             ))}

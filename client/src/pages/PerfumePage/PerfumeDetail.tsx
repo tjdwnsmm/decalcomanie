@@ -1,23 +1,23 @@
-import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
-import { styled } from 'styled-components';
-import { LikeBtn } from '../../components/Button/LikeBtn';
-import { RateBtn } from '../../components/Button/RateBtn';
-import { PerfumeDetail } from '../../types/PerfumeInfoType';
-import ScentList from '../../components/Perfume/Detail/ScentList';
-import ScentBall from '../../components/Perfume/Detail/ScentBall';
 import { useEffect, useState } from 'react';
-import { ScentNotes } from '../../components/Perfume/Detail/ScentNotes';
-import MoreInfo from '../../components/Perfume/Detail/MoreInfo';
-import axios, { USERID } from '../../api/apiController';
 import { useNavigate, useParams } from 'react-router-dom';
+import { styled } from 'styled-components';
+import axios from '../../api/apiController';
+import { Main } from '../../style';
+import { ReactComponent as NextArrowSvg } from '../../assets/icon/nextArrow.svg';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
+import { ScentNotes } from '../../components/Perfume/Detail/ScentNotes';
+import PerfumeInfoSection from '../../components/Perfume/PerfumeInfoSection';
+import PerfumeImageSection from '../../components/Perfume/PerfumeImageSection';
+import ActionButtons from '../../components/Perfume/DetailActionButtons';
+import DetailEtcInfoSection from '../../components/Perfume/DetailEtcInfoSection';
 
-const PerfumeDetail = () => {
+const PerfumeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [perfume, setPerfume] = useState<PerfumeDetail | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    axios.get(`/perfume/detail/${USERID}/${id}`).then((res) => {
+    axios.get(`/perfume/detail/${id}`).then((res) => {
       setPerfume(res.data);
       console.log(res.data);
     });
@@ -41,60 +41,38 @@ const PerfumeDetail = () => {
     navigate('/search');
   };
 
+  const handleSearch = (perfumeName: string) => {
+    const searchName = perfumeName.replace(/\s+/g, '+');
+    const newWindow = window.open('about:blank');
+    if (newWindow) {
+      newWindow.location.href = `https://www.google.com/search?q=${searchName}&tbm=shop`;
+    }
+  };
+
   if (!perfume) {
     return null;
   }
 
   return (
     <Main>
-      <PerfumeInfo>
-        <LeftSection>
-          <PerfumeIcon>
-            <LikeBtn
-              picked={perfume.picked}
-              count={perfume.pick}
-              likeUrl="/perfume/pick"
-              dislikeUrl="/perfume/dispick"
-              perfumeId={perfume.perfumeId}
-              userId={USERID}
-            />
-            <RateBtn count={perfume.rate ? perfume.rate : 0} />
-          </PerfumeIcon>
-          <Brand>{perfume.brandName}</Brand>
-          <PerfumeName>{perfume.name}</PerfumeName>
-          <ScentList accord={perfume.accord.slice(0, 3)} />
-        </LeftSection>
-        <PerfumeImg>
-          <img src={perfume.picture} />
-        </PerfumeImg>
-      </PerfumeInfo>
-      <ScentBall
-        first="white"
-        second={perfume.accord[0].rgb}
-        third={perfume.accord[1].rgb}
+      {/* Use the imported components */}
+      <PerfumeInfoSection perfume={perfume} />
+      <SearchPerfume
+        onClick={() => {
+          handleSearch(perfume.nameOrg);
+        }}
+      >
+        향수 가격 정보 보러가기
+        <NextArrowSvg />
+      </SearchPerfume>
+      <PerfumeImageSection perfume={perfume} />
+      <DetailEtcInfoSection perfume={perfume} />
+      <ActionButtons
+        handleOpenModal={handleOpenModal}
+        handleFeed={handleFeed}
+        handleBack={handleBack}
       />
-      <MoreInfo longevity={perfume.longevity} sillage={perfume.sillage} />
-      <MarginFrame margin="30px 0 20px ">
-        <CenterFrame>
-          <ConfirmButton fontweight="600" onClick={handleOpenModal}>
-            자세한 노트 정보 확인하기
-          </ConfirmButton>
-        </CenterFrame>
-        <MarginFrame margin="10px"></MarginFrame>
-        <CenterFrame>
-          <ConfirmButton
-            color="primary"
-            background="primary"
-            fontweight="500"
-            onClick={handleFeed}
-          >
-            다른 사용자들의 글을 구경해보세요
-          </ConfirmButton>
-        </CenterFrame>
-        <CenterFrame>
-          <BackToList onClick={handleBack}>목록으로 돌아가기</BackToList>
-        </CenterFrame>
-      </MarginFrame>
+
       {modalOpen && (
         <ScentNotes noteLists={perfume.note} closeModal={handleCloseModal} />
       )}
@@ -102,58 +80,25 @@ const PerfumeDetail = () => {
   );
 };
 
-export default PerfumeDetail;
+export default PerfumeDetailPage;
 
-const LeftSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 200px;
-`;
-
-const PerfumeInfo = styled.div`
+const SearchPerfume = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
-  margin-top: 20px;
-`;
-
-const PerfumeIcon = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  gap: 7px;
-`;
-
-const PerfumeImg = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 130px;
-  height: 178px;
-  border-radius: 10px;
-  background-color: var(--white-color);
-  object-fit: cover;
-  img{
-    width: 100px;
-  }}
-  
-`;
-
-const Brand = styled.div`
-  font-size: 18px;
-  font-weight: 500;
-  line-height: normal;
-  margin-bottom: 4px;
-`;
-const PerfumeName = styled.div`
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-`;
-
-const BackToList = styled.div`
+  text-align: right;
+  margin: 25px 20px -20px 20px;
+  width: fit-content;
+  height: fit-content;
   color: var(--primary-color);
-  margin-top: 18px;
+  font-size: 14px;
   font-weight: 700;
+  gap: 5px;
+  cursor: pointer;
+  svg {
+    margin-top: 1px;
+  }
+  svg g path {
+    stroke: var(--primary-color);
+    stroke-width: 2;
+  }
 `;

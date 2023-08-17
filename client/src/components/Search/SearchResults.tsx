@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
 import SecondaryBox from '../Box/SecondaryBox';
-import { PerfumeDetail, ScentDto } from '../../types/PerfumeInfoType';
+import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import Spinner from '../common/Spinner';
-import { useNavigate } from 'react-router-dom';
-import axios, { USERID } from '../../api/apiController';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from '../../api/apiController';
+import { ReactComponent as StarSvg } from '../../assets/icon/fill-star.svg';
 
 interface SearchResultsProps {
   results: PerfumeDetail[] | null;
@@ -23,6 +24,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   addUrl,
 }) => {
   const [loading, setLoading] = useState<boolean>(true);
+  const [addLoading, setAddloading] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(false);
@@ -34,16 +36,71 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     navigate(`/perfume-detail/${perfumeId}`);
   };
 
+  const location = useLocation();
+
   const handleAddPerfume = (perfumeId: number) => {
-    axios
-      .post(addUrl, { perfumeId: perfumeId, userId: USERID })
-      .then((res) => console.log(res.data));
-    navigate(`/my-drawer`);
+    if (location.state && location.state.nowLocation === 'post') {
+      const existingData = localStorage.getItem('postPerfume');
+      if (existingData) {
+        try {
+          const parsedData = JSON.parse(existingData);
+
+          const existingPerfume = parsedData.find(
+            (item: any) => item.perfumeId === perfumeId,
+          );
+
+          if (existingPerfume) {
+            alert('이미 추가된 향수입니다.');
+          } else if (parsedData.length >= 5) {
+            alert('더 이상 향수를 추가할 수 없습니다 (최대 5개)');
+            navigate('/post');
+          } else {
+            parsedData.push({ perfumeId: perfumeId, rate: 0 });
+            localStorage.setItem('postPerfume', JSON.stringify(parsedData));
+            navigate(`/post`, { state: { perfumeId: perfumeId } });
+          }
+        } catch (error) {
+          console.error('Error parsing existing data:', error);
+        }
+      } else {
+        const newData = [{ perfumeId: perfumeId, rate: 0 }];
+        localStorage.setItem('postPerfume', JSON.stringify(newData));
+        navigate(`/post`, { state: { perfumeId: perfumeId } });
+      }
+    } else {
+      axios.get('/user/perfume').then((res) => {
+        const data = res.data;
+        if (data && data.length > 0) {
+          const existingPerfume = data.find(
+            (item: any) => item.perfumeId === perfumeId,
+          );
+
+          if (existingPerfume) {
+            alert('이미 추가된 향수입니다');
+            navigate('/my-drawer');
+          } else {
+            setAddloading(true);
+            axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
+              console.log('Data added!', res.data);
+              setAddloading(false);
+              navigate(`/my-drawer`);
+            });
+          }
+        } else {
+          setAddloading(true);
+          axios.post(addUrl, { perfumeId: perfumeId }).then((res) => {
+            console.log('Data added!', res.data);
+            setAddloading(false);
+            navigate(`/my-drawer`);
+          });
+        }
+      });
+    }
   };
 
   return (
     <>
-      {!loading && results?.length ? (
+      {!addLoading && !loading && results?.length ? (
         <PerfumeList>
           <MarginFrame margin="-4px 0" />
           {results.map((feed) => (
@@ -51,6 +108,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               <PerfumeBox>
                 <PerfumeInfo onClick={() => handleClick(feed.perfumeId)}>
                   <TextInfo>
+                    <PerfumeRate>
+                      <StarSvg />
+                      {feed.rate ? feed.rate : 0}
+                    </PerfumeRate>
                     <PerfumeBrand>{feed.brandName}</PerfumeBrand>
                     <PerfumeName>
                       {feed.name.length > 12
@@ -84,7 +145,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         </PerfumeList>
       ) : (
         <MarginFrame margin="100px auto">
-          <Spinner />
+          <Spinner info="향수정보를 로딩중입니다" />
         </MarginFrame>
       )}
     </>
@@ -116,10 +177,21 @@ const TextInfo = styled.div`
   flex-direction: column;
   width: 60%;
 `;
+
+const PerfumeRate = styled.div`
+  font-weight: 400;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  // color: var(--primary-color);
+  margin-bottom: 10px;
+`;
+
 const PerfumeBrand = styled.div`
   color: var(--black-color);
-  font-size: 11px;
-  font-weight: 400;
+  font-size: 13px;
+  font-weight: 500;
   margin-bottom: 5px;
 `;
 const PerfumeName = styled.div`
@@ -130,8 +202,8 @@ const PerfumeName = styled.div`
 const PerfumeScent = styled.div`
   margin-top: 28px;
   color: var(--black-color);
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 14px;
+  font-weight: 600;
 `;
 const ImgBox = styled.div`
   width: 110px;
@@ -168,5 +240,3 @@ const Button = styled.button`
     color: var(--white-color);
   }
 `;
-
-const Scent = styled.span``;

@@ -1,30 +1,17 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import Carousel from 'react-items-carousel';
-import PerfumeReviewBox from '../Perfume/PerfumeReviewBox.tsx';
-import { NextSvg } from '../Box/AddCarousel.tsx';
+import PerfumeReviewBox from '../Perfume/PerfumeReviewBox';
+import { NextSvg } from '../Box/AddCarousel';
 import { ReactComponent as PrevSvg } from '../../assets/icon/prevBack.svg';
-
-interface Perfume {
-  rate: number;
-  brand: string;
-  name: string;
-  img: string;
-}
+import { PerfumeInfos } from '../../types/PostInfoType';
 
 interface PerfumeReviewCarouselProps {
-  perfumes: Perfume[];
+  rates: number[];
+  perfumes: PerfumeInfos[];
 }
 
-const Button = styled.button`
-  background: none;
-  border: none;
-  color: var(--gray-color);
-  font-size: 25px;
-  cursor: pointer;
-`;
-
 const PerfumeReviewCarousel: React.FC<PerfumeReviewCarouselProps> = ({
+  rates,
   perfumes,
 }) => {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
@@ -39,13 +26,14 @@ const PerfumeReviewCarousel: React.FC<PerfumeReviewCarouselProps> = ({
       rightChevron={<NextSvg />}
       chevronWidth={30}
     >
-      {perfumes.map((perfume, index) => (
+      {perfumes?.map((perfume, index) => (
         <PerfumeReviewBox
-          key={index}
-          rate={perfume.rate}
-          brand={perfume.brand}
+          key={perfume.perfumeId}
+          rate={rates[index]}
+          brand={perfume.brandName}
           name={perfume.name}
-          img={perfume.img}
+          img={perfume.picture}
+          perfumeId={perfume.perfumeId}
         />
       ))}
     </Carousel>

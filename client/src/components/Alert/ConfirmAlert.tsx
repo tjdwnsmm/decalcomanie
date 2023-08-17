@@ -3,7 +3,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import { styled as MUIstyled } from '@mui/material/styles';
-import axios, { USERID } from '../../api/apiController';
+import axios from '../../api/apiController';
 
 interface ConfirmProps {
   open: boolean;
@@ -29,7 +29,6 @@ export const ConfirmAlert = ({
     axios
       .post('/user/perfume/manage', {
         perfumeId: perfumeId,
-        userId: USERID,
       })
       .then((res) => console.log(`삭제!! ${res.data}`));
     setOpen(false);

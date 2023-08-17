@@ -2,16 +2,22 @@ import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import { MarginFrame } from '../../style';
 import { ReactComponent as CancelSvg } from '../../assets/icon/input-cancel.svg';
+import { ReactComponent as ErrorSvg } from '../../assets/icon/error.svg';
+import { scentDto } from '../../types/PostInfoType';
+import axios from '../../api/apiController';
 
 interface ScentModiProps {
-  scents: string[];
+  targetList: scentDto[];
+  setTargetList: (scents: scentDto[]) => void;
   fav: string;
+  anotherList: scentDto[];
 }
 
 const ScentList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  padding: 0px 2px;
 `;
 
 const ScentItem = styled.div`
@@ -25,17 +31,11 @@ const ScentItem = styled.div`
   font-size: 14px;
 `;
 
-const DeleteButton = styled.div`
-  padding: 0px 4px;
-  margin-left: 10px;
-  border: 2px solid var(--white-color);
-  border-radius: 7px;
-  font-size: 13px;
-`;
-
 const AddScent = styled.div`
-  margin-top: 15px;
+  margin-top: 10px;
   display: flex;
+  align-items: center;
+  border-bottom: 2px solid var(--gray-color);
 `;
 
 const ScentInput = styled.input`
@@ -47,83 +47,166 @@ const ScentInput = styled.input`
   color: var(--black-color);
   border: none;
   outline: none;
-  border-bottom: 2px solid var(--gray-color);
+  padding: 4px;
 
   &::placeholder {
     color: var(--primary-color);
   }
 `;
 
-const AddButton = styled.button<{ disabled?: boolean }>`
-  display: flex;
-  padding: 0px 5px;
-  margin: 0px 8px;
-  border: 2px solid var(--success-color);
-  border-radius: 7px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--success-color);
-  cursor: ${(props) => (props.disabled ? 'default' : 'pointer')};
-  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
-`;
-
 const MaxScentMessage = styled.div`
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
   color: var(--error-color);
-  margin-top: 4px;
+  font-size: 13px;
+  margin: 6px;
+  gap: 5px;
 `;
 
-function ScentModi({ scents, fav }: ScentModiProps) {
-  const [scentList, setScentList] = useState(scents);
-  const [newScent, setNewScent] = useState('');
+const CancelSvgColor = styled(CancelSvg)`
+  g path {
+    fill: var(--white-color);
+  }
+`;
+
+const SearchResultList = styled.div`
+  position: absolute;
+  z-index: 1;
+  width: 280px;
+  max-height: 120px;
+  overflow: auto;
+  border: 1.4px solid var(--gray-color);
+  border-top: none;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding: 4px 8px;
+  background-color: var(--background-color);
+`;
+
+const SearchResultItem = styled.div`
+  background-color: var(--background-color);
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  transition: background-color 0.3s;
+  font-size: 15px;
+  font-weight: 400;
+
+  &:hover {
+    background-color: var(--secondary-color);
+    font-weight: 600;
+  }
+`;
+
+function ScentModi({ targetList, setTargetList, fav, anotherList }: ScentModiProps) {
   const [showMaxScentMessage, setShowMaxScentMessage] = useState(false);
+  const [searchResults, setSearchResults] = useState<scentDto[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [duplicateMsg, setDuplicateMsg] = useState('');
 
   const handleDeleteScent = (index: number) => {
-    const updatedScents = scentList.filter((_, idx) => idx !== index);
-    setScentList(updatedScents);
+    setTargetList(targetList.filter((_, idx) => idx !== index));
   };
 
-  const handleAddScent = () => {
-    if (scentList.length >= 3) {
-      setShowMaxScentMessage(true);
+  const handleAddScent = (selectedScent: scentDto) => {
+    if (selectedScent.name.trim() !== '') {
+      setSearchKeyword('');
+      setSearchResults([]);
+      setTargetList([...targetList, selectedScent]);
+    }
+  };
+
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const keyword = e.target.value;
+    setSearchKeyword(keyword);
+
+    const isInTarget = targetList.some((target) => (
+      target.name === keyword || target.nameOrg === keyword
+    ));
+    const isInAnother = anotherList.some((target) => (
+      target.name === keyword || target.nameOrg === keyword
+    ));
+
+    if (!isInTarget && !isInAnother) {
+      setDuplicateMsg('');
+    } else {
+      setSearchResults([]);
+      setDuplicateMsg(`${keyword}은(는) 이미 등록된 향입니다.`);
       return;
     }
 
-    setShowMaxScentMessage(false);
+    if (keyword.trim() !== '') {
+      if (targetList.length < 3) {
+        setShowMaxScentMessage(false);
+        try {
+          const response = await axios.get('/perfume/search/scent');
+          const dataArray = response.data.map((data: scentDto) => data);
+          const matchingScents: scentDto[] = dataArray.filter((scent: scentDto) => {
+            const isMatchingName = scent.nameOrg.includes(keyword) || scent.name.includes(keyword);
+            const isNotInTarget = !targetList.some((item) => item.scentId === scent.scentId);
+            const isNotInAnother = !anotherList.some((item) => item.scentId === scent.scentId);
 
-    if (newScent.trim() !== '') {
-      setScentList([...scentList, newScent]);
-      setNewScent('');
+            return isMatchingName && isNotInTarget && isNotInAnother;
+          });
+
+          setSearchResults(matchingScents);
+        } catch (error) {
+          console.error(error);
+          setSearchResults([]);
+        }
+      } else {
+        setShowMaxScentMessage(true);
+      }
+    } else {
+      setSearchResults([]);
     }
+  };
+
+  const handleClearSearch = () => {
+    setSearchKeyword('');
+    setSearchResults([]);
   };
 
   return (
     <MarginFrame margin="8px 6px">
-      <ScentList>
-        {scentList.map((scent, idx) => (
+      {(targetList.length > 0) && <ScentList>
+        {targetList.map((scent, idx) => (
           <ScentItem key={idx}>
-            {scent}
+            {scent.name}
             <CancelSvgColor onClick={() => handleDeleteScent(idx)} />
-            {/* <DeleteButton onClick={() => handleDeleteScent(idx)}>
-              x
-            </DeleteButton> */}
           </ScentItem>
         ))}
-      </ScentList>
-      <AddScent>
-        <ScentInput
-          placeholder={`${fav} 향 계열을 입력해주세요.`}
-          value={newScent}
-          onChange={(e) => setNewScent(e.target.value)}
-          onKeyPress={handleAddScent}
-        />
-        <AddButton onClick={handleAddScent} disabled={!newScent}>
-          +
-        </AddButton>
-      </AddScent>
-      {showMaxScentMessage && (
+      </ScentList>}
+      <div style={{ position: 'relative' }}>
+        <AddScent>
+          <ScentInput
+            placeholder={`${fav} 향 계열을 입력해주세요.`}
+            value={searchKeyword}
+            onChange={handleInputChange}
+          />
+          {searchKeyword && <CancelSvg style={{ paddingRight: '4px' }} onClick={handleClearSearch}/>}
+        </AddScent>
+        {(searchResults.length > 0) && (
+          <SearchResultList>
+            {searchResults.map((result, idx) => (
+              <SearchResultItem key={idx} onClick={() => handleAddScent(result)}>
+                {result.name} ({result.nameOrg})
+              </SearchResultItem>
+            ))}
+          </SearchResultList>
+        )}
+      </div>
+      {showMaxScentMessage && searchKeyword && (
         <MaxScentMessage>
+          <ErrorSvg/>
           향 계열은 최대 3개까지만 추가할 수 있습니다.
+        </MaxScentMessage>
+      )}
+      {duplicateMsg && (
+        <MaxScentMessage>
+          <ErrorSvg/> {duplicateMsg}
         </MaxScentMessage>
       )}
     </MarginFrame>
@@ -131,9 +214,3 @@ function ScentModi({ scents, fav }: ScentModiProps) {
 }
 
 export default ScentModi;
-
-const CancelSvgColor = styled(CancelSvg)`
-  g path {
-    fill: var(--white-color);
-  }
-`;

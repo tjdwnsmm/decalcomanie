@@ -7,13 +7,11 @@ import { ReactComponent as UncoloredBookmark } from '../../assets/icon/uncolored
 import { ReactComponent as UncoloredFeed } from '../../assets/icon/uncolored-feed.svg';
 import { ReactComponent as UncoloredLike } from '../../assets/icon/uncolored-like.svg';
 
-// styled-components의 PolymorphicComponentProps 타입을 사용하여 props 의 타입을 미리 지정
 interface TabProps {
   active?: boolean;
   onClick?: () => void;
 }
 
-// main-feed 로부터 넘어온 props 에 대한 type 설정
 interface FeedTabProps {
   setNowActive: (keyword: string) => void;
 }
@@ -21,10 +19,9 @@ interface FeedTabProps {
 export const MyPageTab = ({ setNowActive }: FeedTabProps) => {
   const [activeTab, setActiveTab] = useState('post');
 
-  //탭을 클릭시
   const handleTabClick = (tab: string) => {
-    setActiveTab(tab); //관련 css 수정
-    setNowActive(tab); //페이지 업데이트
+    setActiveTab(tab);
+    setNowActive(tab);
   };
 
   return (
@@ -33,8 +30,8 @@ export const MyPageTab = ({ setNowActive }: FeedTabProps) => {
         {activeTab === 'post' ? <ColoredFeed /> : <UncoloredFeed />}
       </Tab>
       <Tab
-        active={activeTab === 'popularity'}
-        onClick={() => handleTabClick('popularity')}
+        active={activeTab === 'bookmark'}
+        onClick={() => handleTabClick('bookmark')}
       >
         {activeTab === 'bookmark' ? <ColoredBookmark /> : <UncoloredBookmark />}
       </Tab>

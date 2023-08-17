@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 import { FloatingButton } from './FloatingWriteBtn';
 import { useNavigate } from 'react-router-dom';
-
+import { ReactComponent as DrawerSvg } from '../../assets/img/perfume-drawer.svg';
 const FloatingDrawerBtn = () => {
   const navigate = useNavigate();
   const handleClick = () => {
@@ -11,7 +11,7 @@ const FloatingDrawerBtn = () => {
   return (
     <>
       <FloatingDrawerButton onClick={handleClick}>
-        <img src="src/assets/img/drawer-float.png" />
+        <DrawerSvg />
       </FloatingDrawerButton>
     </>
   );
@@ -22,7 +22,7 @@ export default FloatingDrawerBtn;
 const FloatingDrawerButton = styled(FloatingButton)`
   width: 70px;
   height: 70px;
-  img {
+  svg {
     width: 32px;
   }
 `;
