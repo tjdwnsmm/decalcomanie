@@ -1,5 +1,7 @@
 package com.eightlow.decalcomanie.user.controller;
 
+import com.eightlow.decalcomanie.auth.dto.OAuthToken;
+import com.eightlow.decalcomanie.auth.entity.UserCredential;
 import com.eightlow.decalcomanie.auth.service.JwtService;
 import com.eightlow.decalcomanie.perfume.dto.PerfumeDto;
 import com.eightlow.decalcomanie.perfume.dto.ScentDto;
@@ -13,14 +15,25 @@ import com.eightlow.decalcomanie.user.dto.response.FollowerResponse;
 import com.eightlow.decalcomanie.user.dto.response.FollowingResponse;
 import com.eightlow.decalcomanie.user.dto.response.ProfileResponse;
 import com.eightlow.decalcomanie.user.service.IUserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +47,11 @@ public class UserApiController {
 
     private final IUserService userService;
     private final JwtService jwtService;
-
     private final IArticleService articleService;
+    private final EntityManager em;
+
+    @Value("${spring.kakao.admin-key}")
+    private String kakaoAdminKey;
 
     // 사용자 향수 등록, 삭제
     @PostMapping("/perfume/manage")
@@ -142,7 +158,30 @@ public class UserApiController {
 
     @DeleteMapping("/withdrawal")
     public ResponseEntity<String> withdrawUser(HttpServletRequest req) {
+        UserCredential userCredential = em.find(UserCredential.class, (String)req.getAttribute("userId"));
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.set("Authorization", "KakaoAK " + kakaoAdminKey);
+
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("target_id_type", "user_id");
+        requestBody.add("target_id", userCredential.getKakaoUserNum());
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        String url = "https://kapi.kakao.com/v1/user/unlink";
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         userService.withdrawUser((String)req.getAttribute("userId"));
+
         return new ResponseEntity<>("회원 탈퇴 완료!", HttpStatus.OK);
     }
 

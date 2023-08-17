@@ -53,6 +53,7 @@ public interface PerfumeMapper {
                 .brandNameOrg(perfume.getBrand().getNameOrg())
                 .brandName(perfume.getBrand().getName())
                 .picture(perfume.getPicture())
+                .pick(perfume.getPick())
                 .rate(perfume.getRate())
                 .accord(accords)
                 .build();

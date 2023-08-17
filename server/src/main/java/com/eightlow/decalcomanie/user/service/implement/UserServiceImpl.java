@@ -518,7 +518,6 @@ public class UserServiceImpl implements IUserService {
         return result;
     }
 
-
     // 사용자 TOP 3 향 조회
     @Override
     public List<ScentDto> getTopThreeScent(String userId) {
