@@ -68,7 +68,7 @@ export default function OptionMenu() {
 
   const handleLeftArrowClick = () => {
     // 뒤로가기
-    navigate(-1);
+    navigate('/');
   };
 
   // 회원정보 수정 페이지로 이동
