@@ -158,7 +158,7 @@ public class UserApiController {
 
     @DeleteMapping("/withdrawal")
     public ResponseEntity<String> withdrawUser(HttpServletRequest req) {
-        UserCredential userCredential = em.find(UserCredential.class, (String)req.getAttribute("userId"));
+        UserCredential userCredential = em.find(UserCredential.class, req.getAttribute("userId"));
 
         RestTemplate restTemplate = new RestTemplate();
 

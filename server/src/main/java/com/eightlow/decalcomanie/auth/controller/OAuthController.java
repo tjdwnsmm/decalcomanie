@@ -152,11 +152,11 @@ public class OAuthController {
         int gender = 2;
         int age = 20;
 
-        if(kakaoProfile.getKakaoAccount().hasAgeRange) {
+        if(!kakaoProfile.getKakaoAccount().ageRangeNeedsAgreement) {
             age = Integer.parseInt(kakaoProfile.getKakaoAccount().getAgeRange().split("~")[0]);
         }
 
-        if(kakaoProfile.getKakaoAccount().hasGender) {
+        if(!kakaoProfile.getKakaoAccount().genderNeedsAgreement) {
             gender = kakaoProfile.getKakaoAccount().getGender().equals("male") ? 0 : 1;
         }
 
