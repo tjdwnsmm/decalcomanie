@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import SearchBar from '../../components/Search/SearchBar';
-import { Main, MarginFrame } from '../../style';
+import { CenterFrame, ConfirmButton, Main, MarginFrame } from '../../style';
 import SearchResults from '../../components/Search/SearchResults';
 import { PerfumeDetail } from '../../types/PerfumeInfoType';
 import axios from '../../api/apiController';
@@ -9,9 +9,12 @@ import { useFetchDatas } from '../../components/Search/useFetchData';
 import useIntersect from '../../hooks/useIntersect';
 import { styled } from 'styled-components';
 import Spinner from '../../components/common/Spinner';
-import FloatingTopBtn from '../../components/Button/FloatingTopBtn';
+
+const SEARCH_RESULT_TIMEOUT = 5000; // 5 seconds
 
 const SearchMyPerfume: React.FC = () => {
+  const [showNoResultsMessage, setShowNoResultsMessage] = useState(false);
+
   //현재 검색할 단어
   const [searchKeyword, setSearchKeyword] = useState('');
 
@@ -58,6 +61,32 @@ const SearchMyPerfume: React.FC = () => {
       setOriginSearchResults(fullNames);
     });
   }, []);
+
+  useEffect(() => {
+    if (newSearch && (!searchResults || searchResults.length === 0)) {
+      const timeoutId = setTimeout(() => {
+        setShowNoResultsMessage((prevShowNoResultsMessage) => {
+          if (
+            prevShowNoResultsMessage ||
+            !searchResults ||
+            searchResults.length === 0
+          ) {
+            return true;
+          }
+          return prevShowNoResultsMessage;
+        });
+      }, SEARCH_RESULT_TIMEOUT);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [searchResults]);
+
+  const handleBack = () => {
+    location.reload();
+  };
+
   /**
    * @summary 검색 결과를 가져오는 로직을 구현 - 예시로 검색 결과를 빈 배열로 설정
    */
@@ -90,6 +119,7 @@ const SearchMyPerfume: React.FC = () => {
         dataSize: 200,
         lastPick: null,
         lastPerfumeId: null,
+        orderType: 1,
       });
       // //console.log(response);
       return response.data;
@@ -98,6 +128,25 @@ const SearchMyPerfume: React.FC = () => {
       return [];
     }
   };
+
+  if (showNoResultsMessage) {
+    return (
+      <>
+        <ErrorTxt>검색 결과가 없습니다 😥</ErrorTxt>
+        <MarginFrame margin="15px 25px 0">
+          <CenterFrame>
+            <ConfirmButton
+              color="primary"
+              background="primary"
+              onClick={handleBack}
+            >
+              검색화면으로 돌아가기
+            </ConfirmButton>
+          </CenterFrame>
+        </MarginFrame>
+      </>
+    );
+  }
 
   return (
     <Main>
@@ -144,4 +193,10 @@ const Target = styled.div`
   height: 3px;
 `;
 
+const ErrorTxt = styled.div`
+  font-weight: 700;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 270px;
+`;
 export default SearchMyPerfume;
