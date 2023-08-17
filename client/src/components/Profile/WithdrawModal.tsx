@@ -12,6 +12,9 @@ const WithdrawModal = ({ closeModal }: WithdrawProps) => {
   const handleWithdraw = async () => {
     if (window.confirm('탈퇴하시겠습니까?')) {
       try {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('nickname');
         const response = await axios.delete('/user/withdrawal');
         navigate('/login');
         console.log(response.data);
@@ -26,13 +29,17 @@ const WithdrawModal = ({ closeModal }: WithdrawProps) => {
       <Modal>
         <ModalTitle>Decalcomanie 탈퇴하기</ModalTitle>
         <ModalContent>
-          탈퇴하기 버튼을 누르면 회원님의 정보가 즉시 삭제되며, 복구할 수 없습니다.
-          <br/><br/>
+          탈퇴하기 버튼을 누르면 회원님의 정보가 즉시 삭제되며, 복구할 수
+          없습니다.
+          <br />
+          <br />
           정말로 탈퇴하시겠습니까?
         </ModalContent>
         <Option>
           <ModalButton onClick={closeModal}>취소</ModalButton>
-          <ModalButton color='error' onClick={handleWithdraw}>탈퇴하기</ModalButton>
+          <ModalButton color="error" onClick={handleWithdraw}>
+            탈퇴하기
+          </ModalButton>
         </Option>
       </Modal>
     </ModalBackground>
