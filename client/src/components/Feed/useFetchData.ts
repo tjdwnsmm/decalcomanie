@@ -37,14 +37,14 @@ export const useFetchDatas = ({
       setIsLastPage(
         response.data[0].lastPage ? response.data[0].lastPage : false,
       );
-      console.log('response', response);
+      //console.log('response', response);
       setDatas((prevDatas) => [...prevDatas, ...response.data]);
 
-      console.log(datas);
+      //console.log(datas);
 
-      console.log(
-        `지난 마지막 article id : ${lastArticleId} && 지난 마지막 찜 갯수 : ${heartCnt}`,
-      );
+      //console.log(
+      //   `지난 마지막 article id : ${lastArticleId} && 지난 마지막 찜 갯수 : ${heartCnt}`,
+      // );
     } catch (error) {
       console.error('Error fetching datas:', error);
     } finally {
@@ -60,10 +60,10 @@ export const useFetchDatas = ({
 
   useEffect(() => {
     // setUrlTab(urlTab);
-    console.log(`isLast? ${isLastPage}`);
+    //console.log(`isLast? ${isLastPage}`);
     if (!isLastPage && !isLoading) {
       fetchDatas(heartCnt, lastArticleId, urlTab);
-      console.log(`${pageNumber + 1}번째 호출!`);
+      //console.log(`${pageNumber + 1}번째 호출!`);
     }
   }, [pageNumber, isLastPage, urlTab]);
 

@@ -44,7 +44,7 @@ export default function OtherProfilePage() {
   useEffect(() => {
     axios.get(`/user/profile/${id}`).then((res) => {
       const userData = res.data;
-      console.log(userData);
+      //console.log(userData);
       setFollowerCount(userData.follower);
       setFollowingCount(userData.following);
       setFavorites(userData.userInfo.favorities);
@@ -59,7 +59,7 @@ export default function OtherProfilePage() {
     axios
       .post('/sns/user', { dataSize: 100, lastArticleId: null, userId: id })
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         setPostCount(res.data.length);
         const otherFeed = res.data.map((feedData: EachFeedInfo) => ({
           id: feedData.articleDtos.articleId,

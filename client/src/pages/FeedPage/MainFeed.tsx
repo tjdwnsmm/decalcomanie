@@ -36,7 +36,7 @@ export const MainFeed = () => {
     observer.unobserve(entry.target);
     if (hasNextPage && !isFetching) {
       fetchNextPage();
-      console.log('✅ 이전까지 받아온 데이터!', datas);
+      //console.log('✅ 이전까지 받아온 데이터!', datas);
       setLastArticleId(datas[datas.length - 1].articleDtos.articleId);
       setHeartCnt(datas[datas.length - 1].articleDtos.heart);
     }

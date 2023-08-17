@@ -9,7 +9,7 @@ function App() {
 
   //   // resize 이벤트가 발생하면 다시 계산하도록 아래 코드 추가
   //   window.addEventListener('resize', setScreenSize);
-  //   console.log(setScreenSize);
+  //   //console.log(setScreenSize);
   //   return () => window.removeEventListener('resize', setScreenSize);
   // }, []);
   return (

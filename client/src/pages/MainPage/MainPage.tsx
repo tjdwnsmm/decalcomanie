@@ -55,7 +55,7 @@ const MainPage = () => {
     setRecommendPerfume(null);
     setSaveRecommend(false);
     axios.get('/perfume/recommend').then((res) => {
-      console.log(res.data);
+      //console.log(res.data);
       setRecommendPerfume(res.data);
       setSaveRecommend(true);
     });
@@ -88,7 +88,7 @@ const MainPage = () => {
     });
 
     axios.get('/perfume/today').then((res) => {
-      console.log(`today data : ${JSON.stringify(res.data)}`);
+      //console.log(`today data : ${JSON.stringify(res.data)}`);
       setWeatherPerfumes(res.data.season);
       setDayNightPerfumes(res.data.dayNight);
       setAgeGenderPerfumes(res.data.ageGender);

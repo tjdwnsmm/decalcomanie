@@ -17,7 +17,7 @@ const SortToggle: React.FC<SortToggleProps> = ({ onSortChange }) => {
     if (!localStorage.getItem('sort')) {
       setSortOption(SortOption.Popularity);
     } else {
-      console.log('redirect - ', localStorage.getItem('sort'));
+      //console.log('redirect - ', localStorage.getItem('sort'));
       if (localStorage.getItem('sort') == '2') {
         setSortOption(SortOption.Grade);
       }
@@ -25,7 +25,7 @@ const SortToggle: React.FC<SortToggleProps> = ({ onSortChange }) => {
   }, []);
   const handleToggle = (event: React.ChangeEvent<HTMLSelectElement>) => {
     let newSortOption = event.target.value as SortOption;
-    console.log('handle', newSortOption);
+    //console.log('handle', newSortOption);
     setSortOption(newSortOption);
     onSortChange(newSortOption);
   };

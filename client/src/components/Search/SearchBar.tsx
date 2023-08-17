@@ -49,7 +49,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
         setDataByURL(dataArray);
       });
     }
-    // console.log('받아온 데이터 - ', dataByURL);
+    // //console.log('받아온 데이터 - ', dataByURL);
   }, []);
 
   /**
@@ -76,7 +76,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
         )
         .map((data: dataByUrlProps) => data.name)
         .slice(0, 8);
-      console.log(filteredResults);
+      //console.log(filteredResults);
       setSearchResults(filteredResults);
       setIsFetching(false);
     }
@@ -116,7 +116,7 @@ const SearchBar: React.FC<SearchBoxProps> = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    console.log(e);
+    //console.log(e);
     //향수 이름 검색에 ENTER 지원
     if (e.key === 'Enter' && dataList) {
       onSearch(keyword, true);

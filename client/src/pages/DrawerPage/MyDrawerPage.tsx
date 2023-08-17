@@ -21,7 +21,7 @@ export const MyDrawerPage = () => {
   useEffect(() => {
     axios.get(`/user/perfume`).then((res) => {
       setPerfumeList(res.data);
-      console.log(res.data);
+      //console.log(res.data);
     });
   }, []);
 

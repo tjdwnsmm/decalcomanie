@@ -21,7 +21,7 @@ const FloatingTopBtn = () => {
   }, []);
 
   const scrollToTop = () => {
-    console.log('clock');
+    //console.log('clock');
     window.scrollTo({
       top: 0,
       left: 0,

@@ -27,7 +27,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   useEffect(() => {
     setLoading(false);
-    console.log(results);
+    //console.log(results);
   }, [results]);
 
   const handleClick = (perfumeId: number) => {
@@ -35,9 +35,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   };
 
   const handleAddPerfume = (perfumeId: number) => {
-    axios
-      .post(addUrl, { perfumeId: perfumeId })
-      .then((res) => console.log(res.data));
+    axios.post(addUrl, { perfumeId: perfumeId });
+    // .then((res) => console.log(res.data));
     navigate(`/my-drawer`);
   };
 

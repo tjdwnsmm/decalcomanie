@@ -84,8 +84,8 @@ const ModiBtn = styled.button<{ isEditable?: boolean }>`
 const getElapsedTime = (createdAt: string): number => {
   const createdAtDate = new Date(createdAt);
   const currentTime = new Date();
-  // console.log('작성시간', createdAtDate);
-  // console.log(currentTime);
+  // //console.log('작성시간', createdAtDate);
+  // //console.log(currentTime);
   const diff = currentTime.getTime() - createdAtDate.getTime(); // 단위: (ms)
   const elapsedTime = Math.floor(diff / 1000 / 60);
   return elapsedTime;
@@ -151,7 +151,7 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
           commentId: comment.commentId,
           content: editedContent,
         });
-        console.log('댓글이 수정되었습니다:', response.data);
+        //console.log('댓글이 수정되었습니다:', response.data);
         setEditedContent('');
         setEditing(false);
         window.location.reload();
@@ -173,8 +173,12 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
     }
   };
 
-  const handleOtherProfile = (id: string, notMe: boolean, withdraw:boolean) => {
-    console.log(notMe);
+  const handleOtherProfile = (
+    id: string,
+    notMe: boolean,
+    withdraw: boolean,
+  ) => {
+    //console.log(notMe);
     if (withdraw) {
       return;
     }
@@ -190,7 +194,11 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
       <div
         style={{ display: 'flex' }}
         onClick={() => {
-          handleOtherProfile(commentUser.user.userId, !commentUser.me, commentUser.withdrawal);
+          handleOtherProfile(
+            commentUser.user.userId,
+            !commentUser.me,
+            commentUser.withdrawal,
+          );
         }}
       >
         <ProfileImage
@@ -213,7 +221,9 @@ const CommentBox = ({ comment, commentUser }: CommentBoxProps) => {
               isEditing={isEditing}
               value={editedContent}
               onChange={handleContentChange}
-              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => handleKeyPress(e)}
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) =>
+                handleKeyPress(e)
+              }
             />
             <ModiBtn isEditable={isEditable} onClick={handleEditClick}>
               수정
