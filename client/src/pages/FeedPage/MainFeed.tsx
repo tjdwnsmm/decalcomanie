@@ -45,7 +45,9 @@ export const MainFeed = () => {
     }
   });
 
-  useEffect(() => {}, [nowActive]);
+  useEffect(() => {
+    setFeeds([]);
+  }, [nowActive]);
 
   const handleDetail = (articleId: number) => {
     navigate(`/post-detail/${articleId}`);
