@@ -27,7 +27,7 @@ const PostDetail = () => {
   const navigate = useNavigate();
 
   const handleLeftArrowClick = () => {
-    navigate('/main-feed');
+    navigate(-1);
   };
 
   useEffect(() => {

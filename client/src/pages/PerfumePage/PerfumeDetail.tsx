@@ -10,6 +10,7 @@ import PerfumeInfoSection from '../../components/Perfume/PerfumeInfoSection';
 import PerfumeImageSection from '../../components/Perfume/PerfumeImageSection';
 import ActionButtons from '../../components/Perfume/DetailActionButtons';
 import DetailEtcInfoSection from '../../components/Perfume/DetailEtcInfoSection';
+import { ReactComponent as LeftArrow } from '../../assets/img/close.svg';
 
 const PerfumeDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,6 +49,9 @@ const PerfumeDetailPage: React.FC = () => {
       newWindow.location.href = `https://www.google.com/search?q=${searchName}&tbm=shop`;
     }
   };
+  const handleLeftArrowClick = () => {
+    navigate(-1);
+  };
 
   if (!perfume) {
     return null;
@@ -55,7 +59,9 @@ const PerfumeDetailPage: React.FC = () => {
 
   return (
     <Main>
-      {/* Use the imported components */}
+      <Button onClick={handleLeftArrowClick}>
+        <LeftArrow />
+      </Button>
       <PerfumeInfoSection perfume={perfume} />
       <SearchPerfume
         onClick={() => {
@@ -82,6 +88,14 @@ const PerfumeDetailPage: React.FC = () => {
 
 export default PerfumeDetailPage;
 
+const Button = styled.button`
+  background: none;
+  border: none;
+  margin: 20px 18px 1px;
+  cursor: pointer;
+  position: relative;
+  left: 85%;
+`;
 const SearchPerfume = styled.div`
   display: flex;
   align-items: center;
