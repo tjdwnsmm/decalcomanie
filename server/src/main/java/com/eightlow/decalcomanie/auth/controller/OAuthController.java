@@ -162,11 +162,15 @@ public class OAuthController {
         int age = 20;
 
         if(!kakaoProfile.getKakaoAccount().ageRangeNeedsAgreement) {
-            age = Integer.parseInt(kakaoProfile.getKakaoAccount().getAgeRange().split("~")[0]);
+            if(kakaoProfile.getKakaoAccount().getAgeRange() != null) {
+                age = Integer.parseInt(kakaoProfile.getKakaoAccount().getAgeRange().split("~")[0]);
+            }
         }
 
         if(!kakaoProfile.getKakaoAccount().genderNeedsAgreement) {
-            gender = kakaoProfile.getKakaoAccount().getGender().equals("male") ? 0 : 1;
+            if(kakaoProfile.getKakaoAccount().getGender() != null) {
+                gender = kakaoProfile.getKakaoAccount().getGender().equals("male") ? 0 : 1;
+            }
         }
 
         UserDto userInfo = UserDto.builder()
