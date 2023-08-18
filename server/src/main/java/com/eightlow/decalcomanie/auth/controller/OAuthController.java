@@ -64,8 +64,6 @@ public class OAuthController {
         params.add("redirect_uri", kakaoRedirectURL);
         params.add("code", code);
 
-        log.info("access code : " + code);
-
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(params, headers);
 
@@ -84,8 +82,6 @@ public class OAuthController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-        log.info("kakao token : " + oAuthToken.toString());
 
         // accessToken으로 카카오에 사용자 정보 요청
         RestTemplate rt2 = new RestTemplate();
@@ -143,9 +139,6 @@ public class OAuthController {
         String accessToken = jwtService.generateAccessToken(kakaoProfile.getId().toString(), userId.toString());
         String refreshToken = jwtService.generateRefreshToken(kakaoProfile.getId().toString(), userId.toString());
 
-        log.info("accessToken : " + accessToken);
-        log.info("refreshToken : " + refreshToken);
-
         userCredential = UserCredential.builder()
                 .userId(userId.toString())
                 .email(kakaoProfile.getKakaoAccount().getEmail())
@@ -182,8 +175,6 @@ public class OAuthController {
                 .build();
 
         oAuthService.register(userCredential, userMapper.toEntity(userInfo));
-
-        log.info("register complete");
 
         LoginResponse loginResponse = LoginResponse.builder()
                 .nickname(userInfo.getNickname())
