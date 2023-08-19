@@ -29,6 +29,7 @@ export function OtherProfilePage() {
   const { id } = useParams<{ id: string }>();
   const [feeds, setFeeds] = useState<Feed[] | null>([]);
   const [isLoading, setLoading] = useState(false);
+  const [followed, setFollowed] = useState<boolean>(false);
   const [favorites, setFavorites] = useState<ScentDto[]>([]);
   const [hates, setHates] = useState<ScentDto[]>([]);
   const [postCount, setPostCount] = useState<number>(0);
@@ -53,6 +54,7 @@ export function OtherProfilePage() {
       // setUserId(userData.userInfo.user.userId);
       setUserNickname(userData.userInfo.user.nickname);
       setFollow(userData.userInfo.following);
+      setFollowed(userData.userInfo.following);
       setIsMe(userData.userInfo.me);
     });
 
@@ -78,7 +80,8 @@ export function OtherProfilePage() {
   };
 
   const handleFollow = () => {
-    isFollow
+    setFollowed(!followed);
+    followed
       ? setFollowerCount(followerCount - 1)
       : setFollowerCount(followerCount + 1);
   };
