@@ -54,7 +54,10 @@ instance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    //console.log(error.response, error.response.data.status, getRefreshToken());
+
+    if (error.response.status === 400 || error.response.status === 404) {
+      window.location.href = '/pagenotfound';
+    }
     // 401 에러면 refresh token 보내기
     if (error?.response?.data?.status === 401) {
       //!console 지우기

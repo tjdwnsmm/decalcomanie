@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 // styled-components의 PolymorphicComponentProps 타입을 사용하여 props 의 타입을 미리 지정
@@ -10,10 +10,14 @@ interface TabProps {
 // main-feed 로부터 넘어온 props 에 대한 type 설정
 interface FeedTabProps {
   setNowActive: (keyword: string) => void;
+  nowActive: string;
 }
 
-export const FeedTab = ({ setNowActive }: FeedTabProps) => {
-  const [activeTab, setActiveTab] = useState('following');
+export const FeedTab = ({ setNowActive, nowActive }: FeedTabProps) => {
+  const [activeTab, setActiveTab] = useState(nowActive);
+  useEffect(() => {
+    setActiveTab(nowActive);
+  }, []);
 
   //탭을 클릭시
   const handleTabClick = (tab: string) => {

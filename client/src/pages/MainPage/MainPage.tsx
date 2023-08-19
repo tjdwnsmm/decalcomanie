@@ -169,7 +169,9 @@ const MainPage = () => {
                 ) : (
                   <NoSaveRecommend>
                     <>아직 추천된 데이터가 없어요 😥</>
-                    <div onClick={handleRecommend}>추천 향수 업데이트하기</div>
+                    <div className="updateBtn" onClick={handleRecommend}>
+                      추천 향수 업데이트하기
+                    </div>
                   </NoSaveRecommend>
                 )}
               </>
@@ -247,11 +249,15 @@ const NoSaveRecommend = styled.div`
     background-color: var(--primary-color);
     width: fit-content;
     height: fit-content;
-    padding: 5px 10px;
+    padding: 8px 12px;
     border-radius: 4px;
-    margin-top: 10px;
+    margin-top: 12px;
     font-size: 14px;
     font-weight: 400;
+  }
+
+  .updateBtn {
+    cursor: pointer;
   }
 `;
 
@@ -263,6 +269,7 @@ const RecommendBox = styled.div`
   svg {
     width: 15px;
     height: 15px;
+    cursor: pointer;
   }
 `;
 const BackFrame = styled.div`

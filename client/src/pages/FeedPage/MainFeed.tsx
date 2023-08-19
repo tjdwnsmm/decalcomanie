@@ -11,6 +11,16 @@ import { styled } from 'styled-components';
 import { useFetchDatas } from '../../components/Feed/useFetchData';
 import useIntersect from '../../hooks/useIntersect';
 
+// 탭의 상태를 세션 스토리지에 저장
+const saveActiveTab = (tab: string) => {
+  sessionStorage.setItem('activeTab', tab);
+};
+
+// 세션 스토리지에서 탭의 상태를 불러옴
+const loadActiveTab = () => {
+  return sessionStorage.getItem('activeTab');
+};
+
 export const MainFeed = () => {
   //default 탭 : following
   //following , popular , latest
@@ -24,10 +34,17 @@ export const MainFeed = () => {
     useFetchDatas({
       heartCnt,
       lastArticleId,
-      urlTab: nowActive,
+      urlTab: loadActiveTab() || 'following',
     });
 
   const datas = useMemo(() => (data ? data : []), [data]);
+
+  useEffect(() => {
+    // 세션 스토리지에서 이전에 저장한 탭 상태를 불러옴
+    const savedTab = loadActiveTab();
+    // 이전 탭 상태가 있다면 그 탭을 설정하고, 없으면 기본 탭인 'following'으로 설정
+    setNowActive(savedTab || 'following');
+  }, []);
   useEffect(() => {
     // console.log(isFetching);
     // console.log('feed전', feeds);
@@ -51,6 +68,7 @@ export const MainFeed = () => {
     setFeeds([]);
     setLastArticleId(-1);
     setHeartCnt(-1);
+    saveActiveTab(nowActive);
   }, [nowActive]);
 
   const handleDetail = (articleId: number) => {
@@ -80,7 +98,10 @@ export const MainFeed = () => {
   //현재 탭을 설정하는 setNowActive 를 props 로 넘겨서 탭 변경에 따라 페이지 내용이 변경되도록 구현
   return (
     <Main>
-      <FeedTab setNowActive={handleTabClick} />
+      <FeedTab
+        setNowActive={handleTabClick}
+        nowActive={loadActiveTab() || 'following'}
+      />
       <Feeds>
         {feeds ? (
           feeds.length === 0 && isFetching ? (

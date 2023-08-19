@@ -78,18 +78,25 @@ export default function Post() {
         ? JSON.parse(localPerfume)
         : [];
 
-      const requestData: RequestData = {
-        perfumeId: parsedList.map((perfume) => perfume.perfumeId),
-        content,
-        rate: parsedList.map((perfume) => perfume.rate),
-      };
+      // rate 배열에서 0인 요소가 있는지 확인
+      const hasZeroRate = parsedList.some((perfume) => perfume.rate === 0);
 
-      const response = await axios.post('/sns/create/', requestData);
-      //console.log('Request Data : ', requestData);
-      //console.log('API 응답:', response.data);
+      if (hasZeroRate) {
+        // 0인 요소가 있는 경우, 알림 또는 처리를 수행
+        alert('평점은 0.5점 이상부터 등록됩니다 🙏 ');
+      } else {
+        // 0인 요소가 없는 경우에만 axios 요청 보내기
+        const requestData: RequestData = {
+          perfumeId: parsedList.map((perfume) => perfume.perfumeId),
+          content,
+          rate: parsedList.map((perfume) => perfume.rate),
+        };
 
-      // 작성 글 상세 페이지로 이동
-      navigate(`/post-detail/${response.data.articleId}`);
+        const response = await axios.post('/sns/create/', requestData);
+
+        // 작성 글 상세 페이지로 이동
+        navigate(`/post-detail/${response.data.articleId}`);
+      }
     } catch (error) {
       console.error('API 요청 전송 에러:', error);
     }

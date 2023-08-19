@@ -14,7 +14,8 @@ const PageNotFound = () => {
   return (
     <Main2>
       <CenterFrame2>
-        <MarginFrame margin="150px auto">
+        <MarginFrame margin="130px auto">
+          <div className="notfound">404 NOT FOUND</div>
           <Title>페이지 정보가 없어요 😭</Title>
           <ConfirmButton2 onClick={handleBack}>
             이전 페이지로 이동
@@ -31,7 +32,9 @@ const PageNotFound = () => {
 export default PageNotFound;
 
 const Main2 = styled(Main)`
-  background-color: var(--secondary-color);
+  background-image: url('assets/img/main_bg_2.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
 `;
 
 const CenterFrame2 = styled(CenterFrame)`
@@ -39,15 +42,23 @@ const CenterFrame2 = styled(CenterFrame)`
   align-items: center;
   text-align: center;
   justify-content: center;
+
+  .notfound {
+    color: var(--white-color);
+    font-weight: 900;
+    font-size: 50px;
+    margin-bottom: 5px;
+  }
 `;
 
 const ConfirmButton2 = styled(ConfirmButton)`
   margin-bottom: 10px;
-  font-weight: 600;
+  font-weight: 700;
 `;
 
 const Title = styled.div`
   font-weight: 700;
-  font-size: 20px;
-  margin-bottom: 30px;
+  font-size: 18px;
+  margin-bottom: 150px;
+  color: var(--white-color);
 `;
