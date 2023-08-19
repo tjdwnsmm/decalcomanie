@@ -77,6 +77,12 @@ export default function OtherProfilePage() {
     navigation(-1);
   };
 
+  const handleFollow = () => {
+    isFollow
+      ? setFollowerCount(followerCount - 1)
+      : setFollowerCount(followerCount + 1);
+  };
+
   if (isMe) {
     navigation('/mypage');
   }
@@ -99,7 +105,9 @@ export default function OtherProfilePage() {
         )}
         <MarginFrame margin="10px 0 -10px ">
           <CenterFrame>
-            <FollowBtn isFollow={isFollow} to={id ? id : ''} />
+            <FollowBox onClick={handleFollow}>
+              <FollowBtn isFollow={isFollow} to={id ? id : ''} />
+            </FollowBox>
           </CenterFrame>
         </MarginFrame>
 
@@ -161,6 +169,7 @@ const MypageContainer = styled.div`
   }
 `;
 
+const FollowBox = styled.div``;
 const TopDiv = styled.div`
   display: flex;
   justify-content: space-between;
