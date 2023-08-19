@@ -24,6 +24,7 @@ const Button = styled.button`
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [postDetailData, setPostDetailData] = useState<PostDetailData>();
+  const [nonData, setNonData] = useState(false);
   const navigate = useNavigate();
 
   const handleLeftArrowClick = () => {
@@ -36,8 +37,20 @@ const PostDetail = () => {
         const response = await axios.get(`/sns/search/${id}`);
         setPostDetailData(response.data);
         //console.log(response.data);
-      } catch (error) {
-        console.error('오류:', error);
+      } catch (error: any) {
+        if (error.response) {
+          // 서버 응답이 있는 경우 (예: 404 Not Found)
+          if (error.response.status === 400 || error.response.status === 404) {
+            navigate('/pagenotfound');
+          }
+          console.error('서버 응답 데이터:', error.response.data);
+        } else if (error.request) {
+          // 요청은 보내었지만 응답을 받지 못한 경우 (네트워크 오류 등)
+          console.error('요청 오류:', error.request);
+        } else {
+          // 요청을 보내기 전에 발생한 에러
+          console.error('오류:', error.message);
+        }
       }
     };
 
