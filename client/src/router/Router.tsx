@@ -15,7 +15,7 @@ import LoginPage from '../pages/LoginPage/LoginPage';
 import KakaoAuthHandle from '../pages/LoginPage/KakaoAuthHandler';
 import PrivateRoute from './PrivateRoute';
 import PostUpdate from '../pages/PostPages/PostUpdate';
-import OtherProfilePage from '../pages/ProfilePage/OtherProfilePage';
+import { OtherProfilePage } from '../pages/ProfilePage/OtherProfilePage';
 import PageNotFound from '../pages/PageNotFound';
 
 export default function Router() {

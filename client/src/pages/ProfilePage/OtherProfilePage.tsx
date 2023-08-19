@@ -25,7 +25,7 @@ interface Feed {
   perfumeId: number;
 }
 
-export default function OtherProfilePage() {
+export function OtherProfilePage() {
   const { id } = useParams<{ id: string }>();
   const [feeds, setFeeds] = useState<Feed[] | null>([]);
   const [isLoading, setLoading] = useState(false);
