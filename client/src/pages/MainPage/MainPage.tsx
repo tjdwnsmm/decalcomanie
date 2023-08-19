@@ -249,9 +249,9 @@ const NoSaveRecommend = styled.div`
     background-color: var(--primary-color);
     width: fit-content;
     height: fit-content;
-    padding: 5px 10px;
+    padding: 8px 12px;
     border-radius: 4px;
-    margin-top: 10px;
+    margin-top: 12px;
     font-size: 14px;
     font-weight: 400;
   }
