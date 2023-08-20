@@ -57,9 +57,27 @@ const SearchTabPage: React.FC = () => {
   const [lastPick, setLastPick] = useState(-1);
   const [lastRate, setLastRate] = useState(-1);
   const [lastPerfumeId, setLastPerfumeId] = useState(-1);
+  const [lastSearch, setLastSearch] = useState(false);
 
   // const [datas, setDatas] = useState<PerfumeDetail[]>([]);
   useEffect(() => {
+    // 이전 검색 기록을 sessionStorage에서 가져와서 우선적으로 사용
+    const storedSearchResults = sessionStorage.getItem('searchResults');
+    if (storedSearchResults) {
+      setLastSearch(true);
+      setSearchResults(JSON.parse(storedSearchResults));
+    }
+
+    // sessionStorage에서 filter를 불러오기
+    const storedFilter = sessionStorage.getItem('filter');
+    const parsedFilter = storedFilter ? JSON.parse(storedFilter) : {};
+    setFilter(parsedFilter);
+
+    if (calcFilteringNum(parsedFilter) === 0) {
+      setNewSearch(false);
+      setLastSearch(false);
+    }
+
     if (!localStorage.getItem('sort')) {
       setSortOption(SortOption.Popularity);
     } else {
@@ -154,6 +172,10 @@ const SearchTabPage: React.FC = () => {
         setSearchResults([]);
         const data = await searchPerfume(keyword);
         setSearchResults(data.searchedPerfumes);
+        // sessionStorage.setItem(
+        //   'searchResults',
+        //   JSON.stringify(data.searchedPerfumes),
+        // );
         //console.log(data);
       } catch (error) {
         console.error(error);
@@ -205,6 +227,7 @@ const SearchTabPage: React.FC = () => {
   const handleApplyFilters = async (filter: Filter) => {
     setModalOpen(false); // 모달 닫기
     setFilter(filter);
+    sessionStorage.setItem('filter', JSON.stringify(filter));
     //console.log(
     //   `나 적용된 필터! 💫: ${JSON.stringify(
     //     filter,
@@ -214,12 +237,13 @@ const SearchTabPage: React.FC = () => {
     setSearchResults(null);
     if (calcFilteringNum(filter) === 0) {
       setNewSearch(false);
+      setLastSearch(false);
     } else {
       setNewSearch(true);
     }
     const filterDatas = await filterSearch(filter);
     setSearchResults(filterDatas.searchedPerfumes); // 검색 결과
-    localStorage.setItem(
+    sessionStorage.setItem(
       'searchResults',
       JSON.stringify(filterDatas.searchedPerfumes),
     );
@@ -284,6 +308,7 @@ const SearchTabPage: React.FC = () => {
               </SortArea>
 
               {/* 검색 결과 */}
+
               {newSearch ? (
                 <>
                   {searchResults && searchResults.length > 0 ? (
@@ -301,6 +326,21 @@ const SearchTabPage: React.FC = () => {
                     </MarginFrame>
                   )}
                 </>
+              ) : lastSearch ? (
+                searchResults && searchResults.length > 0 ? (
+                  <>
+                    <SearchResults
+                      results={searchResults}
+                      isButton={false}
+                      addUrl=""
+                    />
+                    <MarginFrame margin="100px auto" />
+                  </>
+                ) : (
+                  <MarginFrame margin="120px auto">
+                    <Spinner />
+                  </MarginFrame>
+                )
               ) : (
                 <>
                   {datas.length > 0 ? (
