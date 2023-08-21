@@ -110,7 +110,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                   <TextInfo>
                     <PerfumeRate>
                       <StarSvg />
-                      {feed.rate ? feed.rate : 0}
+                      {feed.rate ? feed.rate.toFixed(1) : 0}
                     </PerfumeRate>
                     <PerfumeBrand>{feed.brandName}</PerfumeBrand>
                     <PerfumeName>
