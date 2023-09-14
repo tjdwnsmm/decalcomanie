@@ -15,7 +15,7 @@
 - Notion
 
 ### Infra
-![DecalcomanieSystemArchitecture](/uploads/b2f3756ad6adc41b7b4f60a1b2e81a5a/DecalcomanieSystemArchitecture.png)
+![DecalcomanieSystemArchitecture](https://github.com/tjdwnsmm/decalcomanie/assets/66672464/47f8a1d0-8c4e-418a-ae96-677308f9e968)
 
 
 ### **`AWS`**
